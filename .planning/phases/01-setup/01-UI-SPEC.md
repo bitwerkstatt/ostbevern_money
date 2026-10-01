@@ -1,7 +1,7 @@
 ---
 phase: "1"
 slug: "setup"
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: "2026-10-01"
@@ -156,18 +156,43 @@ Phase 1 ships no real content pages (those start Phase 5), only an app skeleton 
 
 ## UI Considerations
 
-Applicable state considerations resolved: 4 covered, 2 backstop, 2 unresolved.
+Probe: `ui-consideration-probe` over 6 elements (E1 app shell, E2 `PageIntro`, E3 `ChartCard`, E4 `BaseChart` — kind overridden to `media`, E5 `DatenTabelle`, E6 Beispieldaten callout). Kinds confirmed by user 2026-10-01.
+Coverage: 32 applicable — 16 resolved (explicit), 3 resolved (backstop), 11 dismissed, 2 unresolved. Empty/error COPY lives in the Copywriting Contract; this section covers state coverage only.
 
-| Category | Element(s) | Status | Resolution / Reason |
-|----------|------------|--------|---------------------|
-| empty | `BaseChart`, `DatenTabelle` | ✅ covered | Both components render the "Noch keine Daten" empty state (see Copywriting Contract) when their data prop is empty/undefined, instead of an empty canvas or table. |
-| long-text | `PageIntro` title/lead, `DatenTabelle` row labels | ✅ covered | `hyphens: auto; lang="de"` on text blocks; long German compounds wrap instead of overflowing at 360px (A11Y-03). |
-| overflow | `DatenTabelle` (6–7 value columns + label) | ✅ covered | Table sits in a horizontally scrollable wrapper with a sticky first (label) column; never clipped or silently hidden on narrow viewports. |
-| populated | Demo `ChartCard`/`BaseChart` on the Phase 1 start page | ✅ covered | Demo dataset is a small typed fixture (not inline magic numbers) and is explicitly labeled "Beispieldaten" per the Copywriting Contract, so it can never be mistaken for a real, sourced figure. |
-| error | `BaseChart` render/data failure | 🧪 backstop | Error copy is defined now; no automated test exercises this path in Phase 1 (no real async data source yet). Verification is deferred to the Phase 7 Playwright smoke test (QUAL-02), which the planner should extend to cover a forced-error render. |
-| loading | `BaseChart`/`DatenTabelle` while data resolves | 🧪 backstop | `loading` prop renders `<wa-skeleton>`; not functionally exercised in Phase 1 because `app/src/data/` is still statically imported (no real async fetch exists until Phase 4). The prop/slot shape is built now so Phase 4+ doesn't retrofit it. |
-| zero-one-many | App-shell nav items, `BaseChart` series count | ⚠ unresolved | Phase 1's nav has only placeholder/empty route stubs; the real route list (and per-chart series counts) is only known once Phase 5/6 UI-SPECs exist. Planner should treat "nav scales to the Phase 5/6 route count without redesign" as an assumption, not a verified fact. |
-| partial | Any "some years missing" / partial-series data states | ⚠ unresolved | Not knowable until the pipeline (Phase 2+) determines which years/rows can be zero vs. genuinely absent. Deferred explicitly rather than guessed at. |
+| ID | Element | Category | Status | Resolution / Reason |
+|----|---------|----------|--------|---------------------|
+| E1 | App shell / nav | empty | dismissed | Reason: shell renders no data; nav is a static route list. |
+| E1 | App shell / nav | loading | dismissed | Reason: static SPA, hash router, no async fetch in the shell. |
+| E1 | App shell / nav | error | dismissed | Reason: nothing to fail at runtime; unknown hash routes fall back to the start route. |
+| E1 | App shell / nav | populated | dismissed | Reason: no data volume — shell content is fixed. |
+| E1 | App shell / nav | partial | dismissed | Reason: no data rows. |
+| E1 | App shell / nav | zero-one-many | ⚠ unresolved — planner must treat as assumption | Phase 1 has one nav item ("Start"); assume the nav scales to the Phase 5/6 route count without redesign. |
+| E1 | App shell / nav | overflow | resolved (explicit) | At 360 px viewport width the nav wraps or collapses; the page body never scrolls horizontally. |
+| E1 | App shell / nav | long-text | resolved (explicit) | Nav labels wrap instead of truncating; no label is clipped at 360 px. |
+| E2 | `PageIntro` | overflow | resolved (explicit) | Title and lead never overflow their container at 360 px. |
+| E2 | `PageIntro` | long-text | resolved (explicit) | `hyphens: auto` with `lang="de"` — long German compounds (e.g. "Verpflichtungsermächtigungen") hyphenate and wrap. |
+| E3 | `ChartCard` | empty | dismissed | Reason: delegated to slot content (`BaseChart` / `DatenTabelle` own the empty state). |
+| E3 | `ChartCard` | loading | dismissed | Reason: delegated to slot content (`BaseChart` `loading` prop). |
+| E3 | `ChartCard` | error | dismissed | Reason: delegated to slot content (`BaseChart` error state). |
+| E3 | `ChartCard` | partial | dismissed | Reason: delegated to slot content. |
+| E3 | `ChartCard` | zero-one-many | dismissed | Reason: card holds exactly one slot; item counts belong to the slot content. |
+| E3 | `ChartCard` | populated | resolved (explicit) | Renders title (Heading 20/600), optional subtitle/source hint, slot, optional footer callout on the secondary surface with `md` padding. |
+| E3 | `ChartCard` | overflow | resolved (explicit) | Slot container sets `min-width: 0` so wide slot content (tables) scrolls inside its own wrapper and never widens the card. |
+| E3 | `ChartCard` | long-text | resolved (explicit) | Card title wraps (with `hyphens: auto`); never truncated. |
+| E4 | `BaseChart` | empty | resolved (explicit) | Empty/undefined data prop renders the "Noch keine Daten" state, never an empty canvas. |
+| E4 | `BaseChart` | loading | resolved (backstop) | `{ statement: "loading prop renders <wa-skeleton> in place of the chart", verification: backstop }` — exercised by the Phase 7 Playwright smoke test (QUAL-02). |
+| E4 | `BaseChart` | error | resolved (backstop) | `{ statement: "render/data failure shows the Error state copy instead of a broken canvas", verification: backstop }` — Phase 7 smoke test extended with a forced-error render. |
+| E4 | `BaseChart` | populated | resolved (explicit) | Demo chart renders a typed fixture with colors from `echartsTheme.ts` and carries the "Beispieldaten" callout. |
+| E5 | `DatenTabelle` | empty | resolved (explicit) | Zero rows renders the "Noch keine Daten" state instead of an empty table. |
+| E5 | `DatenTabelle` | loading | resolved (backstop) | `{ statement: "loading state renders <wa-skeleton> rows", verification: backstop }` — no async source until Phase 4. |
+| E5 | `DatenTabelle` | error | dismissed | Reason: data is statically imported; failures surface at build time (`vue-tsc` / `npm run build`), not at runtime. |
+| E5 | `DatenTabelle` | populated | resolved (explicit) | Semantic `<table>`, numeric cells right-aligned with `tabular-nums` via `charts/format.ts`, header row in Label 14/600. |
+| E5 | `DatenTabelle` | partial | ⚠ unresolved — planner must treat as assumption | How missing years/cells are shown (blank vs. "–" vs. 0) is decided once the pipeline (Phase 2+) knows which values can be absent. |
+| E5 | `DatenTabelle` | overflow | resolved (explicit) | Horizontally scrollable wrapper with sticky first (label) column; no column is clipped at 360 px. |
+| E5 | `DatenTabelle` | zero-one-many | resolved (explicit) | 0 rows → empty state; 1 and many rows → the same table layout (no singular/plural copy in the table). |
+| E5 | `DatenTabelle` | long-text | resolved (explicit) | Row labels wrap with `hyphens: auto`; the sticky label column has a max width and wraps rather than truncating. |
+| E6 | Beispieldaten callout | overflow | resolved (explicit) | Callout spans container width and never overflows at 360 px. |
+| E6 | Beispieldaten callout | long-text | resolved (explicit) | Notice text wraps; never truncated or ellipsized. |
 
 ---
 
@@ -181,12 +206,12 @@ Applicable state considerations resolved: 4 covered, 2 backstop, 2 unresolved.
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
-- [ ] Dimension 7 Inventory Provenance: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
+- [x] Dimension 7 Inventory Provenance: PASS
 
-**Approval:** pending
+**Approval:** approved 2026-10-01
