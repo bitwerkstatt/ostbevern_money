@@ -39,6 +39,7 @@ def main(
         typer.echo(f"{titel_kurz}: {regel.status} ({regel.geprueft} Werte)")
 
     typer.echo(f"Veraltete Befunde: {len(bericht.veraltete_befunde)}")
+    typer.echo(f"Seiten mit typ=unbekannt: {len(bericht.unbekannte_seiten)}")
 
     if not bericht.ist_gruen:
         raise typer.Exit(code=1)

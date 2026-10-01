@@ -15,6 +15,7 @@ import pytest
 
 from ostbevern.konfiguration import JAHRGAENGE_VERZEICHNIS, STANDARD_JAHR, lade_sollwerte
 from ostbevern.pruefung import (
+    REGEL3_ZEILEN,
     SATZUNG_FORMELN,
     TOLERANZ_EURO,
     Abgleich,
@@ -34,10 +35,15 @@ from ostbevern.schema import (
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
     FINANZPLAN_CSV,
+    HIERARCHIE_CSV,
     KONSISTENZ_MD,
     PLAN_SPALTEN,
+    SEITEN_CSV,
+    lies_hierarchie_csv,
     lies_plan_csv,
+    lies_seiten_csv,
     schreibe_plan_csv,
+    schreibe_seiten_csv,
 )
 from ostbevern.zeilen import FORMELN
 
@@ -62,6 +68,23 @@ def _schreibe_befunde_md(pfad: Path, *, zeilen: Sequence[str] = ()) -> None:
     ]
     pfad.parent.mkdir(parents=True, exist_ok=True)
     pfad.write_text("\n".join(inhalt), encoding="utf-8")
+
+
+def _lies_schluesseltabelle_markdown_zeilen(pfad: Path) -> list[str]:
+    """Liest die rohen Markdown-Tabellenzeilen der Schlüsseltabelle einer befunde.md.
+
+    Für Tests, die eigene Befunde zu den real eingecheckten (D-06) hinzufügen wollen, ohne
+    deren bekannte PDF-Rundungsdifferenzen (Regel 1/2/3) von Hand zu duplizieren.
+    """
+    zeilen = pfad.read_text(encoding="utf-8").splitlines()
+    start = next(i for i, z in enumerate(zeilen) if z.strip() == "## Schlüsseltabelle")
+    kopfzeile_index = next(i for i in range(start + 1, len(zeilen)) if zeilen[i].strip())
+    ergebnis: list[str] = []
+    for zeile in zeilen[kopfzeile_index + 2 :]:
+        if not zeile.strip().startswith("|"):
+            break
+        ergebnis.append(zeile)
+    return ergebnis
 
 
 def _befunde_zeile(
@@ -140,6 +163,13 @@ def _kopiere_finanzplan_nach(tmp_path: Path) -> None:
     schreibe_plan_csv(finanzplan, tmp_path / FINANZPLAN_CSV)
 
 
+def _kopiere_hierarchie_nach(tmp_path: Path) -> None:
+    """Kopiert die eingecheckte hierarchie.csv unverändert in den tmp-Datenbaum (D-06)."""
+    pfad_ziel = tmp_path / HIERARCHIE_CSV
+    pfad_ziel.parent.mkdir(parents=True, exist_ok=True)
+    pfad_ziel.write_bytes((DATEN_WURZEL / HIERARCHIE_CSV).read_bytes())
+
+
 def _kopiere_befunde_nach(tmp_path: Path) -> None:
     """Kopiert die eingecheckte befunde.md unverändert in den tmp-Datenbaum (D-02)."""
     pfad_ziel = tmp_path / BEFUNDE_MD
@@ -159,13 +189,57 @@ def _manipuliere_betrag(df: pl.DataFrame, *, zeile: str, jahr: int, delta: int) 
     )
 
 
+def _manipuliere_eine_zeile(
+    df: pl.DataFrame,
+    *,
+    ebene: str,
+    code: str,
+    zeile: str,
+    jahr: int,
+    wertart: str,
+    delta: int,
+) -> pl.DataFrame:
+    """Ändert genau eine (ebene, code, zeile, jahr, wertart)-Zelle um `delta` (Regel 2/3)."""
+    bedingung = (
+        (pl.col("ebene") == ebene)
+        & (pl.col("code") == code)
+        & (pl.col("zeile") == zeile)
+        & (pl.col("jahr") == jahr)
+        & (pl.col("wertart") == wertart)
+    )
+    return df.with_columns(
+        pl.when(bedingung)
+        .then(pl.col("betrag") + delta)
+        .otherwise(pl.col("betrag"))
+        .alias("betrag")
+    )
+
+
+def _erste_zeile(df: pl.DataFrame, *, ebene: str, zeile: str) -> dict:
+    """Die erste (nach code/jahr/wertart sortierte) Zeile eines Knotens für eine Zeilennummer."""
+    treffer = df.filter((pl.col("ebene") == ebene) & (pl.col("zeile") == zeile))
+    return treffer.sort(["code", "jahr", "wertart"]).row(0, named=True)
+
+
 def _erwartete_anzahl_regel4(sollwerte: dict) -> int:
     gesamtergebnisplan = sollwerte["gesamtergebnisplan"]
     b1 = len(gesamtergebnisplan["zeilen"]) * len(gesamtergebnisplan["jahre"])
     gesamtfinanzplan = sollwerte["gesamtfinanzplan"]
     b2 = len(gesamtfinanzplan.get("ansatz", {})) + len(gesamtfinanzplan.get("ve", {}))
     satzung = len(sollwerte["satzung"]) - 1  # ohne pdf_seite
-    return b1 + b2 + satzung
+    # Anhang B.3: je PB die Felder aus teilergebnisplaene_pb (ordentliche_ertraege,
+    # ordentliche_aufwendungen, ergebnis_mit_internen_verrechnungen), plus die PB-Summenfelder.
+    teilergebnisplaene_pb = sollwerte["teilergebnisplaene_pb"]
+    felder_pro_pb = len(next(iter(teilergebnisplaene_pb.values())))
+    b3 = len(teilergebnisplaene_pb) * felder_pro_pb + len(sollwerte["teilergebnisplaene_pb_summe"])
+    return b1 + b2 + satzung + b3
+
+
+def _kopiere_seiten_nach(tmp_path: Path) -> None:
+    """Kopiert die eingecheckte seiten.csv unverändert in den tmp-Datenbaum (D-06)."""
+    pfad_ziel = tmp_path / SEITEN_CSV
+    pfad_ziel.parent.mkdir(parents=True, exist_ok=True)
+    pfad_ziel.write_bytes((DATEN_WURZEL / SEITEN_CSV).read_bytes())
 
 
 def test_regel4_sollwerte_gesamtergebnisplan_gruen() -> None:
@@ -226,6 +300,59 @@ def test_regel4_satzung_ohne_formel_bricht_ab(tmp_path: Path) -> None:
         pruefe_alles(STANDARD_JAHR, sollwerte_verzeichnis=tmp_path)
 
 
+def test_regel4_b3_gruen_auf_eingecheckten_daten() -> None:
+    bericht = pruefe_alles(STANDARD_JAHR)
+    regel4 = next((regel for regel in bericht.regeln if regel.regel == 4), None)
+    assert regel4 is not None, "Regel 4 fehlt im Bericht"
+
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    assert regel4.geprueft == _erwartete_anzahl_regel4(sollwerte)
+    assert regel4.status == "grün"
+    assert regel4.abweichungen == ()
+
+
+def test_regel4_b3_herleitet_fehlende_z29() -> None:
+    """Mind. eine PB druckt Anhang B.3 Z. 29 nicht; Planwerte muss sie über die Formelkette
+    (Z.26+27-28) aus den gedruckten PB-Zeilen herleiten (Research Planning-time facts)."""
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    haushaltsjahr = sollwerte["haushaltsjahr"]
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+
+    pb_ohne_z29 = next(
+        pb_code
+        for pb_code in sollwerte["teilergebnisplaene_pb"]
+        if ergebnisplan.filter(
+            (pl.col("ebene") == "PB")
+            & (pl.col("code") == pb_code)
+            & (pl.col("zeile") == "29")
+            & (pl.col("jahr") == haushaltsjahr)
+        ).height
+        == 0
+    )
+
+    planwerte = Planwerte(ergebnisplan, datei="ergebnisplan")
+    hergeleitet = planwerte.wert("PB", pb_ohne_z29, "29", haushaltsjahr, "ansatz")
+    soll = sollwerte["teilergebnisplaene_pb"][pb_ohne_z29]["ergebnis_mit_internen_verrechnungen"]
+    assert hergeleitet == soll
+
+
+def test_regel4_b3_unbekannte_pb_bricht_ab(tmp_path: Path) -> None:
+    quelle_pfad = JAHRGAENGE_VERZEICHNIS / f"{STANDARD_JAHR}_sollwerte.toml"
+    text = quelle_pfad.read_text(encoding="utf-8")
+    markierung = "[teilergebnisplaene_pb_summe]\n"
+    assert markierung in text
+    neue_zeile = (
+        '"99" = { ordentliche_ertraege = 1, ordentliche_aufwendungen = 1, '
+        "ergebnis_mit_internen_verrechnungen = 1 }\n"
+    )
+    text = text.replace(markierung, neue_zeile + markierung)
+    ziel_pfad = tmp_path / f"{STANDARD_JAHR}_sollwerte.toml"
+    ziel_pfad.write_text(text, encoding="utf-8")
+
+    with pytest.raises(PruefungsFehler, match="99"):
+        pruefe_alles(STANDARD_JAHR, sollwerte_verzeichnis=tmp_path)
+
+
 def test_regel1_sollwerte_gesamtplaene_gruen() -> None:
     bericht = pruefe_alles(STANDARD_JAHR)
     regel1 = next(regel for regel in bericht.regeln if regel.regel == 1)
@@ -240,6 +367,129 @@ def test_regel1_sollwerte_gesamtplaene_gruen() -> None:
     # dieselbe Rundungsdifferenz auf allen drei Ebenen, PB 08 hat nur ein Produkt) sind
     # in befunde.md dokumentiert und deshalb hier "bekannt", nicht "offen" (D-04/D-05).
     assert regel1.abweichungen == ()
+
+
+def test_regel2_gruen_auf_eingecheckten_daten() -> None:
+    bericht = pruefe_alles(STANDARD_JAHR)
+    regel2 = next((regel for regel in bericht.regeln if regel.regel == 2), None)
+    assert regel2 is not None, "Regel 2 fehlt im Bericht"
+    assert regel2.status == "grün"
+    assert regel2.abweichungen == ()
+
+
+def test_regel2_erkennt_manipulierte_produktzeile(tmp_path: Path) -> None:
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    hierarchie = lies_hierarchie_csv(DATEN_WURZEL / HIERARCHIE_CSV)
+    produkt_zeile = _erste_zeile(ergebnisplan, ebene="P", zeile="13")
+    pg_code = hierarchie.filter(
+        (pl.col("ebene") == "P") & (pl.col("code") == produkt_zeile["code"])
+    )["eltern_code"][0]
+
+    manipuliert_2 = _manipuliere_eine_zeile(
+        ergebnisplan,
+        ebene="P",
+        code=produkt_zeile["code"],
+        zeile=produkt_zeile["zeile"],
+        jahr=produkt_zeile["jahr"],
+        wertart=produkt_zeile["wertart"],
+        delta=2,
+    )
+    schreibe_plan_csv(manipuliert_2, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_befunde_nach(tmp_path)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel2 = next((regel for regel in bericht.regeln if regel.regel == 2), None)
+    assert regel2 is not None, "Regel 2 fehlt im Bericht"
+    assert len(regel2.abweichungen) == 1
+    abweichung = regel2.abweichungen[0]
+    assert abweichung.ebene == "PG"
+    assert abweichung.code == pg_code
+    assert abweichung.zeile == produkt_zeile["zeile"]
+    assert abweichung.jahr == produkt_zeile["jahr"]
+    assert abweichung.wertart == produkt_zeile["wertart"]
+    assert abweichung.abweichung == 2
+
+    # +1 EUR bleibt innerhalb von TOLERANZ_EURO (Regel 2 bleibt grün).
+    manipuliert_1 = _manipuliere_eine_zeile(
+        ergebnisplan,
+        ebene="P",
+        code=produkt_zeile["code"],
+        zeile=produkt_zeile["zeile"],
+        jahr=produkt_zeile["jahr"],
+        wertart=produkt_zeile["wertart"],
+        delta=TOLERANZ_EURO,
+    )
+    schreibe_plan_csv(manipuliert_1, tmp_path / ERGEBNISPLAN_CSV)
+    bericht_ein_euro = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel2_ein_euro = next((regel for regel in bericht_ein_euro.regeln if regel.regel == 2), None)
+    assert regel2_ein_euro is not None, "Regel 2 fehlt im Bericht"
+    assert regel2_ein_euro.status == "grün"
+
+
+def test_regel3_gruen_auf_eingecheckten_daten() -> None:
+    bericht = pruefe_alles(STANDARD_JAHR)
+    regel3 = next((regel for regel in bericht.regeln if regel.regel == 3), None)
+    assert regel3 is not None, "Regel 3 fehlt im Bericht"
+    assert regel3.geprueft == 114
+    assert regel3.status == "grün"
+    assert regel3.abweichungen == ()
+
+
+def test_regel3_ignoriert_tp_27_28(tmp_path: Path) -> None:
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    pb_zeile_27 = _erste_zeile(ergebnisplan, ebene="PB", zeile="27")
+    manipuliert = _manipuliere_eine_zeile(
+        ergebnisplan,
+        ebene="PB",
+        code=pb_zeile_27["code"],
+        zeile="27",
+        jahr=pb_zeile_27["jahr"],
+        wertart=pb_zeile_27["wertart"],
+        delta=1_000_000,
+    )
+    schreibe_plan_csv(manipuliert, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_befunde_nach(tmp_path)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel3 = next((regel for regel in bericht.regeln if regel.regel == 3), None)
+    assert regel3 is not None, "Regel 3 fehlt im Bericht"
+    assert regel3.status == "grün"
+    assert regel3.abweichungen == ()
+
+
+def test_regel3_erkennt_manipulierte_pb_zeile(tmp_path: Path) -> None:
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    pb_zeile_15 = _erste_zeile(ergebnisplan, ebene="PB", zeile="15")
+    manipuliert = _manipuliere_eine_zeile(
+        ergebnisplan,
+        ebene="PB",
+        code=pb_zeile_15["code"],
+        zeile="15",
+        jahr=pb_zeile_15["jahr"],
+        wertart=pb_zeile_15["wertart"],
+        delta=2,
+    )
+    schreibe_plan_csv(manipuliert, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_befunde_nach(tmp_path)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel3 = next((regel for regel in bericht.regeln if regel.regel == 3), None)
+    assert regel3 is not None, "Regel 3 fehlt im Bericht"
+    assert len(regel3.abweichungen) == 1
+    abweichung = regel3.abweichungen[0]
+    assert abweichung.zeile == "15"
+    assert abweichung.jahr == pb_zeile_15["jahr"]
+    assert abweichung.wertart == pb_zeile_15["wertart"]
+    assert abweichung.abweichung == 2
 
 
 def test_regel1_formelkette_fuer_fehlende_zwischenzeilen() -> None:
@@ -276,6 +526,8 @@ def test_regel1_keine_formel_fuer_nachrichtlich_zeile_33(tmp_path: Path) -> None
     manipuliert = _manipuliere_betrag(ergebnisplan, zeile="33", jahr=2024, delta=1_000_000)
     schreibe_plan_csv(manipuliert, tmp_path / ERGEBNISPLAN_CSV)
     _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
     _kopiere_befunde_nach(tmp_path)
 
     bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
@@ -395,6 +647,8 @@ def test_veralteter_befund_macht_bericht_nicht_gruen(tmp_path: Path) -> None:
     ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
     schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
     _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
     zeile = _befunde_zeile(
         regel=4,
         plan="gesamtergebnisplan",
@@ -509,6 +763,8 @@ def test_konsistenzbericht_listet_bekannten_befund(tmp_path: Path) -> None:
     manipuliert = _manipuliere_betrag(df, zeile=zeile_sollwert, jahr=jahr, delta=5)
     schreibe_plan_csv(manipuliert, tmp_path / ERGEBNISPLAN_CSV)
     _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
 
     befund_regel4 = _befunde_zeile(
         regel=4,
@@ -557,8 +813,42 @@ def test_konsistenzbericht_listet_bekannten_befund(tmp_path: Path) -> None:
             ("P", "080101", 206),
         )
     ]
+    # zeile_sollwert kann auch eine Regel-3-Zeile sein (Z. 01-17/19/20): die GESAMT-Manipulation
+    # wirkt dann auch auf Regel 3 (soll = Gesamt, ist = Σ PB bleibt unverändert), seit diesem
+    # Plan braucht das denselben Befund-Abgleich wie Regel 1/4 oben.
+    befunde_regel3: list[str] = []
+    if zeile_sollwert in REGEL3_ZEILEN:
+        hierarchie = lies_hierarchie_csv(DATEN_WURZEL / HIERARCHIE_CSV)
+        planwerte_basis = Planwerte(df, datei="ergebnisplan")
+        pb_codes = sorted(hierarchie.filter(pl.col("ebene") == "PB")["code"].unique().to_list())
+        ist_basis = sum(
+            planwerte_basis.wert("PB", code, zeile_sollwert, jahr, "ansatz") for code in pb_codes
+        )
+        soll_basis = planwerte_basis.wert("GESAMT", "", zeile_sollwert, jahr, "ansatz")
+        abweichung_regel3 = ist_basis - (soll_basis + 5)
+        if abs(abweichung_regel3) > TOLERANZ_EURO:
+            befunde_regel3 = [
+                _befunde_zeile(
+                    regel=3,
+                    plan="gesamtergebnisplan",
+                    ebene="GESAMT",
+                    code="",
+                    zeile=zeile_sollwert,
+                    jahr=jahr,
+                    wertart="ansatz",
+                    abweichung=abweichung_regel3,
+                    pdf_seite=62,
+                    begruendung="Testabweichung Regel 3 (GESAMT-Manipulation wirkt auch hier)",
+                )
+            ]
+
+    # Die real eingecheckte befunde.md deckt bereits die bekannten PDF-Rundungsdifferenzen von
+    # Regel 1 (PB08/PG0801/P080101 Z.17 2024, s. befunde_teilplan) und Regel 2/3 ab; diese Datei
+    # ergänzt nur die beiden testspezifischen Einträge (und ggf. den Regel-3-Folgeeffekt).
+    reale_befunde_zeilen = _lies_schluesseltabelle_markdown_zeilen(DATEN_WURZEL / BEFUNDE_MD)
     _schreibe_befunde_md(
-        tmp_path / BEFUNDE_MD, zeilen=[befund_regel4, befund_regel1, *befunde_teilplan]
+        tmp_path / BEFUNDE_MD,
+        zeilen=[*reale_befunde_zeilen, befund_regel4, befund_regel1, *befunde_regel3],
     )
 
     bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
@@ -589,6 +879,55 @@ def test_konsistenzbericht_wird_geschrieben() -> None:
         assert regel.titel in inhalt
 
 
+def test_konsistenzbericht_unbekannte_seiten_keine_auf_echten_daten() -> None:
+    bericht = pruefe_alles(STANDARD_JAHR)
+    unbekannte_seiten = getattr(bericht, "unbekannte_seiten", None)
+    assert unbekannte_seiten is not None, "Bericht.unbekannte_seiten fehlt"
+    assert unbekannte_seiten == ()
+
+    # rendere_konsistenzbericht ist eine reine Funktion (kein Dateizugriff) -- die echte
+    # daten/pruefberichte/konsistenz.md bleibt unberührt (D-06, nur alle.py/06_pruefen.py
+    # dürfen sie schreiben).
+    inhalt = rendere_konsistenzbericht(bericht)
+    abschnitt = inhalt.split("## Seiten mit typ=unbekannt")
+    assert len(abschnitt) == 2, "Abschnitt '## Seiten mit typ=unbekannt' fehlt im Bericht"
+    assert "Keine." in abschnitt[1]
+
+
+def test_konsistenzbericht_unbekannte_seiten_gelistet(tmp_path: Path) -> None:
+    seiten = lies_seiten_csv(DATEN_WURZEL / SEITEN_CSV)
+    erste_seite = seiten.sort("pdf_seite").row(0, named=True)["pdf_seite"]
+    manipuliert = seiten.with_columns(
+        pl.when(pl.col("pdf_seite") == erste_seite)
+        .then(pl.lit("unbekannt"))
+        .otherwise(pl.col("typ"))
+        .alias("typ")
+    )
+    schreibe_seiten_csv(manipuliert, tmp_path / SEITEN_CSV)
+
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_befunde_nach(tmp_path)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    unbekannte_seiten = getattr(bericht, "unbekannte_seiten", None)
+    assert unbekannte_seiten is not None, "Bericht.unbekannte_seiten fehlt"
+    assert erste_seite in unbekannte_seiten
+    # D-17: unbekannt-Seiten sind eine bewusste Ausnahme von D-08 und machen den Bericht
+    # nicht rot.
+    assert bericht.ist_gruen is True
+
+    # schreibe_konsistenzbericht mit explizitem daten_wurzel=tmp_path, damit der manipulierte
+    # Bericht nicht versehentlich die echte daten/pruefberichte/konsistenz.md überschreibt.
+    pfad = schreibe_konsistenzbericht(bericht, daten_wurzel=tmp_path)
+    inhalt = pfad.read_text(encoding="utf-8")
+    abschnitt = inhalt.split("## Seiten mit typ=unbekannt")
+    assert len(abschnitt) == 2, "Abschnitt '## Seiten mit typ=unbekannt' fehlt im Bericht"
+    assert str(erste_seite) in abschnitt[1]
+
+
 def test_konsistenzbericht_meldet_abweichung_ueber_einem_euro(tmp_path: Path) -> None:
     sollwerte = lade_sollwerte(STANDARD_JAHR)
     gesamtergebnisplan = sollwerte["gesamtergebnisplan"]
@@ -599,6 +938,8 @@ def test_konsistenzbericht_meldet_abweichung_ueber_einem_euro(tmp_path: Path) ->
     manipuliert = _manipuliere_betrag(df, zeile=zeile, jahr=jahr, delta=TOLERANZ_EURO + 1)
     schreibe_plan_csv(manipuliert, tmp_path / ERGEBNISPLAN_CSV)
     _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
     _kopiere_befunde_nach(tmp_path)
 
     bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
@@ -622,6 +963,8 @@ def test_konsistenzbericht_toleriert_einen_euro(tmp_path: Path) -> None:
     manipuliert = _manipuliere_betrag(df, zeile=zeile, jahr=jahr, delta=TOLERANZ_EURO)
     schreibe_plan_csv(manipuliert, tmp_path / ERGEBNISPLAN_CSV)
     _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
     _kopiere_befunde_nach(tmp_path)
 
     bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
