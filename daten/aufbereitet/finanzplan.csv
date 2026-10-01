@@ -286,3 +286,675 @@ GESAMT,,false,41,liquide_mittel,Liquide Mittel,=,true,2026,ve,-11600000,63
 GESAMT,,false,41,liquide_mittel,Liquide Mittel,=,true,2027,planung,2956329,63
 GESAMT,,false,41,liquide_mittel,Liquide Mittel,=,true,2028,planung,1204289,63
 GESAMT,,false,41,liquide_mittel,Liquide Mittel,=,true,2029,planung,2169403,63
+PB,01,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,859878,66
+PB,01,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,394850,66
+PB,01,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,432850,66
+PB,01,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,66
+PB,01,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,482850,66
+PB,01,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,482950,66
+PB,01,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,482950,66
+PB,01,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,4125629,66
+PB,01,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,4408750,66
+PB,01,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,4204950,66
+PB,01,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,66
+PB,01,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,4374750,66
+PB,01,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,4494690,66
+PB,01,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,4530250,66
+PB,01,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2024,ergebnis,36145,66
+PB,01,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2025,ansatz,0,66
+PB,01,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ansatz,0,66
+PB,01,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ve,0,66
+PB,01,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2027,planung,0,66
+PB,01,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2028,planung,0,66
+PB,01,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2029,planung,0,66
+PB,01,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2024,ergebnis,2099199,66
+PB,01,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2025,ansatz,3199990,66
+PB,01,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2026,ansatz,2245830,66
+PB,01,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2026,ve,0,66
+PB,01,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2027,planung,2181640,66
+PB,01,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2028,planung,3516928,66
+PB,01,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2029,planung,1830000,66
+PB,01,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2024,ergebnis,-18590,66
+PB,01,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2025,ansatz,0,66
+PB,01,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2026,ansatz,0,66
+PB,01,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2026,ve,0,66
+PB,01,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2027,planung,0,66
+PB,01,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2028,planung,0,66
+PB,01,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2029,planung,0,66
+PB,01,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,2116754,66
+PB,01,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2025,ansatz,3199990,66
+PB,01,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ansatz,2245830,66
+PB,01,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ve,0,66
+PB,01,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2027,planung,2181640,66
+PB,01,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2028,planung,3516928,66
+PB,01,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2029,planung,1830000,66
+PB,01,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2024,ergebnis,155215,66
+PB,01,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2025,ansatz,4725000,66
+PB,01,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ansatz,2081384,66
+PB,01,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ve,0,66
+PB,01,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2027,planung,450000,66
+PB,01,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2028,planung,450000,66
+PB,01,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2029,planung,0,66
+PB,01,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2024,ergebnis,112840,66
+PB,01,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2025,ansatz,450000,66
+PB,01,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ansatz,425000,66
+PB,01,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ve,0,66
+PB,01,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2027,planung,300000,66
+PB,01,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2028,planung,0,66
+PB,01,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2029,planung,0,66
+PB,01,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2024,ergebnis,105255,66
+PB,01,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2025,ansatz,426050,66
+PB,01,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ansatz,569500,66
+PB,01,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ve,0,66
+PB,01,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2027,planung,163500,66
+PB,01,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2028,planung,79000,66
+PB,01,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2029,planung,74000,66
+PB,01,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2024,ergebnis,50000,66
+PB,01,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2025,ansatz,550000,66
+PB,01,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2026,ansatz,50000,66
+PB,01,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2026,ve,0,66
+PB,01,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2027,planung,50000,66
+PB,01,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2028,planung,50000,66
+PB,01,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2029,planung,50000,66
+PB,01,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2024,ergebnis,5071,66
+PB,01,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2025,ansatz,0,66
+PB,01,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2026,ansatz,0,66
+PB,01,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2026,ve,0,66
+PB,01,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2027,planung,0,66
+PB,01,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2028,planung,0,66
+PB,01,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2029,planung,0,66
+PB,01,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,428381,66
+PB,01,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2025,ansatz,6151050,66
+PB,01,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ansatz,3125884,66
+PB,01,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ve,0,66
+PB,01,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2027,planung,963500,66
+PB,01,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2028,planung,579000,66
+PB,01,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2029,planung,124000,66
+PB,01,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2024,ergebnis,1688373,66
+PB,01,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2025,ansatz,-2951060,66
+PB,01,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2026,ansatz,-880054,66
+PB,01,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2026,ve,0,66
+PB,01,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2027,planung,1218140,66
+PB,01,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2028,planung,2937928,66
+PB,01,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2029,planung,1706000,66
+PB,02,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,190070,124
+PB,02,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,145400,124
+PB,02,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,152300,124
+PB,02,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,124
+PB,02,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,162300,124
+PB,02,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,152300,124
+PB,02,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,172300,124
+PB,02,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,866608,124
+PB,02,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,1149351,124
+PB,02,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,1163892,124
+PB,02,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,124
+PB,02,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,1152391,124
+PB,02,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,1170075,124
+PB,02,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,1219276,124
+PB,02,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2024,ergebnis,77854,124
+PB,02,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2025,ansatz,68000,124
+PB,02,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ansatz,68000,124
+PB,02,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ve,0,124
+PB,02,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2027,planung,318000,124
+PB,02,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2028,planung,68000,124
+PB,02,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2029,planung,0,124
+PB,02,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2024,ergebnis,29016,124
+PB,02,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2025,ansatz,0,124
+PB,02,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2026,ansatz,0,124
+PB,02,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2026,ve,0,124
+PB,02,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2027,planung,0,124
+PB,02,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2028,planung,0,124
+PB,02,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2029,planung,0,124
+PB,02,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,106870,124
+PB,02,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2025,ansatz,68000,124
+PB,02,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ansatz,68000,124
+PB,02,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ve,0,124
+PB,02,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2027,planung,318000,124
+PB,02,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2028,planung,68000,124
+PB,02,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2029,planung,0,124
+PB,02,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2024,ergebnis,0,124
+PB,02,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2025,ansatz,175000,124
+PB,02,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ansatz,0,124
+PB,02,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ve,0,124
+PB,02,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2027,planung,0,124
+PB,02,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2028,planung,0,124
+PB,02,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2029,planung,0,124
+PB,02,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2024,ergebnis,210330,124
+PB,02,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2025,ansatz,100000,124
+PB,02,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ansatz,120000,124
+PB,02,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ve,3200000,124
+PB,02,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2027,planung,2000000,124
+PB,02,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2028,planung,1200000,124
+PB,02,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2029,planung,0,124
+PB,02,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2024,ergebnis,42874,124
+PB,02,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2025,ansatz,494400,124
+PB,02,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ansatz,354000,124
+PB,02,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ve,0,124
+PB,02,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2027,planung,324000,124
+PB,02,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2028,planung,324000,124
+PB,02,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2029,planung,224000,124
+PB,02,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2024,ergebnis,0,124
+PB,02,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2025,ansatz,0,124
+PB,02,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2026,ansatz,140000,124
+PB,02,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2026,ve,0,124
+PB,02,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2027,planung,0,124
+PB,02,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2028,planung,0,124
+PB,02,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2029,planung,0,124
+PB,02,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,253204,124
+PB,02,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2025,ansatz,769400,124
+PB,02,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ansatz,614000,124
+PB,02,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ve,3200000,124
+PB,02,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2027,planung,2324000,124
+PB,02,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2028,planung,1524000,124
+PB,02,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2029,planung,224000,124
+PB,02,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2024,ergebnis,-146333,124
+PB,02,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2025,ansatz,-701400,124
+PB,02,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2026,ansatz,-546000,124
+PB,02,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2026,ve,-3200000,124
+PB,02,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2027,planung,-2006000,124
+PB,02,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2028,planung,-1456000,124
+PB,02,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2029,planung,-224000,124
+PB,03,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,645777,145
+PB,03,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,1039100,145
+PB,03,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,1462400,145
+PB,03,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,145
+PB,03,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,1411800,145
+PB,03,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,1411800,145
+PB,03,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,1411800,145
+PB,03,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,2800486,145
+PB,03,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,3488500,145
+PB,03,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,3805300,145
+PB,03,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,145
+PB,03,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,3612200,145
+PB,03,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,3646600,145
+PB,03,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,3656740,145
+PB,03,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2024,ergebnis,66064,145
+PB,03,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2025,ansatz,590000,145
+PB,03,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ansatz,586000,145
+PB,03,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ve,0,145
+PB,03,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2027,planung,0,145
+PB,03,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2028,planung,0,145
+PB,03,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2029,planung,0,145
+PB,03,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2024,ergebnis,3000,145
+PB,03,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2025,ansatz,0,145
+PB,03,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2026,ansatz,0,145
+PB,03,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2026,ve,0,145
+PB,03,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2027,planung,0,145
+PB,03,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2028,planung,0,145
+PB,03,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2029,planung,0,145
+PB,03,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,69064,145
+PB,03,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2025,ansatz,590000,145
+PB,03,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ansatz,586000,145
+PB,03,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ve,0,145
+PB,03,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2027,planung,0,145
+PB,03,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2028,planung,0,145
+PB,03,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2029,planung,0,145
+PB,03,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2024,ergebnis,13817,145
+PB,03,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2025,ansatz,3576000,145
+PB,03,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ansatz,4030000,145
+PB,03,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ve,5700000,145
+PB,03,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2027,planung,4700000,145
+PB,03,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2028,planung,1000000,145
+PB,03,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2029,planung,0,145
+PB,03,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2024,ergebnis,65101,145
+PB,03,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2025,ansatz,370000,145
+PB,03,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ansatz,370600,145
+PB,03,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ve,0,145
+PB,03,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2027,planung,5600,145
+PB,03,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2028,planung,5600,145
+PB,03,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2029,planung,5600,145
+PB,03,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,78918,145
+PB,03,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2025,ansatz,3946000,145
+PB,03,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ansatz,4400600,145
+PB,03,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ve,5700000,145
+PB,03,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2027,planung,4705600,145
+PB,03,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2028,planung,1005600,145
+PB,03,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2029,planung,5600,145
+PB,03,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2024,ergebnis,-9854,145
+PB,03,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2025,ansatz,-3356000,145
+PB,03,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2026,ansatz,-3814600,145
+PB,03,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2026,ve,-5700000,145
+PB,03,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2027,planung,-4705600,145
+PB,03,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2028,planung,-1005600,145
+PB,03,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2029,planung,-5600,145
+PB,04,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,34794,169
+PB,04,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,16100,169
+PB,04,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,16200,169
+PB,04,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,169
+PB,04,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,16200,169
+PB,04,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,11200,169
+PB,04,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,11200,169
+PB,04,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,133574,169
+PB,04,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,145850,169
+PB,04,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,174750,169
+PB,04,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,169
+PB,04,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,167900,169
+PB,04,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,168100,169
+PB,04,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,173000,169
+PB,04,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2024,ergebnis,0,169
+PB,04,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2025,ansatz,0,169
+PB,04,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ansatz,0,169
+PB,04,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ve,0,169
+PB,04,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2027,planung,30000,169
+PB,04,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2028,planung,0,169
+PB,04,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2029,planung,0,169
+PB,04,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,0,169
+PB,04,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2025,ansatz,0,169
+PB,04,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ansatz,0,169
+PB,04,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ve,0,169
+PB,04,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2027,planung,30000,169
+PB,04,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2028,planung,0,169
+PB,04,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2029,planung,0,169
+PB,05,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,516859,178
+PB,05,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,351000,178
+PB,05,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,421000,178
+PB,05,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,178
+PB,05,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,421000,178
+PB,05,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,421000,178
+PB,05,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,421000,178
+PB,05,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,594905,178
+PB,05,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,833000,178
+PB,05,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,873150,178
+PB,05,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,178
+PB,05,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,888100,178
+PB,05,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,901500,178
+PB,05,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,916600,178
+PB,05,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2024,ergebnis,-2322,178
+PB,05,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2025,ansatz,0,178
+PB,05,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ansatz,0,178
+PB,05,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ve,0,178
+PB,05,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2027,planung,0,178
+PB,05,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2028,planung,0,178
+PB,05,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2029,planung,0,178
+PB,05,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,-2322,178
+PB,05,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2025,ansatz,0,178
+PB,05,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ansatz,0,178
+PB,05,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ve,0,178
+PB,05,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2027,planung,0,178
+PB,05,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2028,planung,0,178
+PB,05,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2029,planung,0,178
+PB,06,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,164171,192
+PB,06,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,28650,192
+PB,06,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,17650,192
+PB,06,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,192
+PB,06,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,9650,192
+PB,06,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,9650,192
+PB,06,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,9650,192
+PB,06,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,1327102,192
+PB,06,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,1332630,192
+PB,06,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,1260080,192
+PB,06,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,192
+PB,06,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,1202580,192
+PB,06,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,1230280,192
+PB,06,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,1249380,192
+PB,06,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2024,ergebnis,22935,192
+PB,06,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2025,ansatz,0,192
+PB,06,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ansatz,0,192
+PB,06,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ve,0,192
+PB,06,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2027,planung,0,192
+PB,06,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2028,planung,0,192
+PB,06,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2029,planung,0,192
+PB,06,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,22935,192
+PB,06,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2025,ansatz,0,192
+PB,06,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ansatz,0,192
+PB,06,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ve,0,192
+PB,06,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2027,planung,0,192
+PB,06,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2028,planung,0,192
+PB,06,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2029,planung,0,192
+PB,06,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2024,ergebnis,103135,192
+PB,06,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2025,ansatz,25000,192
+PB,06,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ansatz,0,192
+PB,06,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ve,0,192
+PB,06,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2027,planung,0,192
+PB,06,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2028,planung,0,192
+PB,06,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2029,planung,0,192
+PB,06,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2024,ergebnis,0,192
+PB,06,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2025,ansatz,0,192
+PB,06,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ansatz,175000,192
+PB,06,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ve,0,192
+PB,06,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2027,planung,0,192
+PB,06,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2028,planung,0,192
+PB,06,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2029,planung,0,192
+PB,06,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2024,ergebnis,0,192
+PB,06,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2025,ansatz,0,192
+PB,06,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ansatz,0,192
+PB,06,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ve,0,192
+PB,06,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2027,planung,65000,192
+PB,06,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2028,planung,0,192
+PB,06,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2029,planung,0,192
+PB,06,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,103135,192
+PB,06,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2025,ansatz,25000,192
+PB,06,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ansatz,175000,192
+PB,06,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ve,0,192
+PB,06,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2027,planung,65000,192
+PB,06,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2028,planung,0,192
+PB,06,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2029,planung,0,192
+PB,06,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2024,ergebnis,-80200,192
+PB,06,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2025,ansatz,-25000,192
+PB,06,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2026,ansatz,-175000,192
+PB,06,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2026,ve,0,192
+PB,06,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2027,planung,-65000,192
+PB,06,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2028,planung,0,192
+PB,06,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2029,planung,0,192
+PB,08,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,0,203
+PB,08,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,100,203
+PB,08,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,100,203
+PB,08,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,203
+PB,08,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,100,203
+PB,08,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,100,203
+PB,08,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,100,203
+PB,08,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,122147,203
+PB,08,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,223650,203
+PB,08,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,230070,203
+PB,08,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,203
+PB,08,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,170720,203
+PB,08,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,174720,203
+PB,08,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,176620,203
+PB,08,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2024,ergebnis,0,203
+PB,08,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2025,ansatz,0,203
+PB,08,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ansatz,85000,203
+PB,08,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ve,0,203
+PB,08,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2027,planung,0,203
+PB,08,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2028,planung,0,203
+PB,08,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2029,planung,0,203
+PB,08,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2024,ergebnis,0,203
+PB,08,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2025,ansatz,20000,203
+PB,08,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ansatz,200000,203
+PB,08,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ve,0,203
+PB,08,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2027,planung,0,203
+PB,08,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2028,planung,0,203
+PB,08,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2029,planung,0,203
+PB,08,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,0,203
+PB,08,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2025,ansatz,20000,203
+PB,08,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ansatz,285000,203
+PB,08,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ve,0,203
+PB,08,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2027,planung,0,203
+PB,08,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2028,planung,0,203
+PB,08,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2029,planung,0,203
+PB,09,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,775,208
+PB,09,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,600,208
+PB,09,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,0,208
+PB,09,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,208
+PB,09,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,0,208
+PB,09,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,0,208
+PB,09,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,0,208
+PB,09,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,190227,208
+PB,09,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,274050,208
+PB,09,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,133250,208
+PB,09,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,208
+PB,09,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,113150,208
+PB,09,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,109050,208
+PB,09,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,112050,208
+PB,09,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2024,ergebnis,5730,208
+PB,09,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2025,ansatz,75000,208
+PB,09,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ansatz,20000,208
+PB,09,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ve,0,208
+PB,09,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2027,planung,150000,208
+PB,09,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2028,planung,100000,208
+PB,09,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2029,planung,50000,208
+PB,09,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,5730,208
+PB,09,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2025,ansatz,75000,208
+PB,09,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ansatz,20000,208
+PB,09,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ve,0,208
+PB,09,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2027,planung,150000,208
+PB,09,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2028,planung,100000,208
+PB,09,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2029,planung,50000,208
+PB,10,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,206345,220
+PB,10,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,248050,220
+PB,10,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,233150,220
+PB,10,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,220
+PB,10,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,225650,220
+PB,10,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,225650,220
+PB,10,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,225650,220
+PB,10,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,531776,220
+PB,10,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,626900,220
+PB,10,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,603700,220
+PB,10,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,220
+PB,10,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,586000,220
+PB,10,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,600200,220
+PB,10,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,614500,220
+PB,10,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2024,ergebnis,569804,220
+PB,10,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2025,ansatz,65000,220
+PB,10,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ansatz,90000,220
+PB,10,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ve,0,220
+PB,10,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2027,planung,0,220
+PB,10,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2028,planung,0,220
+PB,10,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2029,planung,0,220
+PB,10,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2024,ergebnis,9207,220
+PB,10,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2025,ansatz,24000,220
+PB,10,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ansatz,6000,220
+PB,10,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ve,0,220
+PB,10,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2027,planung,6000,220
+PB,10,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2028,planung,6000,220
+PB,10,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2029,planung,6000,220
+PB,10,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,579011,220
+PB,10,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2025,ansatz,89000,220
+PB,10,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ansatz,96000,220
+PB,10,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ve,0,220
+PB,10,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2027,planung,6000,220
+PB,10,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2028,planung,6000,220
+PB,10,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2029,planung,6000,220
+PB,11,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,1131653,231
+PB,11,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,1291300,231
+PB,11,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,1226952,231
+PB,11,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,231
+PB,11,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,1247030,231
+PB,11,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,1302940,231
+PB,11,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,1420240,231
+PB,11,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,1113454,231
+PB,11,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,1226500,231
+PB,11,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,1165400,231
+PB,11,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,231
+PB,11,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,1185900,231
+PB,11,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,1242400,231
+PB,11,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,1359700,231
+PB,12,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,64521,234
+PB,12,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,46500,234
+PB,12,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,62990,234
+PB,12,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,234
+PB,12,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,64190,234
+PB,12,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,65040,234
+PB,12,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,66340,234
+PB,12,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,1617709,234
+PB,12,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,1870450,234
+PB,12,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,1951150,234
+PB,12,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,234
+PB,12,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,2033800,234
+PB,12,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,2610248,234
+PB,12,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,3223075,234
+PB,12,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2024,ergebnis,1975836,234
+PB,12,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2025,ansatz,1188000,234
+PB,12,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ansatz,1097000,234
+PB,12,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ve,0,234
+PB,12,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2027,planung,4052000,234
+PB,12,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2028,planung,452000,234
+PB,12,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2029,planung,75000,234
+PB,12,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2024,ergebnis,462634,234
+PB,12,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2025,ansatz,0,234
+PB,12,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2026,ansatz,0,234
+PB,12,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2026,ve,0,234
+PB,12,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2027,planung,0,234
+PB,12,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2028,planung,0,234
+PB,12,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2029,planung,0,234
+PB,12,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2024,ergebnis,94559,234
+PB,12,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2025,ansatz,80000,234
+PB,12,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2026,ansatz,1237000,234
+PB,12,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2026,ve,0,234
+PB,12,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2027,planung,154140,234
+PB,12,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2028,planung,2229815,234
+PB,12,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2029,planung,1848825,234
+PB,12,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,2533029,234
+PB,12,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2025,ansatz,1268000,234
+PB,12,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ansatz,2334000,234
+PB,12,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ve,0,234
+PB,12,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2027,planung,4206140,234
+PB,12,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2028,planung,2681815,234
+PB,12,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2029,planung,1923825,234
+PB,12,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2024,ergebnis,0,234
+PB,12,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2025,ansatz,300000,234
+PB,12,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ansatz,450000,234
+PB,12,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ve,0,234
+PB,12,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2027,planung,300000,234
+PB,12,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2028,planung,300000,234
+PB,12,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2029,planung,300000,234
+PB,12,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2024,ergebnis,2046379,234
+PB,12,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2025,ansatz,3980000,234
+PB,12,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ansatz,2990000,234
+PB,12,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ve,2700000,234
+PB,12,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2027,planung,8220000,234
+PB,12,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2028,planung,3030000,234
+PB,12,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2029,planung,0,234
+PB,12,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2024,ergebnis,134535,234
+PB,12,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2025,ansatz,0,234
+PB,12,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ansatz,0,234
+PB,12,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ve,0,234
+PB,12,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2027,planung,0,234
+PB,12,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2028,planung,0,234
+PB,12,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2029,planung,0,234
+PB,12,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,2180914,234
+PB,12,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2025,ansatz,4280000,234
+PB,12,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ansatz,3440000,234
+PB,12,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ve,2700000,234
+PB,12,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2027,planung,8520000,234
+PB,12,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2028,planung,3330000,234
+PB,12,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2029,planung,300000,234
+PB,12,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2024,ergebnis,352115,234
+PB,12,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2025,ansatz,-3012000,234
+PB,12,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2026,ansatz,-1106000,234
+PB,12,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2026,ve,-2700000,234
+PB,12,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2027,planung,-4313860,234
+PB,12,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2028,planung,-648185,234
+PB,12,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2029,planung,1623825,234
+PB,13,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,150176,255
+PB,13,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,70301,255
+PB,13,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,63300,255
+PB,13,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,255
+PB,13,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,63300,255
+PB,13,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,63300,255
+PB,13,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,63300,255
+PB,13,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,397832,255
+PB,13,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,464650,255
+PB,13,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,493100,255
+PB,13,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,255
+PB,13,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,491550,255
+PB,13,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,503350,255
+PB,13,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,515350,255
+PB,13,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2024,ergebnis,145420,255
+PB,13,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2025,ansatz,263000,255
+PB,13,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ansatz,80000,255
+PB,13,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ve,0,255
+PB,13,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2027,planung,0,255
+PB,13,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2028,planung,0,255
+PB,13,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2029,planung,0,255
+PB,13,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2024,ergebnis,1226,255
+PB,13,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2025,ansatz,8500,255
+PB,13,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ansatz,14000,255
+PB,13,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2026,ve,0,255
+PB,13,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2027,planung,9000,255
+PB,13,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2028,planung,3000,255
+PB,13,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb von bewegl. Anlagevermögen,-,false,2029,planung,3000,255
+PB,13,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,146646,255
+PB,13,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2025,ansatz,271500,255
+PB,13,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ansatz,94000,255
+PB,13,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ve,0,255
+PB,13,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2027,planung,9000,255
+PB,13,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2028,planung,3000,255
+PB,13,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2029,planung,3000,255
+PB,14,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,16955,268
+PB,14,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,50000,268
+PB,14,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,50000,268
+PB,14,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,268
+PB,14,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,50000,268
+PB,14,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,50000,268
+PB,14,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,50000,268
+PB,14,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,293969,268
+PB,14,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,186100,268
+PB,14,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,110200,268
+PB,14,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,268
+PB,14,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,118100,268
+PB,14,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,113100,268
+PB,14,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,110700,268
+PB,15,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,14538,271
+PB,15,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,10000,271
+PB,15,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,11000,271
+PB,15,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,271
+PB,15,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,11000,271
+PB,15,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,11000,271
+PB,15,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,11000,271
+PB,15,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,249350,271
+PB,15,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,235235,271
+PB,15,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,199954,271
+PB,15,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,271
+PB,15,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,235900,271
+PB,15,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,243500,271
+PB,15,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,251400,271
+PB,15,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2024,ergebnis,0,271
+PB,15,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2025,ansatz,119000,271
+PB,15,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2026,ansatz,30000,271
+PB,15,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2026,ve,0,271
+PB,15,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2027,planung,30000,271
+PB,15,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2028,planung,18000,271
+PB,15,false,28,aktivierbare_zuwendungen,Ausz. f. aktivierbaren Zuwendungen,-,false,2029,planung,0,271
+PB,15,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,0,271
+PB,15,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2025,ansatz,119000,271
+PB,15,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ansatz,30000,271
+PB,15,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ve,0,271
+PB,15,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2027,planung,30000,271
+PB,15,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2028,planung,18000,271
+PB,15,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2029,planung,0,271
+PB,16,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,22834172,278
+PB,16,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,21850000,278
+PB,16,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,20553000,278
+PB,16,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,278
+PB,16,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,23410000,278
+PB,16,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,24429000,278
+PB,16,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,25053000,278
+PB,16,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,10986289,278
+PB,16,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,11311766,278
+PB,16,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,11328681,278
+PB,16,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,278
+PB,16,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,13308800,278
+PB,16,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,14022300,278
+PB,16,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,14527000,278
+PB,16,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2024,ergebnis,1794144,278
+PB,16,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2025,ansatz,1846000,278
+PB,16,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ansatz,1991000,278
+PB,16,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ve,0,278
+PB,16,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2027,planung,1991000,278
+PB,16,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2028,planung,1991000,278
+PB,16,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2029,planung,1991000,278
+PB,16,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2024,ergebnis,86187,278
+PB,16,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2025,ansatz,0,278
+PB,16,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2026,ansatz,0,278
+PB,16,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2026,ve,0,278
+PB,16,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2027,planung,0,278
+PB,16,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2028,planung,0,278
+PB,16,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2029,planung,0,278
+PB,16,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,1880331,278
+PB,16,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2025,ansatz,1846000,278
+PB,16,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ansatz,1991000,278
+PB,16,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ve,0,278
+PB,16,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2027,planung,1991000,278
+PB,16,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2028,planung,1991000,278
+PB,16,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2029,planung,1991000,278
+PB,16,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2024,ergebnis,0,278
+PB,16,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2025,ansatz,7400000,278
+PB,16,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2026,ansatz,5200000,278
+PB,16,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2026,ve,0,278
+PB,16,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2027,planung,9500000,278
+PB,16,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2028,planung,0,278
+PB,16,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2029,planung,0,278
+PB,16,false,34,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2024,ergebnis,-400183,278
+PB,16,false,34,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2025,ansatz,6910000,278
+PB,16,false,34,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2026,ansatz,4750000,278
+PB,16,false,34,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2026,ve,0,278
+PB,16,false,34,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2027,planung,8930000,278
+PB,16,false,34,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2028,planung,-850000,278
+PB,16,false,34,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2029,planung,-830000,278
+PB,16,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2024,ergebnis,400183,278
+PB,16,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2025,ansatz,490000,278
+PB,16,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2026,ansatz,450000,278
+PB,16,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2026,ve,0,278
+PB,16,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2027,planung,570000,278
+PB,16,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2028,planung,850000,278
+PB,16,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2029,planung,830000,278

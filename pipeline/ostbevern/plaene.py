@@ -7,7 +7,8 @@ Bricht bei jedem Unstimmigkeit sofort mit PDF-Seite und Zeile ab (D-08).
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+import re
+from collections.abc import Collection, Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 
@@ -19,7 +20,11 @@ from ostbevern.schema import (
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
     FINANZPLAN_CSV,
+    HIERARCHIE_CSV,
     PLAN_SPALTEN,
+    SEITEN_CSV,
+    lies_hierarchie_csv,
+    lies_seiten_csv,
     schreibe_plan_csv,
     zerlege_spaltenkopf,
 )
@@ -27,6 +32,7 @@ from ostbevern.zahlen import ist_betrag, lies_betrag, trenne_angeklebten_betrag,
 from ostbevern.zeilen import ZEILEN, ZWISCHENUEBERSCHRIFTEN, normalisiere_bezeichnung, plantyp_fuer
 
 _X_TOLERANZ = 2.0
+_NR_WORT = "Nr."
 
 
 class PlaeneFehler(ValueError):
@@ -50,6 +56,106 @@ class ExtraktionsErgebnis:
 
     zeilen_geschrieben: int
     pfad: Path
+
+
+@dataclass(frozen=True)
+class Abschnitt:
+    """Ein zusammenhängender Teilergebnis- oder Teilfinanzplan-Abschnitt einer Seite.
+
+    `zeilen` beginnt bei der "Nr."-Kopfzeile des Abschnitts (Research Pattern 3).
+    `fortsetzung` ist True, wenn der Abschnitt ohne eigenen Titel als Fortsetzung eines
+    auf einer Vorseite begonnenen Teilfinanzplans startet (bare Tabellenkopf statt Titel,
+    D-17/EXTR-05).
+    """
+
+    plantyp: str
+    zeilen: tuple[Textzeile, ...]
+    fortsetzung: bool
+
+
+def _ist_nr_zeile(zeile: Textzeile) -> bool:
+    return bool(zeile.woerter) and zeile.woerter[0].text == _NR_WORT
+
+
+def lies_abschnitte(
+    zeilen: Sequence[Textzeile], jahrgang: Jahrgang, pdf_seite: int
+) -> list[Abschnitt]:
+    """Zerlegt eine Teilplan-Seite in Teilergebnisplan-/Teilfinanzplan-Abschnitte.
+
+    Scannt die ganze Seite nach beiden Abschnitts-Headern statt einem einzigen Typ pro
+    Seite zu vertrauen (Research Pattern 3, Pitfall 2). Ein Abschnitt endet vor dem
+    nächsten Abschnitts-Start, vor einer Erläuterungen-/Investitionen-Zeile, vor der
+    Fortsetzung-Markierung oder am Seitenzahl-Fußzeilen-Fund (D-08).
+    """
+    seitentypen = jahrgang.kopfzeilen.seitentypen
+    fortsetzung_normalisiert = "".join(jahrgang.kopfzeilen.fortsetzung.split())
+
+    abschnitte: list[Abschnitt] = []
+    plantyp: str | None = None
+    fortsetzung = False
+    gesammelt: list[Textzeile] = []
+
+    def schliesse() -> None:
+        nonlocal plantyp, fortsetzung, gesammelt
+        if plantyp is not None:
+            abschnitte.append(
+                Abschnitt(plantyp=plantyp, zeilen=tuple(gesammelt), fortsetzung=fortsetzung)
+            )
+        plantyp = None
+        fortsetzung = False
+        gesammelt = []
+
+    for zeile in zeilen:
+        text = zeile.text_ohne_leerzeichen
+        if text == str(pdf_seite):
+            break
+
+        ist_nr_zeile = _ist_nr_zeile(zeile)
+        ist_teg_treffer = re.match(seitentypen["teilergebnisplan"], text) is not None
+        ist_tfp_treffer = re.match(seitentypen["teilfinanzplan"], text) is not None
+
+        if ist_teg_treffer and not ist_nr_zeile:
+            # Der Titel "Teilergebnisplan" eröffnet einen neuen Abschnitt; er spannt nie
+            # mehrere Seiten (Flagged assumptions, 02-04-PLAN.md).
+            schliesse()
+            plantyp = "teilergebnisplan"
+            fortsetzung = False
+            continue
+
+        if ist_tfp_treffer and not ist_nr_zeile:
+            # Der Titel "Teilfinanzplan" eröffnet einen neuen Abschnitt. Direkt danach
+            # folgt die eigene "Nr."-Kopfzeile, die den Teilfinanzplan-Treffer über die
+            # zweite Alternative ebenfalls erfüllt — die unten folgende Prüfung
+            # (plantyp bereits "teilfinanzplan") verhindert, dass daraus ein zweiter
+            # Abschnitt wird (02-04-PLAN.md: "Titel direkt gefolgt von Kopfzeile").
+            schliesse()
+            plantyp = "teilfinanzplan"
+            fortsetzung = False
+            continue
+
+        if ist_tfp_treffer and ist_nr_zeile and plantyp != "teilfinanzplan":
+            # Bare Tabellenkopf ohne vorherigen Titel auf dieser Seite: Fortsetzung eines
+            # auf der Vorseite begonnenen Teilfinanzplans (Research Pitfall 2/EXTR-05).
+            schliesse()
+            plantyp = "teilfinanzplan"
+            fortsetzung = True
+            gesammelt.append(zeile)
+            continue
+
+        ist_ende = (
+            re.match(seitentypen["erlaeuterungen"], text) is not None
+            or re.match(seitentypen["investitionen"], text) is not None
+            or text.startswith(fortsetzung_normalisiert)
+        )
+        if ist_ende:
+            schliesse()
+            continue
+
+        if plantyp is not None:
+            gesammelt.append(zeile)
+
+    schliesse()
+    return abschnitte
 
 
 def _finde_kopfzeile(zeilen: Sequence[Textzeile], pdf_seite: int) -> int:
@@ -220,36 +326,10 @@ def lies_plantabelle(
     return [gelesene_zeilen[z] for z in sorted(gelesene_zeilen)]
 
 
-def extrahiere_plaene(
-    jahrgang: Jahrgang, *, daten_wurzel: Path = DATEN_WURZEL
-) -> tuple[ExtraktionsErgebnis, ExtraktionsErgebnis]:
-    """Extrahiert Gesamtergebnis- und Gesamtfinanzplan (GESAMT) nach daten_wurzel (EXTR-04/05)."""
-    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
-        ergebnisplan = _extrahiere_gesamtplan(
-            dokument,
-            jahrgang,
-            daten_wurzel=daten_wurzel,
-            datei="ergebnisplan",
-            ziel_csv=ERGEBNISPLAN_CSV,
-        )
-        finanzplan = _extrahiere_gesamtplan(
-            dokument,
-            jahrgang,
-            daten_wurzel=daten_wurzel,
-            datei="finanzplan",
-            ziel_csv=FINANZPLAN_CSV,
-        )
-    return ergebnisplan, finanzplan
-
-
-def _extrahiere_gesamtplan(
-    dokument: PdfDokument,
-    jahrgang: Jahrgang,
-    *,
-    daten_wurzel: Path,
-    datei: str,
-    ziel_csv: Path,
-) -> ExtraktionsErgebnis:
+def _gesamtplan_datensaetze(
+    dokument: PdfDokument, jahrgang: Jahrgang, *, datei: str
+) -> list[dict[str, object]]:
+    """Liest den Gesamtergebnis- oder Gesamtfinanzplan (GESAMT) als Datensatzliste (EXTR-04/05)."""
     plantyp = plantyp_fuer(datei, "GESAMT")
     bereich = jahrgang.seitenbereiche[plantyp]
     spalten = jahrgang.spalten[datei]
@@ -281,8 +361,153 @@ def _extrahiere_gesamtplan(
                     "pdf_seite": gedruckt.pdf_seite,
                 }
             )
+    return datensaetze
 
-    df = pl.DataFrame(datensaetze, schema=PLAN_SPALTEN)
-    pfad = daten_wurzel / ziel_csv
-    schreibe_plan_csv(df, pfad)
-    return ExtraktionsErgebnis(zeilen_geschrieben=df.height, pfad=pfad)
+
+def _knoten_fuer_seite(seite: dict[str, object]) -> tuple[str, str]:
+    """Leitet (ebene, code) aus einer seiten.csv-Zeile ab: Produkt > PG > PB (D-13)."""
+    if seite["produkt"] is not None:
+        return "P", seite["produkt"]
+    if seite["pg"] is not None:
+        return "PG", seite["pg"]
+    return "PB", seite["pb"]
+
+
+def lies_teilplaene(
+    dokument: PdfDokument,
+    jahrgang: Jahrgang,
+    seiten: pl.DataFrame,
+    hierarchie: pl.DataFrame,
+    *,
+    ebenen: Collection[str],
+) -> tuple[pl.DataFrame, pl.DataFrame]:
+    """Extrahiert Teilergebnis-/Teilfinanzpläne der verarbeiteten Ebenen (D-08, D-13, EXTR-04/05).
+
+    Iteriert alle als teilergebnisplan/teilfinanzplan klassifizierten Seiten in Seitenreihenfolge,
+    zerlegt jede Seite über `lies_abschnitte` und ordnet jeden Abschnitt dem Knoten (PB, PG oder
+    Produkt) der Seite zu. Nur Knoten, deren Ebene in `ebenen` liegt, werden verarbeitet.
+    Vollständigkeit (D-08): jeder erwartete, nicht-synthetische Knoten der verarbeiteten Ebenen
+    braucht genau einen Teilergebnisplan- und mindestens einen Teilfinanzplan-Abschnitt; eine
+    Zeilennummer darf innerhalb eines Knotens/Plantyps nicht zweimal vorkommen.
+    """
+    relevante_typen = ("teilergebnisplan", "teilfinanzplan")
+    teilplan_seiten = seiten.filter(pl.col("typ").is_in(relevante_typen)).sort("pdf_seite")
+
+    ergebnisplan_datensaetze: list[dict[str, object]] = []
+    finanzplan_datensaetze: list[dict[str, object]] = []
+    gesehene_zeilen: dict[tuple[str, str, str], dict[str, int]] = {}
+    teilergebnisplan_abschnitte: dict[tuple[str, str], int] = {}
+    teilfinanzplan_knoten: set[tuple[str, str]] = set()
+
+    for seite in teilplan_seiten.iter_rows(named=True):
+        ebene, code = _knoten_fuer_seite(seite)
+        if ebene not in ebenen:
+            continue
+
+        pdf_seite = seite["pdf_seite"]
+        zeilen = dokument.zeilen(pdf_seite)
+        for abschnitt in lies_abschnitte(zeilen, jahrgang, pdf_seite):
+            if abschnitt.plantyp == "teilergebnisplan":
+                spalten = jahrgang.spalten["ergebnisplan"]
+                ziel = ergebnisplan_datensaetze
+                teilergebnisplan_abschnitte[(ebene, code)] = (
+                    teilergebnisplan_abschnitte.get((ebene, code), 0) + 1
+                )
+            else:
+                spalten = jahrgang.spalten["finanzplan"]
+                ziel = finanzplan_datensaetze
+                if abschnitt.fortsetzung and (ebene, code) not in teilfinanzplan_knoten:
+                    raise PlaeneFehler(
+                        f"S. {pdf_seite}: Fortsetzung des Teilfinanzplans ohne vorherigen "
+                        f"Abschnitt für {ebene} {code}"
+                    )
+                teilfinanzplan_knoten.add((ebene, code))
+
+            gedruckte_zeilen = lies_plantabelle(
+                abschnitt.zeilen, plantyp=abschnitt.plantyp, spalten=spalten, pdf_seite=pdf_seite
+            )
+            zeilen_definition = ZEILEN[abschnitt.plantyp]
+            knoten_schluessel = (ebene, code, abschnitt.plantyp)
+            bereits_gesehen = gesehene_zeilen.setdefault(knoten_schluessel, {})
+            for gedruckt in gedruckte_zeilen:
+                if gedruckt.zeile in bereits_gesehen:
+                    raise PlaeneFehler(
+                        f"{ebene} {code} ({abschnitt.plantyp}): Zeile {gedruckt.zeile} kommt auf "
+                        f"S. {bereits_gesehen[gedruckt.zeile]} und S. {pdf_seite} doppelt vor"
+                    )
+                bereits_gesehen[gedruckt.zeile] = pdf_seite
+                definition = zeilen_definition[gedruckt.zeile]
+                for spaltenkopf, betrag in zip(spalten, gedruckt.werte, strict=True):
+                    wertart, jahr = zerlege_spaltenkopf(spaltenkopf)
+                    ziel.append(
+                        {
+                            "ebene": ebene,
+                            "code": code,
+                            "synthetisch": False,
+                            "zeile": gedruckt.zeile,
+                            "zeile_kanonisch": definition.kanonisch,
+                            "zeile_name": definition.name,
+                            "operator": gedruckt.operator,
+                            "ist_summe": definition.ist_summe,
+                            "jahr": jahr,
+                            "wertart": wertart,
+                            "betrag": betrag,
+                            "pdf_seite": gedruckt.pdf_seite,
+                        }
+                    )
+
+    erwartete_knoten = hierarchie.filter(
+        pl.col("ebene").is_in(list(ebenen)) & ~pl.col("synthetisch")
+    )
+    for knoten in erwartete_knoten.iter_rows(named=True):
+        schluessel = (knoten["ebene"], knoten["code"])
+        anzahl_teg = teilergebnisplan_abschnitte.get(schluessel, 0)
+        if anzahl_teg != 1:
+            raise PlaeneFehler(
+                f"{knoten['ebene']} {knoten['code']}: {anzahl_teg} Teilergebnisplan-Abschnitte "
+                "gefunden, erwartet genau 1"
+            )
+        if schluessel not in teilfinanzplan_knoten:
+            raise PlaeneFehler(
+                f"{knoten['ebene']} {knoten['code']}: kein Teilfinanzplan-Abschnitt gefunden"
+            )
+
+    return (
+        pl.DataFrame(ergebnisplan_datensaetze, schema=PLAN_SPALTEN),
+        pl.DataFrame(finanzplan_datensaetze, schema=PLAN_SPALTEN),
+    )
+
+
+def extrahiere_plaene(
+    jahrgang: Jahrgang, *, daten_wurzel: Path = DATEN_WURZEL
+) -> tuple[ExtraktionsErgebnis, ExtraktionsErgebnis]:
+    """Extrahiert Gesamt- und Teilpläne (PB) nach daten_wurzel (EXTR-04/05).
+
+    Liest `seiten.csv` und `hierarchie.csv` aus `daten_wurzel`, hängt die PB-Teilplanzeilen
+    an die GESAMT-Zeilen beider Dateien an und schreibt beide CSVs einmal.
+    """
+    seiten = lies_seiten_csv(daten_wurzel / SEITEN_CSV)
+    hierarchie = lies_hierarchie_csv(daten_wurzel / HIERARCHIE_CSV)
+
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        gesamt_ergebnisplan = _gesamtplan_datensaetze(dokument, jahrgang, datei="ergebnisplan")
+        gesamt_finanzplan = _gesamtplan_datensaetze(dokument, jahrgang, datei="finanzplan")
+        teil_ergebnisplan, teil_finanzplan = lies_teilplaene(
+            dokument, jahrgang, seiten, hierarchie, ebenen=("PB",)
+        )
+
+    ergebnisplan_df = pl.concat(
+        [pl.DataFrame(gesamt_ergebnisplan, schema=PLAN_SPALTEN), teil_ergebnisplan]
+    )
+    finanzplan_df = pl.concat(
+        [pl.DataFrame(gesamt_finanzplan, schema=PLAN_SPALTEN), teil_finanzplan]
+    )
+
+    ergebnisplan_pfad = daten_wurzel / ERGEBNISPLAN_CSV
+    finanzplan_pfad = daten_wurzel / FINANZPLAN_CSV
+    schreibe_plan_csv(ergebnisplan_df, ergebnisplan_pfad)
+    schreibe_plan_csv(finanzplan_df, finanzplan_pfad)
+    return (
+        ExtraktionsErgebnis(zeilen_geschrieben=ergebnisplan_df.height, pfad=ergebnisplan_pfad),
+        ExtraktionsErgebnis(zeilen_geschrieben=finanzplan_df.height, pfad=finanzplan_pfad),
+    )

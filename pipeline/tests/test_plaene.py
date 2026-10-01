@@ -13,7 +13,7 @@ import pytest
 
 from ostbevern.konfiguration import STANDARD_JAHR, Jahrgang, lade_jahrgang, lade_sollwerte
 from ostbevern.pdf import PdfDokument, Textzeile
-from ostbevern.plaene import PlaeneFehler, lies_plantabelle
+from ostbevern.plaene import PlaeneFehler, lies_abschnitte, lies_plantabelle
 from ostbevern.schema import zerlege_spaltenkopf
 from ostbevern.zeilen import ZEILEN, plantyp_fuer
 
@@ -243,3 +243,110 @@ def test_gesamtfinanzplan_falscher_spaltenkopf_bricht_ab() -> None:
             spalten=jahrgang.spalten["finanzplan"],
             pdf_seite=pdf_seite,
         )
+
+
+def _pb_teilplan_abschnitte(
+    jahrgang: Jahrgang, dokument: PdfDokument, pdf_seite: int
+) -> dict[str, object]:
+    zeilen = dokument.zeilen(pdf_seite)
+    abschnitte = lies_abschnitte(zeilen, jahrgang, pdf_seite)
+    return {a.plantyp: a for a in abschnitte}
+
+
+def test_pb_teilergebnisplan_trifft_b3() -> None:
+    """Jede PB-Teilplan-Startseite (Anhang A) hat genau einen TEG- und einen TFP-Abschnitt;
+    die Ansatz-Haushaltsjahr-Werte von Z. 10/17 stimmen mit Anhang B.3 überein (D-07)."""
+    jahrgang = lade_jahrgang(STANDARD_JAHR)
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    anhang_a = sollwerte["anhang_a"]
+    teilergebnisplaene_pb = sollwerte["teilergebnisplaene_pb"]
+    spalten = jahrgang.spalten["ergebnisplan"]
+    index_ansatz_haushaltsjahr = next(
+        i
+        for i, kopf in enumerate(spalten)
+        if zerlege_spaltenkopf(kopf) == ("ansatz", STANDARD_JAHR)
+    )
+
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        for pb_code, sollwert in teilergebnisplaene_pb.items():
+            pdf_seite = anhang_a[pb_code]["pdf_seite"]
+            zeilen = dokument.zeilen(pdf_seite)
+            abschnitte = lies_abschnitte(zeilen, jahrgang, pdf_seite)
+            teg_abschnitte = [a for a in abschnitte if a.plantyp == "teilergebnisplan"]
+            tfp_abschnitte = [a for a in abschnitte if a.plantyp == "teilfinanzplan"]
+            assert len(teg_abschnitte) == 1, pb_code
+            assert len(tfp_abschnitte) == 1, pb_code
+
+            gedruckt = {
+                zeile.zeile: zeile
+                for zeile in lies_plantabelle(
+                    teg_abschnitte[0].zeilen,
+                    plantyp="teilergebnisplan",
+                    spalten=spalten,
+                    pdf_seite=pdf_seite,
+                )
+            }
+            for zeile, feld in (
+                ("10", "ordentliche_ertraege"),
+                ("17", "ordentliche_aufwendungen"),
+            ):
+                erwartet = sollwert[feld]
+                if zeile not in gedruckt:
+                    # Ein B.3-Wert 0 kann bedeuten, dass die Zeile nicht gedruckt ist (D-11).
+                    assert erwartet == 0, pb_code
+                    continue
+                assert gedruckt[zeile].werte[index_ansatz_haushaltsjahr] == erwartet, pb_code
+
+
+def test_pb_teilergebnisplan_bestandsveraenderung_geklebt() -> None:
+    """Eine PB-Teilergebnisplan-Seite, die Zeile 09 druckt, liefert Operator "+/-" auch wenn
+    er ohne Leerzeichen an die Bezeichnung angeklebt ist (Research Pattern 2)."""
+    jahrgang = lade_jahrgang(STANDARD_JAHR)
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    anhang_a = sollwerte["anhang_a"]
+    teilergebnisplaene_pb = sollwerte["teilergebnisplaene_pb"]
+
+    gefunden = False
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        for pb_code in teilergebnisplaene_pb:
+            pdf_seite = anhang_a[pb_code]["pdf_seite"]
+            abschnitte = _pb_teilplan_abschnitte(jahrgang, dokument, pdf_seite)
+            abschnitt = abschnitte["teilergebnisplan"]
+            gedruckt = {
+                zeile.zeile: zeile
+                for zeile in lies_plantabelle(
+                    abschnitt.zeilen,
+                    plantyp="teilergebnisplan",
+                    spalten=jahrgang.spalten["ergebnisplan"],
+                    pdf_seite=pdf_seite,
+                )
+            }
+            if "09" in gedruckt:
+                assert gedruckt["09"].operator == "+/-", pb_code
+                gefunden = True
+    assert gefunden, "keine PB-Teilergebnisplan-Seite druckt Zeile 09 (Bestandsveränderungen)"
+
+
+def test_pb_teilfinanzplan_hat_sieben_spalten() -> None:
+    """Der PB-Teilfinanzplan hat dieselbe Spaltenzahl wie der Gesamtfinanzplan (inkl. VE,
+    EXTR-05); die doppelte Haushaltsjahr-Kopfzeile (Ansatz/VE) wird über x-Position gelöst."""
+    jahrgang = lade_jahrgang(STANDARD_JAHR)
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    anhang_a = sollwerte["anhang_a"]
+    pb_code = next(iter(sollwerte["teilergebnisplaene_pb"]))
+    pdf_seite = anhang_a[pb_code]["pdf_seite"]
+    erwartete_spaltenzahl = len(jahrgang.spalten["finanzplan"])
+
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        abschnitte = _pb_teilplan_abschnitte(jahrgang, dokument, pdf_seite)
+        abschnitt = abschnitte["teilfinanzplan"]
+        gedruckte_zeilen = lies_plantabelle(
+            abschnitt.zeilen,
+            plantyp="teilfinanzplan",
+            spalten=jahrgang.spalten["finanzplan"],
+            pdf_seite=pdf_seite,
+        )
+
+    assert gedruckte_zeilen
+    for gedruckt in gedruckte_zeilen:
+        assert len(gedruckt.werte) == erwartete_spaltenzahl
