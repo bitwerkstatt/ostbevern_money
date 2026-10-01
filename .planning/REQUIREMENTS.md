@@ -11,7 +11,7 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 
 - [ ] **SETUP-01**: Repo-Struktur nach Spez. 7 existiert (`pipeline/`, `daten/{zwischen,aufbereitet,manuell,pruefberichte}`, `app/`), das Quell-PDF liegt unter `raw_data/`
 - [x] **SETUP-02**: Pipeline ist ein uv-Projekt (Python ≥ 3.12, pdfplumber, polars, typer, pytest), `uv run pytest` läuft
-- [ ] **SETUP-03**: App-Grundgerüst (Vue 3, TS, Vite, Web Awesome, vue-echarts, Hash-Router) mit übernommenen Münster-Basiskomponenten, `npm run build` läuft
+- [x] **SETUP-03**: App-Grundgerüst (Vue 3, TS, Vite, Web Awesome, vue-echarts, Hash-Router) mit übernommenen Münster-Basiskomponenten, `npm run build` läuft
 - [ ] **SETUP-04**: Projekt-`CLAUDE.md` dokumentiert Befehle und Konventionen (deutsche Bezeichner ohne Umlaute, Beträge als int-Euro, nur PDF-Seiten 1-basiert)
 - [x] **SETUP-05**: Jahrgangsspezifisches (Haushaltsjahr, Spaltenköpfe, Seitenbereiche, PDF-Pfad) steht in einer Konfigurationsdatei, nicht im Code, damit das ProFIS-Layout eines Folgejahres mit wenig Änderung verarbeitbar ist
 
@@ -180,7 +180,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | SETUP-01 | Phase 1 | Pending |
 | SETUP-02 | Phase 1 | Complete |
-| SETUP-03 | Phase 1 | Pending |
+| SETUP-03 | Phase 1 | Complete |
 | SETUP-04 | Phase 1 | Pending |
 | SETUP-05 | Phase 1 | Complete |
 | EXTR-01 | Phase 2 | Pending |
