@@ -478,13 +478,77 @@ def lies_teilplaene(
     )
 
 
+def _synthetische_pg_datensaetze(
+    teil_df: pl.DataFrame, hierarchie: pl.DataFrame, plantyp: str
+) -> list[dict[str, object]]:
+    """Baut synthetische-PG-Zeilen aus den Produktzeilen ihrer Produktgruppe (D-14).
+
+    Für jede PG mit `synthetisch=true` in `hierarchie`: pro (zeile, jahr, wertart) ist
+    `betrag` die Summe der Produktzeilen (eine einzige Produktzeile ist also eine exakte
+    Kopie); `pdf_seite` und `operator` kommen vom Produkt mit dem niedrigsten Code, das
+    diese konkrete Zeile druckt (gedruckte_zeilen ist nach Code aufsteigend sortiert, daher
+    gewinnt beim ersten Auftreten je Schlüssel immer der niedrigste Code). Eine synthetische
+    PG ohne jede Produktzeile bricht mit PlaeneFehler ab (D-08).
+    """
+    synthetische_pg = hierarchie.filter((pl.col("ebene") == "PG") & pl.col("synthetisch"))
+    if synthetische_pg.height == 0:
+        return []
+
+    zeilen_definition = ZEILEN[plantyp]
+    produkt_zeilen = teil_df.filter(pl.col("ebene") == "P").sort("code")
+    produkt_zeilen_je_pg: dict[str, list[dict[str, object]]] = {}
+    for zeile in produkt_zeilen.iter_rows(named=True):
+        produkt_zeilen_je_pg.setdefault(zeile["code"][:4], []).append(zeile)
+
+    datensaetze: list[dict[str, object]] = []
+    for pg in synthetische_pg.iter_rows(named=True):
+        pg_code = pg["code"]
+        zeilen_dieser_pg = produkt_zeilen_je_pg.get(pg_code, [])
+        if not zeilen_dieser_pg:
+            raise PlaeneFehler(f"PG {pg_code}: synthetische Produktgruppe ohne Produktzeilen")
+
+        gruppen: dict[tuple[str, int, str], dict[str, object]] = {}
+        for zeile in zeilen_dieser_pg:
+            schluessel = (zeile["zeile"], zeile["jahr"], zeile["wertart"])
+            gruppe = gruppen.get(schluessel)
+            if gruppe is None:
+                gruppen[schluessel] = {
+                    "betrag": zeile["betrag"],
+                    "pdf_seite": zeile["pdf_seite"],
+                    "operator": zeile["operator"],
+                }
+            else:
+                gruppe["betrag"] += zeile["betrag"]
+
+        for (zeilennummer, jahr, wertart), gruppe in gruppen.items():
+            definition = zeilen_definition[zeilennummer]
+            datensaetze.append(
+                {
+                    "ebene": "PG",
+                    "code": pg_code,
+                    "synthetisch": True,
+                    "zeile": zeilennummer,
+                    "zeile_kanonisch": definition.kanonisch,
+                    "zeile_name": definition.name,
+                    "operator": gruppe["operator"],
+                    "ist_summe": definition.ist_summe,
+                    "jahr": jahr,
+                    "wertart": wertart,
+                    "betrag": gruppe["betrag"],
+                    "pdf_seite": gruppe["pdf_seite"],
+                }
+            )
+    return datensaetze
+
+
 def extrahiere_plaene(
     jahrgang: Jahrgang, *, daten_wurzel: Path = DATEN_WURZEL
 ) -> tuple[ExtraktionsErgebnis, ExtraktionsErgebnis]:
-    """Extrahiert Gesamt- und Teilpläne (PB) nach daten_wurzel (EXTR-04/05).
+    """Extrahiert Gesamt- und alle Teilpläne (PB, PG, Produkt) nach daten_wurzel (EXTR-04/05).
 
-    Liest `seiten.csv` und `hierarchie.csv` aus `daten_wurzel`, hängt die PB-Teilplanzeilen
-    an die GESAMT-Zeilen beider Dateien an und schreibt beide CSVs einmal.
+    Liest `seiten.csv` und `hierarchie.csv` aus `daten_wurzel`, hängt die Teilplanzeilen
+    (gedruckte und synthetische PG, D-14) an die GESAMT-Zeilen beider Dateien an und
+    schreibt beide CSVs einmal.
     """
     seiten = lies_seiten_csv(daten_wurzel / SEITEN_CSV)
     hierarchie = lies_hierarchie_csv(daten_wurzel / HIERARCHIE_CSV)
@@ -493,14 +557,29 @@ def extrahiere_plaene(
         gesamt_ergebnisplan = _gesamtplan_datensaetze(dokument, jahrgang, datei="ergebnisplan")
         gesamt_finanzplan = _gesamtplan_datensaetze(dokument, jahrgang, datei="finanzplan")
         teil_ergebnisplan, teil_finanzplan = lies_teilplaene(
-            dokument, jahrgang, seiten, hierarchie, ebenen=("PB",)
+            dokument, jahrgang, seiten, hierarchie, ebenen=("PB", "PG", "P")
         )
 
+    synthetisch_ergebnisplan = _synthetische_pg_datensaetze(
+        teil_ergebnisplan, hierarchie, "teilergebnisplan"
+    )
+    synthetisch_finanzplan = _synthetische_pg_datensaetze(
+        teil_finanzplan, hierarchie, "teilfinanzplan"
+    )
+
     ergebnisplan_df = pl.concat(
-        [pl.DataFrame(gesamt_ergebnisplan, schema=PLAN_SPALTEN), teil_ergebnisplan]
+        [
+            pl.DataFrame(gesamt_ergebnisplan, schema=PLAN_SPALTEN),
+            teil_ergebnisplan,
+            pl.DataFrame(synthetisch_ergebnisplan, schema=PLAN_SPALTEN),
+        ]
     )
     finanzplan_df = pl.concat(
-        [pl.DataFrame(gesamt_finanzplan, schema=PLAN_SPALTEN), teil_finanzplan]
+        [
+            pl.DataFrame(gesamt_finanzplan, schema=PLAN_SPALTEN),
+            teil_finanzplan,
+            pl.DataFrame(synthetisch_finanzplan, schema=PLAN_SPALTEN),
+        ]
     )
 
     ergebnisplan_pfad = daten_wurzel / ERGEBNISPLAN_CSV

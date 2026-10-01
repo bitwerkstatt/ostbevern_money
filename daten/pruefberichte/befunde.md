@@ -21,6 +21,8 @@ Parsing-Fehlern.
 | regel | plan | ebene | code | zeile | jahr | wertart | abweichung | pdf_seite | begruendung |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | teilergebnisplan | PB | 08 | 17 | 2024 | ergebnis | 2 | 203 | Teilergebnisplan PB 08 (Sportförderung), Spalte Ergebnis 2024: Summe der gedruckten Zeilen 11, 13-16 (12 nicht gedruckt, D-11) ergibt 186.501 C, gedruckt ist 186.499 C. Wortweise gegen das PDF verifiziert (Zeile 17 "186.499" exakt so gedruckt); kein Extraktionsfehler, sondern eine Rundungsdifferenz von 2 C im PDF selbst. |
+| 1 | teilergebnisplan | PG | 0801 | 17 | 2024 | ergebnis | 2 | 206 | Dieselbe Rundungsdifferenz wie PB 08 Z. 17 2024 (siehe oben): PB 08 hat nur die synthetische PG 0801 mit dem einzigen Produkt 080101, daher druckt S. 206 (Produkt-Teilergebnisplan) dieselbe Zeile 17 "186.499" wie S. 203, und die synthetische PG 0801 ist nach D-14 eine Kopie dieser Produktzeile. |
+| 1 | teilergebnisplan | P | 080101 | 17 | 2024 | ergebnis | 2 | 206 | Dieselbe Rundungsdifferenz wie PB 08 Z. 17 2024 (siehe oben), hier auf der Produktseite selbst: S. 206 druckt Zeile 17 "186.499" für 2024, die Summe der gedruckten Zeilen 11, 13-16 ergibt 186.501. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler. |
 
 ## Beobachtungen ohne Prüfregel
 
@@ -35,3 +37,10 @@ Parsing-Fehlern.
   (Einzahlungen aus lfd. Verw.-tätigkeit), Spalte Ergebnis des ersten Jahres (Summe der
   Zeilen 01–08 liegt 1 € unter dem gedruckten Wert), und Gesamtergebnisplan Zeile 21
   (Finanzergebnis), Spalte Ergebnis des ersten Jahres.
+- PG 1501/1502 (Wirtschaftsförderung, PB 15): Produkt 150102 (Touristische Öffentlichkeitsarbeit)
+  wird nach D-14 in die synthetische Produktgruppe 1501 (aus Produkt 150101) einsortiert, da
+  `hierarchie.csv` nur eine PG je Produktgruppencode kennt und 1502 im Teilplanbereich (S. 66-282)
+  nicht gedruckt ist. Die Haushaltsquerschnitt-Seiten 299/300 führen PG 1502 "Tourismus" jedoch als
+  eigenen Posten. Vor Phase 3 Regel 7 (Produkt→PG→PB-Summen auf den Querschnittsseiten) muss
+  entschieden werden, ob die App diese PG-Aufteilung übernimmt oder bei der synthetischen
+  Zusammenfassung 1501 bleibt.
