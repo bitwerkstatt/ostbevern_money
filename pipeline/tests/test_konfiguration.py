@@ -261,3 +261,25 @@ def test_gesamtfinanzplan_ansatz_schluessel_ohne_zweistellige_zeile_wird_abgeleh
     _schreibe_sollwertdatei(tmp_path, text)
     with pytest.raises(KonfigurationsFehler):
         lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def _ohne_anhang_a(text: str) -> str:
+    """Entfernt eine vorhandene [anhang_a]-Tabelle (steht am Dateiende); ist sie
+    noch nicht vorhanden, bleibt der Text unverändert."""
+    return re.sub(r"(?ms)^\[anhang_a\]\n.*", "", text)
+
+
+def test_lade_sollwerte_lehnt_ungueltigen_anhang_a_schluessel_ab(tmp_path: Path) -> None:
+    text = _ohne_anhang_a(_sollwertdatei_text())
+    text += '\n[anhang_a]\n"1" = { name = "Testfall", pdf_seite = 1 }\n'
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="anhang_a"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_lade_sollwerte_lehnt_anhang_a_eintrag_ohne_namen_ab(tmp_path: Path) -> None:
+    text = _ohne_anhang_a(_sollwertdatei_text())
+    text += '\n[anhang_a]\n"01" = { pdf_seite = 1 }\n'
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="anhang_a"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
