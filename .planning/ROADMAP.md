@@ -28,6 +28,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Phase Details
 
 ### Phase 1: Setup
+
 **Goal**: Pipeline und App lassen sich leer bauen und testen. Die Konventionen und die Jahrgangskonfiguration sind festgelegt, und die CI prüft jeden Push.
 **Depends on**: Nothing (first phase)
 **Requirements**: SETUP-01, SETUP-02, SETUP-03, SETUP-04, SETUP-05, QUAL-01
@@ -37,16 +38,25 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. `npm run build` baut das Vue-3-Grundgerüst (TS, Vite, Web Awesome, vue-echarts, Hash-Router) mit den übernommenen Münster-Basiskomponenten (`PageIntro`, `ChartCard`, `BaseChart`, `DatenTabelle`, `charts/format.ts`, `echartsTheme.ts` u. a.). `vue-tsc` und ESLint laufen in GitHub Actions fehlerfrei.
   4. Haushaltsjahr, Spaltenköpfe, Seitenbereiche und PDF-Pfad stehen in einer Jahrgangs-Konfigurationsdatei, und die Pipeline lädt sie von dort statt aus dem Code.
   5. Die Projekt-`CLAUDE.md` nennt die Befehle für Pipeline und App sowie die Konventionen: deutsche Bezeichner ohne Umlaute, Beträge als int-Euro, nur 1-basierte PDF-Seiten, keine Jahrgangswerte im Code, Du-Anrede, Zahlen in Texten aus Daten.
+
 **Plans**: 5 plans
 
 Plans:
+**Wave 1**
 - [ ] 01-01-PLAN.md — Paketprüfung: Mensch bestätigt alle PyPI- und npm-Pakete vor jeder Installation (Wave 1, Checkpoint)
+
+**Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 01-02-PLAN.md — Pipeline: PDF umbenannt, uv-Projekt, Jahrgangs- und Sollwertdatei, Lader mit Prüfung, Rauchtest, alle.py --jahr, ruff, daten/ (Wave 2)
 - [ ] 01-03-PLAN.md — App-Gerüst: create-vue, Web Awesome, Hash-Router, PageIntro, Rahmen mit Navigation und Münster-Dank, Lint-/Format-Skripte (Wave 2)
+
+**Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 01-04-PLAN.md — Basiskomponenten: format.ts, echartsTheme.ts, BaseChart, ChartCard mit Beispieldaten-Hinweis, DatenTabelle, bildschirm.ts (Wave 3)
+
+**Wave 4** *(blocked on Wave 3 completion)*
 - [ ] 01-05-PLAN.md — CI mit zwei Jobs (lokal nachgestellt), Befehle und Konventionen in .claude/CLAUDE.md, README, MIT-LICENSE (Wave 4)
 
 ### Phase 2: Kernzahlen
+
 **Goal**: Alle Ergebnis- und Finanzpläne (Gesamt, PB, Produkt) liegen korrekt im Langformat vor. Die Pipeline weist das durch automatische Prüfungen und Anhang-B-Sollwerte nach.
 **Depends on**: Phase 1
 **Requirements**: EXTR-01, EXTR-02, EXTR-03, EXTR-04, EXTR-05, PRUEF-01, PRUEF-02, PRUEF-03, PRUEF-04, PRUEF-09
@@ -60,9 +70,11 @@ Plans:
      - B.3 PB-Summen (Σ Erträge 27.042.063 €, Σ Aufwendungen 30.255.569 €)
      - Satzung § 1 (Erträge 27.502.063 €, Aufwendungen 30.455.569 €)
   5. `uv run pytest` erzeugt `daten/pruefberichte/konsistenz.md`. Eine Abweichung über 1 €, die nicht in `befunde.md` steht, lässt den Lauf scheitern.
+
 **Plans**: TBD
 
 ### Phase 3: Details
+
 **Goal**: Alle 63 Produkte sind inhaltlich vollständig beschrieben (Produktinformationen, Bindungsgrad, Grundzahlen, Erläuterungen), und die Investitionsmaßnahmen stimmen mit den Finanzplänen überein.
 **Depends on**: Phase 2
 **Requirements**: EXTR-06, EXTR-07, EXTR-08, EXTR-09, PRUEF-06, PRUEF-07, PRUEF-08
@@ -71,9 +83,11 @@ Plans:
   2. `grundzahlen.csv` führt die Kennzahlen je Produkt mit Einheit, Jahr und Stichtagshinweis, inklusive der Steuer-Istwerte 2022–2025 aus 160101 (z. B. Gewerbesteuer 2023 = 4.771.497 €). Die Erläuterungsposten stehen je Produkt mit Betrag, Text und Zeilenbezug bereit.
   3. `investitionen.csv` stammt nur aus den Produktseiten. Die Summe je Produkt entspricht Teilfinanzplan Z. 23/30, und die Summe aller Maßnahmen 2026 ergibt 7.224.830 € / 12.280.484 € (Regel 6). „(Kassenwirksamkeit)“-Zeilen stehen in `ve_faelligkeiten.csv` und nicht in den Summen.
   4. Die Querschnitte ab S. 291 stimmen mit den eigenen PG-Aggregaten überein (Regel 7). `konsistenz.md` meldet die Regeln 1–4 und 6–8 als grün.
+
 **Plans**: TBD
 
 ### Phase 4: Manuelle Daten und App-Daten
+
 **Goal**: Die Pipeline ist geschlossen. Die Vorberichtswerte sind manuell gepflegt und gegen den Plan geprüft, der Stellenplan ist extrahiert, und die App-JSON-Dateien entstehen reproduzierbar ohne Personennamen.
 **Depends on**: Phase 3
 **Requirements**: MANU-01, MANU-02, MANU-03, MANU-04, MANU-05, MANU-06, MANU-07, MANU-08, PRUEF-05, EXTR-10, DATA-01, DATA-02, DATA-03, PRUEF-10
@@ -87,9 +101,11 @@ Plans:
   3. `stellenplan.csv` enthält Teil A (Beamte), Teil B (Tarif) und die Stellenübersicht nach PB mit Stellen 2026, 2025, besetzt 30.06.2025 und Vermerken. Beamtenstellen 2026 = 8.
   4. `app/src/data/` enthält `haushalt.json`, `produkte.json`, `investitionen.json` und `stellenplan.json`. Ein Test bestätigt, dass keine Personennamen enthalten sind. „Weitergabe an Kreis und Land“ (Kreisumlage, Gewerbesteuerumlage, Krankenhausinvestitionsumlage) ist eine eigene Kategorie, und der Rest von PB 16 heißt „Allgemeine Finanzwirtschaft“. Der Zuschussbedarf ist je Knoten und Jahr als berechneter Wert gekennzeichnet.
   5. `uv run pipeline/alle.py` führt alle Schritte in Reihenfolge aus. Die CI schlägt fehl, wenn danach eingecheckte Daten einen Diff zeigen.
+
 **Plans**: TBD
 
 ### Phase 5: Leitfragen-Seiten
+
 **Goal**: Bürgerinnen und Bürger finden in der App laienverständliche Antworten auf „Wo kommt das Geld her?“ und „Wofür wird es ausgegeben?“. Jede gezeigte Zahl stammt aus den generierten Daten.
 **Depends on**: Phase 4
 **Requirements**: START-01, START-02, EINN-01, EINN-02, EINN-03, EINN-04, EINN-05, EINN-06, AUSG-01, AUSG-02, AUSG-03, AUSG-04, AUSG-05, FLUSS-01, FLUSS-02, FLUSS-03, FLUSS-04, GLOS-01, GLOS-02, GLOS-03, UI-01, UI-03, UI-05
@@ -106,10 +122,12 @@ Plans:
      - Produktdetail mit Beschreibung, Bindungsgrad, Gremium, Teilergebnisplan 2024–2029, Erläuterungen, Grundzahlen (berechnete Pro-Kopf-Werte gekennzeichnet), Investitionen und Quellenlink
   4. `/geldfluss` zeigt einen Sankey 2026, der über „Defizit (Entnahme aus Rücklagen)“ und den Minderaufwand bilanziert. Hover hebt Pfade hervor, und ein Klick auf einen Aufgabenbereich öffnet die Ausgabenseite. Auf schmalen Bildschirmen erscheint stattdessen eine Tabelle oder ein gestapelter Balken. Einnahmen, Ausgaben und Geldfluss haben einen Jahr-Umschalter (2024 Ist … 2029 Planung, Standard 2026).
   5. `/glossar` erklärt mindestens die 22 Begriffe aus Spez. 6.14 und listet alle 63 Produkte als Akkordeon. `GlossarBegriff`-Links auf den Seiten führen zum jeweiligen Begriff. Zahlen in Erklärtexten werden aus den Daten erzeugt und verweisen auf eine PDF-Seite.
+
 **Plans**: TBD
 **UI hint**: yes
 
 ### Phase 6: Kontext-Seiten
+
 **Goal**: Die App ordnet den Haushalt ein: Entwicklung bis 2029, Investitionen und Schulden, Gestaltungsspielraum des Rats, Personal und was außerhalb des Kernhaushalts liegt.
 **Depends on**: Phase 5
 **Requirements**: ENTW-01, ENTW-02, ENTW-03, INV-01, INV-02, INV-03, INV-04, RAT-01, RAT-02, RAT-03, RAT-04, STEL-01, STEL-02, STEL-03, UI-04
@@ -122,10 +140,12 @@ Plans:
   3. `/rat-entscheidet` zeigt den Zuschussbedarf 2026 nach Bindungsgrad als gestapelten Balken mit den Produkten je Kategorie. Es folgen der Block „Was der Rat nicht beeinflussen kann“, die Einzelzuschüsse aus dem Vorbericht und der Hinweis, dass der Bindungsgrad eine Selbstauskunft der Verwaltung ist.
   4. `/stellenplan` zeigt die Stellen 2026 im Vergleich zu 2025 und zu den besetzten Stellen am 30.06.2025, die Verteilung nach Aufgabenbereich und nach Entgelt- bzw. Besoldungsgruppe sowie daneben den Personalaufwand je Aufgabenbereich (TP Z. 11).
   5. Ein Hinweis „Was nicht im Haushalt steht“ erklärt BBO (Hallenbad) und TEO AöR (Abwasser).
+
 **Plans**: TBD
 **UI hint**: yes
 
 ### Phase 7: Feinschliff und Veröffentlichung
+
 **Goal**: Die App ist belegbar, barrierefrei, mobil nutzbar und unter einer öffentlichen URL erreichbar.
 **Depends on**: Phase 6
 **Requirements**: DATA-04, UI-02, UI-06, A11Y-01, A11Y-02, A11Y-03, A11Y-04, QUAL-02, DEPL-01, DEPL-02
@@ -135,6 +155,7 @@ Plans:
   3. Lighthouse-Barrierefreiheit erreicht auf allen Routen mindestens 95.
   4. Ein Playwright-Smoke-Test bestätigt, dass jede Route ohne Konsolenfehler rendert und die Diagramme Daten enthalten. Ein Textdurchgang bestätigt, dass alle Texte deutsch und durchgehend in der Du-Anrede sind.
   5. GitHub Actions baut die App und deployt sie auf GitHub Pages (eigener Account), und die App ist unter einer öffentlichen URL erreichbar.
+
 **Plans**: TBD
 **UI hint**: yes
 
