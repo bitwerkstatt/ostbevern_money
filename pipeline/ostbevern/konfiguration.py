@@ -91,7 +91,14 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
         rohdaten = tomllib.load(datei)
 
     fehlende_schluessel: list[str] = []
-    for schluessel in ("haushaltsjahr", "pdf_pfad", "anzahlen", "spalten", "seitenbereiche", "kopfzeilen"):
+    for schluessel in (
+        "haushaltsjahr",
+        "pdf_pfad",
+        "anzahlen",
+        "spalten",
+        "seitenbereiche",
+        "kopfzeilen",
+    ):
         if schluessel not in rohdaten:
             fehlende_schluessel.append(schluessel)
 
@@ -119,7 +126,8 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
         wert = anzahlen_rohdaten[teil_schluessel]
         if not isinstance(wert, int) or isinstance(wert, bool):
             raise KonfigurationsFehler(
-                f"Jahrgangsdatei {pfad}: anzahlen.{teil_schluessel} muss eine Ganzzahl sein, nicht {wert!r}"
+                f"Jahrgangsdatei {pfad}: anzahlen.{teil_schluessel} muss eine Ganzzahl "
+                f"sein, nicht {wert!r}"
             )
 
     pdf_pfad_roh = rohdaten["pdf_pfad"]
@@ -162,7 +170,9 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
             )
         seitenbereiche[name] = bereich
 
-    fehlende_seitenbereiche = [name for name in PFLICHT_SEITENBEREICHE if name not in seitenbereiche]
+    fehlende_seitenbereiche = [
+        name for name in PFLICHT_SEITENBEREICHE if name not in seitenbereiche
+    ]
     if fehlende_seitenbereiche:
         raise KonfigurationsFehler(
             f"Jahrgangsdatei {pfad} fehlen Seitenbereiche: {', '.join(fehlende_seitenbereiche)}"
@@ -232,7 +242,8 @@ def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> 
     for zeile, werte in gesamtergebnisplan.get("zeilen", {}).items():
         if len(werte) != len(jahre):
             raise KonfigurationsFehler(
-                f"Sollwertdatei {pfad}: Zeile {zeile!r} hat {len(werte)} Werte, erwartet {len(jahre)}"
+                f"Sollwertdatei {pfad}: Zeile {zeile!r} hat {len(werte)} Werte, "
+                f"erwartet {len(jahre)}"
             )
 
     _pruefe_nur_ganzzahlen(rohdaten, "sollwerte")

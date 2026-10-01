@@ -119,7 +119,9 @@ def test_relativer_pdf_pfad_ausserhalb_projekt_wird_abgelehnt(tmp_path: Path) ->
 
 
 def test_seitenbereich_von_groesser_bis_wird_abgelehnt(tmp_path: Path) -> None:
-    muster = re.compile(r"(?m)^(haushaltssatzung\s*=\s*\{\s*von\s*=\s*)(\d+)(,\s*bis\s*=\s*)(\d+)(\s*\})")
+    muster = re.compile(
+        r"(?m)^(haushaltssatzung\s*=\s*\{\s*von\s*=\s*)(\d+)(,\s*bis\s*=\s*)(\d+)(\s*\})"
+    )
     text = muster.sub(
         lambda m: f"{m.group(1)}{m.group(4)}{m.group(3)}{m.group(2)}{m.group(5)}",
         _jahrgangsdatei_text(),
