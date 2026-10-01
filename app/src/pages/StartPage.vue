@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { EChartsOption } from 'echarts'
 import PageIntro from '@/components/PageIntro.vue'
+import ChartCard from '@/components/ChartCard.vue'
 import BaseChart from '@/components/BaseChart.vue'
 import jahrgang from '@/data/jahrgang.json'
 import beispieldaten from '@/data/beispieldaten.json'
@@ -33,6 +34,12 @@ const chartOption = computed<EChartsOption>(() => ({
     },
   ],
 }))
+
+const leereOption: EChartsOption = {
+  xAxis: { type: 'category', data: [] },
+  yAxis: { type: 'value' },
+  series: [],
+}
 </script>
 
 <template>
@@ -40,12 +47,14 @@ const chartOption = computed<EChartsOption>(() => ({
     :titel="`Der Haushalt ${jahrgang.haushaltsjahr} der Gemeinde Ostbevern`"
     beschreibung="Diese Seite zeigt, wie die Grundbausteine der App aussehen. Die echten Zahlen kommen in den nächsten Phasen dazu."
   />
-  <wa-callout variant="warning">
-    <wa-icon slot="icon" name="circle-info"></wa-icon>
-    Beispieldaten — noch keine echten Haushaltszahlen.
-  </wa-callout>
-  <BaseChart
-    :option="chartOption"
+  <ChartCard
+    :titel="beispieldaten.titel"
     beschreibung="Beispieldiagramm mit erfundenen Beträgen für vier Bereiche"
-  />
+    :beispieldaten="beispieldaten.beispieldaten"
+  >
+    <BaseChart :option="chartOption" />
+  </ChartCard>
+  <ChartCard titel="Echte Haushaltszahlen">
+    <BaseChart :option="leereOption" />
+  </ChartCard>
 </template>
