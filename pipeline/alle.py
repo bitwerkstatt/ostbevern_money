@@ -2,10 +2,10 @@
 
 Prüft den gewählten Jahrgang (Jahrgangs- und Sollwertdatei, PDF-Existenz) und führt die
 nummerierten Schritte in Reihenfolge aus (D-09): 01 (Seiten klassifizieren), 02 (Pläne
-extrahieren), Querschnitte (Kontrollquelle, PDF-lesend, D-14), 06 (Konsistenzprüfung, liest
-danach nur noch CSVs, D-06). Spätere Phasen hängen 03-05 und 07 zwischen bzw. nach diesen
-Schritten an. Die eigentliche Logik lebt in `ostbevern/`; dieses Modul bleibt ein dünner
-typer-Einstiegspunkt.
+extrahieren), 04 (Investitionsmaßnahmen), Querschnitte (Kontrollquelle, PDF-lesend, D-14),
+06 (Konsistenzprüfung, liest danach nur noch CSVs, D-06). Spätere Phasen hängen 03/05 und
+07 zwischen bzw. nach diesen Schritten an. Die eigentliche Logik lebt in `ostbevern/`;
+dieses Modul bleibt ein dünner typer-Einstiegspunkt.
 """
 
 from __future__ import annotations
@@ -14,7 +14,8 @@ from typing import Annotated
 
 import typer
 
-from ostbevern import plaene, pruefung, querschnitte, seiten
+from ostbevern import investitionen, plaene, pruefung, querschnitte, seiten
+from ostbevern.investitionen import InvestitionenFehler
 from ostbevern.konfiguration import (
     PROJEKT_WURZEL,
     STANDARD_JAHR,
@@ -81,6 +82,15 @@ def main(
         raise typer.Exit(code=1) from fehler
     zeilen_gesamt = sum(ergebnis.zeilen_geschrieben for ergebnis in ergebnisse_plaene)
     typer.echo(f"Schritt 02: {zeilen_gesamt} Planzeilen geschrieben.")
+
+    try:
+        ergebnisse_investitionen = investitionen.extrahiere_investitionen(jahrgang)
+    except (PdfFehler, InvestitionenFehler, SchemaFehler) as fehler:
+        typer.echo(f"Fehler: {fehler}", err=True)
+        raise typer.Exit(code=1) from fehler
+    for ergebnis in ergebnisse_investitionen:
+        pfad_relativ = ergebnis.pfad.relative_to(PROJEKT_WURZEL)
+        typer.echo(f"Schritt 04: {ergebnis.zeilen_geschrieben} Zeilen geschrieben: {pfad_relativ}")
 
     try:
         ergebnis_querschnitte = querschnitte.extrahiere_querschnitte(jahrgang)
