@@ -1,7 +1,7 @@
 // Einzige Quelle für Zahlenformatierung in der App (UI-05). Jede Zahl, die in
 // der Oberfläche erscheint, wird über diese Funktionen oder die hier
 // exportierten Formatoptionen (EURO_OPTIONEN) formatiert — niemals mit einer
-// eigenen toLocaleString()-Logik in Komponenten.
+// eigenen, pro Komponente duplizierten Formatierungslogik.
 
 export const LOCALE = 'de-DE'
 
