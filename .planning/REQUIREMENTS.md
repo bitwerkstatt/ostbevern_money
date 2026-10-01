@@ -9,10 +9,10 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 
 ### Setup
 
-- [ ] **SETUP-01**: Repo-Struktur nach Spez. 7 existiert (`pipeline/`, `daten/{zwischen,aufbereitet,manuell,pruefberichte}`, `app/`), das Quell-PDF liegt unter `raw_data/`
+- [x] **SETUP-01**: Repo-Struktur nach Spez. 7 existiert (`pipeline/`, `daten/{zwischen,aufbereitet,manuell,pruefberichte}`, `app/`), das Quell-PDF liegt unter `raw_data/`
 - [x] **SETUP-02**: Pipeline ist ein uv-Projekt (Python ≥ 3.12, pdfplumber, polars, typer, pytest), `uv run pytest` läuft
 - [x] **SETUP-03**: App-Grundgerüst (Vue 3, TS, Vite, Web Awesome, vue-echarts, Hash-Router) mit übernommenen Münster-Basiskomponenten, `npm run build` läuft
-- [ ] **SETUP-04**: Projekt-`CLAUDE.md` dokumentiert Befehle und Konventionen (deutsche Bezeichner ohne Umlaute, Beträge als int-Euro, nur PDF-Seiten 1-basiert)
+- [x] **SETUP-04**: Projekt-`CLAUDE.md` dokumentiert Befehle und Konventionen (deutsche Bezeichner ohne Umlaute, Beträge als int-Euro, nur PDF-Seiten 1-basiert)
 - [x] **SETUP-05**: Jahrgangsspezifisches (Haushaltsjahr, Spaltenköpfe, Seitenbereiche, PDF-Pfad) steht in einer Konfigurationsdatei, nicht im Code, damit das ProFIS-Layout eines Folgejahres mit wenig Änderung verarbeitbar ist
 
 ### Extraktion
@@ -135,7 +135,7 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [ ] **A11Y-02**: Fokussteuerung beim Routenwechsel, ausreichende Kontraste und `prefers-reduced-motion` werden beachtet
 - [ ] **A11Y-03**: Alle Seiten sind ab 360 px Breite nutzbar
 - [ ] **A11Y-04**: Lighthouse-Barrierefreiheit ≥ 95 auf allen Routen
-- [ ] **QUAL-01**: `vue-tsc` und ESLint laufen fehlerfrei in der CI
+- [x] **QUAL-01**: `vue-tsc` und ESLint laufen fehlerfrei in der CI
 - [ ] **QUAL-02**: Ein Playwright-Smoke-Test stellt sicher, dass jede Route ohne Konsolenfehler rendert und Diagramme Daten enthalten
 
 ### Deployment
@@ -178,10 +178,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SETUP-01 | Phase 1 | Pending |
+| SETUP-01 | Phase 1 | Complete |
 | SETUP-02 | Phase 1 | Complete |
 | SETUP-03 | Phase 1 | Complete |
-| SETUP-04 | Phase 1 | Pending |
+| SETUP-04 | Phase 1 | Complete |
 | SETUP-05 | Phase 1 | Complete |
 | EXTR-01 | Phase 2 | Pending |
 | EXTR-02 | Phase 2 | Pending |
@@ -259,7 +259,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | A11Y-02 | Phase 7 | Pending |
 | A11Y-03 | Phase 7 | Pending |
 | A11Y-04 | Phase 7 | Pending |
-| QUAL-01 | Phase 1 | Pending |
+| QUAL-01 | Phase 1 | Complete |
 | QUAL-02 | Phase 7 | Pending |
 | DEPL-01 | Phase 7 | Pending |
 | DEPL-02 | Phase 7 | Pending |
