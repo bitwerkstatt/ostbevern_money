@@ -15,6 +15,12 @@ use([CanvasRenderer, BarChart, GridComponent, TooltipComponent])
  * Liest einen Web-Awesome-Token zur Laufzeit; fällt auf `ersatz` zurück,
  * wenn der Token (noch) leer ist oder kein DOM existiert (z. B. SSR/Tests).
  * `ersatz`-Werte sind aus der installierten Web-Awesome-CSS kopiert.
+ *
+ * ACHTUNG: `ersatz`-Werte sind eine manuelle Kopie der installierten
+ * Web-Awesome-CSS. Sie werden nur einmal beim Modul-Laden gelesen und
+ * NICHT automatisch aktualisiert, falls sich die CSS-Variablen später
+ * ändern (z. B. durch eine künftige Theme-Umschaltung). Bei Divergenz
+ * zwischen CSS und `ersatz` beide Stellen von Hand synchron halten.
  */
 function token(name: string, ersatz: string): string {
   if (typeof document === 'undefined') {
