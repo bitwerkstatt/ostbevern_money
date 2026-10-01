@@ -20,13 +20,19 @@ class PdfFehler(ValueError):
 
 @dataclass(frozen=True)
 class Wort:
-    """Ein einzelnes von pdfplumber erkanntes Wort mit Koordinaten und Schriftgröße."""
+    """Ein einzelnes von pdfplumber erkanntes Wort mit Koordinaten und Schriftgröße.
+
+    `fett` (Phase 3, D-10) ist nur bei der feinen Extraktion (`zeilen_fein`) gesetzt,
+    wenn der Fontname "Bold" enthält; bei `zeilen()` ist er immer False (letztes Feld,
+    damit bestehende positionale Konstruktionen gültig bleiben).
+    """
 
     text: str
     x0: float
     x1: float
     top: float
     groesse: float
+    fett: bool = False
 
 
 @dataclass(frozen=True)
@@ -62,6 +68,7 @@ class PdfDokument:
         self._pfad = pfad
         self._pdf = pdfplumber.open(pfad)
         self._cache: dict[int, tuple[Textzeile, ...]] = {}
+        self._cache_fein: dict[int, tuple[Textzeile, ...]] = {}
 
     @classmethod
     def oeffne(cls, pfad: Path) -> PdfDokument:
@@ -83,21 +90,16 @@ class PdfDokument:
     def seitenanzahl(self) -> int:
         return len(self._pdf.pages)
 
-    def zeilen(self, pdf_seite: int) -> tuple[Textzeile, ...]:
-        """Liefert die Textzeilen der 1-basierten Seite `pdf_seite`, nach `top` gruppiert."""
-        if pdf_seite in self._cache:
-            return self._cache[pdf_seite]
+    def _pruefe_seite(self, pdf_seite: int) -> None:
         if not (1 <= pdf_seite <= self.seitenanzahl):
             raise PdfFehler(
                 f"{self._pfad}: Seite {pdf_seite} liegt außerhalb von 1..{self.seitenanzahl}"
             )
-        seite = self._pdf.pages[pdf_seite - 1]
-        rohe_woerter = seite.extract_words(extra_attrs=["size"])
-        woerter = [
-            Wort(text=w["text"], x0=w["x0"], x1=w["x1"], top=w["top"], groesse=w["size"])
-            for w in rohe_woerter
-        ]
 
+    @staticmethod
+    def _gruppiere_zeilen(woerter: list[Wort]) -> tuple[Textzeile, ...]:
+        """Gruppiert Wörter nach `top` (Toleranz `_ZEILEN_TOLERANZ`), sortiert jede Gruppe
+        nach `x0` und die Zeilen selbst nach `top` (gemeinsame Logik für `zeilen`/`zeilen_fein`)."""
         gruppen: list[list[Wort]] = []
         for wort in sorted(woerter, key=lambda w: w.top):
             if gruppen and abs(wort.top - gruppen[-1][0].top) <= _ZEILEN_TOLERANZ:
@@ -109,6 +111,51 @@ class PdfDokument:
             Textzeile(top=gruppe[0].top, woerter=tuple(sorted(gruppe, key=lambda w: w.x0)))
             for gruppe in gruppen
         )
-        zeilen = tuple(sorted(zeilen, key=lambda z: z.top))
+        return tuple(sorted(zeilen, key=lambda z: z.top))
+
+    def zeilen(self, pdf_seite: int) -> tuple[Textzeile, ...]:
+        """Liefert die Textzeilen der 1-basierten Seite `pdf_seite`, nach `top` gruppiert.
+
+        Nutzt `extract_words(extra_attrs=["size"])` (kein `x_tolerance`, kein `fontname`);
+        dieses Verhalten bleibt byte-für-byte gleich, unabhängig von `zeilen_fein` (Phase 3).
+        """
+        if pdf_seite in self._cache:
+            return self._cache[pdf_seite]
+        self._pruefe_seite(pdf_seite)
+        seite = self._pdf.pages[pdf_seite - 1]
+        rohe_woerter = seite.extract_words(extra_attrs=["size"])
+        woerter = [
+            Wort(text=w["text"], x0=w["x0"], x1=w["x1"], top=w["top"], groesse=w["size"])
+            for w in rohe_woerter
+        ]
+        zeilen = self._gruppiere_zeilen(woerter)
         self._cache[pdf_seite] = zeilen
+        return zeilen
+
+    def zeilen_fein(self, pdf_seite: int) -> tuple[Textzeile, ...]:
+        """Liefert die Textzeilen von `pdf_seite` mit feiner Worttrennung (Phase 3, D-10).
+
+        Nutzt `extract_words(x_tolerance=1, extra_attrs=["size", "fontname"])`: trennt eng
+        stehende Wörter (Freitext, Namen, Investitionsmaßnahmen-Tabellen) deutlich feiner
+        als `zeilen()` und setzt `Wort.fett`, wenn der Fontname "Bold" enthält. Eigener
+        Cache; `zeilen()` bleibt davon unberührt (fordert kein `fontname` an).
+        """
+        if pdf_seite in self._cache_fein:
+            return self._cache_fein[pdf_seite]
+        self._pruefe_seite(pdf_seite)
+        seite = self._pdf.pages[pdf_seite - 1]
+        rohe_woerter = seite.extract_words(x_tolerance=1, extra_attrs=["size", "fontname"])
+        woerter = [
+            Wort(
+                text=w["text"],
+                x0=w["x0"],
+                x1=w["x1"],
+                top=w["top"],
+                groesse=w["size"],
+                fett="Bold" in w["fontname"],
+            )
+            for w in rohe_woerter
+        ]
+        zeilen = self._gruppiere_zeilen(woerter)
+        self._cache_fein[pdf_seite] = zeilen
         return zeilen
