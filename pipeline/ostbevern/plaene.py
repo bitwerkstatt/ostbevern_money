@@ -479,7 +479,7 @@ def lies_teilplaene(
 
 
 def _synthetische_pg_datensaetze(
-    teil_df: pl.DataFrame, hierarchie: pl.DataFrame, plantyp: str
+    teil_df: pl.DataFrame, hierarchie: pl.DataFrame
 ) -> list[dict[str, object]]:
     """Baut synthetische-PG-Zeilen als exakte Kopie der Zeilen ihres einzigen Kind-
     Produkts (D-14, 261001-oim: jede synthetische PG hat genau ein Produkt).
@@ -537,12 +537,8 @@ def extrahiere_plaene(
             dokument, jahrgang, seiten, hierarchie, ebenen=("PB", "PG", "P")
         )
 
-    synthetisch_ergebnisplan = _synthetische_pg_datensaetze(
-        teil_ergebnisplan, hierarchie, "teilergebnisplan"
-    )
-    synthetisch_finanzplan = _synthetische_pg_datensaetze(
-        teil_finanzplan, hierarchie, "teilfinanzplan"
-    )
+    synthetisch_ergebnisplan = _synthetische_pg_datensaetze(teil_ergebnisplan, hierarchie)
+    synthetisch_finanzplan = _synthetische_pg_datensaetze(teil_finanzplan, hierarchie)
 
     ergebnisplan_df = pl.concat(
         [
