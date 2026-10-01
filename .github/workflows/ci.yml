@@ -1,0 +1,63 @@
+# CI-Workflow für Ostbevern Money.
+#
+# Hinweis (D-18): Zum Zeitpunkt der Erstellung dieser Datei gibt es noch kein
+# GitHub-Remote für dieses Repository. Dieser Workflow läuft erst, sobald die
+# Nutzerin bzw. der Nutzer das Repository bei GitHub anlegt und pusht. Alle
+# hier aufgeführten Befehle wurden lokal, mit identischer Befehlszeile, in
+# den jeweiligen Arbeitsverzeichnissen erfolgreich ausgeführt (siehe
+# 01-05-SUMMARY.md).
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - name: Quellcode auschecken
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: uv einrichten
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: "0.9.26"
+      - name: Abhängigkeiten installieren
+        run: uv sync --locked
+      - name: Ruff-Lint
+        run: uv run ruff check .
+      - name: Ruff-Formatierungsprüfung
+        run: uv run ruff format --check .
+      - name: Tests
+        run: uv run pytest
+
+  app:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Quellcode auschecken
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Node.js einrichten
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: app/.nvmrc
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Abhängigkeiten installieren
+        run: npm ci
+      - name: Typprüfung (vue-tsc)
+        run: npm run type-check
+      - name: ESLint
+        run: npm run lint
+      - name: Prettier-Prüfung
+        run: npm run format:check
+      - name: Build
+        run: npm run build
