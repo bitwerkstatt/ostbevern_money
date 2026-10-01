@@ -281,6 +281,7 @@ _ZWEISTELLIGE_ZEILE_MUSTER = re.compile(r"^\d{2}$")
 _TEILERGEBNISPLAENE_PB_FELDER = frozenset(
     {"ordentliche_ertraege", "ordentliche_aufwendungen", "ergebnis_mit_internen_verrechnungen"}
 )
+_ANHANG_A_CODE_MUSTER = re.compile(r"^(\d{2}|\d{4}|\d{6})$")
 
 
 def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> dict[str, Any]:
@@ -301,6 +302,7 @@ def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> 
             "gesamtfinanzplan",
             "teilergebnisplaene_pb",
             "teilergebnisplaene_pb_summe",
+            "anhang_a",
         )
         if schluessel not in rohdaten
     ]
@@ -359,6 +361,21 @@ def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> 
             f"Sollwertdatei {pfad}: teilergebnisplaene_pb_summe fehlen Felder: "
             f"{', '.join(fehlende_summenfelder)}"
         )
+
+    anhang_a = rohdaten["anhang_a"]
+    for code, eintrag in anhang_a.items():
+        if not _ANHANG_A_CODE_MUSTER.match(code):
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: anhang_a hat keinen 2-, 4- oder 6-stelligen Code: {code!r}"
+            )
+        name = eintrag.get("name")
+        if not isinstance(name, str) or not name:
+            raise KonfigurationsFehler(f"Sollwertdatei {pfad}: anhang_a.{code} hat keinen Namen")
+        pdf_seite = eintrag.get("pdf_seite")
+        if not isinstance(pdf_seite, int) or isinstance(pdf_seite, bool) or pdf_seite < 1:
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: anhang_a.{code} hat keine gültige pdf_seite"
+            )
 
     _pruefe_nur_ganzzahlen(rohdaten, "sollwerte")
 

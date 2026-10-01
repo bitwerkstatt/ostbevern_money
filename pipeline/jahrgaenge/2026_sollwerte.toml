@@ -91,3 +91,95 @@ pdf_seite = 63
 [teilergebnisplaene_pb_summe]
 ordentliche_ertraege = 27042063
 ordentliche_aufwendungen = 30255569
+
+# Anhang A: Produktverzeichnis mit Startseiten, übertragen aus
+# discussion/SPEZIFIKATION.md "Anhang A - Produktverzeichnis". Startseiten
+# stammen aus dem Inhaltsverzeichnis (PDF S. 2-5) und dienen als Sollwert für
+# den Startseiten-Test (D-19), nicht zur Steuerung der Extraktion.
+[anhang_a]
+"01" = { name = "Innere Verwaltung", pdf_seite = 66 }
+"010101" = { name = "Politische Gremien", pdf_seite = 72 }
+"010201" = { name = "Verwaltungsführung", pdf_seite = 74 }
+"010301" = { name = "Gleichstellung von Frau und Mann", pdf_seite = 76 }
+"010401" = { name = "Beschäftigtenvertretung/Personalrat", pdf_seite = 79 }
+"010501" = { name = "Durchführung gesetzlich vorgeschriebener und übertragener Prüfungen", pdf_seite = 81 }
+"0106" = { name = "Zentrale Dienste", pdf_seite = 83 }
+"010601" = { name = "Zentrale Dienste für Organisationseinheiten im Hause und Dritter", pdf_seite = 84 }
+"010602" = { name = "Bauhof", pdf_seite = 88 }
+"010603" = { name = "Zentrale Dienste für Beteiligungen und verbundene Unternehmen", pdf_seite = 92 }
+"010701" = { name = "Presse- und Öffentlichkeitsarbeit", pdf_seite = 94 }
+"010801" = { name = "Gemeinde-/Städtepartnerschaften", pdf_seite = 96 }
+"010901" = { name = "Personalmanagement", pdf_seite = 98 }
+"0110" = { name = "Finanzmanagement und Rechnungswesen", pdf_seite = 102 }
+"011001" = { name = "Finanzmanagement und Geschäftsbuchführung", pdf_seite = 103 }
+"011002" = { name = "Zahlungsabwicklung und Vollstreckung", pdf_seite = 105 }
+"011003" = { name = "Steuerveranlagung sowie Wasser- und Bodenverbandsgebühren", pdf_seite = 107 }
+"011101" = { name = "Dienstleistung im Bereich IT", pdf_seite = 109 }
+"0112" = { name = "Grundstücks- und Gebäudemanagement", pdf_seite = 112 }
+"011201" = { name = "Bauunterhaltung von kommunal genutzten Gebäuden", pdf_seite = 113 }
+"011202" = { name = "Bereitstellung und Bewirtschaftung von Gebäuden", pdf_seite = 116 }
+"011203" = { name = "Baumaßnahmen", pdf_seite = 118 }
+"011204" = { name = "Bereitstellung und Bewirtschaftung von Grundstücken", pdf_seite = 120 }
+"02" = { name = "Sicherheit und Ordnung", pdf_seite = 124 }
+"020101" = { name = "Allgemeine Gefahrenabwehr", pdf_seite = 127 }
+"020201" = { name = "Gewerbewesen", pdf_seite = 130 }
+"020301" = { name = "Verkehrsangelegenheiten", pdf_seite = 132 }
+"020401" = { name = "Einwohnerangelegenheiten", pdf_seite = 134 }
+"020501" = { name = "Standesamtswesen", pdf_seite = 136 }
+"020601" = { name = "Wahlen und Abstimmungen", pdf_seite = 138 }
+"020701" = { name = "Feuer- und Bevölkerungsschutz", pdf_seite = 140 }
+"03" = { name = "Schulträgeraufgaben", pdf_seite = 145 }
+"0301" = { name = "Schulische Einrichtungen und schülerbezogene Leistungen", pdf_seite = 150 }
+"030101" = { name = "Ambrosius-Grundschule", pdf_seite = 151 }
+"030102" = { name = "Franz-von-Assisi-Grundschule", pdf_seite = 155 }
+"030103" = { name = "Josef-Annegarn-Schule", pdf_seite = 158 }
+"030104" = { name = "Offene Ganztagsgrundschule, ganztägige Förder- und Betreuungsangebote", pdf_seite = 162 }
+"030201" = { name = "Schülerbeförderung", pdf_seite = 165 }
+"030301" = { name = "Zentrale Leistungen für Schüler/innen und am Schulleben Beteiligte", pdf_seite = 167 }
+"04" = { name = "Kultur", pdf_seite = 169 }
+"040101" = { name = "Kulturförderung, Heimatpflege", pdf_seite = 171 }
+"040201" = { name = "Volkshochschule und sonstige Weiterbildung", pdf_seite = 174 }
+"040301" = { name = "Schule für Musik im Kreis Warendorf", pdf_seite = 176 }
+"05" = { name = "Soziale Leistungen", pdf_seite = 178 }
+"0501" = { name = "Gesetzliche Leistungen", pdf_seite = 180 }
+"050102" = { name = "Leistungen nach dem Asylbewerberleistungsgesetz", pdf_seite = 181 }
+"050103" = { name = "Leistungen der Sozialhilfe nach SGB XII", pdf_seite = 183 }
+"050201" = { name = "Zuschüsse an Dritte im Bereich des sozialen Lebens", pdf_seite = 185 }
+"050301" = { name = "Dienstleistung und Beratung", pdf_seite = 188 }
+"050401" = { name = "Demographie", pdf_seite = 190 }
+"06" = { name = "Kinder-, Jugend- und Familienhilfe", pdf_seite = 192 }
+"060101" = { name = "Unterstützung von Kindertagesstätten anderer Träger", pdf_seite = 194 }
+"0602" = { name = "Kinder- und Jugendarbeit", pdf_seite = 196 }
+"060201" = { name = "Jugendzentrum und Unterstützung Dritter im Bereich der Jugendarbeit", pdf_seite = 197 }
+"060202" = { name = "Sportfreianlagen und Kinderspielplätze", pdf_seite = 200 }
+"08" = { name = "Sportförderung", pdf_seite = 203 }
+"080101" = { name = "Beverhalle, Förderung des Vereins- und Breitensports", pdf_seite = 205 }
+"09" = { name = "Räumliche Planung und Entwicklung, Geoinformationen", pdf_seite = 208 }
+"090101" = { name = "Räumliche Planung und Entwicklung", pdf_seite = 211 }
+"0902" = { name = "Grundstücksneuordnung und grundstücksbezogene Ordnungsmaßnahmen", pdf_seite = 214 }
+"090201" = { name = "Grundstücksneuordnung und -ordnungsmaßnahmen", pdf_seite = 215 }
+"090202" = { name = "Grundstücksbezogene Informationen", pdf_seite = 218 }
+"10" = { name = "Bauen und Wohnen", pdf_seite = 220 }
+"100101" = { name = "Maßnahmen der Bauordnung", pdf_seite = 222 }
+"100201" = { name = "Denkmalschutz und Denkmalpflege", pdf_seite = 224 }
+"100301" = { name = "Wohnungsbau- und Wohnraumförderung, Wohnraumsicherung und -versorgung", pdf_seite = 226 }
+"100401" = { name = "Unterkunft für Flüchtlinge und Asylbewerber", pdf_seite = 228 }
+"11" = { name = "Ver- und Entsorgung", pdf_seite = 231 }
+"110101" = { name = "Abfallbeseitigung und -entsorgung", pdf_seite = 232 }
+"12" = { name = "Verkehrsflächen und -anlagen", pdf_seite = 234 }
+"1201" = { name = "Öffentliche Verkehrsflächen und Verkehrsanlagen", pdf_seite = 240 }
+"120101" = { name = "Bau von Straßen, Wegen, Plätzen und sonstigen Verkehrsanlagen", pdf_seite = 241 }
+"120102" = { name = "Unterhaltung von Straßen, Wegen, Plätzen und sonstigen Verkehrsanlagen", pdf_seite = 247 }
+"120201" = { name = "ÖPNV", pdf_seite = 250 }
+"120301" = { name = "Straßenreinigung", pdf_seite = 253 }
+"13" = { name = "Natur- und Landschaftspflege", pdf_seite = 255 }
+"130101" = { name = "Natur- und Landschaftsschutz", pdf_seite = 258 }
+"130201" = { name = "Öffentliche Grünanlagen", pdf_seite = 261 }
+"130301" = { name = "Friedhofs- und Bestattungswesen", pdf_seite = 264 }
+"14" = { name = "Umweltschutz", pdf_seite = 268 }
+"140101" = { name = "Umwelt- und Klimaschutz, Mobilität", pdf_seite = 269 }
+"15" = { name = "Wirtschaft und Tourismus", pdf_seite = 271 }
+"150101" = { name = "Wirtschaftsförderung", pdf_seite = 273 }
+"150102" = { name = "Touristische Öffentlichkeitsarbeit", pdf_seite = 276 }
+"16" = { name = "Allgemeine Finanzwirtschaft", pdf_seite = 278 }
+"160101" = { name = "Allgemeine Finanzwirtschaft", pdf_seite = 280 }
