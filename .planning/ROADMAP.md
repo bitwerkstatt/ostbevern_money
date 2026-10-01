@@ -71,11 +71,11 @@ Plans:
      - Satzung § 1 (Erträge 27.502.063 €, Aufwendungen 30.455.569 €)
   5. `uv run pytest` erzeugt `daten/pruefberichte/konsistenz.md`. Eine Abweichung über 1 €, die nicht in `befunde.md` steht, lässt den Lauf scheitern.
 
-**Plans**: 5 plans
+**Plans**: 1/5 plans executed
 
 Plans:
 **Wave 1**
-- [ ] 02-01-PLAN.md — Tracer Gesamtergebnisplan PDF → ergebnisplan.csv → Regel 4 (B.1) → konsistenz.md; Zahlenparser (EXTR-01); Sollwerte B.1–B.3 (Wave 1)
+- [x] 02-01-PLAN.md — Tracer Gesamtergebnisplan PDF → ergebnisplan.csv → Regel 4 (B.1) → konsistenz.md; Zahlenparser (EXTR-01); Sollwerte B.1–B.3 (Wave 1)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 02-02-PLAN.md — Seitenklassifikation seiten.csv und hierarchie.csv (synthetische PG), Anhang-A-Startseiten-Test (Wave 2)
@@ -181,7 +181,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Setup | 5/5 | Complete    | 2026-10-01 |
-| 2. Kernzahlen | 0/5 | Not started | - |
+| 2. Kernzahlen | 1/5 | In Progress|  |
 | 3. Details | 0/TBD | Not started | - |
 | 4. Manuelle Daten und App-Daten | 0/TBD | Not started | - |
 | 5. Leitfragen-Seiten | 0/TBD | Not started | - |
