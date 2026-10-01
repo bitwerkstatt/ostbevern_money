@@ -22,7 +22,7 @@ from ostbevern.schema import (
     schreibe_plan_csv,
     zerlege_spaltenkopf,
 )
-from ostbevern.zahlen import ist_betrag, lies_betrag, trenne_operator
+from ostbevern.zahlen import ist_betrag, lies_betrag, trenne_angeklebten_betrag, trenne_operator
 from ostbevern.zeilen import ZEILEN, ZWISCHENUEBERSCHRIFTEN, normalisiere_bezeichnung, plantyp_fuer
 
 _X_TOLERANZ = 2.0
@@ -160,12 +160,27 @@ def lies_plantabelle(
         if ist_zeilenkopf and amount_woerter:
             zeilennummer = erstes_wort.text
             amount_set = set(amount_woerter)
-            label_woerter = [w for w in zeile.woerter[1:] if w not in amount_set]
-            if not label_woerter:
+            label_woerter_roh = [w for w in zeile.woerter[1:] if w not in amount_set]
+            if not label_woerter_roh:
                 raise PlaeneFehler(f"S. {pdf_seite}, Zeile {zeilennummer}: keine Bezeichnung")
-            operator, rest = trenne_operator(label_woerter[0].text)
-            bezeichnung = rest + "".join(w.text for w in label_woerter[1:])
-            werte = _ordne_werte(amount_woerter, jahreswoerter, pdf_seite, zeilennummer)
+
+            # Ein Wort in der Betragszone, das selbst kein Betrag ist, kann einen
+            # angeklebten Betrag am Ende tragen (Spez. 3.8/5.4); der Textteil bleibt
+            # im Label, der Zahlenteil wird wie ein eigenes Betragswort zugeordnet.
+            alle_amount_woerter = list(amount_woerter)
+            label_teile: list[str] = []
+            for wort in label_woerter_roh:
+                if wort.x1 > erste_jahresspalte_x0:
+                    rest_text, betrag_text = trenne_angeklebten_betrag(wort.text)
+                    if betrag_text is not None:
+                        label_teile.append(rest_text)
+                        alle_amount_woerter.append(replace(wort, text=betrag_text))
+                        continue
+                label_teile.append(wort.text)
+
+            operator, rest = trenne_operator(label_teile[0])
+            bezeichnung = rest + "".join(label_teile[1:])
+            werte = _ordne_werte(alle_amount_woerter, jahreswoerter, pdf_seite, zeilennummer)
             if zeilennummer in gelesene_zeilen:
                 raise PlaeneFehler(
                     f"S. {pdf_seite}, Zeile {zeilennummer}: Zeilennummer kommt zweimal vor"

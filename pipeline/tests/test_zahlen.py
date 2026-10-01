@@ -93,6 +93,14 @@ def test_trenne_angeklebten_betrag_ohne_zahl_gibt_none(wort: str) -> None:
     assert trenne_angeklebten_betrag(wort) == (wort, None)
 
 
+def test_trenne_angeklebten_betrag_trennt_auch_ausserhalb_der_betragszone() -> None:
+    # trenne_angeklebten_betrag selbst kennt keine Spaltenposition - es trennt jeden
+    # Text mit angeklebter Zahl am Ende. plaene.py wendet es deshalb nur auf Wörter
+    # an, deren x1 in der Betragszone liegt, damit ein Label wie "AVüber800" in der
+    # Bezeichnungsspalte nicht fälschlich aufgespalten wird (Spez. 5.4).
+    assert trenne_angeklebten_betrag("AVüber800") == ("AVüber", "800")
+
+
 def test_trenne_operator_angeklebt_plus_minus() -> None:
     assert trenne_operator("+/-Bestandsveränderungen") == ("+/-", "Bestandsveränderungen")
 
