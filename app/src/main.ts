@@ -1,4 +1,5 @@
 import './lib/webawesome'
+import './styles/basis.css'
 
 import '@awesome.me/webawesome/dist/components/page/page.js'
 import '@awesome.me/webawesome/dist/components/callout/callout.js'
