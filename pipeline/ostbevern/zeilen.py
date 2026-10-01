@@ -2,8 +2,9 @@
 
 Das Wörterbuch und die Zwischenüberschriften sind fachliche Regeln (Phase 1 D-07),
 keine Jahrgangswerte: sie stehen hier im Code, nicht in `pipeline/jahrgaenge/*.toml`.
-Dieses Modul deckt bislang die Plantypen "gesamtergebnisplan" und "gesamtfinanzplan" ab;
-Teilergebnis- und Teilfinanzplan folgen in Plan 02-04 dieser Phase.
+Dieses Modul deckt alle vier Plantypen ab: "gesamtergebnisplan", "gesamtfinanzplan",
+"teilergebnisplan" (Zeilen 01-26 wie im Gesamtergebnisplan, 27-31 eigene Zeilen) und
+"teilfinanzplan" (eigene, auf Teilpläne beschränkte Zeilenauswahl, D-12).
 """
 
 from __future__ import annotations
@@ -197,6 +198,75 @@ ZEILEN: dict[str, dict[str, Zeilendefinition]] = {
         "40": Zeilendefinition("Bestand an fremden Finanzmitteln", "fremde_finanzmittel", False),
         "41": Zeilendefinition("Liquide Mittel", "liquide_mittel", True),
     },
+}
+
+# Teilergebnisplan: Zeilen 01-26 sind wortgleich mit dem Gesamtergebnisplan (gleiches
+# gedrucktes Label, gleicher zeile_name/zeile_kanonisch/ist_summe); 27-31 sind eigene
+# Teilplan-Zeilen (Research Planning-time facts, verifiziert auf allen Teilplan-Seiten).
+ZEILEN["teilergebnisplan"] = {
+    zeile: definition for zeile, definition in ZEILEN["gesamtergebnisplan"].items() if zeile <= "26"
+} | {
+    "27": Zeilendefinition("Erträge aus internen Leistungsbeziehungen", "interne_ertraege", False),
+    "28": Zeilendefinition(
+        "Aufwendungen aus internen Leistungsbeziehungen", "interne_aufwendungen", False
+    ),
+    "29": Zeilendefinition(
+        "Ergebnis mit inneren Verrechnungen",
+        "ergebnis_mit_internen_verrechnungen",
+        True,
+    ),
+    "30": Zeilendefinition("Globaler Minderaufwand", "globaler_minderaufwand", False),
+    "31": Zeilendefinition(
+        "Ergebnis nach Abzug glob. Minderaufw.", "ergebnis_nach_minderaufwand", True
+    ),
+}
+
+# Teilfinanzplan: eigene, auf die tatsächlich gedruckten Zeilen beschränkte Auswahl
+# (Research Planning-time facts). Zeile 20 wird absichtlich NICHT aufgenommen (D-08):
+# sie ist in keinem Teilfinanzplan gedruckt, ein unerwartetes Auftreten soll laut
+# abbrechen statt still als bekannte Zeile durchzugehen.
+ZEILEN["teilfinanzplan"] = {
+    "09": Zeilendefinition(
+        "Einzahlungen aus lfd. Verw.-tätigkeit", "einzahlungen_laufende_verwaltung", True
+    ),
+    "16": Zeilendefinition(
+        "Auszahlungen aus lfd. Verw.-tätigkeit", "auszahlungen_laufende_verwaltung", True
+    ),
+    "17": Zeilendefinition("Saldo aus lfd. Verw.-tätigkeit", "saldo_laufende_verwaltung", True),
+    "18": Zeilendefinition(
+        "Zuwendungen für Investitionsmaßnahmen", "investitionszuwendungen", False
+    ),
+    "19": Zeilendefinition(
+        "Einz. aus Veräußerung v. Sachanlagen", "veraeusserung_sachanlagen", False
+    ),
+    "21": Zeilendefinition("Einz. aus Beiträgen u. ä. Entgelten", "beitraege", False),
+    "22": Zeilendefinition(
+        "Sonstige Investitionseinzahlungen", "sonstige_investitionseinzahlungen", False
+    ),
+    "23": Zeilendefinition(
+        "Einzahlungen aus Investitionstätigkeit", "einzahlungen_investitionen", True
+    ),
+    "24": Zeilendefinition(
+        "Ausz. f. Erwerb von Grundst. u. Gebäuden", "erwerb_grundstuecke_gebaeude", False
+    ),
+    "25": Zeilendefinition("Ausz. f. Baumaßnahmen", "baumassnahmen", False),
+    "26": Zeilendefinition(
+        "Ausz. f. Erwerb von bewegl. Anlagevermögen",
+        "erwerb_bewegliches_anlagevermoegen",
+        False,
+    ),
+    "27": Zeilendefinition("Ausz. f. Erwerb v. Finanzanlagen", "erwerb_finanzanlagen", False),
+    "28": Zeilendefinition("Ausz. f. aktivierbaren Zuwendungen", "aktivierbare_zuwendungen", False),
+    "29": Zeilendefinition(
+        "Sonstige Investitionsauszahlungen", "sonstige_investitionsauszahlungen", False
+    ),
+    "30": Zeilendefinition(
+        "Auszahlungen aus Investitionstätigkeit", "auszahlungen_investitionen", True
+    ),
+    "31": Zeilendefinition("Saldo aus Investitionstätigkeit", "saldo_investitionen", True),
+    "33": Zeilendefinition("Aufnahme und Rückflüsse von Darlehen", "kreditaufnahme", False),
+    "34": Zeilendefinition("Saldo aus Finanzierungstätigkeit", "saldo_finanzierung", True),
+    "35": Zeilendefinition("Tilgung und Gewährung von Darlehen", "tilgung", False),
 }
 
 ZWISCHENUEBERSCHRIFTEN: dict[str, tuple[str, ...]] = {

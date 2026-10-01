@@ -232,8 +232,13 @@ def test_regel1_sollwerte_gesamtplaene_gruen() -> None:
 
     # Gesamtergebnisplan: 8 Formelzeilen (10,17,18,21,22,25,26,28) x 6 Spalten = 48.
     # Gesamtfinanzplan: 10 Formelzeilen (09,16,17,23,30,31,32,37,38,41) x 7 Spalten = 70.
-    assert regel1.geprueft == 118
+    # 118 GESAMT + 6432 Teilplan-Formelzeilen seit 02-04 (alle PB/PG/P-Knoten inkl.
+    # synthetischer PG; nur tatsächlich gedruckte Zeilen zählen, D-13).
+    assert regel1.geprueft == 6550
     assert regel1.status == "grün"
+    # Die einzigen echten PDF-Abweichungen (PB 08/PG 0801/P 080101, je Z. 17, 2024 —
+    # dieselbe Rundungsdifferenz auf allen drei Ebenen, PB 08 hat nur ein Produkt) sind
+    # in befunde.md dokumentiert und deshalb hier "bekannt", nicht "offen" (D-04/D-05).
     assert regel1.abweichungen == ()
 
 
@@ -529,7 +534,32 @@ def test_konsistenzbericht_listet_bekannten_befund(tmp_path: Path) -> None:
         pdf_seite=62,
         begruendung="Testabweichung Formelzeile",
     )
-    _schreibe_befunde_md(tmp_path / BEFUNDE_MD, zeilen=[befund_regel4, befund_regel1])
+    # Seit 02-04 enthält ergebnisplan.csv auch die PB/PG/P-Teilplanzeilen; deren einzige
+    # echte, im PDF so gedruckte Abweichung (dieselbe Rundungsdifferenz auf allen drei
+    # Ebenen, da PB 08 nur ein Produkt hat) braucht denselben Befund-Abgleich wie die
+    # beiden Test-Befunde oben, sonst bleibt sie hier offen (rot).
+    befunde_teilplan = [
+        _befunde_zeile(
+            regel=1,
+            plan="teilergebnisplan",
+            ebene=ebene,
+            code=code,
+            zeile="17",
+            jahr=2024,
+            wertart="ergebnis",
+            abweichung=2,
+            pdf_seite=pdf_seite,
+            begruendung="Rundungsdifferenz im PDF (siehe daten/pruefberichte/befunde.md)",
+        )
+        for ebene, code, pdf_seite in (
+            ("PB", "08", 203),
+            ("PG", "0801", 206),
+            ("P", "080101", 206),
+        )
+    ]
+    _schreibe_befunde_md(
+        tmp_path / BEFUNDE_MD, zeilen=[befund_regel4, befund_regel1, *befunde_teilplan]
+    )
 
     bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
     regel1 = next(regel for regel in bericht.regeln if regel.regel == 1)
@@ -539,7 +569,7 @@ def test_konsistenzbericht_listet_bekannten_befund(tmp_path: Path) -> None:
     assert bericht.ist_gruen is True
     assert len(regel4.bekannte) == 1
     assert regel4.bekannte[0][1].begruendung == "Testabweichung Sollwert"
-    assert len(regel1.bekannte) == 1
+    assert len(regel1.bekannte) == 1 + len(befunde_teilplan)
 
     # Ohne passenden Befund bleibt dieselbe Abweichung offen (rot).
     _schreibe_befunde_md(tmp_path / BEFUNDE_MD, zeilen=[])
