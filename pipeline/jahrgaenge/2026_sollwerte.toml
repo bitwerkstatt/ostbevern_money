@@ -1,6 +1,8 @@
 # Sollwertdatei für den Haushalt 2026 der Gemeinde Ostbevern (D-08, Anhang B).
-# Beträge sind int-Euro. Diese Datei deckt Phase 1 nur Satzung § 1-3 und die
-# B.1-Kopfwerte ab; Phase 2 ergänzt B.1 vollständig, B.2 und B.3.
+# Beträge sind int-Euro. Phase 2 hält Anhang B.1 vollständig, B.2 (Gesamtfinanzplan
+# Ansatz/VE) und B.3 (Teilergebnispläne je PB) wie in discussion/SPEZIFIKATION.md
+# dokumentiert (D-18); Prüfungen für B.2 folgen in Plan 02-03, für B.3 in Plan 02-05.
+# Fehlende Zeilen von PDF S. 62/63 werden nicht zusätzlich abgeschrieben (D-18).
 
 haushaltsjahr = 2026
 quelle = "raw_data/haushalt-2026.pdf; übertragen aus discussion/SPEZIFIKATION.md Anhang B"
@@ -21,13 +23,26 @@ auszahlungen_finanzierung = 450000
 kredite_investitionen = 5200000
 verpflichtungsermaechtigungen = 11600000
 
-# Gesamtergebnisplan (Anhang B.1, PDF S. 62). Phase 2 ergänzt die restlichen Zeilen.
+# Gesamtergebnisplan (Anhang B.1, PDF S. 62), vollständig.
 [gesamtergebnisplan]
 pdf_seite = 62
 jahre = [2024, 2025, 2026, 2027, 2028, 2029]
 
 [gesamtergebnisplan.zeilen]
+"01" = [19614808, 17964000, 18443000, 19866000, 20801000, 21721000]
+"02" = [4333024, 4967048, 3113200, 4472920, 4521039, 4210051]
+"03" = [36321, 0, 0, 0, 0, 0]
+"04" = [2325683, 2429355, 2390607, 2376355, 2433697, 2551035]
+"05" = [449398, 360201, 389800, 389800, 389800, 389800]
+"06" = [812781, 686150, 762070, 770970, 760720, 781750]
+"07" = [2764446, 2106281, 1943386, 1689885, 2346161, 1182136]
 "10" = [30336461, 28513035, 27042063, 29565930, 31252417, 30835772]
+"11" = [4629147, 4977200, 5204054, 5448900, 5666700, 5893100]
+"12" = [463579, 373400, 258000, 265700, 273800, 281900]
+"13" = [6471265, 6961896, 7023472, 6578021, 6658705, 6713846]
+"14" = [2882133, 2957773, 2758142, 2576817, 2831331, 2808031]
+"15" = [14523567, 13782286, 13764981, 15756800, 16232800, 16746800]
+"16" = [1581389, 1430600, 1246920, 1242220, 1797908, 2399795]
 "17" = [30551079, 30483155, 30255569, 31868458, 33461244, 34843472]
 "18" = [-214618, -1970120, -3213506, -2302528, -2208827, -4007700]
 "19" = [559158, 320000, 460000, 390000, 390000, 390000]
@@ -35,3 +50,44 @@ jahre = [2024, 2025, 2026, 2027, 2028, 2029]
 "26" = [191990, -1896120, -2953506, -2262528, -2418827, -4217700]
 "27" = [0, -564600, -600000, -620000, -660000, -660000]
 "28" = [191990, -1331520, -2353506, -1642528, -1758827, -3557700]
+
+# Gesamtfinanzplan (Anhang B.2, PDF S. 63), Haushaltsjahr 2026 (Ansatz- und VE-Spalte).
+[gesamtfinanzplan]
+pdf_seite = 63
+
+[gesamtfinanzplan.ansatz]
+"09" = 24703192
+"16" = 27697627
+"23" = 7224830
+"25" = 7915000
+"30" = 12280484
+"33" = 5200000
+"35" = 450000
+"41" = 4199420
+
+[gesamtfinanzplan.ve]
+"30" = 11600000
+
+# Teilergebnispläne je Produktbereich (Anhang B.3), Haushaltsjahr 2026:
+# TP Z. 10 (ordentliche Erträge), Z. 17 (ordentliche Aufwendungen),
+# Z. 29 (Ergebnis mit internen Verrechnungen).
+[teilergebnisplaene_pb]
+"01" = { ordentliche_ertraege = 1749837, ordentliche_aufwendungen = 4519223, ergebnis_mit_internen_verrechnungen = -2719206 }
+"02" = { ordentliche_ertraege = 281179, ordentliche_aufwendungen = 1370587, ergebnis_mit_internen_verrechnungen = -1090858 }
+"03" = { ordentliche_ertraege = 1693437, ordentliche_aufwendungen = 4223552, ergebnis_mit_internen_verrechnungen = -2531015 }
+"04" = { ordentliche_ertraege = 31403, ordentliche_aufwendungen = 200452, ergebnis_mit_internen_verrechnungen = -170399 }
+"05" = { ordentliche_ertraege = 423865, ordentliche_aufwendungen = 876486, ergebnis_mit_internen_verrechnungen = -602721 }
+"06" = { ordentliche_ertraege = 64800, ordentliche_aufwendungen = 1399575, ergebnis_mit_internen_verrechnungen = -1336775 }
+"08" = { ordentliche_ertraege = 133014, ordentliche_aufwendungen = 289454, ergebnis_mit_internen_verrechnungen = -156440 }
+"09" = { ordentliche_ertraege = 0, ordentliche_aufwendungen = 133250, ergebnis_mit_internen_verrechnungen = -115550 }
+"10" = { ordentliche_ertraege = 287022, ordentliche_aufwendungen = 667090, ergebnis_mit_internen_verrechnungen = -235018 }
+"11" = { ordentliche_ertraege = 1226952, ordentliche_aufwendungen = 1166412, ergebnis_mit_internen_verrechnungen = 6150 }
+"12" = { ordentliche_ertraege = 932209, ordentliche_aufwendungen = 3463589, ergebnis_mit_internen_verrechnungen = -2533570 }
+"13" = { ordentliche_ertraege = 63300, ordentliche_aufwendungen = 504281, ergebnis_mit_internen_verrechnungen = -449731 }
+"14" = { ordentliche_ertraege = 50000, ordentliche_aufwendungen = 110200, ergebnis_mit_internen_verrechnungen = -60200 }
+"15" = { ordentliche_ertraege = 12045, ordentliche_aufwendungen = 202737, ergebnis_mit_internen_verrechnungen = -118138 }
+"16" = { ordentliche_ertraege = 20093000, ordentliche_aufwendungen = 11128681, ergebnis_mit_internen_verrechnungen = 9250219 }
+
+[teilergebnisplaene_pb_summe]
+ordentliche_ertraege = 27042063
+ordentliche_aufwendungen = 30255569

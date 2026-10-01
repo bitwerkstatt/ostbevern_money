@@ -213,8 +213,14 @@ def _pruefe_nur_ganzzahlen(wert: object, pfad_hinweis: str) -> None:
             _pruefe_nur_ganzzahlen(teilwert, f"{pfad_hinweis}[{index}]")
 
 
+_ZWEISTELLIGE_ZEILE_MUSTER = re.compile(r"^\d{2}$")
+_TEILERGEBNISPLAENE_PB_FELDER = frozenset(
+    {"ordentliche_ertraege", "ordentliche_aufwendungen", "ergebnis_mit_internen_verrechnungen"}
+)
+
+
 def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> dict[str, Any]:
-    """Lädt die Sollwertdatei `{jahr}_sollwerte.toml` und validiert sie (D-08, D-12)."""
+    """Lädt die Sollwertdatei `{jahr}_sollwerte.toml` und validiert sie (D-08, D-12, D-18)."""
     pfad = verzeichnis / f"{jahr}_sollwerte.toml"
     if not pfad.is_file():
         raise KonfigurationsFehler(f"Sollwertdatei nicht gefunden: {pfad}")
@@ -224,7 +230,14 @@ def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> 
 
     fehlende_schluessel = [
         schluessel
-        for schluessel in ("haushaltsjahr", "satzung", "gesamtergebnisplan")
+        for schluessel in (
+            "haushaltsjahr",
+            "satzung",
+            "gesamtergebnisplan",
+            "gesamtfinanzplan",
+            "teilergebnisplaene_pb",
+            "teilergebnisplaene_pb_summe",
+        )
         if schluessel not in rohdaten
     ]
     if fehlende_schluessel:
@@ -245,6 +258,43 @@ def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> 
                 f"Sollwertdatei {pfad}: Zeile {zeile!r} hat {len(werte)} Werte, "
                 f"erwartet {len(jahre)}"
             )
+
+    gesamtfinanzplan = rohdaten["gesamtfinanzplan"]
+    if "ansatz" not in gesamtfinanzplan:
+        raise KonfigurationsFehler(f"Sollwertdatei {pfad}: gesamtfinanzplan.ansatz fehlt")
+    for teiltabelle_name in ("ansatz", "ve"):
+        for zeile in gesamtfinanzplan.get(teiltabelle_name, {}):
+            if not _ZWEISTELLIGE_ZEILE_MUSTER.match(zeile):
+                raise KonfigurationsFehler(
+                    f"Sollwertdatei {pfad}: gesamtfinanzplan.{teiltabelle_name} hat keine "
+                    f"zweistellige Zeilennummer: {zeile!r}"
+                )
+
+    teilergebnisplaene_pb = rohdaten["teilergebnisplaene_pb"]
+    for pb_schluessel, eintrag in teilergebnisplaene_pb.items():
+        if not _ZWEISTELLIGE_ZEILE_MUSTER.match(pb_schluessel):
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: teilergebnisplaene_pb hat keinen zweistelligen "
+                f"PB-Schlüssel: {pb_schluessel!r}"
+            )
+        fehlende_felder = _TEILERGEBNISPLAENE_PB_FELDER - set(eintrag)
+        if fehlende_felder:
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: teilergebnisplaene_pb.{pb_schluessel} fehlen Felder: "
+                f"{', '.join(sorted(fehlende_felder))}"
+            )
+
+    teilergebnisplaene_pb_summe = rohdaten["teilergebnisplaene_pb_summe"]
+    fehlende_summenfelder = [
+        feld
+        for feld in ("ordentliche_ertraege", "ordentliche_aufwendungen")
+        if feld not in teilergebnisplaene_pb_summe
+    ]
+    if fehlende_summenfelder:
+        raise KonfigurationsFehler(
+            f"Sollwertdatei {pfad}: teilergebnisplaene_pb_summe fehlen Felder: "
+            f"{', '.join(fehlende_summenfelder)}"
+        )
 
     _pruefe_nur_ganzzahlen(rohdaten, "sollwerte")
 
