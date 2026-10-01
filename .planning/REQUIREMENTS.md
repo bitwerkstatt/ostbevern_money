@@ -17,7 +17,7 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 
 ### Extraktion
 
-- [ ] **EXTR-01**: Zahlenparser verarbeitet deutsches Format, Minus, „–“ als „kein Wert“, an Bezeichnungen klebende Beträge und `C` als Eurozeichen (mit Unit-Tests)
+- [x] **EXTR-01**: Zahlenparser verarbeitet deutsches Format, Minus, „–“ als „kein Wert“, an Bezeichnungen klebende Beträge und `C` als Eurozeichen (mit Unit-Tests)
 - [x] **EXTR-02**: Seitenklassifikation erzeugt `daten/zwischen/seiten.csv` (Seite, Typ, PB, PG, Produkt); Fortsetzungsseiten erben den Kontext; Startseiten aller 63 Produkte stimmen mit Anhang A überein
 - [x] **EXTR-03**: `hierarchie.csv` enthält 15 PB, alle PG (synthetische mit `synthetisch=true`) und 63 Produkte mit Namen aus der Produktseite
 - [x] **EXTR-04**: Gesamtergebnisplan und alle Teilergebnispläne (PB, Produkt) stehen im Langformat in `ergebnisplan.csv` mit `zeile`, `zeile_kanonisch`, `ist_summe` und `pdf_seite`; Spalten werden über x-Koordinaten zugeordnet; fehlende Zeilen gelten als 0
@@ -183,7 +183,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SETUP-03 | Phase 1 | Complete |
 | SETUP-04 | Phase 1 | Complete |
 | SETUP-05 | Phase 1 | Complete |
-| EXTR-01 | Phase 2 | Pending |
+| EXTR-01 | Phase 2 | Complete |
 | EXTR-02 | Phase 2 | Complete |
 | EXTR-03 | Phase 2 | Complete |
 | EXTR-04 | Phase 2 | Complete |

@@ -18,7 +18,7 @@ Abweichungen vom Spez.-Phasenplan:
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Setup** - Repo-Struktur, uv-Pipeline, Vue-Grundgerüst mit Münster-Komponenten, Jahrgangskonfiguration, CLAUDE.md und CI (Spez. P0) (completed 2026-10-01)
-- [ ] **Phase 2: Kernzahlen** - Seitenklassifikation, Hierarchie, alle Ergebnis- und Finanzpläne; Prüfregeln 1–4 grün, Anhang-B-Sollwerte getroffen (Spez. P1)
+- [x] **Phase 2: Kernzahlen** - Seitenklassifikation, Hierarchie, alle Ergebnis- und Finanzpläne; Prüfregeln 1–4 grün, Anhang-B-Sollwerte getroffen (Spez. P1) (completed 2026-10-01)
 - [ ] **Phase 3: Details** - Produktinformationen, Grundzahlen, Erläuterungen, Investitionen; Prüfregeln 6–8 grün, 63 Produkte vollständig (Spez. P2)
 - [ ] **Phase 4: Manuelle Daten und App-Daten** - Vorberichtstabellen, meta.json, Erklärtexte, Stellenplan, App-JSON; Prüfregel 5 grün, `alle.py` reproduzierbar (Spez. P3)
 - [ ] **Phase 5: Leitfragen-Seiten** - Start, Einnahmen, Ausgaben, Geldfluss und Glossar beantworten „Woher?“ und „Wofür?“ (Spez. P4)
@@ -71,7 +71,7 @@ Plans:
      - Satzung § 1 (Erträge 27.502.063 €, Aufwendungen 30.455.569 €)
   5. `uv run pytest` erzeugt `daten/pruefberichte/konsistenz.md`. Eine Abweichung über 1 €, die nicht in `befunde.md` steht, lässt den Lauf scheitern.
 
-**Plans**: 5/5 plans executed
+**Plans**: 5/5 plans complete
 
 Plans:
 **Wave 1**
@@ -181,7 +181,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Setup | 5/5 | Complete    | 2026-10-01 |
-| 2. Kernzahlen | 5/5 | In Progress|  |
+| 2. Kernzahlen | 5/5 | Complete    | 2026-10-01 |
 | 3. Details | 0/TBD | Not started | - |
 | 4. Manuelle Daten und App-Daten | 0/TBD | Not started | - |
 | 5. Leitfragen-Seiten | 0/TBD | Not started | - |
