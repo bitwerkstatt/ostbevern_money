@@ -71,6 +71,17 @@ pdf_seite = 63
 # Teilergebnispläne je Produktbereich (Anhang B.3), Haushaltsjahr 2026:
 # TP Z. 10 (ordentliche Erträge), Z. 17 (ordentliche Aufwendungen),
 # Z. 29 (Ergebnis mit internen Verrechnungen).
+#
+# PB 09/15 Z.29 korrigiert (Plan 02-05, D-20 "Tippfehler fallen über die Konsistenzregeln
+# auf"): discussion/SPEZIFIKATION.md Anhang B.3 listet für diese beiden PB fälschlich den
+# Wert der ERSTEN Produktgruppe aus dem Haushaltsquerschnitt (PDF S. 296 PG 0901: -115.550;
+# PDF S. 299 PG 1501: -118.138) statt des PB-Gesamtwerts. PB 09 und PB 15 drucken auf ihrer
+# eigenen Teilergebnisplan-Seite (S. 208 bzw. 271) keine Z. 27-31 außer (PB 09) Z. 30/31;
+# Z. 29 ist daher über die Formelkette (Z.26 = Z.18 = Z.10-Z.17, Z.27=Z.28=0, D-11)
+# herzuleiten: PB 09 = 0-133.250 = -133.250 (Regel-1-geprüft konsistent mit dem gedruckten
+# Z.31=-123.250 und Z.30=-10.000 auf S. 208: Z.31=Z.29-Z.30); PB 15 = 12.045-202.737 =
+# -190.692 (entspricht der GESAMTSUMME der zwei Produktgruppen 1501+1502 im
+# Haushaltsquerschnitt S. 299, -118.138 + -72.554 = -190.692).
 [teilergebnisplaene_pb]
 "01" = { ordentliche_ertraege = 1749837, ordentliche_aufwendungen = 4519223, ergebnis_mit_internen_verrechnungen = -2719206 }
 "02" = { ordentliche_ertraege = 281179, ordentliche_aufwendungen = 1370587, ergebnis_mit_internen_verrechnungen = -1090858 }
@@ -79,13 +90,13 @@ pdf_seite = 63
 "05" = { ordentliche_ertraege = 423865, ordentliche_aufwendungen = 876486, ergebnis_mit_internen_verrechnungen = -602721 }
 "06" = { ordentliche_ertraege = 64800, ordentliche_aufwendungen = 1399575, ergebnis_mit_internen_verrechnungen = -1336775 }
 "08" = { ordentliche_ertraege = 133014, ordentliche_aufwendungen = 289454, ergebnis_mit_internen_verrechnungen = -156440 }
-"09" = { ordentliche_ertraege = 0, ordentliche_aufwendungen = 133250, ergebnis_mit_internen_verrechnungen = -115550 }
+"09" = { ordentliche_ertraege = 0, ordentliche_aufwendungen = 133250, ergebnis_mit_internen_verrechnungen = -133250 }
 "10" = { ordentliche_ertraege = 287022, ordentliche_aufwendungen = 667090, ergebnis_mit_internen_verrechnungen = -235018 }
 "11" = { ordentliche_ertraege = 1226952, ordentliche_aufwendungen = 1166412, ergebnis_mit_internen_verrechnungen = 6150 }
 "12" = { ordentliche_ertraege = 932209, ordentliche_aufwendungen = 3463589, ergebnis_mit_internen_verrechnungen = -2533570 }
 "13" = { ordentliche_ertraege = 63300, ordentliche_aufwendungen = 504281, ergebnis_mit_internen_verrechnungen = -449731 }
 "14" = { ordentliche_ertraege = 50000, ordentliche_aufwendungen = 110200, ergebnis_mit_internen_verrechnungen = -60200 }
-"15" = { ordentliche_ertraege = 12045, ordentliche_aufwendungen = 202737, ergebnis_mit_internen_verrechnungen = -118138 }
+"15" = { ordentliche_ertraege = 12045, ordentliche_aufwendungen = 202737, ergebnis_mit_internen_verrechnungen = -190692 }
 "16" = { ordentliche_ertraege = 20093000, ordentliche_aufwendungen = 11128681, ergebnis_mit_internen_verrechnungen = 9250219 }
 
 [teilergebnisplaene_pb_summe]

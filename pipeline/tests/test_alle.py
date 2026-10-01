@@ -31,7 +31,7 @@ def _klassifizierungs_ergebnis() -> KlassifizierungsErgebnis:
     return KlassifizierungsErgebnis(
         seiten_pfad=Path("daten/zwischen/seiten.csv"),
         hierarchie_pfad=Path("daten/aufbereitet/hierarchie.csv"),
-        anzahl_seiten=400,
+        anzahl_seiten=42,
         unbekannte_seiten=(),
         anzahl_pb=15,
         anzahl_pg=48,

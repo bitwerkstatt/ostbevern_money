@@ -23,9 +23,11 @@ from ostbevern.schema import (
     FINANZPLAN_CSV,
     HIERARCHIE_CSV,
     KONSISTENZ_MD,
+    SEITEN_CSV,
     WERTARTEN,
     lies_hierarchie_csv,
     lies_plan_csv,
+    lies_seiten_csv,
     zerlege_spaltenkopf,
 )
 from ostbevern.zeilen import FORMELN, plantyp_fuer
@@ -45,6 +47,13 @@ TOLERANZ_EURO = 1
 # Minderaufwand (GEP 27, TP 30) sind absichtlich ausgenommen; Z. 18 (Ordentliches Ergebnis)
 # ist bereits über Regel 1 als Formel aus Z. 10/17 abgesichert.
 REGEL3_ZEILEN: tuple[str, ...] = tuple(f"{zeile:02d}" for zeile in range(1, 18)) + ("19", "20")
+
+# Anhang B.3 (Spez. Anhang B.3, fachliche Regel): Sollwertfeld -> Teilergebnisplan-Zeile je PB.
+B3_ZEILEN: dict[str, str] = {
+    "ordentliche_ertraege": "10",
+    "ordentliche_aufwendungen": "17",
+    "ergebnis_mit_internen_verrechnungen": "29",
+}
 
 # Satzung § 1-3 (PDF S. 8) als Formel aus Ergebnis-/Finanzplan-Zeilen (GESAMT, Haushaltsjahr):
 # Schlüssel -> (Zieldatei, Wertart, Komponenten als (Vorzeichen, Zeile)).
@@ -153,9 +162,12 @@ class Bericht:
     jahr: int
     regeln: tuple[Regelergebnis, ...]
     veraltete_befunde: tuple[Befund, ...] = ()
+    unbekannte_seiten: tuple[int, ...] = ()
 
     @property
     def ist_gruen(self) -> bool:
+        # unbekannte_seiten fliessen bewusst nicht ein (D-17): eine Seite ohne passendes
+        # Muster listet der Bericht, macht den Lauf aber nicht rot.
         return all(regel.status == "grün" for regel in self.regeln) and not self.veraltete_befunde
 
 
@@ -656,10 +668,79 @@ def _pruefe_regel4_satzung(
     return geprueft, abweichungen
 
 
+def _pruefe_regel4_b3(
+    *,
+    planwerte: Planwerte,
+    hierarchie: pl.DataFrame,
+    sollwerte: dict,
+    haushaltsjahr: int,
+) -> tuple[int, list[Pruefpunkt]]:
+    """Anhang B.3: je PB die 3 B3_ZEILEN-Felder, plus die beiden PB-Summenfelder."""
+    teilergebnisplaene_pb = sollwerte["teilergebnisplaene_pb"]
+    teilergebnisplaene_pb_summe = sollwerte["teilergebnisplaene_pb_summe"]
+    pdf_seite = sollwerte["gesamtergebnisplan"].get("pdf_seite")
+    hierarchie_pb_codes = set(hierarchie.filter(pl.col("ebene") == "PB")["code"].to_list())
+
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for pb_code, felder in sorted(teilergebnisplaene_pb.items()):
+        if pb_code not in hierarchie_pb_codes:
+            raise PruefungsFehler(
+                f"Regel 4 B.3: PB {pb_code!r} aus teilergebnisplaene_pb hat keinen "
+                "Teilergebnisplan in hierarchie.csv"
+            )
+        for feld, zeile in sorted(B3_ZEILEN.items()):
+            soll = felder[feld]
+            ist = planwerte.wert("PB", pb_code, zeile, haushaltsjahr, "ansatz")
+            geprueft += 1
+            punkt = Pruefpunkt(
+                regel=4,
+                plan="teilergebnisplaene_pb",
+                ebene="PB",
+                code=pb_code,
+                zeile=zeile,
+                jahr=haushaltsjahr,
+                wertart="ansatz",
+                soll=soll,
+                ist=ist,
+                pdf_seite=pdf_seite,
+            )
+            if abs(punkt.abweichung) > TOLERANZ_EURO:
+                abweichungen.append(punkt)
+
+    for feld, zeile in (
+        ("ordentliche_ertraege", B3_ZEILEN["ordentliche_ertraege"]),
+        ("ordentliche_aufwendungen", B3_ZEILEN["ordentliche_aufwendungen"]),
+    ):
+        soll = teilergebnisplaene_pb_summe[feld]
+        ist = sum(
+            planwerte.wert("PB", pb_code, zeile, haushaltsjahr, "ansatz")
+            for pb_code in sorted(hierarchie_pb_codes)
+        )
+        geprueft += 1
+        punkt = Pruefpunkt(
+            regel=4,
+            plan="teilergebnisplaene_pb_summe",
+            ebene="PB",
+            code="",
+            zeile=zeile,
+            jahr=haushaltsjahr,
+            wertart="ansatz",
+            soll=soll,
+            ist=ist,
+            pdf_seite=pdf_seite,
+        )
+        if abs(punkt.abweichung) > TOLERANZ_EURO:
+            abweichungen.append(punkt)
+
+    return geprueft, abweichungen
+
+
 def _pruefe_regel4(
     *,
     planwerte_ergebnisplan: Planwerte,
     planwerte_finanzplan: Planwerte,
+    hierarchie: pl.DataFrame,
     sollwerte: dict,
     spalten: tuple[str, ...],
 ) -> Regelergebnis:
@@ -677,12 +758,20 @@ def _pruefe_regel4(
         sollwerte=sollwerte,
         haushaltsjahr=haushaltsjahr,
     )
+    geprueft_b3, abweichungen_b3 = _pruefe_regel4_b3(
+        planwerte=planwerte_ergebnisplan,
+        hierarchie=hierarchie,
+        sollwerte=sollwerte,
+        haushaltsjahr=haushaltsjahr,
+    )
 
     return Regelergebnis(
         regel=4,
         titel="Regel 4 – Sollwerte (Anhang B, Satzung § 1-3)",
-        geprueft=geprueft_b1 + geprueft_b2 + geprueft_satzung,
-        abweichungen=tuple(abweichungen_b1 + abweichungen_b2 + abweichungen_satzung),
+        geprueft=geprueft_b1 + geprueft_b2 + geprueft_satzung + geprueft_b3,
+        abweichungen=tuple(
+            abweichungen_b1 + abweichungen_b2 + abweichungen_satzung + abweichungen_b3
+        ),
     )
 
 
@@ -703,6 +792,7 @@ def pruefe_alles(
     ergebnisplan = lies_plan_csv(daten_wurzel / ERGEBNISPLAN_CSV)
     finanzplan = lies_plan_csv(daten_wurzel / FINANZPLAN_CSV)
     hierarchie = lies_hierarchie_csv(daten_wurzel / HIERARCHIE_CSV)
+    seiten = lies_seiten_csv(daten_wurzel / SEITEN_CSV)
     pfad_befunde = befunde_pfad if befunde_pfad is not None else daten_wurzel / BEFUNDE_MD
     befunde = lies_befunde(pfad_befunde)
 
@@ -722,12 +812,21 @@ def pruefe_alles(
     regel4 = _pruefe_regel4(
         planwerte_ergebnisplan=Planwerte(ergebnisplan, datei="ergebnisplan"),
         planwerte_finanzplan=Planwerte(finanzplan, datei="finanzplan"),
+        hierarchie=hierarchie,
         sollwerte=sollwerte,
         spalten=jahrgang.spalten["ergebnisplan"],
     )
 
     regeln, veraltete_befunde = _wende_befunde_an((regel1, regel2, regel3, regel4), befunde)
-    return Bericht(jahr=jahr, regeln=regeln, veraltete_befunde=veraltete_befunde)
+    unbekannte_seiten = tuple(
+        sorted(seiten.filter(pl.col("typ") == "unbekannt")["pdf_seite"].to_list())
+    )
+    return Bericht(
+        jahr=jahr,
+        regeln=regeln,
+        veraltete_befunde=veraltete_befunde,
+        unbekannte_seiten=unbekannte_seiten,
+    )
 
 
 def _pruefpunkt_sortierschluessel(punkt: Pruefpunkt) -> tuple:
@@ -803,6 +902,12 @@ def rendere_konsistenzbericht(bericht: Bericht) -> str:
                 f"{befund.zeile} | {befund.jahr} | {befund.wertart} | {befund.abweichung} | "
                 f"{befund.pdf_seite} | {befund.begruendung} |"
             )
+
+    zeilen += ["", "## Seiten mit typ=unbekannt", ""]
+    if bericht.unbekannte_seiten:
+        zeilen.append(", ".join(str(seite) for seite in bericht.unbekannte_seiten))
+    else:
+        zeilen.append("Keine.")
 
     zeilen.append("")
     return "\n".join(zeilen)

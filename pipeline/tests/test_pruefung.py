@@ -885,8 +885,10 @@ def test_konsistenzbericht_unbekannte_seiten_keine_auf_echten_daten() -> None:
     assert unbekannte_seiten is not None, "Bericht.unbekannte_seiten fehlt"
     assert unbekannte_seiten == ()
 
-    pfad = schreibe_konsistenzbericht(bericht)
-    inhalt = pfad.read_text(encoding="utf-8")
+    # rendere_konsistenzbericht ist eine reine Funktion (kein Dateizugriff) -- die echte
+    # daten/pruefberichte/konsistenz.md bleibt unberührt (D-06, nur alle.py/06_pruefen.py
+    # dürfen sie schreiben).
+    inhalt = rendere_konsistenzbericht(bericht)
     abschnitt = inhalt.split("## Seiten mit typ=unbekannt")
     assert len(abschnitt) == 2, "Abschnitt '## Seiten mit typ=unbekannt' fehlt im Bericht"
     assert "Keine." in abschnitt[1]
@@ -917,7 +919,9 @@ def test_konsistenzbericht_unbekannte_seiten_gelistet(tmp_path: Path) -> None:
     # nicht rot.
     assert bericht.ist_gruen is True
 
-    pfad = schreibe_konsistenzbericht(bericht)
+    # schreibe_konsistenzbericht mit explizitem daten_wurzel=tmp_path, damit der manipulierte
+    # Bericht nicht versehentlich die echte daten/pruefberichte/konsistenz.md überschreibt.
+    pfad = schreibe_konsistenzbericht(bericht, daten_wurzel=tmp_path)
     inhalt = pfad.read_text(encoding="utf-8")
     abschnitt = inhalt.split("## Seiten mit typ=unbekannt")
     assert len(abschnitt) == 2, "Abschnitt '## Seiten mit typ=unbekannt' fehlt im Bericht"

@@ -11,7 +11,7 @@ Gesamtstatus: grün
 | Regel 1 – Zeilenformeln | grün | 6550 | 0 | 3 |
 | Regel 2 – Produkte → PG → PB | grün | 7920 | 0 | 6 |
 | Regel 3 – Produktbereiche → Gesamtergebnisplan | grün | 114 | 0 | 1 |
-| Regel 4 – Sollwerte (Anhang B, Satzung § 1-3) | grün | 147 | 0 | 0 |
+| Regel 4 – Sollwerte (Anhang B, Satzung § 1-3) | grün | 194 | 0 | 0 |
 
 ## Abweichungen
 
@@ -33,5 +33,9 @@ Keine.
 | 3 | gesamtergebnisplan | GESAMT |  | 11 | 2024 | ergebnis | 3 | 62 | Gesamtergebnisplan (Anhang B.1), Spalte Ergebnis 2024: Zeile 11 (Personalaufwendungen) ist mit "4.629.147" gedruckt (S. 62). Die Summe der gedruckten Zeile 11 aller 15 Produktbereiche (S. 66, 124, 145, 169, 178, 192, 203, 208, 220, 231, 234, 255, 268, 271, 278) ergibt 4.629.150. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 3 C im PDF selbst. |
 
 ## Veraltete Befunde
+
+Keine.
+
+## Seiten mit typ=unbekannt
 
 Keine.
