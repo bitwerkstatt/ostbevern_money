@@ -178,12 +178,97 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| SETUP-01 | Phase 1 | Pending |
+| SETUP-02 | Phase 1 | Pending |
+| SETUP-03 | Phase 1 | Pending |
+| SETUP-04 | Phase 1 | Pending |
+| SETUP-05 | Phase 1 | Pending |
+| EXTR-01 | Phase 2 | Pending |
+| EXTR-02 | Phase 2 | Pending |
+| EXTR-03 | Phase 2 | Pending |
+| EXTR-04 | Phase 2 | Pending |
+| EXTR-05 | Phase 2 | Pending |
+| EXTR-06 | Phase 3 | Pending |
+| EXTR-07 | Phase 3 | Pending |
+| EXTR-08 | Phase 3 | Pending |
+| EXTR-09 | Phase 3 | Pending |
+| EXTR-10 | Phase 4 | Pending |
+| MANU-01 | Phase 4 | Pending |
+| MANU-02 | Phase 4 | Pending |
+| MANU-03 | Phase 4 | Pending |
+| MANU-04 | Phase 4 | Pending |
+| MANU-05 | Phase 4 | Pending |
+| MANU-06 | Phase 4 | Pending |
+| MANU-07 | Phase 4 | Pending |
+| MANU-08 | Phase 4 | Pending |
+| PRUEF-01 | Phase 2 | Pending |
+| PRUEF-02 | Phase 2 | Pending |
+| PRUEF-03 | Phase 2 | Pending |
+| PRUEF-04 | Phase 2 | Pending |
+| PRUEF-05 | Phase 4 | Pending |
+| PRUEF-06 | Phase 3 | Pending |
+| PRUEF-07 | Phase 3 | Pending |
+| PRUEF-08 | Phase 3 | Pending |
+| PRUEF-09 | Phase 2 | Pending |
+| PRUEF-10 | Phase 4 | Pending |
+| DATA-01 | Phase 4 | Pending |
+| DATA-02 | Phase 4 | Pending |
+| DATA-03 | Phase 4 | Pending |
+| DATA-04 | Phase 7 | Pending |
+| START-01 | Phase 5 | Pending |
+| START-02 | Phase 5 | Pending |
+| EINN-01 | Phase 5 | Pending |
+| EINN-02 | Phase 5 | Pending |
+| EINN-03 | Phase 5 | Pending |
+| EINN-04 | Phase 5 | Pending |
+| EINN-05 | Phase 5 | Pending |
+| EINN-06 | Phase 5 | Pending |
+| AUSG-01 | Phase 5 | Pending |
+| AUSG-02 | Phase 5 | Pending |
+| AUSG-03 | Phase 5 | Pending |
+| AUSG-04 | Phase 5 | Pending |
+| AUSG-05 | Phase 5 | Pending |
+| FLUSS-01 | Phase 5 | Pending |
+| FLUSS-02 | Phase 5 | Pending |
+| FLUSS-03 | Phase 5 | Pending |
+| FLUSS-04 | Phase 5 | Pending |
+| ENTW-01 | Phase 6 | Pending |
+| ENTW-02 | Phase 6 | Pending |
+| ENTW-03 | Phase 6 | Pending |
+| INV-01 | Phase 6 | Pending |
+| INV-02 | Phase 6 | Pending |
+| INV-03 | Phase 6 | Pending |
+| INV-04 | Phase 6 | Pending |
+| RAT-01 | Phase 6 | Pending |
+| RAT-02 | Phase 6 | Pending |
+| RAT-03 | Phase 6 | Pending |
+| RAT-04 | Phase 6 | Pending |
+| STEL-01 | Phase 6 | Pending |
+| STEL-02 | Phase 6 | Pending |
+| STEL-03 | Phase 6 | Pending |
+| GLOS-01 | Phase 5 | Pending |
+| GLOS-02 | Phase 5 | Pending |
+| GLOS-03 | Phase 5 | Pending |
+| UI-01 | Phase 5 | Pending |
+| UI-02 | Phase 7 | Pending |
+| UI-03 | Phase 5 | Pending |
+| UI-04 | Phase 6 | Pending |
+| UI-05 | Phase 5 | Pending |
+| UI-06 | Phase 7 | Pending |
+| A11Y-01 | Phase 7 | Pending |
+| A11Y-02 | Phase 7 | Pending |
+| A11Y-03 | Phase 7 | Pending |
+| A11Y-04 | Phase 7 | Pending |
+| QUAL-01 | Phase 1 | Pending |
+| QUAL-02 | Phase 7 | Pending |
+| DEPL-01 | Phase 7 | Pending |
+| DEPL-02 | Phase 7 | Pending |
 
 **Coverage:**
 - v1 requirements: 85 total
-- Mapped to phases: 0
-- Unmapped: 85 ⚠️
+- Mapped to phases: 85
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-10-01*
-*Last updated: 2026-10-01 after initial definition*
+*Last updated: 2026-10-01 after roadmap creation*
