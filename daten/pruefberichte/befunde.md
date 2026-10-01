@@ -8,7 +8,7 @@ PDF-Seite dokumentiert.
 Ein Befund deckt eine Abweichung nur ab, wenn Regel, Plan, Ebene, Code, Zeile, Jahr und
 Wertart übereinstimmen **und** die tatsächliche Abweichung um höchstens 1 € von der hier
 dokumentierten abweicht (D-05). `abweichung = ist − soll`, je nach Regel in `pruefung.py`
-berechnet (Regel 1: gedruckte Summe minus Formelkette; Regel 2: Summe der Kinder minus
+berechnet (Regel 1: Formelkette minus gedruckte Summe; Regel 2: Summe der Kinder minus
 gedruckter Elternwert, je Ebene PG→P bzw. PB→PG; Regel 3: Summe der 15 PB minus gedrucktem
 Gesamtergebnisplan; Regel 4: Pipeline-Wert minus Sollwert aus Anhang B bzw. Satzung).
 
