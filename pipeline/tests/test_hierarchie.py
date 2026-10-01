@@ -2,17 +2,24 @@
 CSVs unter daten/ und die Sollwertdatei, nie das PDF).
 
 Deckt EXTR-03 (hierarchie.csv: 15 PB, 48 PG davon 40 synthetisch, 63 Produkte)
-und den Abgleich der Startseiten/Namen gegen Anhang A (D-19, Roadmap SC 1).
+und den Abgleich der Startseiten/Namen gegen Anhang A (D-19, Roadmap SC 1), sowie
+seit 02-04 die Vollständigkeit von ergebnisplan.csv/finanzplan.csv je Knoten und
+die synthetischen-PG-Summenbildung (D-14).
 """
 
 from __future__ import annotations
 
+import polars as pl
+
 from ostbevern.konfiguration import STANDARD_JAHR, lade_jahrgang, lade_sollwerte
 from ostbevern.schema import (
     DATEN_WURZEL,
+    ERGEBNISPLAN_CSV,
+    FINANZPLAN_CSV,
     HIERARCHIE_CSV,
     SEITEN_CSV,
     lies_hierarchie_csv,
+    lies_plan_csv,
     lies_seiten_csv,
 )
 
@@ -100,3 +107,53 @@ def test_produktseiten_in_seiten_csv_stimmen_mit_anhang_a() -> None:
                 assert startseite["pb"] == code
             else:
                 assert startseite["pg"] == code
+
+
+def test_jeder_knoten_hat_ergebnis_und_finanzplanzeilen() -> None:
+    """Jeder Knoten aus hierarchie.csv (PB, PG gedruckt und synthetisch, P) hat mindestens
+    eine Zeile in ergebnisplan.csv und finanzplan.csv (D-08, D-13, D-14)."""
+    hierarchie = lies_hierarchie_csv(DATEN_WURZEL / HIERARCHIE_CSV)
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    finanzplan = lies_plan_csv(DATEN_WURZEL / FINANZPLAN_CSV)
+
+    for knoten in hierarchie.iter_rows(named=True):
+        ebene, code = knoten["ebene"], knoten["code"]
+        teilergebnisplan_zeilen = ergebnisplan.filter(
+            (pl.col("ebene") == ebene) & (pl.col("code") == code)
+        )
+        assert teilergebnisplan_zeilen.height > 0, (ebene, code)
+        teilfinanzplan_zeilen = finanzplan.filter(
+            (pl.col("ebene") == ebene) & (pl.col("code") == code)
+        )
+        assert teilfinanzplan_zeilen.height > 0, (ebene, code)
+        assert (teilergebnisplan_zeilen["synthetisch"] == knoten["synthetisch"]).all()
+        assert (teilfinanzplan_zeilen["synthetisch"] == knoten["synthetisch"]).all()
+
+
+def test_synthetische_pg_summieren_ihre_produkte() -> None:
+    """Jede synthetische-PG-Zeile ist je zeile/jahr/wertart die Summe ihrer Produktzeilen
+    (D-14): für eine einproduktige PG ist das eine Kopie, für PG 1501 eine echte Summe."""
+    hierarchie = lies_hierarchie_csv(DATEN_WURZEL / HIERARCHIE_CSV)
+    synthetische_pg = hierarchie.filter((pl.col("ebene") == "PG") & pl.col("synthetisch"))
+    assert synthetische_pg.height > 0
+
+    for datei in (
+        lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV),
+        lies_plan_csv(DATEN_WURZEL / FINANZPLAN_CSV),
+    ):
+        for pg in synthetische_pg.iter_rows(named=True):
+            pg_code = pg["code"]
+            pg_zeilen = datei.filter((pl.col("ebene") == "PG") & (pl.col("code") == pg_code))
+            produkt_zeilen = datei.filter(
+                (pl.col("ebene") == "P") & pl.col("code").str.starts_with(pg_code)
+            )
+            assert pg_zeilen.height > 0, pg_code
+            summe_je_schluessel = {
+                (zeile["zeile"], zeile["jahr"], zeile["wertart"]): zeile["betrag_summe"]
+                for zeile in produkt_zeilen.group_by(["zeile", "jahr", "wertart"])
+                .agg(pl.col("betrag").sum().alias("betrag_summe"))
+                .iter_rows(named=True)
+            }
+            for zeile in pg_zeilen.iter_rows(named=True):
+                schluessel = (zeile["zeile"], zeile["jahr"], zeile["wertart"])
+                assert zeile["betrag"] == summe_je_schluessel[schluessel], (pg_code, schluessel)
