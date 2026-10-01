@@ -15,6 +15,7 @@ import pytest
 
 from ostbevern.konfiguration import JAHRGAENGE_VERZEICHNIS, STANDARD_JAHR, lade_sollwerte
 from ostbevern.pruefung import (
+    REGEL3_ZEILEN,
     SATZUNG_FORMELN,
     TOLERANZ_EURO,
     Abgleich,
@@ -64,6 +65,23 @@ def _schreibe_befunde_md(pfad: Path, *, zeilen: Sequence[str] = ()) -> None:
     ]
     pfad.parent.mkdir(parents=True, exist_ok=True)
     pfad.write_text("\n".join(inhalt), encoding="utf-8")
+
+
+def _lies_schluesseltabelle_markdown_zeilen(pfad: Path) -> list[str]:
+    """Liest die rohen Markdown-Tabellenzeilen der Schlüsseltabelle einer befunde.md.
+
+    Für Tests, die eigene Befunde zu den real eingecheckten (D-06) hinzufügen wollen, ohne
+    deren bekannte PDF-Rundungsdifferenzen (Regel 1/2/3) von Hand zu duplizieren.
+    """
+    zeilen = pfad.read_text(encoding="utf-8").splitlines()
+    start = next(i for i, z in enumerate(zeilen) if z.strip() == "## Schlüsseltabelle")
+    kopfzeile_index = next(i for i in range(start + 1, len(zeilen)) if zeilen[i].strip())
+    ergebnis: list[str] = []
+    for zeile in zeilen[kopfzeile_index + 2 :]:
+        if not zeile.strip().startswith("|"):
+            break
+        ergebnis.append(zeile)
+    return ergebnis
 
 
 def _befunde_zeile(
@@ -721,8 +739,42 @@ def test_konsistenzbericht_listet_bekannten_befund(tmp_path: Path) -> None:
             ("P", "080101", 206),
         )
     ]
+    # zeile_sollwert kann auch eine Regel-3-Zeile sein (Z. 01-17/19/20): die GESAMT-Manipulation
+    # wirkt dann auch auf Regel 3 (soll = Gesamt, ist = Σ PB bleibt unverändert), seit diesem
+    # Plan braucht das denselben Befund-Abgleich wie Regel 1/4 oben.
+    befunde_regel3: list[str] = []
+    if zeile_sollwert in REGEL3_ZEILEN:
+        hierarchie = lies_hierarchie_csv(DATEN_WURZEL / HIERARCHIE_CSV)
+        planwerte_basis = Planwerte(df, datei="ergebnisplan")
+        pb_codes = sorted(hierarchie.filter(pl.col("ebene") == "PB")["code"].unique().to_list())
+        ist_basis = sum(
+            planwerte_basis.wert("PB", code, zeile_sollwert, jahr, "ansatz") for code in pb_codes
+        )
+        soll_basis = planwerte_basis.wert("GESAMT", "", zeile_sollwert, jahr, "ansatz")
+        abweichung_regel3 = ist_basis - (soll_basis + 5)
+        if abs(abweichung_regel3) > TOLERANZ_EURO:
+            befunde_regel3 = [
+                _befunde_zeile(
+                    regel=3,
+                    plan="gesamtergebnisplan",
+                    ebene="GESAMT",
+                    code="",
+                    zeile=zeile_sollwert,
+                    jahr=jahr,
+                    wertart="ansatz",
+                    abweichung=abweichung_regel3,
+                    pdf_seite=62,
+                    begruendung="Testabweichung Regel 3 (GESAMT-Manipulation wirkt auch hier)",
+                )
+            ]
+
+    # Die real eingecheckte befunde.md deckt bereits die bekannten PDF-Rundungsdifferenzen von
+    # Regel 1 (PB08/PG0801/P080101 Z.17 2024, s. befunde_teilplan) und Regel 2/3 ab; diese Datei
+    # ergänzt nur die beiden testspezifischen Einträge (und ggf. den Regel-3-Folgeeffekt).
+    reale_befunde_zeilen = _lies_schluesseltabelle_markdown_zeilen(DATEN_WURZEL / BEFUNDE_MD)
     _schreibe_befunde_md(
-        tmp_path / BEFUNDE_MD, zeilen=[befund_regel4, befund_regel1, *befunde_teilplan]
+        tmp_path / BEFUNDE_MD,
+        zeilen=[*reale_befunde_zeilen, befund_regel4, befund_regel1, *befunde_regel3],
     )
 
     bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
