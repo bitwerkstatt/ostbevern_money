@@ -37,7 +37,14 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. `npm run build` baut das Vue-3-Grundgerüst (TS, Vite, Web Awesome, vue-echarts, Hash-Router) mit den übernommenen Münster-Basiskomponenten (`PageIntro`, `ChartCard`, `BaseChart`, `DatenTabelle`, `charts/format.ts`, `echartsTheme.ts` u. a.). `vue-tsc` und ESLint laufen in GitHub Actions fehlerfrei.
   4. Haushaltsjahr, Spaltenköpfe, Seitenbereiche und PDF-Pfad stehen in einer Jahrgangs-Konfigurationsdatei, und die Pipeline lädt sie von dort statt aus dem Code.
   5. Die Projekt-`CLAUDE.md` nennt die Befehle für Pipeline und App sowie die Konventionen: deutsche Bezeichner ohne Umlaute, Beträge als int-Euro, nur 1-basierte PDF-Seiten, keine Jahrgangswerte im Code, Du-Anrede, Zahlen in Texten aus Daten.
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Paketprüfung: Mensch bestätigt alle PyPI- und npm-Pakete vor jeder Installation (Wave 1, Checkpoint)
+- [ ] 01-02-PLAN.md — Pipeline: PDF umbenannt, uv-Projekt, Jahrgangs- und Sollwertdatei, Lader mit Prüfung, Rauchtest, alle.py --jahr, ruff, daten/ (Wave 2)
+- [ ] 01-03-PLAN.md — App-Gerüst: create-vue, Web Awesome, Hash-Router, PageIntro, Rahmen mit Navigation und Münster-Dank, Lint-/Format-Skripte (Wave 2)
+- [ ] 01-04-PLAN.md — Basiskomponenten: format.ts, echartsTheme.ts, BaseChart, ChartCard mit Beispieldaten-Hinweis, DatenTabelle, bildschirm.ts (Wave 3)
+- [ ] 01-05-PLAN.md — CI mit zwei Jobs (lokal nachgestellt), Befehle und Konventionen in .claude/CLAUDE.md, README, MIT-LICENSE (Wave 4)
 
 ### Phase 2: Kernzahlen
 **Goal**: Alle Ergebnis- und Finanzpläne (Gesamt, PB, Produkt) liegen korrekt im Langformat vor. Die Pipeline weist das durch automatische Prüfungen und Anhang-B-Sollwerte nach.
