@@ -27,21 +27,66 @@ Die vollständige fachliche Spezifikation steht in `discussion/SPEZIFIKATION.md`
 
 ## Technology Stack
 
-Technology stack not yet documented. Will populate after codebase mapping or first phase.
+**Pipeline** (`pipeline/`): Python 3.12 (uv-verwaltet über `pipeline/.python-version`), uv 0.9.x, pdfplumber, polars, typer, pytest, ruff (genaue Versionen in `pipeline/uv.lock`).
+
+**App** (`app/`): Vue 3, vue-router 5 mit Hash-History, Vite, TypeScript (Scaffold-Pin), Web Awesome 3 (Komponenten werden einzeln in `app/src/main.ts` importiert, Icons selbst gehostet unter `app/public/icons`, Goldakzent über `wa-brand-yellow`), ECharts 6 über vue-echarts 8 (nur die in `app/src/charts/echartsTheme.ts` registrierten Module), ESLint-Flat-Config plus Prettier, Node 22 (`app/.nvmrc`).
+
+**CI**: `.github/workflows/ci.yml` mit den Jobs `pipeline` und `app`.
+
+### Befehle
+
+Pipeline (vom Repo-Root aus):
+- `uv sync --directory pipeline`
+- `uv run --directory pipeline pytest`
+- `uv run --directory pipeline ruff check .`
+- `uv run --directory pipeline ruff format .`
+- `uv run --directory pipeline python alle.py --jahr 2026` (ohne `--jahr` gilt `STANDARD_JAHR`)
+
+Hinweis: Ein bloßes `uv run pipeline/SKRIPT.py` vom Repo-Root nutzt **nicht** die Pipeline-Umgebung — deshalb immer `--directory pipeline` angeben (Abweichung von Spez. 5.2).
+
+App (vom Repo-Root aus):
+- `npm --prefix app ci`
+- `npm --prefix app run dev`
+- `npm --prefix app run build`
+- `npm --prefix app run type-check`
+- `npm --prefix app run lint` (und `lint:fix`)
+- `npm --prefix app run format` und `format:check`
+
+CI lokal nachstellen (identisch zu `.github/workflows/ci.yml`):
+```
+(cd pipeline && uv sync --locked && uv run ruff check . && uv run ruff format --check . && uv run pytest)
+(cd app && npm ci && npm run type-check && npm run lint && npm run format:check && npm run build)
+```
 <!-- GSD:stack-end -->
 
 <!-- GSD:conventions-start source:CONVENTIONS.md -->
 
 ## Conventions
 
-Conventions not yet established. Will populate as patterns emerge during development.
+- **Deutsche Bezeichner ohne Umlaute** — in Code und Daten, z. B. `ertraege`, `zuschussbedarf`, `lade_jahrgang`.
+- **Beträge als int-Euro** — Formatierung ausschließlich in der App über `app/src/charts/format.ts`.
+- **Nur 1-basierte PDF-Seiten** — `pdf_seite`, niemals gedruckte Seitenzahlen.
+- **Keine Jahrgangswerte im Code** — Haushaltsjahr, PDF-Pfad, Spaltenköpfe, Seitenbereiche, Kopfzeilen-Muster und erwartete Anzahlen stehen in `pipeline/jahrgaenge/{jahr}.toml`, Sollwerte in `{jahr}_sollwerte.toml`. Gelesen wird ausschließlich über `ostbevern.konfiguration.lade_jahrgang` bzw. `lade_sollwerte`. Der Standardjahrgang steht an genau einer Stelle, `STANDARD_JAHR`. Jedes Pipeline-Skript nimmt `--jahr` entgegen. Die App bezieht den Jahrgang aus `app/src/data/`.
+- **Du-Anrede** — durchgehend in allen App-Texten.
+- **Zahlen in Texten aus Daten** — niemals von Hand eingetippt; jeder erklärende Text mit einer Zahl verweist auf eine PDF-Seite.
+
+Konventionen aus dieser Phase:
+- Pipeline-Skripte sind dünne typer-Einstiegspunkte, die eigentliche Logik liegt in `pipeline/ostbevern/`.
+- Fachliche Regeln (Zeilenformeln, Minderaufwand-Zeilen, Ausschluss TP 27/28) bleiben im Code.
+- Generierte Daten unter `daten/` werden eingecheckt.
+- Die Basiskomponenten behalten die Münster-Namen und -Props (`PageIntro`, `ChartCard`, `BaseChart`, `DatenTabelle`, `format.ts`, `echartsTheme.ts`, `bildschirm.ts`).
+- Farben ausschließlich über `--wa-*`-Tokens, Chartfarben ausschließlich aus `echartsTheme.ts`.
+- Projekteigene CSS-Klassen tragen das Präfix `om-`.
+- Beispielwerte erscheinen nur hinter dem `ChartCard`-Flag `beispieldaten`.
+- Keine Drittanbieter-Requests zur Laufzeit.
+- Beim Commit werden nur die explizit benannten Pfade gestaged.
 <!-- GSD:conventions-end -->
 
 <!-- GSD:architecture-start source:ARCHITECTURE.md -->
 
 ## Architecture
 
-Architecture not yet mapped. Follow existing patterns found in the codebase.
+Datenfluss: `raw_data/haushalt-2026.pdf` → `pipeline/` (Bibliothek `ostbevern/`, Konfiguration `jahrgaenge/`, Einstieg `alle.py`, nummerierte Schritte ab Phase 2) → `daten/{zwischen,aufbereitet,manuell,pruefberichte}` → `app/src/data/` JSON (ab Phase 4) → Vue-App (`src/pages`, `src/components`, `src/charts`, `src/lib`, `src/data`) → GitHub Pages (Phase 7). Die CI prüft beide Projektteile bei jedem Push.
 <!-- GSD:architecture-end -->
 
 <!-- GSD:skills-start source:skills/ -->
