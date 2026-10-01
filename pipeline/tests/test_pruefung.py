@@ -14,7 +14,12 @@ from pathlib import Path
 import polars as pl
 import pytest
 
-from ostbevern.konfiguration import JAHRGAENGE_VERZEICHNIS, STANDARD_JAHR, lade_sollwerte
+from ostbevern.konfiguration import (
+    JAHRGAENGE_VERZEICHNIS,
+    STANDARD_JAHR,
+    lade_jahrgang,
+    lade_sollwerte,
+)
 from ostbevern.pruefung import (
     REGEL3_ZEILEN,
     REGEL7_KENNZAHLEN,
@@ -38,17 +43,23 @@ from ostbevern.schema import (
     ERGEBNISPLAN_CSV,
     FINANZPLAN_CSV,
     HIERARCHIE_CSV,
+    INVESTITIONEN_CSV,
     KONSISTENZ_MD,
     PLAN_SPALTEN,
     QUERSCHNITTE_CSV,
     SEITEN_CSV,
+    VE_FAELLIGKEITEN_CSV,
     lies_hierarchie_csv,
+    lies_investitionen_csv,
     lies_plan_csv,
     lies_querschnitte_csv,
     lies_seiten_csv,
+    lies_ve_faelligkeiten_csv,
+    schreibe_investitionen_csv,
     schreibe_plan_csv,
     schreibe_querschnitte_csv,
     schreibe_seiten_csv,
+    schreibe_ve_faelligkeiten_csv,
 )
 from ostbevern.zeilen import FORMELN, plantyp_fuer
 
@@ -163,9 +174,15 @@ def _synthetischer_teilergebnisplan(z29_betrag: int) -> pl.DataFrame:
 
 
 def _kopiere_finanzplan_nach(tmp_path: Path) -> None:
-    """Kopiert die eingecheckte finanzplan.csv unverändert in den tmp-Datenbaum (D-06)."""
+    """Kopiert die eingecheckte finanzplan.csv unverändert in den tmp-Datenbaum (D-06).
+
+    Kopiert außerdem investitionen.csv und ve_faelligkeiten.csv mit (Regel 6 liest beide
+    bei jedem pruefe_alles()-Aufruf; praktisch jeder Aufrufer dieser Funktion braucht sie).
+    """
     finanzplan = lies_plan_csv(DATEN_WURZEL / FINANZPLAN_CSV)
     schreibe_plan_csv(finanzplan, tmp_path / FINANZPLAN_CSV)
+    _kopiere_investitionen_nach(tmp_path)
+    _kopiere_ve_faelligkeiten_nach(tmp_path)
 
 
 def _kopiere_hierarchie_nach(tmp_path: Path) -> None:
@@ -1181,6 +1198,213 @@ def test_regel7_kennzahlen_decken_alle_querschnitt_werte_ab() -> None:
     querschnitte = lies_querschnitte_csv(DATEN_WURZEL / QUERSCHNITTE_CSV)
     gefundene_kennzahlen = set(querschnitte["kennzahl"].unique().to_list())
     assert gefundene_kennzahlen <= set(REGEL7_KENNZAHLEN)
+
+
+# --- Regel 6: Investitionsmaßnahmen -> Teil-/Gesamtfinanzplan (PRUEF-06, D-05) ---------
+
+
+def _kopiere_investitionen_nach(tmp_path: Path) -> None:
+    """Kopiert die eingecheckte investitionen.csv unverändert in den tmp-Datenbaum (D-06)."""
+    investitionen = lies_investitionen_csv(DATEN_WURZEL / INVESTITIONEN_CSV)
+    schreibe_investitionen_csv(investitionen, tmp_path / INVESTITIONEN_CSV)
+
+
+def _kopiere_ve_faelligkeiten_nach(tmp_path: Path) -> None:
+    """Kopiert die eingecheckte ve_faelligkeiten.csv unverändert in den tmp-Datenbaum (D-06)."""
+    ve_faelligkeiten = lies_ve_faelligkeiten_csv(DATEN_WURZEL / VE_FAELLIGKEITEN_CSV)
+    schreibe_ve_faelligkeiten_csv(ve_faelligkeiten, tmp_path / VE_FAELLIGKEITEN_CSV)
+
+
+def _kopiere_regel6_abhaengigkeiten(tmp_path: Path, *, mit_befunde: bool = True) -> None:
+    """Kopiert alle von Regel 6 (und dem restlichen Bericht) benötigten Dateien (D-06)."""
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_querschnitte_nach(tmp_path)
+    _kopiere_investitionen_nach(tmp_path)
+    _kopiere_ve_faelligkeiten_nach(tmp_path)
+    if mit_befunde:
+        _kopiere_befunde_nach(tmp_path)
+
+
+def _erwartete_regel6_anzahl() -> int:
+    jahrgang = lade_jahrgang(STANDARD_JAHR)
+    hierarchie = lies_hierarchie_csv(DATEN_WURZEL / HIERARCHIE_CSV)
+    anzahl_produkte = hierarchie.filter(pl.col("ebene") == "P").height
+    anzahl_spalten = len(jahrgang.spalten["investitionen"])
+    investitionen = lies_investitionen_csv(DATEN_WURZEL / INVESTITIONEN_CSV)
+    ve_faelligkeiten = lies_ve_faelligkeiten_csv(DATEN_WURZEL / VE_FAELLIGKEITEN_CSV)
+    ve_schluessel = set(
+        investitionen.filter(pl.col("wertart") == "ve")
+        .select(["produkt", "massnahme_id", "konto"])
+        .iter_rows()
+    ) | set(ve_faelligkeiten.select(["produkt", "massnahme_id", "konto"]).iter_rows())
+    return anzahl_produkte * 2 * anzahl_spalten + 2 * anzahl_spalten + len(ve_schluessel)
+
+
+def test_regel6_gruen_auf_eingecheckten_daten() -> None:
+    bericht = pruefe_alles(STANDARD_JAHR)
+    regel6 = next((regel for regel in bericht.regeln if regel.regel == 6), None)
+    assert regel6 is not None, "Regel 6 fehlt im Bericht"
+    assert regel6.geprueft == _erwartete_regel6_anzahl()
+    assert regel6.status == "grün"
+    assert regel6.abweichungen == ()
+    assert bericht.ist_gruen is True
+
+
+def test_regel6_summe_trifft_sollwerte_b2() -> None:
+    """Σ aller Maßnahmen Ansatz Haushaltsjahr trifft Anhang-B.2-Sollwerte (Roadmap SC 3)."""
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    investitionen = lies_investitionen_csv(DATEN_WURZEL / INVESTITIONEN_CSV)
+    ansatz = investitionen.filter(
+        (pl.col("jahr") == STANDARD_JAHR) & (pl.col("wertart") == "ansatz")
+    )
+    assert (
+        ansatz.filter(pl.col("richtung") == "einzahlung")["betrag"].sum()
+        == sollwerte["gesamtfinanzplan"]["ansatz"]["23"]
+    )
+    assert (
+        ansatz.filter(pl.col("richtung") == "auszahlung")["betrag"].sum()
+        == sollwerte["gesamtfinanzplan"]["ansatz"]["30"]
+    )
+
+
+def test_regel6_erkennt_manipulierten_investitionswert(tmp_path: Path) -> None:
+    investitionen = lies_investitionen_csv(DATEN_WURZEL / INVESTITIONEN_CSV)
+    ziel_zeile = investitionen.row(0, named=True)
+
+    def _manipuliere(delta: int) -> pl.DataFrame:
+        bedingung = (
+            (pl.col("produkt") == ziel_zeile["produkt"])
+            & (pl.col("massnahme_id") == ziel_zeile["massnahme_id"])
+            & (pl.col("konto") == ziel_zeile["konto"])
+            & (pl.col("jahr") == ziel_zeile["jahr"])
+            & (pl.col("wertart") == ziel_zeile["wertart"])
+        )
+        return investitionen.with_columns(
+            pl.when(bedingung)
+            .then(pl.col("betrag") + delta)
+            .otherwise(pl.col("betrag"))
+            .alias("betrag")
+        )
+
+    # _kopiere_finanzplan_nach kopiert auch investitionen.csv/ve_faelligkeiten.csv mit
+    # (Regel 6, s. dort); die Manipulation überschreibt investitionen.csv deshalb ERST
+    # danach, sonst würde die Kopie sie wieder zurücksetzen.
+    _kopiere_finanzplan_nach(tmp_path)
+    schreibe_investitionen_csv(_manipuliere(2), tmp_path / INVESTITIONEN_CSV)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_querschnitte_nach(tmp_path)
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_befunde_nach(tmp_path)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel6 = next((regel for regel in bericht.regeln if regel.regel == 6), None)
+    assert regel6 is not None, "Regel 6 fehlt im Bericht"
+    plaene_betroffen = {punkt.plan for punkt in regel6.abweichungen}
+    assert "investitionen_produkt" in plaene_betroffen
+    assert "investitionen_gesamt" in plaene_betroffen
+
+    # +1 EUR bleibt innerhalb von TOLERANZ_EURO (Regel 6 bleibt grün).
+    schreibe_investitionen_csv(_manipuliere(TOLERANZ_EURO), tmp_path / INVESTITIONEN_CSV)
+    bericht_ein_euro = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel6_ein_euro = next((regel for regel in bericht_ein_euro.regeln if regel.regel == 6), None)
+    assert regel6_ein_euro is not None, "Regel 6 fehlt im Bericht"
+    assert regel6_ein_euro.status == "grün"
+
+
+def test_regel6_erkennt_manipulierte_faelligkeit(tmp_path: Path) -> None:
+    ve_faelligkeiten = lies_ve_faelligkeiten_csv(DATEN_WURZEL / VE_FAELLIGKEITEN_CSV)
+    ziel_zeile = ve_faelligkeiten.row(0, named=True)
+    bedingung = (
+        (pl.col("produkt") == ziel_zeile["produkt"])
+        & (pl.col("massnahme_id") == ziel_zeile["massnahme_id"])
+        & (pl.col("konto") == ziel_zeile["konto"])
+        & (pl.col("jahr") == ziel_zeile["jahr"])
+    )
+    manipuliert = ve_faelligkeiten.with_columns(
+        pl.when(bedingung).then(pl.col("betrag") + 2).otherwise(pl.col("betrag")).alias("betrag")
+    )
+    # _kopiere_finanzplan_nach kopiert auch ve_faelligkeiten.csv mit (Regel 6, s. dort);
+    # die Manipulation überschreibt sie deshalb ERST danach.
+    _kopiere_finanzplan_nach(tmp_path)
+    schreibe_ve_faelligkeiten_csv(manipuliert, tmp_path / VE_FAELLIGKEITEN_CSV)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_querschnitte_nach(tmp_path)
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_befunde_nach(tmp_path)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel6 = next((regel for regel in bericht.regeln if regel.regel == 6), None)
+    assert regel6 is not None, "Regel 6 fehlt im Bericht"
+    assert any(punkt.plan == "ve_faelligkeiten" for punkt in regel6.abweichungen)
+
+
+def test_regel6_produkt_ohne_massnahmen_mit_tfp_wert_bricht_rot(tmp_path: Path) -> None:
+    """Ein Produkt ohne Maßnahmen, dessen TFP Z. 30 künstlich auf ungleich 0 gesetzt wird,
+    macht Regel 6 rot (Flagged assumption EXTR-09: ohne Tabelle wird 0 erwartet)."""
+    investitionen = lies_investitionen_csv(DATEN_WURZEL / INVESTITIONEN_CSV)
+    finanzplan = lies_plan_csv(DATEN_WURZEL / FINANZPLAN_CSV)
+    produkte_mit_massnahmen = set(investitionen["produkt"].unique().to_list())
+    alle_produkte = set(finanzplan.filter(pl.col("ebene") == "P")["code"].unique().to_list())
+    produkte_ohne_massnahmen = alle_produkte - produkte_mit_massnahmen
+    assert produkte_ohne_massnahmen, "Kein Produkt ohne Maßnahmen gefunden"
+    ziel_produkt = sorted(produkte_ohne_massnahmen)[0]
+
+    # Zeile 30 (Ansatz Haushaltsjahr) existiert für ein Produkt ohne Investitionstätigkeit
+    # typischerweise gar nicht (D-11: fehlende Zeilen bedeuten 0) — eine reine
+    # Werte-Manipulation auf einer nicht vorhandenen Zeile hätte keine Wirkung. Eine
+    # eventuell vorhandene Zeile wird entfernt und durch eine neue mit Betrag != 0 ersetzt.
+    ohne_ziel_zeile = finanzplan.filter(
+        ~(
+            (pl.col("ebene") == "P")
+            & (pl.col("code") == ziel_produkt)
+            & (pl.col("zeile") == "30")
+            & (pl.col("jahr") == STANDARD_JAHR)
+            & (pl.col("wertart") == "ansatz")
+        )
+    )
+    neue_zeile = pl.DataFrame(
+        [
+            {
+                "ebene": "P",
+                "code": ziel_produkt,
+                "synthetisch": False,
+                "zeile": "30",
+                "zeile_kanonisch": "auszahlungen_investitionen",
+                "zeile_name": "Auszahlungen aus Investitionstätigkeit",
+                "operator": "=",
+                "ist_summe": True,
+                "jahr": STANDARD_JAHR,
+                "wertart": "ansatz",
+                "betrag": 1000,
+                "pdf_seite": 1,
+            }
+        ],
+        schema=PLAN_SPALTEN,
+    )
+    manipuliert = pl.concat([ohne_ziel_zeile, neue_zeile])
+    schreibe_plan_csv(manipuliert, tmp_path / FINANZPLAN_CSV)
+    _kopiere_investitionen_nach(tmp_path)
+    _kopiere_ve_faelligkeiten_nach(tmp_path)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_querschnitte_nach(tmp_path)
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_befunde_nach(tmp_path)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel6 = next((regel for regel in bericht.regeln if regel.regel == 6), None)
+    assert regel6 is not None, "Regel 6 fehlt im Bericht"
+    assert regel6.status == "rot"
+    assert any(punkt.code == ziel_produkt and punkt.zeile == "30" for punkt in regel6.abweichungen)
 
 
 def test_pruefung_liest_kein_pdf() -> None:

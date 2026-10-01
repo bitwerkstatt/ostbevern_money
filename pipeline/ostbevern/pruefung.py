@@ -22,14 +22,18 @@ from ostbevern.schema import (
     ERGEBNISPLAN_CSV,
     FINANZPLAN_CSV,
     HIERARCHIE_CSV,
+    INVESTITIONEN_CSV,
     KONSISTENZ_MD,
     QUERSCHNITTE_CSV,
     SEITEN_CSV,
+    VE_FAELLIGKEITEN_CSV,
     WERTARTEN,
     lies_hierarchie_csv,
+    lies_investitionen_csv,
     lies_plan_csv,
     lies_querschnitte_csv,
     lies_seiten_csv,
+    lies_ve_faelligkeiten_csv,
     zerlege_spaltenkopf,
 )
 from ostbevern.zeilen import FORMELN, plantyp_fuer
@@ -804,6 +808,161 @@ def _pruefe_regel4(
     )
 
 
+# Regel 6 (PRUEF-06, D-05): Teilfinanzplan-Zeile -> Richtung der Investitionsmaßnahmen.
+REGEL6_ZEILEN: tuple[tuple[str, str], ...] = (("23", "einzahlung"), ("30", "auszahlung"))
+
+
+def _pruefe_regel6(
+    *,
+    investitionen: pl.DataFrame,
+    ve_faelligkeiten: pl.DataFrame,
+    planwerte_finanzplan: Planwerte,
+    hierarchie: pl.DataFrame,
+    jahrgang: Jahrgang,
+) -> Regelergebnis:
+    """Regel 6 – Investitionsmaßnahmen → Teil-/Gesamtfinanzplan (PRUEF-06, D-05).
+
+    (a) Je Produkt und Richtung (Z. 23 Einzahlungen / Z. 30 Auszahlungen): Σ der in
+    investitionen.csv gedruckten Beträge dieser Richtung gegen den Teilfinanzplan-Wert,
+    in allen sieben Spalten von jahrgang.spalten["investitionen"] (Ergebnis, zwei Ansatz-,
+    eine VE- und drei Planung-Spalten).
+    (b) Dieselbe Prüfung gegen den Gesamtfinanzplan (Σ aller Produkte). (d) Für jeden
+    (produkt, massnahme_id, konto)-Schlüssel mit einem VE-Wert in investitionen.csv oder
+    Zeilen in ve_faelligkeiten.csv: Σ der Fälligkeiten gegen den VE-Wert (0, falls keiner
+    gedruckt ist). PB-Investitionslisten (D-06) sind nicht Teil dieser Regel.
+    """
+    spalten = jahrgang.spalten["investitionen"]
+    spalten_zu_wertart = _spalten_zu_wertart(spalten)
+    produkt_codes = sorted(hierarchie.filter(pl.col("ebene") == "P")["code"].unique().to_list())
+
+    pdf_seite_je_produkt: dict[str, int] = {
+        zeile["code"]: zeile["pdf_seite_start"]
+        for zeile in hierarchie.filter(pl.col("ebene") == "P").iter_rows(named=True)
+    }
+    kleinste_seite_je_produkt = (
+        investitionen.group_by("produkt")
+        .agg(pl.col("pdf_seite").min().alias("pdf_seite"))
+        .to_dict(as_series=False)
+    )
+    kleinste_seite_je_produkt = dict(
+        zip(
+            kleinste_seite_je_produkt["produkt"],
+            kleinste_seite_je_produkt["pdf_seite"],
+            strict=True,
+        )
+    )
+
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+
+    # (a) je Produkt
+    for produkt in produkt_codes:
+        investitionen_produkt = investitionen.filter(pl.col("produkt") == produkt)
+        pdf_seite = kleinste_seite_je_produkt.get(produkt, pdf_seite_je_produkt.get(produkt))
+        for zeile, richtung in REGEL6_ZEILEN:
+            ist_je_spalte = investitionen_produkt.filter(pl.col("richtung") == richtung)
+            for wertart, jahr in spalten_zu_wertart:
+                soll = planwerte_finanzplan.wert("P", produkt, zeile, jahr, wertart)
+                ist = (
+                    ist_je_spalte.filter((pl.col("jahr") == jahr) & (pl.col("wertart") == wertart))[
+                        "betrag"
+                    ].sum()
+                    or 0
+                )
+                geprueft += 1
+                punkt = Pruefpunkt(
+                    regel=6,
+                    plan="investitionen_produkt",
+                    ebene="P",
+                    code=produkt,
+                    zeile=zeile,
+                    jahr=jahr,
+                    wertart=wertart,
+                    soll=soll,
+                    ist=ist,
+                    pdf_seite=pdf_seite,
+                )
+                if abs(punkt.abweichung) > TOLERANZ_EURO:
+                    abweichungen.append(punkt)
+
+    # (b) Gesamt
+    gesamtfinanzplan_seite = jahrgang.seitenbereiche["gesamtfinanzplan"].von
+    for zeile, richtung in REGEL6_ZEILEN:
+        ist_je_spalte = investitionen.filter(pl.col("richtung") == richtung)
+        for wertart, jahr in spalten_zu_wertart:
+            soll = planwerte_finanzplan.wert("GESAMT", "", zeile, jahr, wertart)
+            ist = (
+                ist_je_spalte.filter((pl.col("jahr") == jahr) & (pl.col("wertart") == wertart))[
+                    "betrag"
+                ].sum()
+                or 0
+            )
+            geprueft += 1
+            punkt = Pruefpunkt(
+                regel=6,
+                plan="investitionen_gesamt",
+                ebene="GESAMT",
+                code="",
+                zeile=zeile,
+                jahr=jahr,
+                wertart=wertart,
+                soll=soll,
+                ist=ist,
+                pdf_seite=gesamtfinanzplan_seite,
+            )
+            if abs(punkt.abweichung) > TOLERANZ_EURO:
+                abweichungen.append(punkt)
+
+    # (d) VE-Fälligkeiten
+    ve_investitionen = investitionen.filter(pl.col("wertart") == "ve")
+    ve_schluessel = set(
+        ve_investitionen.select(["produkt", "massnahme_id", "konto"]).unique().iter_rows()
+    ) | set(ve_faelligkeiten.select(["produkt", "massnahme_id", "konto"]).unique().iter_rows())
+    for produkt, massnahme_id, konto in sorted(ve_schluessel):
+        ve_zeile = ve_investitionen.filter(
+            (pl.col("produkt") == produkt)
+            & (pl.col("massnahme_id") == massnahme_id)
+            & (pl.col("konto") == konto)
+        )
+        soll = ve_zeile["betrag"].sum() or 0
+        jahr = ve_zeile["jahr"][0] if ve_zeile.height else jahrgang.haushaltsjahr
+        ist = (
+            ve_faelligkeiten.filter(
+                (pl.col("produkt") == produkt)
+                & (pl.col("massnahme_id") == massnahme_id)
+                & (pl.col("konto") == konto)
+            )["betrag"].sum()
+            or 0
+        )
+        pdf_seite = (
+            ve_zeile["pdf_seite"][0]
+            if ve_zeile.height
+            else kleinste_seite_je_produkt.get(produkt, pdf_seite_je_produkt.get(produkt))
+        )
+        geprueft += 1
+        punkt = Pruefpunkt(
+            regel=6,
+            plan="ve_faelligkeiten",
+            ebene="P",
+            code=produkt,
+            zeile=f"{massnahme_id}/{konto}",
+            jahr=jahr,
+            wertart="ve",
+            soll=soll,
+            ist=ist,
+            pdf_seite=pdf_seite,
+        )
+        if abs(punkt.abweichung) > TOLERANZ_EURO:
+            abweichungen.append(punkt)
+
+    return Regelergebnis(
+        regel=6,
+        titel="Regel 6 – Investitionsmaßnahmen → Teil-/Gesamtfinanzplan",
+        geprueft=geprueft,
+        abweichungen=tuple(abweichungen),
+    )
+
+
 def _pruefe_regel7(
     *,
     querschnitte: pl.DataFrame,
@@ -882,6 +1041,8 @@ def pruefe_alles(
     hierarchie = lies_hierarchie_csv(daten_wurzel / HIERARCHIE_CSV)
     seiten = lies_seiten_csv(daten_wurzel / SEITEN_CSV)
     querschnitte = lies_querschnitte_csv(daten_wurzel / QUERSCHNITTE_CSV)
+    investitionen = lies_investitionen_csv(daten_wurzel / INVESTITIONEN_CSV)
+    ve_faelligkeiten = lies_ve_faelligkeiten_csv(daten_wurzel / VE_FAELLIGKEITEN_CSV)
     pfad_befunde = befunde_pfad if befunde_pfad is not None else daten_wurzel / BEFUNDE_MD
     befunde = lies_befunde(pfad_befunde)
 
@@ -905,6 +1066,13 @@ def pruefe_alles(
         sollwerte=sollwerte,
         spalten=jahrgang.spalten["ergebnisplan"],
     )
+    regel6 = _pruefe_regel6(
+        investitionen=investitionen,
+        ve_faelligkeiten=ve_faelligkeiten,
+        planwerte_finanzplan=Planwerte(finanzplan, datei="finanzplan"),
+        hierarchie=hierarchie,
+        jahrgang=jahrgang,
+    )
     regel7 = _pruefe_regel7(
         querschnitte=querschnitte,
         planwerte_ergebnisplan=Planwerte(ergebnisplan, datei="ergebnisplan"),
@@ -912,7 +1080,9 @@ def pruefe_alles(
         haushaltsjahr=jahrgang.haushaltsjahr,
     )
 
-    regeln, veraltete_befunde = _wende_befunde_an((regel1, regel2, regel3, regel4, regel7), befunde)
+    regeln, veraltete_befunde = _wende_befunde_an(
+        (regel1, regel2, regel3, regel4, regel6, regel7), befunde
+    )
     unbekannte_seiten = tuple(
         sorted(seiten.filter(pl.col("typ") == "unbekannt")["pdf_seite"].to_list())
     )
