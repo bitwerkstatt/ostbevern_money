@@ -1,0 +1,199 @@
+ebene,code,synthetisch,zeile,zeile_kanonisch,zeile_name,operator,ist_summe,jahr,wertart,betrag,pdf_seite
+GESAMT,,false,01,steuern,Steuern und ähnliche Abgaben,,false,2024,ergebnis,19614808,62
+GESAMT,,false,01,steuern,Steuern und ähnliche Abgaben,,false,2025,ansatz,17964000,62
+GESAMT,,false,01,steuern,Steuern und ähnliche Abgaben,,false,2026,ansatz,18443000,62
+GESAMT,,false,01,steuern,Steuern und ähnliche Abgaben,,false,2027,planung,19866000,62
+GESAMT,,false,01,steuern,Steuern und ähnliche Abgaben,,false,2028,planung,20801000,62
+GESAMT,,false,01,steuern,Steuern und ähnliche Abgaben,,false,2029,planung,21721000,62
+GESAMT,,false,02,zuwendungen,Zuwendungen und allgemeine Umlagen,+,false,2024,ergebnis,4333024,62
+GESAMT,,false,02,zuwendungen,Zuwendungen und allgemeine Umlagen,+,false,2025,ansatz,4967048,62
+GESAMT,,false,02,zuwendungen,Zuwendungen und allgemeine Umlagen,+,false,2026,ansatz,3113200,62
+GESAMT,,false,02,zuwendungen,Zuwendungen und allgemeine Umlagen,+,false,2027,planung,4472920,62
+GESAMT,,false,02,zuwendungen,Zuwendungen und allgemeine Umlagen,+,false,2028,planung,4521039,62
+GESAMT,,false,02,zuwendungen,Zuwendungen und allgemeine Umlagen,+,false,2029,planung,4210051,62
+GESAMT,,false,03,sonstige_transferertraege,Sonstige Transfererträge,+,false,2024,ergebnis,36321,62
+GESAMT,,false,03,sonstige_transferertraege,Sonstige Transfererträge,+,false,2025,ansatz,0,62
+GESAMT,,false,03,sonstige_transferertraege,Sonstige Transfererträge,+,false,2026,ansatz,0,62
+GESAMT,,false,03,sonstige_transferertraege,Sonstige Transfererträge,+,false,2027,planung,0,62
+GESAMT,,false,03,sonstige_transferertraege,Sonstige Transfererträge,+,false,2028,planung,0,62
+GESAMT,,false,03,sonstige_transferertraege,Sonstige Transfererträge,+,false,2029,planung,0,62
+GESAMT,,false,04,oeffentlich_rechtliche_entgelte,Öffentlich-rechtliche Leistungsentgelte,+,false,2024,ergebnis,2325683,62
+GESAMT,,false,04,oeffentlich_rechtliche_entgelte,Öffentlich-rechtliche Leistungsentgelte,+,false,2025,ansatz,2429355,62
+GESAMT,,false,04,oeffentlich_rechtliche_entgelte,Öffentlich-rechtliche Leistungsentgelte,+,false,2026,ansatz,2390607,62
+GESAMT,,false,04,oeffentlich_rechtliche_entgelte,Öffentlich-rechtliche Leistungsentgelte,+,false,2027,planung,2376355,62
+GESAMT,,false,04,oeffentlich_rechtliche_entgelte,Öffentlich-rechtliche Leistungsentgelte,+,false,2028,planung,2433697,62
+GESAMT,,false,04,oeffentlich_rechtliche_entgelte,Öffentlich-rechtliche Leistungsentgelte,+,false,2029,planung,2551035,62
+GESAMT,,false,05,privatrechtliche_entgelte,Privatrechtliche Leistungsentgelte,+,false,2024,ergebnis,449398,62
+GESAMT,,false,05,privatrechtliche_entgelte,Privatrechtliche Leistungsentgelte,+,false,2025,ansatz,360201,62
+GESAMT,,false,05,privatrechtliche_entgelte,Privatrechtliche Leistungsentgelte,+,false,2026,ansatz,389800,62
+GESAMT,,false,05,privatrechtliche_entgelte,Privatrechtliche Leistungsentgelte,+,false,2027,planung,389800,62
+GESAMT,,false,05,privatrechtliche_entgelte,Privatrechtliche Leistungsentgelte,+,false,2028,planung,389800,62
+GESAMT,,false,05,privatrechtliche_entgelte,Privatrechtliche Leistungsentgelte,+,false,2029,planung,389800,62
+GESAMT,,false,06,kostenerstattungen,Kostenerstattungen und Kostenumlagen,+,false,2024,ergebnis,812781,62
+GESAMT,,false,06,kostenerstattungen,Kostenerstattungen und Kostenumlagen,+,false,2025,ansatz,686150,62
+GESAMT,,false,06,kostenerstattungen,Kostenerstattungen und Kostenumlagen,+,false,2026,ansatz,762070,62
+GESAMT,,false,06,kostenerstattungen,Kostenerstattungen und Kostenumlagen,+,false,2027,planung,770970,62
+GESAMT,,false,06,kostenerstattungen,Kostenerstattungen und Kostenumlagen,+,false,2028,planung,760720,62
+GESAMT,,false,06,kostenerstattungen,Kostenerstattungen und Kostenumlagen,+,false,2029,planung,781750,62
+GESAMT,,false,07,sonstige_ordentliche_ertraege,Sonstige ordentliche Erträge,+,false,2024,ergebnis,2764446,62
+GESAMT,,false,07,sonstige_ordentliche_ertraege,Sonstige ordentliche Erträge,+,false,2025,ansatz,2106281,62
+GESAMT,,false,07,sonstige_ordentliche_ertraege,Sonstige ordentliche Erträge,+,false,2026,ansatz,1943386,62
+GESAMT,,false,07,sonstige_ordentliche_ertraege,Sonstige ordentliche Erträge,+,false,2027,planung,1689885,62
+GESAMT,,false,07,sonstige_ordentliche_ertraege,Sonstige ordentliche Erträge,+,false,2028,planung,2346161,62
+GESAMT,,false,07,sonstige_ordentliche_ertraege,Sonstige ordentliche Erträge,+,false,2029,planung,1182136,62
+GESAMT,,false,08,aktivierte_eigenleistungen,Aktivierte Eigenleistungen,+,false,2024,ergebnis,0,62
+GESAMT,,false,08,aktivierte_eigenleistungen,Aktivierte Eigenleistungen,+,false,2025,ansatz,0,62
+GESAMT,,false,08,aktivierte_eigenleistungen,Aktivierte Eigenleistungen,+,false,2026,ansatz,0,62
+GESAMT,,false,08,aktivierte_eigenleistungen,Aktivierte Eigenleistungen,+,false,2027,planung,0,62
+GESAMT,,false,08,aktivierte_eigenleistungen,Aktivierte Eigenleistungen,+,false,2028,planung,0,62
+GESAMT,,false,08,aktivierte_eigenleistungen,Aktivierte Eigenleistungen,+,false,2029,planung,0,62
+GESAMT,,false,09,bestandsveraenderungen,Bestandsveränderungen,+/-,false,2024,ergebnis,0,62
+GESAMT,,false,09,bestandsveraenderungen,Bestandsveränderungen,+/-,false,2025,ansatz,0,62
+GESAMT,,false,09,bestandsveraenderungen,Bestandsveränderungen,+/-,false,2026,ansatz,0,62
+GESAMT,,false,09,bestandsveraenderungen,Bestandsveränderungen,+/-,false,2027,planung,0,62
+GESAMT,,false,09,bestandsveraenderungen,Bestandsveränderungen,+/-,false,2028,planung,0,62
+GESAMT,,false,09,bestandsveraenderungen,Bestandsveränderungen,+/-,false,2029,planung,0,62
+GESAMT,,false,10,ordentliche_ertraege,Ordentliche Erträge,=,true,2024,ergebnis,30336461,62
+GESAMT,,false,10,ordentliche_ertraege,Ordentliche Erträge,=,true,2025,ansatz,28513035,62
+GESAMT,,false,10,ordentliche_ertraege,Ordentliche Erträge,=,true,2026,ansatz,27042063,62
+GESAMT,,false,10,ordentliche_ertraege,Ordentliche Erträge,=,true,2027,planung,29565930,62
+GESAMT,,false,10,ordentliche_ertraege,Ordentliche Erträge,=,true,2028,planung,31252417,62
+GESAMT,,false,10,ordentliche_ertraege,Ordentliche Erträge,=,true,2029,planung,30835772,62
+GESAMT,,false,11,personalaufwendungen,Personalaufwendungen,-,false,2024,ergebnis,4629147,62
+GESAMT,,false,11,personalaufwendungen,Personalaufwendungen,-,false,2025,ansatz,4977200,62
+GESAMT,,false,11,personalaufwendungen,Personalaufwendungen,-,false,2026,ansatz,5204054,62
+GESAMT,,false,11,personalaufwendungen,Personalaufwendungen,-,false,2027,planung,5448900,62
+GESAMT,,false,11,personalaufwendungen,Personalaufwendungen,-,false,2028,planung,5666700,62
+GESAMT,,false,11,personalaufwendungen,Personalaufwendungen,-,false,2029,planung,5893100,62
+GESAMT,,false,12,versorgungsaufwendungen,Versorgungsaufwendungen,-,false,2024,ergebnis,463579,62
+GESAMT,,false,12,versorgungsaufwendungen,Versorgungsaufwendungen,-,false,2025,ansatz,373400,62
+GESAMT,,false,12,versorgungsaufwendungen,Versorgungsaufwendungen,-,false,2026,ansatz,258000,62
+GESAMT,,false,12,versorgungsaufwendungen,Versorgungsaufwendungen,-,false,2027,planung,265700,62
+GESAMT,,false,12,versorgungsaufwendungen,Versorgungsaufwendungen,-,false,2028,planung,273800,62
+GESAMT,,false,12,versorgungsaufwendungen,Versorgungsaufwendungen,-,false,2029,planung,281900,62
+GESAMT,,false,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2024,ergebnis,6471265,62
+GESAMT,,false,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2025,ansatz,6961896,62
+GESAMT,,false,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2026,ansatz,7023472,62
+GESAMT,,false,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2027,planung,6578021,62
+GESAMT,,false,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2028,planung,6658705,62
+GESAMT,,false,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2029,planung,6713846,62
+GESAMT,,false,14,abschreibungen,Bilanzielle Abschreibungen,-,false,2024,ergebnis,2882133,62
+GESAMT,,false,14,abschreibungen,Bilanzielle Abschreibungen,-,false,2025,ansatz,2957773,62
+GESAMT,,false,14,abschreibungen,Bilanzielle Abschreibungen,-,false,2026,ansatz,2758142,62
+GESAMT,,false,14,abschreibungen,Bilanzielle Abschreibungen,-,false,2027,planung,2576817,62
+GESAMT,,false,14,abschreibungen,Bilanzielle Abschreibungen,-,false,2028,planung,2831331,62
+GESAMT,,false,14,abschreibungen,Bilanzielle Abschreibungen,-,false,2029,planung,2808031,62
+GESAMT,,false,15,transferaufwendungen,Transferaufwendungen,-,false,2024,ergebnis,14523567,62
+GESAMT,,false,15,transferaufwendungen,Transferaufwendungen,-,false,2025,ansatz,13782286,62
+GESAMT,,false,15,transferaufwendungen,Transferaufwendungen,-,false,2026,ansatz,13764981,62
+GESAMT,,false,15,transferaufwendungen,Transferaufwendungen,-,false,2027,planung,15756800,62
+GESAMT,,false,15,transferaufwendungen,Transferaufwendungen,-,false,2028,planung,16232800,62
+GESAMT,,false,15,transferaufwendungen,Transferaufwendungen,-,false,2029,planung,16746800,62
+GESAMT,,false,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2024,ergebnis,1581389,62
+GESAMT,,false,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2025,ansatz,1430600,62
+GESAMT,,false,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2026,ansatz,1246920,62
+GESAMT,,false,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2027,planung,1242220,62
+GESAMT,,false,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2028,planung,1797908,62
+GESAMT,,false,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2029,planung,2399795,62
+GESAMT,,false,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2024,ergebnis,30551079,62
+GESAMT,,false,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2025,ansatz,30483155,62
+GESAMT,,false,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2026,ansatz,30255569,62
+GESAMT,,false,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2027,planung,31868458,62
+GESAMT,,false,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2028,planung,33461244,62
+GESAMT,,false,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2029,planung,34843472,62
+GESAMT,,false,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2024,ergebnis,-214618,62
+GESAMT,,false,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2025,ansatz,-1970120,62
+GESAMT,,false,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2026,ansatz,-3213506,62
+GESAMT,,false,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2027,planung,-2302528,62
+GESAMT,,false,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2028,planung,-2208827,62
+GESAMT,,false,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2029,planung,-4007700,62
+GESAMT,,false,19,finanzertraege,Finanzerträge,+,false,2024,ergebnis,559158,62
+GESAMT,,false,19,finanzertraege,Finanzerträge,+,false,2025,ansatz,320000,62
+GESAMT,,false,19,finanzertraege,Finanzerträge,+,false,2026,ansatz,460000,62
+GESAMT,,false,19,finanzertraege,Finanzerträge,+,false,2027,planung,390000,62
+GESAMT,,false,19,finanzertraege,Finanzerträge,+,false,2028,planung,390000,62
+GESAMT,,false,19,finanzertraege,Finanzerträge,+,false,2029,planung,390000,62
+GESAMT,,false,20,zinsaufwendungen,Zinsen und ähnliche Aufwendungen,-,false,2024,ergebnis,152549,62
+GESAMT,,false,20,zinsaufwendungen,Zinsen und ähnliche Aufwendungen,-,false,2025,ansatz,246000,62
+GESAMT,,false,20,zinsaufwendungen,Zinsen und ähnliche Aufwendungen,-,false,2026,ansatz,200000,62
+GESAMT,,false,20,zinsaufwendungen,Zinsen und ähnliche Aufwendungen,-,false,2027,planung,350000,62
+GESAMT,,false,20,zinsaufwendungen,Zinsen und ähnliche Aufwendungen,-,false,2028,planung,600000,62
+GESAMT,,false,20,zinsaufwendungen,Zinsen und ähnliche Aufwendungen,-,false,2029,planung,600000,62
+GESAMT,,false,21,finanzergebnis,Finanzergebnis,=,true,2024,ergebnis,406608,62
+GESAMT,,false,21,finanzergebnis,Finanzergebnis,=,true,2025,ansatz,74000,62
+GESAMT,,false,21,finanzergebnis,Finanzergebnis,=,true,2026,ansatz,260000,62
+GESAMT,,false,21,finanzergebnis,Finanzergebnis,=,true,2027,planung,40000,62
+GESAMT,,false,21,finanzergebnis,Finanzergebnis,=,true,2028,planung,-210000,62
+GESAMT,,false,21,finanzergebnis,Finanzergebnis,=,true,2029,planung,-210000,62
+GESAMT,,false,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2024,ergebnis,191990,62
+GESAMT,,false,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2025,ansatz,-1896120,62
+GESAMT,,false,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2026,ansatz,-2953506,62
+GESAMT,,false,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2027,planung,-2262528,62
+GESAMT,,false,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2028,planung,-2418827,62
+GESAMT,,false,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2029,planung,-4217700,62
+GESAMT,,false,23,ausserordentliche_ertraege,Außerordentliche Erträge,+,false,2024,ergebnis,0,62
+GESAMT,,false,23,ausserordentliche_ertraege,Außerordentliche Erträge,+,false,2025,ansatz,0,62
+GESAMT,,false,23,ausserordentliche_ertraege,Außerordentliche Erträge,+,false,2026,ansatz,0,62
+GESAMT,,false,23,ausserordentliche_ertraege,Außerordentliche Erträge,+,false,2027,planung,0,62
+GESAMT,,false,23,ausserordentliche_ertraege,Außerordentliche Erträge,+,false,2028,planung,0,62
+GESAMT,,false,23,ausserordentliche_ertraege,Außerordentliche Erträge,+,false,2029,planung,0,62
+GESAMT,,false,24,ausserordentliche_aufwendungen,Außerordentliche Aufwendungen,-,false,2024,ergebnis,0,62
+GESAMT,,false,24,ausserordentliche_aufwendungen,Außerordentliche Aufwendungen,-,false,2025,ansatz,0,62
+GESAMT,,false,24,ausserordentliche_aufwendungen,Außerordentliche Aufwendungen,-,false,2026,ansatz,0,62
+GESAMT,,false,24,ausserordentliche_aufwendungen,Außerordentliche Aufwendungen,-,false,2027,planung,0,62
+GESAMT,,false,24,ausserordentliche_aufwendungen,Außerordentliche Aufwendungen,-,false,2028,planung,0,62
+GESAMT,,false,24,ausserordentliche_aufwendungen,Außerordentliche Aufwendungen,-,false,2029,planung,0,62
+GESAMT,,false,25,ausserordentliches_ergebnis,Außerordentliches Ergebnis,=,true,2024,ergebnis,0,62
+GESAMT,,false,25,ausserordentliches_ergebnis,Außerordentliches Ergebnis,=,true,2025,ansatz,0,62
+GESAMT,,false,25,ausserordentliches_ergebnis,Außerordentliches Ergebnis,=,true,2026,ansatz,0,62
+GESAMT,,false,25,ausserordentliches_ergebnis,Außerordentliches Ergebnis,=,true,2027,planung,0,62
+GESAMT,,false,25,ausserordentliches_ergebnis,Außerordentliches Ergebnis,=,true,2028,planung,0,62
+GESAMT,,false,25,ausserordentliches_ergebnis,Außerordentliches Ergebnis,=,true,2029,planung,0,62
+GESAMT,,false,26,jahresergebnis,Jahresergebnis,=,true,2024,ergebnis,191990,62
+GESAMT,,false,26,jahresergebnis,Jahresergebnis,=,true,2025,ansatz,-1896120,62
+GESAMT,,false,26,jahresergebnis,Jahresergebnis,=,true,2026,ansatz,-2953506,62
+GESAMT,,false,26,jahresergebnis,Jahresergebnis,=,true,2027,planung,-2262528,62
+GESAMT,,false,26,jahresergebnis,Jahresergebnis,=,true,2028,planung,-2418827,62
+GESAMT,,false,26,jahresergebnis,Jahresergebnis,=,true,2029,planung,-4217700,62
+GESAMT,,false,27,globaler_minderaufwand,Globaler Minderaufwand,-,false,2024,ergebnis,0,62
+GESAMT,,false,27,globaler_minderaufwand,Globaler Minderaufwand,-,false,2025,ansatz,-564600,62
+GESAMT,,false,27,globaler_minderaufwand,Globaler Minderaufwand,-,false,2026,ansatz,-600000,62
+GESAMT,,false,27,globaler_minderaufwand,Globaler Minderaufwand,-,false,2027,planung,-620000,62
+GESAMT,,false,27,globaler_minderaufwand,Globaler Minderaufwand,-,false,2028,planung,-660000,62
+GESAMT,,false,27,globaler_minderaufwand,Globaler Minderaufwand,-,false,2029,planung,-660000,62
+GESAMT,,false,28,ergebnis_nach_minderaufwand,Jahresergebnis nach Abzug globaler Minderaufwand,=,true,2024,ergebnis,191990,62
+GESAMT,,false,28,ergebnis_nach_minderaufwand,Jahresergebnis nach Abzug globaler Minderaufwand,=,true,2025,ansatz,-1331520,62
+GESAMT,,false,28,ergebnis_nach_minderaufwand,Jahresergebnis nach Abzug globaler Minderaufwand,=,true,2026,ansatz,-2353506,62
+GESAMT,,false,28,ergebnis_nach_minderaufwand,Jahresergebnis nach Abzug globaler Minderaufwand,=,true,2027,planung,-1642528,62
+GESAMT,,false,28,ergebnis_nach_minderaufwand,Jahresergebnis nach Abzug globaler Minderaufwand,=,true,2028,planung,-1758827,62
+GESAMT,,false,28,ergebnis_nach_minderaufwand,Jahresergebnis nach Abzug globaler Minderaufwand,=,true,2029,planung,-3557700,62
+GESAMT,,false,29,nachrichtlich_ertraege_vermoegensgegenstaende,Verrechnete Erträge bei Vermögensgegenständen,,false,2024,ergebnis,0,62
+GESAMT,,false,29,nachrichtlich_ertraege_vermoegensgegenstaende,Verrechnete Erträge bei Vermögensgegenständen,,false,2025,ansatz,0,62
+GESAMT,,false,29,nachrichtlich_ertraege_vermoegensgegenstaende,Verrechnete Erträge bei Vermögensgegenständen,,false,2026,ansatz,0,62
+GESAMT,,false,29,nachrichtlich_ertraege_vermoegensgegenstaende,Verrechnete Erträge bei Vermögensgegenständen,,false,2027,planung,0,62
+GESAMT,,false,29,nachrichtlich_ertraege_vermoegensgegenstaende,Verrechnete Erträge bei Vermögensgegenständen,,false,2028,planung,0,62
+GESAMT,,false,29,nachrichtlich_ertraege_vermoegensgegenstaende,Verrechnete Erträge bei Vermögensgegenständen,,false,2029,planung,0,62
+GESAMT,,false,30,nachrichtlich_ertraege_finanzanlagen,Verrechnete Erträge bei Finanzanlagen,,false,2024,ergebnis,0,62
+GESAMT,,false,30,nachrichtlich_ertraege_finanzanlagen,Verrechnete Erträge bei Finanzanlagen,,false,2025,ansatz,0,62
+GESAMT,,false,30,nachrichtlich_ertraege_finanzanlagen,Verrechnete Erträge bei Finanzanlagen,,false,2026,ansatz,0,62
+GESAMT,,false,30,nachrichtlich_ertraege_finanzanlagen,Verrechnete Erträge bei Finanzanlagen,,false,2027,planung,0,62
+GESAMT,,false,30,nachrichtlich_ertraege_finanzanlagen,Verrechnete Erträge bei Finanzanlagen,,false,2028,planung,0,62
+GESAMT,,false,30,nachrichtlich_ertraege_finanzanlagen,Verrechnete Erträge bei Finanzanlagen,,false,2029,planung,0,62
+GESAMT,,false,31,nachrichtlich_aufwendungen_vermoegensgegenstaende,Verrechnete Aufw. bei Vermögensgegenständen,,false,2024,ergebnis,-6328,62
+GESAMT,,false,31,nachrichtlich_aufwendungen_vermoegensgegenstaende,Verrechnete Aufw. bei Vermögensgegenständen,,false,2025,ansatz,0,62
+GESAMT,,false,31,nachrichtlich_aufwendungen_vermoegensgegenstaende,Verrechnete Aufw. bei Vermögensgegenständen,,false,2026,ansatz,-476327,62
+GESAMT,,false,31,nachrichtlich_aufwendungen_vermoegensgegenstaende,Verrechnete Aufw. bei Vermögensgegenständen,,false,2027,planung,0,62
+GESAMT,,false,31,nachrichtlich_aufwendungen_vermoegensgegenstaende,Verrechnete Aufw. bei Vermögensgegenständen,,false,2028,planung,0,62
+GESAMT,,false,31,nachrichtlich_aufwendungen_vermoegensgegenstaende,Verrechnete Aufw. bei Vermögensgegenständen,,false,2029,planung,0,62
+GESAMT,,false,32,nachrichtlich_aufwendungen_finanzanlagen,Verrechnete Aufwendungen bei Finanzanlagen,,false,2024,ergebnis,0,62
+GESAMT,,false,32,nachrichtlich_aufwendungen_finanzanlagen,Verrechnete Aufwendungen bei Finanzanlagen,,false,2025,ansatz,0,62
+GESAMT,,false,32,nachrichtlich_aufwendungen_finanzanlagen,Verrechnete Aufwendungen bei Finanzanlagen,,false,2026,ansatz,0,62
+GESAMT,,false,32,nachrichtlich_aufwendungen_finanzanlagen,Verrechnete Aufwendungen bei Finanzanlagen,,false,2027,planung,0,62
+GESAMT,,false,32,nachrichtlich_aufwendungen_finanzanlagen,Verrechnete Aufwendungen bei Finanzanlagen,,false,2028,planung,0,62
+GESAMT,,false,32,nachrichtlich_aufwendungen_finanzanlagen,Verrechnete Aufwendungen bei Finanzanlagen,,false,2029,planung,0,62
+GESAMT,,false,33,nachrichtlich_verrechnungssaldo,Verrechnungssaldo,=,true,2024,ergebnis,6328,62
+GESAMT,,false,33,nachrichtlich_verrechnungssaldo,Verrechnungssaldo,=,true,2025,ansatz,0,62
+GESAMT,,false,33,nachrichtlich_verrechnungssaldo,Verrechnungssaldo,=,true,2026,ansatz,476327,62
+GESAMT,,false,33,nachrichtlich_verrechnungssaldo,Verrechnungssaldo,=,true,2027,planung,0,62
+GESAMT,,false,33,nachrichtlich_verrechnungssaldo,Verrechnungssaldo,=,true,2028,planung,0,62
+GESAMT,,false,33,nachrichtlich_verrechnungssaldo,Verrechnungssaldo,=,true,2029,planung,0,62

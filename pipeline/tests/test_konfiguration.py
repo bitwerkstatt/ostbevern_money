@@ -162,3 +162,64 @@ def test_gesamtergebnisplan_zeile_mit_falscher_laenge_wird_abgelehnt(tmp_path: P
     _schreibe_sollwertdatei(tmp_path, text)
     with pytest.raises(KonfigurationsFehler, match="10"):
         lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_lade_sollwerte_gibt_alle_tabellen_vollstaendig_zurueck() -> None:
+    jahrgang = lade_jahrgang(STANDARD_JAHR)
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+
+    gesamtergebnisplan = sollwerte["gesamtergebnisplan"]
+    assert len(gesamtergebnisplan["zeilen"]) == 21
+
+    gesamtfinanzplan = sollwerte["gesamtfinanzplan"]
+    assert gesamtfinanzplan["ansatz"]
+    assert gesamtfinanzplan["ve"]
+
+    teilergebnisplaene_pb = sollwerte["teilergebnisplaene_pb"]
+    assert len(teilergebnisplaene_pb) == jahrgang.anzahlen.produktbereiche
+    for eintrag in teilergebnisplaene_pb.values():
+        assert set(eintrag) == {
+            "ordentliche_ertraege",
+            "ordentliche_aufwendungen",
+            "ergebnis_mit_internen_verrechnungen",
+        }
+
+    teilergebnisplaene_pb_summe = sollwerte["teilergebnisplaene_pb_summe"]
+    assert "ordentliche_ertraege" in teilergebnisplaene_pb_summe
+    assert "ordentliche_aufwendungen" in teilergebnisplaene_pb_summe
+
+
+def test_sollwertdatei_ohne_gesamtfinanzplan_meldet_schluessel(tmp_path: Path) -> None:
+    text = re.sub(
+        r"(?ms)^\[gesamtfinanzplan\].*?(?=^\[(?!gesamtfinanzplan))",
+        "",
+        _sollwertdatei_text(),
+    )
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="gesamtfinanzplan"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_teilergebnisplaene_pb_eintrag_ohne_ordentliche_aufwendungen_meldet_feld(
+    tmp_path: Path,
+) -> None:
+    text = _sollwertdatei_text()
+    eintrag_muster = re.compile(r'(?m)^"01" = \{ (?P<inhalt>[^}]*) \}$')
+    treffer = eintrag_muster.search(text)
+    assert treffer is not None
+    ohne_aufwendungen = re.sub(
+        r"ordentliche_aufwendungen\s*=\s*-?\d+,\s*", "", treffer.group("inhalt")
+    )
+    text = eintrag_muster.sub(f'"01" = {{ {ohne_aufwendungen} }}', text, count=1)
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="01"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_gesamtfinanzplan_ansatz_schluessel_ohne_zweistellige_zeile_wird_abgelehnt(
+    tmp_path: Path,
+) -> None:
+    text = re.sub(r'(?m)^"09" = (\d+)$', r'"9" = \1', _sollwertdatei_text(), count=1)
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
