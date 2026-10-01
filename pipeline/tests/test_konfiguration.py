@@ -405,8 +405,15 @@ def test_synthetische_produktgruppen_doppeltes_produkt_wird_abgelehnt(tmp_path: 
 
 
 def test_synthetische_produktgruppen_falscher_typ_wird_abgelehnt(tmp_path: Path) -> None:
+    # Der Ersatzwert muss VOR der ersten [section]-Kopfzeile stehen, sonst landet er als
+    # TOML-Schlüssel innerhalb der zuletzt geöffneten Tabelle statt auf oberster Ebene.
     ohne = re.sub(r"(?ms)^\[synthetische_produktgruppen\..*", "", _jahrgangsdatei_text())
-    text = ohne + '\nsynthetische_produktgruppen = "nicht-tabelle"\n'
+    text = re.sub(
+        r"(?m)^(haushaltsjahr\s*=\s*\d+)$",
+        r'\1\nsynthetische_produktgruppen = "nicht-tabelle"',
+        ohne,
+        count=1,
+    )
     _schreibe_jahrgangsdatei(tmp_path, text)
     with pytest.raises(KonfigurationsFehler, match="synthetische_produktgruppen"):
         lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)

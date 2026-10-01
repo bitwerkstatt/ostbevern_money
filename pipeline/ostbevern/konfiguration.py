@@ -48,6 +48,12 @@ PFLICHT_SEITENTYPEN = (
     "investitionen",
 )
 
+# Vierstelliger Code: sowohl Schlüssel von [synthetische_produktgruppen] (Jahrgangsdatei,
+# D-14) als auch von [haushaltsquerschnitt_pg] (Sollwertdatei).
+_VIERSTELLIGER_CODE_MUSTER = re.compile(r"^\d{4}$")
+_SECHSSTELLIGER_PRODUKTCODE_MUSTER = re.compile(r"^\d{6}$")
+_SYNTHETISCHE_PG_PFLICHTFELDER = frozenset({"produkt", "name", "pdf_seite"})
+
 
 class KonfigurationsFehler(ValueError):
     """Wird ausgelöst, wenn eine Jahrgangs- oder Sollwertdatei fehlt oder unvollständig ist."""
@@ -266,17 +272,83 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
             ) from fehler
 
     # Synthetische Produktgruppen (D-14): optionale Tabelle, Standard ist eine leere
-    # Zuordnung (jedes Produkt folgt dem Code-Präfix-Standard).
+    # Zuordnung (jedes Produkt folgt dem Code-Präfix-Standard). Validiert Schlüssel-
+    # und Feldmenge, Formate, PB-Präfix-Übereinstimmung, Seitenbereich und doppelte
+    # Produkte (D-08); die semantische Prüfung gegen die extrahierte Hierarchie
+    # (Produkt existiert, gehört nicht zu einer gedruckten PG, Code ist nicht
+    # gedruckt) folgt in seiten.baue_hierarchie, wo die Hierarchie bekannt ist.
     synthetische_produktgruppen_rohdaten = rohdaten.get("synthetische_produktgruppen", {})
-    synthetische_produktgruppen: dict[str, SynthetischeProduktgruppe] = {
-        code: SynthetischeProduktgruppe(
-            code=code,
-            produkt=eintrag["produkt"],
-            name=eintrag["name"],
-            pdf_seite=eintrag["pdf_seite"],
+    if not isinstance(synthetische_produktgruppen_rohdaten, dict):
+        raise KonfigurationsFehler(
+            f"Jahrgangsdatei {pfad}: synthetische_produktgruppen muss eine Tabelle sein, "
+            f"nicht {synthetische_produktgruppen_rohdaten!r}"
         )
-        for code, eintrag in synthetische_produktgruppen_rohdaten.items()
-    }
+
+    synthetische_produktgruppen: dict[str, SynthetischeProduktgruppe] = {}
+    gesehene_produkte: dict[str, str] = {}
+    for code, eintrag in synthetische_produktgruppen_rohdaten.items():
+        if not _VIERSTELLIGER_CODE_MUSTER.match(code):
+            raise KonfigurationsFehler(
+                f"Jahrgangsdatei {pfad}: synthetische_produktgruppen hat keinen "
+                f"vierstelligen Code: {code!r}"
+            )
+        if not isinstance(eintrag, dict):
+            raise KonfigurationsFehler(
+                f"Jahrgangsdatei {pfad}: synthetische_produktgruppen.{code} muss eine "
+                f"Tabelle sein, nicht {eintrag!r}"
+            )
+        fehlende_felder = _SYNTHETISCHE_PG_PFLICHTFELDER - set(eintrag)
+        if fehlende_felder:
+            raise KonfigurationsFehler(
+                f"Jahrgangsdatei {pfad}: synthetische_produktgruppen.{code} fehlen "
+                f"Felder: {', '.join(sorted(fehlende_felder))}"
+            )
+        unbekannte_felder = set(eintrag) - _SYNTHETISCHE_PG_PFLICHTFELDER
+        if unbekannte_felder:
+            raise KonfigurationsFehler(
+                f"Jahrgangsdatei {pfad}: synthetische_produktgruppen.{code} hat "
+                f"unbekannte Felder: {', '.join(sorted(unbekannte_felder))}"
+            )
+
+        produkt = eintrag["produkt"]
+        if not isinstance(produkt, str) or not _SECHSSTELLIGER_PRODUKTCODE_MUSTER.match(produkt):
+            raise KonfigurationsFehler(
+                f"Jahrgangsdatei {pfad}: synthetische_produktgruppen.{code}.produkt ist "
+                f"kein sechsstelliger Produktcode: {produkt!r}"
+            )
+        if produkt[:2] != code[:2]:
+            raise KonfigurationsFehler(
+                f"Jahrgangsdatei {pfad}: synthetische_produktgruppen.{code}.produkt "
+                f"{produkt!r} gehört nicht zum Produktbereich von {code!r}"
+            )
+        if produkt in gesehene_produkte:
+            raise KonfigurationsFehler(
+                f"Jahrgangsdatei {pfad}: synthetische_produktgruppen: Produkt "
+                f"{produkt!r} ist sowohl unter {gesehene_produkte[produkt]!r} als auch "
+                f"{code!r} deklariert"
+            )
+        gesehene_produkte[produkt] = code
+
+        name = eintrag["name"]
+        if not isinstance(name, str) or not name:
+            raise KonfigurationsFehler(
+                f"Jahrgangsdatei {pfad}: synthetische_produktgruppen.{code} hat keinen Namen"
+            )
+
+        pdf_seite = eintrag["pdf_seite"]
+        if (
+            not isinstance(pdf_seite, int)
+            or isinstance(pdf_seite, bool)
+            or not (1 <= pdf_seite <= anzahlen.pdf_seiten)
+        ):
+            raise KonfigurationsFehler(
+                f"Jahrgangsdatei {pfad}: synthetische_produktgruppen.{code} hat keine "
+                "gültige pdf_seite"
+            )
+
+        synthetische_produktgruppen[code] = SynthetischeProduktgruppe(
+            code=code, produkt=produkt, name=name, pdf_seite=pdf_seite
+        )
 
     return Jahrgang(
         haushaltsjahr=rohdaten["haushaltsjahr"],
@@ -403,6 +475,38 @@ def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> 
         if not isinstance(pdf_seite, int) or isinstance(pdf_seite, bool) or pdf_seite < 1:
             raise KonfigurationsFehler(
                 f"Sollwertdatei {pfad}: anhang_a.{code} hat keine gültige pdf_seite"
+            )
+
+    # [haushaltsquerschnitt_pg] (D-14): optionale Sollwerte für den Haushaltsquerschnitt-
+    # Abgleich einer synthetischen PG. Bewusst NICHT in den Pflichtschlüsseln oben und
+    # nicht in Regel 4 verdrahtet (das ist Phase 3 Regel 7, PRUEF-07); Zahlenwerte prüft
+    # bereits _pruefe_nur_ganzzahlen unten.
+    haushaltsquerschnitt_pg = rohdaten.get("haushaltsquerschnitt_pg", {})
+    if not isinstance(haushaltsquerschnitt_pg, dict):
+        raise KonfigurationsFehler(
+            f"Sollwertdatei {pfad}: haushaltsquerschnitt_pg muss eine Tabelle sein, "
+            f"nicht {haushaltsquerschnitt_pg!r}"
+        )
+    for code, eintrag in haushaltsquerschnitt_pg.items():
+        if not _VIERSTELLIGER_CODE_MUSTER.match(code):
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: haushaltsquerschnitt_pg hat keinen vierstelligen "
+                f"Code: {code!r}"
+            )
+        if not isinstance(eintrag, dict):
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: haushaltsquerschnitt_pg.{code} muss eine Tabelle "
+                f"sein, nicht {eintrag!r}"
+            )
+        if "ergebnis_mit_internen_verrechnungen" not in eintrag:
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: haushaltsquerschnitt_pg.{code} fehlt "
+                "ergebnis_mit_internen_verrechnungen"
+            )
+        pdf_seite = eintrag.get("pdf_seite")
+        if not isinstance(pdf_seite, int) or isinstance(pdf_seite, bool) or pdf_seite < 1:
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: haushaltsquerschnitt_pg.{code} hat keine gültige pdf_seite"
             )
 
     _pruefe_nur_ganzzahlen(rohdaten, "sollwerte")

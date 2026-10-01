@@ -329,6 +329,29 @@ def baue_hierarchie(
             f"{len(p_knoten)} Produkte gefunden, erwartet {jahrgang.anzahlen.produkte}"
         )
 
+    # Deklarationen aus [synthetische_produktgruppen] gegen die extrahierte Hierarchie
+    # validieren (D-08): das Produkt muss existieren, darf nicht bereits zu einer
+    # gedruckten PG gehören, und der deklarierte Code darf nicht selbst eine gedruckte
+    # PG sein — sonst kann die Deklaration nie eine synthetische PG ergeben.
+    for pg_code, deklaration in jahrgang.synthetische_produktgruppen.items():
+        if deklaration.produkt not in p_knoten:
+            raise SeitenFehler(
+                f"Jahrgangsdatei [synthetische_produktgruppen].{pg_code!r}: Produkt "
+                f"{deklaration.produkt!r} wurde nicht gefunden"
+            )
+        gedruckte_pg_des_produkts = deklaration.produkt[:4]
+        if gedruckte_pg_des_produkts in pg_knoten:
+            raise SeitenFehler(
+                f"Jahrgangsdatei [synthetische_produktgruppen].{pg_code!r}: Produkt "
+                f"{deklaration.produkt!r} gehört bereits zur gedruckten Produktgruppe "
+                f"{gedruckte_pg_des_produkts!r}"
+            )
+        if pg_code in pg_knoten:
+            raise SeitenFehler(
+                f"Jahrgangsdatei [synthetische_produktgruppen].{pg_code!r}: Code ist "
+                "bereits eine gedruckte Produktgruppe"
+            )
+
     # Synthetische PG (D-14): jede synthetische PG hat genau EIN Produkt. Iteriert
     # Produkte aufsteigend nach Code; ein Produkt, dessen aufgelöster PG-Code (D-14-
     # Standard oder Deklaration aus [synthetische_produktgruppen]) bereits eine
