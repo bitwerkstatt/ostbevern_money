@@ -191,25 +191,31 @@ def test_gesamtfinanzplan_trifft_sollwerte_b2() -> None:
 
     for zeile, erwarteter_wert in gesamtfinanzplan["ansatz"].items():
         index = next(
-            i for i, kopf in enumerate(spalten) if zerlege_spaltenkopf(kopf) == ("ansatz", 2026)
+            i
+            for i, kopf in enumerate(spalten)
+            if zerlege_spaltenkopf(kopf) == ("ansatz", STANDARD_JAHR)
         )
         assert gedruckte_zeilen[zeile].werte[index] == erwarteter_wert
 
     for zeile, erwarteter_wert in gesamtfinanzplan["ve"].items():
         index = next(
-            i for i, kopf in enumerate(spalten) if zerlege_spaltenkopf(kopf) == ("ve", 2026)
+            i
+            for i, kopf in enumerate(spalten)
+            if zerlege_spaltenkopf(kopf) == ("ve", STANDARD_JAHR)
         )
         assert gedruckte_zeilen[zeile].werte[index] == erwarteter_wert
 
-    # Beweist, dass die doppelte Jahreszahl "2026" (Ansatz/VE) über x-Position
+    # Beweist, dass die doppelte Jahreszahl im Haushaltsjahr (Ansatz/VE) über x-Position
     # und nicht über Text aufgelöst wird: beide Werte der VE-Sollwertzeile
     # unterscheiden sich tatsächlich (EXTR-05, Pattern 1).
     ve_zeile = next(iter(gesamtfinanzplan["ve"]))
     ansatz_index = next(
-        i for i, kopf in enumerate(spalten) if zerlege_spaltenkopf(kopf) == ("ansatz", 2026)
+        i
+        for i, kopf in enumerate(spalten)
+        if zerlege_spaltenkopf(kopf) == ("ansatz", STANDARD_JAHR)
     )
     ve_index = next(
-        i for i, kopf in enumerate(spalten) if zerlege_spaltenkopf(kopf) == ("ve", 2026)
+        i for i, kopf in enumerate(spalten) if zerlege_spaltenkopf(kopf) == ("ve", STANDARD_JAHR)
     )
     assert (
         gedruckte_zeilen[ve_zeile].werte[ansatz_index] != gedruckte_zeilen[ve_zeile].werte[ve_index]
