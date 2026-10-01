@@ -188,6 +188,16 @@ def _lies_kopfzeile(
     return kopf, index
 
 
+def produktgruppe_fuer_produkt(produkt_code: str, jahrgang: Jahrgang) -> str:
+    """Löst den PG-Code eines Produkts auf (D-14): den deklarierten Code aus
+    `jahrgang.synthetische_produktgruppen`, falls das Produkt dort als `produkt`
+    auftaucht, sonst den Standard (die ersten vier Ziffern des Produktcodes)."""
+    for eintrag in jahrgang.synthetische_produktgruppen.values():
+        if eintrag.produkt == produkt_code:
+            return eintrag.code
+    return produkt_code[:4]
+
+
 def klassifiziere_dokument(
     dokument: PdfDokument, jahrgang: Jahrgang
 ) -> tuple[tuple[Seite, ...], Mapping[int, Seitenkopf]]:
@@ -221,7 +231,9 @@ def klassifiziere_dokument(
             continue
         koepfe[pdf_seite] = kopf
 
-        pg = kopf.pg or (kopf.produkt[:4] if kopf.produkt else None)
+        pg = kopf.pg or (
+            produktgruppe_fuer_produkt(kopf.produkt, jahrgang) if kopf.produkt else None
+        )
 
         typ: str | None = None
         if erste_inhaltszeile_index < len(zeilen):
@@ -300,7 +312,11 @@ def baue_hierarchie(
             _aktualisiere_knoten(pg_knoten, kopf.pg, kopf.pg_name, seite.pdf_seite, kopf.pb)
         if kopf.produkt is not None and kopf.produkt_name is not None:
             _aktualisiere_knoten(
-                p_knoten, kopf.produkt, kopf.produkt_name, seite.pdf_seite, kopf.produkt[:4]
+                p_knoten,
+                kopf.produkt,
+                kopf.produkt_name,
+                seite.pdf_seite,
+                produktgruppe_fuer_produkt(kopf.produkt, jahrgang),
             )
 
     if len(pb_knoten) != jahrgang.anzahlen.produktbereiche:
@@ -313,24 +329,34 @@ def baue_hierarchie(
             f"{len(p_knoten)} Produkte gefunden, erwartet {jahrgang.anzahlen.produkte}"
         )
 
-    # Synthetische PG (D-14): für jedes Produkt, dessen PG-Code (erste 4 Ziffern)
-    # nicht bereits eine gedruckte PG ist. Name kommt vom niedrigstcodigen Produkt,
-    # pdf_seite_start ist die kleinste Startseite aller Produkte dieser PG.
-    produkte_je_synthetischer_pg: dict[str, list[tuple[str, _Knoten]]] = {}
-    for produkt_code, eintrag in p_knoten.items():
-        pg_code = produkt_code[:4]
+    # Synthetische PG (D-14): jede synthetische PG hat genau EIN Produkt. Iteriert
+    # Produkte aufsteigend nach Code; ein Produkt, dessen aufgelöster PG-Code (D-14-
+    # Standard oder Deklaration aus [synthetische_produktgruppen]) bereits eine
+    # gedruckte PG ist, braucht keine synthetische PG. Zwei Produkte, die auf
+    # denselben synthetischen Code auflösen, sind ein Fehler (D-08) — eine gewollte
+    # Abweichung muss als Deklaration in der Jahrgangsdatei stehen.
+    synthetische_pg: dict[str, _Knoten] = {}
+    pg_kind_produkt: dict[str, str] = {}
+    for produkt_code in sorted(p_knoten):
+        pg_code = produktgruppe_fuer_produkt(produkt_code, jahrgang)
         if pg_code in pg_knoten:
             continue
-        produkte_je_synthetischer_pg.setdefault(pg_code, []).append((produkt_code, eintrag))
-
-    synthetische_pg: dict[str, _Knoten] = {}
-    for pg_code, produkte in produkte_je_synthetischer_pg.items():
-        niedrigstes_code, niedrigstes_eintrag = min(produkte, key=lambda item: item[0])
-        pdf_seite_start = min(eintrag.pdf_seite_start for _, eintrag in produkte)
+        vorhandenes_kind = pg_kind_produkt.get(pg_code)
+        if vorhandenes_kind is not None:
+            raise SeitenFehler(
+                f"Synthetische Produktgruppe {pg_code!r} hätte zwei Produkte: "
+                f"{vorhandenes_kind!r} und {produkt_code!r}. Jede synthetische PG hat "
+                "genau ein Produkt (D-14); eine gewollte Abweichung muss unter "
+                "[synthetische_produktgruppen] der Jahrgangsdatei deklariert werden (D-08)."
+            )
+        pg_kind_produkt[pg_code] = produkt_code
+        produkt_eintrag = p_knoten[produkt_code]
+        deklaration = jahrgang.synthetische_produktgruppen.get(pg_code)
+        name = deklaration.name if deklaration is not None else produkt_eintrag.name
         synthetische_pg[pg_code] = _Knoten(
-            name=niedrigstes_eintrag.name,
-            pdf_seite_start=pdf_seite_start,
-            eltern_code=niedrigstes_code[:2],
+            name=name,
+            pdf_seite_start=produkt_eintrag.pdf_seite_start,
+            eltern_code=produkt_code[:2],
         )
 
     zeilen: list[dict[str, object]] = []

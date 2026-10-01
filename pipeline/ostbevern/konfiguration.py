@@ -82,6 +82,19 @@ class Anzahlen:
 
 
 @dataclass(frozen=True)
+class SynthetischeProduktgruppe:
+    """Deklarierte Ausnahme vom D-14-Standard (Code = erste vier Ziffern des
+    Produktcodes): ordnet ein einzelnes Produkt einer synthetischen PG mit
+    abweichendem Code und/oder Namen zu, belegt durch `pdf_seite` (Spez. Anhang,
+    hier der Haushaltsquerschnitt). `code` ist der TOML-Tabellenschlüssel."""
+
+    code: str
+    produkt: str
+    name: str
+    pdf_seite: int
+
+
+@dataclass(frozen=True)
 class Jahrgang:
     """Alle PDF-spezifischen Werte eines Haushaltsjahrgangs (D-07)."""
 
@@ -91,6 +104,7 @@ class Jahrgang:
     spalten: Mapping[str, tuple[str, ...]]
     seitenbereiche: Mapping[str, Seitenbereich]
     kopfzeilen: Kopfzeilen
+    synthetische_produktgruppen: Mapping[str, SynthetischeProduktgruppe]
 
 
 def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> Jahrgang:
@@ -251,6 +265,19 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
                 f"Ausdruck: {fehler}"
             ) from fehler
 
+    # Synthetische Produktgruppen (D-14): optionale Tabelle, Standard ist eine leere
+    # Zuordnung (jedes Produkt folgt dem Code-Präfix-Standard).
+    synthetische_produktgruppen_rohdaten = rohdaten.get("synthetische_produktgruppen", {})
+    synthetische_produktgruppen: dict[str, SynthetischeProduktgruppe] = {
+        code: SynthetischeProduktgruppe(
+            code=code,
+            produkt=eintrag["produkt"],
+            name=eintrag["name"],
+            pdf_seite=eintrag["pdf_seite"],
+        )
+        for code, eintrag in synthetische_produktgruppen_rohdaten.items()
+    }
+
     return Jahrgang(
         haushaltsjahr=rohdaten["haushaltsjahr"],
         pdf_pfad=pdf_pfad,
@@ -258,6 +285,7 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
         spalten=spalten,
         seitenbereiche=seitenbereiche,
         kopfzeilen=kopfzeilen,
+        synthetische_produktgruppen=synthetische_produktgruppen,
     )
 
 
