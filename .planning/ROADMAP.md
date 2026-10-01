@@ -39,7 +39,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Haushaltsjahr, Spaltenköpfe, Seitenbereiche und PDF-Pfad stehen in einer Jahrgangs-Konfigurationsdatei, und die Pipeline lädt sie von dort statt aus dem Code.
   5. Die Projekt-`CLAUDE.md` nennt die Befehle für Pipeline und App sowie die Konventionen: deutsche Bezeichner ohne Umlaute, Beträge als int-Euro, nur 1-basierte PDF-Seiten, keine Jahrgangswerte im Code, Du-Anrede, Zahlen in Texten aus Daten.
 
-**Plans**: 3/5 plans executed
+**Plans**: 4/5 plans executed
 
 Plans:
 **Wave 1**
@@ -50,7 +50,7 @@ Plans:
 - [x] 01-03-PLAN.md — App-Gerüst: create-vue, Web Awesome, Hash-Router, PageIntro, Rahmen mit Navigation und Münster-Dank, Lint-/Format-Skripte (Wave 2)
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 01-04-PLAN.md — Basiskomponenten: format.ts, echartsTheme.ts, BaseChart, ChartCard mit Beispieldaten-Hinweis, DatenTabelle, bildschirm.ts (Wave 3)
+- [x] 01-04-PLAN.md — Basiskomponenten: format.ts, echartsTheme.ts, BaseChart, ChartCard mit Beispieldaten-Hinweis, DatenTabelle, bildschirm.ts (Wave 3)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 - [ ] 01-05-PLAN.md — CI mit zwei Jobs (lokal nachgestellt), Befehle und Konventionen in .claude/CLAUDE.md, README, MIT-LICENSE (Wave 4)
@@ -166,7 +166,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Setup | 3/5 | In Progress|  |
+| 1. Setup | 4/5 | In Progress|  |
 | 2. Kernzahlen | 0/TBD | Not started | - |
 | 3. Details | 0/TBD | Not started | - |
 | 4. Manuelle Daten und App-Daten | 0/TBD | Not started | - |
