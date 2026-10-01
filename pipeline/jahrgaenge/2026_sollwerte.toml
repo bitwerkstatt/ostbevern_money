@@ -103,6 +103,15 @@ pdf_seite = 63
 ordentliche_ertraege = 27042063
 ordentliche_aufwendungen = 30255569
 
+# Haushaltsquerschnitt Ergebnisplan (PDF S. 299), Spalte "Ergebnis des Teilhaushaltes",
+# Ansatz des Haushaltsjahres. Entspricht TP Z. 29 der jeweiligen PG, da PB 15 im
+# Haushaltsjahr weder interne Verrechnungen noch Minderaufwand hat. Dokumentiert den
+# D-14-Split der synthetischen PG 1501/1502 (siehe [synthetische_produktgruppen] in
+# der Jahrgangsdatei).
+[haushaltsquerschnitt_pg]
+"1501" = { ergebnis_mit_internen_verrechnungen = -118138, pdf_seite = 299 }
+"1502" = { ergebnis_mit_internen_verrechnungen = -72554, pdf_seite = 299 }
+
 # Anhang A: Produktverzeichnis mit Startseiten, übertragen aus
 # discussion/SPEZIFIKATION.md "Anhang A - Produktverzeichnis". Startseiten
 # stammen aus dem Inhaltsverzeichnis (PDF S. 2-5) und dienen als Sollwert für

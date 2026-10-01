@@ -45,7 +45,7 @@ from ostbevern.schema import (
     schreibe_plan_csv,
     schreibe_seiten_csv,
 )
-from ostbevern.zeilen import FORMELN
+from ostbevern.zeilen import FORMELN, plantyp_fuer
 
 _SCHLUESSELTABELLE_KOPF = (
     "| regel | plan | ebene | code | zeile | jahr | wertart | abweichung | pdf_seite | "
@@ -353,15 +353,52 @@ def test_regel4_b3_unbekannte_pb_bricht_ab(tmp_path: Path) -> None:
         pruefe_alles(STANDARD_JAHR, sollwerte_verzeichnis=tmp_path)
 
 
+def _formelzeilen_schluessel(
+    df: pl.DataFrame, *, datei: str, code: str
+) -> set[tuple[str, int, str]]:
+    """(zeile, jahr, wertart)-Schlüssel, die Regel 1 für ein Produkt zählt: nur Zeilen,
+    die im Zeilen-Wörterbuch eine Formel haben (FORMELN), alle anderen überspringt
+    `_pruefe_regel1` (Kommentar dort)."""
+    plantyp = plantyp_fuer(datei, "P")
+    formelzeilen = FORMELN.get(plantyp, {})
+    zeilen = df.filter((pl.col("ebene") == "P") & (pl.col("code") == code))
+    return {
+        (zeile["zeile"], zeile["jahr"], zeile["wertart"])
+        for zeile in zeilen.iter_rows(named=True)
+        if zeile["zeile"] in formelzeilen
+    }
+
+
 def test_regel1_sollwerte_gesamtplaene_gruen() -> None:
     bericht = pruefe_alles(STANDARD_JAHR)
     regel1 = next(regel for regel in bericht.regeln if regel.regel == 1)
 
+    # Formelzeilen, die Produkte 150101 UND 150102 beide drucken (zeile x jahr x
+    # wertart), aus den eingecheckten Plan-CSVs abgeleitet statt als Literal.
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    finanzplan = lies_plan_csv(DATEN_WURZEL / FINANZPLAN_CSV)
+    ueberschneidung = len(
+        _formelzeilen_schluessel(ergebnisplan, datei="ergebnisplan", code="150101")
+        & _formelzeilen_schluessel(ergebnisplan, datei="ergebnisplan", code="150102")
+    ) + len(
+        _formelzeilen_schluessel(finanzplan, datei="finanzplan", code="150101")
+        & _formelzeilen_schluessel(finanzplan, datei="finanzplan", code="150102")
+    )
+
     # Gesamtergebnisplan: 8 Formelzeilen (10,17,18,21,22,25,26,28) x 6 Spalten = 48.
     # Gesamtfinanzplan: 10 Formelzeilen (09,16,17,23,30,31,32,37,38,41) x 7 Spalten = 70.
-    # 118 GESAMT + 6432 Teilplan-Formelzeilen seit 02-04 (alle PB/PG/P-Knoten inkl.
-    # synthetischer PG; nur tatsächlich gedruckte Zeilen zählen, D-13).
-    assert regel1.geprueft == 6550
+    # 118 GESAMT + 6432 Teilplan-Formelzeilen bis Plan 02-04 = 6550 (historische Basis:
+    # vor 261001-oim hatte jede synthetische PG genau ein Produkt außer PG 1501, die
+    # 150101 UND 150102 zu je einer Summenzeile zusammenfasste, deren gemeinsame
+    # Formelzeilen also nur einmal gezählt wurden, D-14 alt).
+    #
+    # Seit 261001-oim (D-14 "genau ein Produkt je synthetische PG") bleibt PG 1501 eine
+    # Kopie von 150101, und die neue PG 1502 kopiert zusätzlich 150102 — jede
+    # Formelzeile, die beide Produkte drucken, wird dadurch ein zweites Mal gezählt.
+    # `ueberschneidung` ist genau dieses Delta (hier 43: 36 im Ergebnisplan, Z. 17/18/
+    # 22/26/29/31 x 6 Spalten, plus 7 im Finanzplan, Z. 17 x 7 Spalten).
+    alte_basis_vor_261001_oim = 6550
+    assert regel1.geprueft == alte_basis_vor_261001_oim + ueberschneidung
     assert regel1.status == "grün"
     # Die einzigen echten PDF-Abweichungen (PB 08/PG 0801/P 080101, je Z. 17, 2024 —
     # dieselbe Rundungsdifferenz auf allen drei Ebenen, PB 08 hat nur ein Produkt) sind

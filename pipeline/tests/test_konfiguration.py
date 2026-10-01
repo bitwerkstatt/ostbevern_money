@@ -283,3 +283,182 @@ def test_lade_sollwerte_lehnt_anhang_a_eintrag_ohne_namen_ab(tmp_path: Path) -> 
     _schreibe_sollwertdatei(tmp_path, text)
     with pytest.raises(KonfigurationsFehler, match="anhang_a"):
         lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+# [synthetische_produktgruppen] (D-14, 261001-oim): Zuordnung eines Produkts zu einer
+# synthetischen PG, wenn der Standard (Code = erste vier Ziffern des Produktcodes)
+# nicht zutrifft. Mutiert die echte 2026.toml-Tabelle "1502" (produkt="150102",
+# name="Tourismus", pdf_seite=299), nie ein frei erfundenes Fixture.
+
+
+def test_synthetische_produktgruppen_vollstaendig_und_gueltig() -> None:
+    jahrgang = lade_jahrgang(STANDARD_JAHR)
+    assert jahrgang.synthetische_produktgruppen
+    for code, eintrag in jahrgang.synthetische_produktgruppen.items():
+        assert eintrag.code == code
+        assert re.match(r"^\d{4}$", code)
+        assert re.match(r"^\d{6}$", eintrag.produkt)
+        assert eintrag.produkt[:2] == code[:2]
+        assert eintrag.name
+        assert 1 <= eintrag.pdf_seite <= jahrgang.anzahlen.pdf_seiten
+
+
+def test_jahrgangsdatei_ohne_synthetische_produktgruppen_laedt_leere_zuordnung(
+    tmp_path: Path,
+) -> None:
+    text = re.sub(r"(?ms)^\[synthetische_produktgruppen\..*", "", _jahrgangsdatei_text())
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    jahrgang = lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+    assert jahrgang.synthetische_produktgruppen == {}
+
+
+def test_synthetische_produktgruppen_schluessel_nicht_vierstellig_wird_abgelehnt(
+    tmp_path: Path,
+) -> None:
+    text = re.sub(
+        r'\[synthetische_produktgruppen\."1502"\]',
+        '[synthetische_produktgruppen."150"]',
+        _jahrgangsdatei_text(),
+        count=1,
+    )
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="synthetische_produktgruppen"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_synthetische_produktgruppen_eintrag_ohne_produkt_meldet_feld(tmp_path: Path) -> None:
+    text = re.sub(r'(?m)^produkt\s*=\s*"150102"\n', "", _jahrgangsdatei_text(), count=1)
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="synthetische_produktgruppen"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_synthetische_produktgruppen_eintrag_mit_unbekanntem_schluessel_wird_abgelehnt(
+    tmp_path: Path,
+) -> None:
+    text = re.sub(
+        r'(\[synthetische_produktgruppen\."1502"\]\n)',
+        r'\1unbekannt = "x"\n',
+        _jahrgangsdatei_text(),
+        count=1,
+    )
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="synthetische_produktgruppen"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_synthetische_produktgruppen_produkt_nicht_sechsstellig_wird_abgelehnt(
+    tmp_path: Path,
+) -> None:
+    text = re.sub(
+        r'(?m)^produkt\s*=\s*"150102"$', 'produkt = "1501"', _jahrgangsdatei_text(), count=1
+    )
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="synthetische_produktgruppen"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_synthetische_produktgruppen_produkt_falscher_produktbereich_wird_abgelehnt(
+    tmp_path: Path,
+) -> None:
+    text = re.sub(
+        r'(?m)^produkt\s*=\s*"150102"$', 'produkt = "160101"', _jahrgangsdatei_text(), count=1
+    )
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="synthetische_produktgruppen"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_synthetische_produktgruppen_leerer_name_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(r'(?m)^name\s*=\s*"Tourismus"$', 'name = ""', _jahrgangsdatei_text(), count=1)
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="synthetische_produktgruppen"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_synthetische_produktgruppen_pdf_seite_ausserhalb_bereich_wird_abgelehnt(
+    tmp_path: Path,
+) -> None:
+    text = re.sub(r"(?m)^pdf_seite\s*=\s*299$", "pdf_seite = 0", _jahrgangsdatei_text(), count=1)
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="synthetische_produktgruppen"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_synthetische_produktgruppen_pdf_seite_als_bool_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(r"(?m)^pdf_seite\s*=\s*299$", "pdf_seite = true", _jahrgangsdatei_text(), count=1)
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="synthetische_produktgruppen"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_synthetische_produktgruppen_doppeltes_produkt_wird_abgelehnt(tmp_path: Path) -> None:
+    text = _jahrgangsdatei_text() + (
+        '\n[synthetische_produktgruppen."1503"]\n'
+        'produkt = "150102"\n'
+        'name = "Duplikat"\n'
+        "pdf_seite = 299\n"
+    )
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="synthetische_produktgruppen"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_synthetische_produktgruppen_falscher_typ_wird_abgelehnt(tmp_path: Path) -> None:
+    # Der Ersatzwert muss VOR der ersten [section]-Kopfzeile stehen, sonst landet er als
+    # TOML-Schlüssel innerhalb der zuletzt geöffneten Tabelle statt auf oberster Ebene.
+    ohne = re.sub(r"(?ms)^\[synthetische_produktgruppen\..*", "", _jahrgangsdatei_text())
+    text = re.sub(
+        r"(?m)^(haushaltsjahr\s*=\s*\d+)$",
+        r'\1\nsynthetische_produktgruppen = "nicht-tabelle"',
+        ohne,
+        count=1,
+    )
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="synthetische_produktgruppen"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+# [haushaltsquerschnitt_pg] (D-14, 261001-oim): optionale Sollwerte für den
+# Haushaltsquerschnitt-Abgleich einer synthetischen PG (Phase 3 Regel 7). Mutiert die
+# echte 2026_sollwerte.toml-Zeile "1501".
+
+
+def test_haushaltsquerschnitt_pg_schluessel_nicht_vierstellig_wird_abgelehnt(
+    tmp_path: Path,
+) -> None:
+    text = re.sub(r'(?m)^"1501" = ', '"150" = ', _sollwertdatei_text(), count=1)
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="haushaltsquerschnitt_pg"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_haushaltsquerschnitt_pg_eintrag_ohne_ergebnis_meldet_feld(tmp_path: Path) -> None:
+    text = re.sub(
+        r'(?m)^("1501" = \{ )ergebnis_mit_internen_verrechnungen = -?\d+, (pdf_seite = \d+ \})$',
+        r"\1\2",
+        _sollwertdatei_text(),
+        count=1,
+    )
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="haushaltsquerschnitt_pg"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_haushaltsquerschnitt_pg_ungueltige_pdf_seite_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(
+        r'(?m)^("1501" = \{ ergebnis_mit_internen_verrechnungen = -?\d+, pdf_seite = )\d+( \})$',
+        r"\g<1>0\2",
+        _sollwertdatei_text(),
+        count=1,
+    )
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="haushaltsquerschnitt_pg"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_sollwertdatei_ohne_haushaltsquerschnitt_pg_bleibt_gueltig(tmp_path: Path) -> None:
+    text = re.sub(r"(?ms)^\[haushaltsquerschnitt_pg\]\n.*?(?=^\[)", "", _sollwertdatei_text())
+    _schreibe_sollwertdatei(tmp_path, text)
+    sollwerte = lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+    assert "haushaltsquerschnitt_pg" not in sollwerte

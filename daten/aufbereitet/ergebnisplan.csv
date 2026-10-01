@@ -4955,72 +4955,132 @@ PG,1501,true,10,ordentliche_ertraege,Ordentliche Erträge,=,true,2026,ansatz,120
 PG,1501,true,10,ordentliche_ertraege,Ordentliche Erträge,=,true,2027,planung,12045,274
 PG,1501,true,10,ordentliche_ertraege,Ordentliche Erträge,=,true,2028,planung,12045,274
 PG,1501,true,10,ordentliche_ertraege,Ordentliche Erträge,=,true,2029,planung,12045,274
-PG,1501,true,11,personalaufwendungen,Personalaufwendungen,-,false,2024,ergebnis,131104,274
-PG,1501,true,11,personalaufwendungen,Personalaufwendungen,-,false,2025,ansatz,97400,274
-PG,1501,true,11,personalaufwendungen,Personalaufwendungen,-,false,2026,ansatz,148054,274
-PG,1501,true,11,personalaufwendungen,Personalaufwendungen,-,false,2027,planung,190800,274
-PG,1501,true,11,personalaufwendungen,Personalaufwendungen,-,false,2028,planung,198400,274
-PG,1501,true,11,personalaufwendungen,Personalaufwendungen,-,false,2029,planung,206300,274
-PG,1501,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2024,ergebnis,13889,274
-PG,1501,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2025,ansatz,13215,274
-PG,1501,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2026,ansatz,13400,274
-PG,1501,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2027,planung,13400,274
-PG,1501,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2028,planung,13400,274
-PG,1501,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2029,planung,13400,274
+PG,1501,true,11,personalaufwendungen,Personalaufwendungen,-,false,2024,ergebnis,111941,274
+PG,1501,true,11,personalaufwendungen,Personalaufwendungen,-,false,2025,ansatz,75500,274
+PG,1501,true,11,personalaufwendungen,Personalaufwendungen,-,false,2026,ansatz,93400,274
+PG,1501,true,11,personalaufwendungen,Personalaufwendungen,-,false,2027,planung,97100,274
+PG,1501,true,11,personalaufwendungen,Personalaufwendungen,-,false,2028,planung,101000,274
+PG,1501,true,11,personalaufwendungen,Personalaufwendungen,-,false,2029,planung,105000,274
+PG,1501,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2024,ergebnis,1116,274
+PG,1501,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2025,ansatz,1200,274
+PG,1501,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2026,ansatz,1400,274
+PG,1501,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2027,planung,1400,274
+PG,1501,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2028,planung,1400,274
+PG,1501,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2029,planung,1400,274
 PG,1501,true,14,abschreibungen,Bilanzielle Abschreibungen,-,false,2024,ergebnis,2783,274
 PG,1501,true,14,abschreibungen,Bilanzielle Abschreibungen,-,false,2025,ansatz,2783,274
 PG,1501,true,14,abschreibungen,Bilanzielle Abschreibungen,-,false,2026,ansatz,2783,274
 PG,1501,true,14,abschreibungen,Bilanzielle Abschreibungen,-,false,2027,planung,2783,274
 PG,1501,true,14,abschreibungen,Bilanzielle Abschreibungen,-,false,2028,planung,2595,274
 PG,1501,true,14,abschreibungen,Bilanzielle Abschreibungen,-,false,2029,planung,2223,274
-PG,1501,true,15,transferaufwendungen,Transferaufwendungen,-,false,2024,ergebnis,74460,274
-PG,1501,true,15,transferaufwendungen,Transferaufwendungen,-,false,2025,ansatz,71720,274
-PG,1501,true,15,transferaufwendungen,Transferaufwendungen,-,false,2026,ansatz,300,274
-PG,1501,true,15,transferaufwendungen,Transferaufwendungen,-,false,2027,planung,300,274
-PG,1501,true,15,transferaufwendungen,Transferaufwendungen,-,false,2028,planung,300,274
-PG,1501,true,15,transferaufwendungen,Transferaufwendungen,-,false,2029,planung,300,274
-PG,1501,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2024,ergebnis,30788,274
-PG,1501,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2025,ansatz,52900,274
-PG,1501,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2026,ansatz,38200,274
-PG,1501,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2027,planung,31400,274
-PG,1501,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2028,planung,31400,274
-PG,1501,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2029,planung,31400,274
-PG,1501,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2024,ergebnis,253025,274
-PG,1501,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2025,ansatz,238018,274
-PG,1501,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2026,ansatz,202737,274
-PG,1501,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2027,planung,238683,274
-PG,1501,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2028,planung,246095,274
-PG,1501,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2029,planung,253623,274
-PG,1501,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2024,ergebnis,-237667,274
-PG,1501,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2025,ansatz,-226973,274
-PG,1501,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2026,ansatz,-190692,274
-PG,1501,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2027,planung,-226638,274
-PG,1501,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2028,planung,-234050,274
-PG,1501,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2029,planung,-241578,274
-PG,1501,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2024,ergebnis,-237667,274
-PG,1501,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2025,ansatz,-226973,274
-PG,1501,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2026,ansatz,-190692,274
-PG,1501,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2027,planung,-226638,274
-PG,1501,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2028,planung,-234050,274
-PG,1501,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2029,planung,-241578,274
-PG,1501,true,26,jahresergebnis,Jahresergebnis,=,true,2024,ergebnis,-237667,274
-PG,1501,true,26,jahresergebnis,Jahresergebnis,=,true,2025,ansatz,-226973,274
-PG,1501,true,26,jahresergebnis,Jahresergebnis,=,true,2026,ansatz,-190692,274
-PG,1501,true,26,jahresergebnis,Jahresergebnis,=,true,2027,planung,-226638,274
-PG,1501,true,26,jahresergebnis,Jahresergebnis,=,true,2028,planung,-234050,274
-PG,1501,true,26,jahresergebnis,Jahresergebnis,=,true,2029,planung,-241578,274
-PG,1501,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2024,ergebnis,-237667,274
-PG,1501,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2025,ansatz,-226973,274
-PG,1501,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2026,ansatz,-190692,274
-PG,1501,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2027,planung,-226638,274
-PG,1501,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2028,planung,-234050,274
-PG,1501,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2029,planung,-241578,274
-PG,1501,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2024,ergebnis,-237667,274
-PG,1501,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2025,ansatz,-226973,274
-PG,1501,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2026,ansatz,-190692,274
-PG,1501,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2027,planung,-226638,274
-PG,1501,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2028,planung,-234050,274
-PG,1501,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2029,planung,-241578,274
+PG,1501,true,15,transferaufwendungen,Transferaufwendungen,-,false,2024,ergebnis,6400,274
+PG,1501,true,15,transferaufwendungen,Transferaufwendungen,-,false,2025,ansatz,0,274
+PG,1501,true,15,transferaufwendungen,Transferaufwendungen,-,false,2026,ansatz,0,274
+PG,1501,true,15,transferaufwendungen,Transferaufwendungen,-,false,2027,planung,0,274
+PG,1501,true,15,transferaufwendungen,Transferaufwendungen,-,false,2028,planung,0,274
+PG,1501,true,15,transferaufwendungen,Transferaufwendungen,-,false,2029,planung,0,274
+PG,1501,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2024,ergebnis,26064,274
+PG,1501,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2025,ansatz,47700,274
+PG,1501,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2026,ansatz,32600,274
+PG,1501,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2027,planung,25800,274
+PG,1501,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2028,planung,25800,274
+PG,1501,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2029,planung,25800,274
+PG,1501,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2024,ergebnis,148305,274
+PG,1501,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2025,ansatz,127183,274
+PG,1501,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2026,ansatz,130183,274
+PG,1501,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2027,planung,127083,274
+PG,1501,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2028,planung,130795,274
+PG,1501,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2029,planung,134423,274
+PG,1501,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2024,ergebnis,-132947,274
+PG,1501,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2025,ansatz,-116138,274
+PG,1501,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2026,ansatz,-118138,274
+PG,1501,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2027,planung,-115038,274
+PG,1501,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2028,planung,-118750,274
+PG,1501,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2029,planung,-122378,274
+PG,1501,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2024,ergebnis,-132947,274
+PG,1501,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2025,ansatz,-116138,274
+PG,1501,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2026,ansatz,-118138,274
+PG,1501,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2027,planung,-115038,274
+PG,1501,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2028,planung,-118750,274
+PG,1501,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2029,planung,-122378,274
+PG,1501,true,26,jahresergebnis,Jahresergebnis,=,true,2024,ergebnis,-132947,274
+PG,1501,true,26,jahresergebnis,Jahresergebnis,=,true,2025,ansatz,-116138,274
+PG,1501,true,26,jahresergebnis,Jahresergebnis,=,true,2026,ansatz,-118138,274
+PG,1501,true,26,jahresergebnis,Jahresergebnis,=,true,2027,planung,-115038,274
+PG,1501,true,26,jahresergebnis,Jahresergebnis,=,true,2028,planung,-118750,274
+PG,1501,true,26,jahresergebnis,Jahresergebnis,=,true,2029,planung,-122378,274
+PG,1501,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2024,ergebnis,-132947,274
+PG,1501,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2025,ansatz,-116138,274
+PG,1501,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2026,ansatz,-118138,274
+PG,1501,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2027,planung,-115038,274
+PG,1501,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2028,planung,-118750,274
+PG,1501,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2029,planung,-122378,274
+PG,1501,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2024,ergebnis,-132947,274
+PG,1501,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2025,ansatz,-116138,274
+PG,1501,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2026,ansatz,-118138,274
+PG,1501,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2027,planung,-115038,274
+PG,1501,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2028,planung,-118750,274
+PG,1501,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2029,planung,-122378,274
+PG,1502,true,11,personalaufwendungen,Personalaufwendungen,-,false,2024,ergebnis,19163,277
+PG,1502,true,11,personalaufwendungen,Personalaufwendungen,-,false,2025,ansatz,21900,277
+PG,1502,true,11,personalaufwendungen,Personalaufwendungen,-,false,2026,ansatz,54654,277
+PG,1502,true,11,personalaufwendungen,Personalaufwendungen,-,false,2027,planung,93700,277
+PG,1502,true,11,personalaufwendungen,Personalaufwendungen,-,false,2028,planung,97400,277
+PG,1502,true,11,personalaufwendungen,Personalaufwendungen,-,false,2029,planung,101300,277
+PG,1502,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2024,ergebnis,12773,277
+PG,1502,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2025,ansatz,12015,277
+PG,1502,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2026,ansatz,12000,277
+PG,1502,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2027,planung,12000,277
+PG,1502,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2028,planung,12000,277
+PG,1502,true,13,sach_und_dienstleistungen,Aufwendungen für Sach- und Dienstleistungen,-,false,2029,planung,12000,277
+PG,1502,true,15,transferaufwendungen,Transferaufwendungen,-,false,2024,ergebnis,68060,277
+PG,1502,true,15,transferaufwendungen,Transferaufwendungen,-,false,2025,ansatz,71720,277
+PG,1502,true,15,transferaufwendungen,Transferaufwendungen,-,false,2026,ansatz,300,277
+PG,1502,true,15,transferaufwendungen,Transferaufwendungen,-,false,2027,planung,300,277
+PG,1502,true,15,transferaufwendungen,Transferaufwendungen,-,false,2028,planung,300,277
+PG,1502,true,15,transferaufwendungen,Transferaufwendungen,-,false,2029,planung,300,277
+PG,1502,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2024,ergebnis,4724,277
+PG,1502,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2025,ansatz,5200,277
+PG,1502,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2026,ansatz,5600,277
+PG,1502,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2027,planung,5600,277
+PG,1502,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2028,planung,5600,277
+PG,1502,true,16,sonstige_ordentliche_aufwendungen,Sonstige ordentliche Aufwendungen,-,false,2029,planung,5600,277
+PG,1502,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2024,ergebnis,104720,277
+PG,1502,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2025,ansatz,110835,277
+PG,1502,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2026,ansatz,72554,277
+PG,1502,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2027,planung,111600,277
+PG,1502,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2028,planung,115300,277
+PG,1502,true,17,ordentliche_aufwendungen,Ordentliche Aufwendungen,=,true,2029,planung,119200,277
+PG,1502,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2024,ergebnis,-104720,277
+PG,1502,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2025,ansatz,-110835,277
+PG,1502,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2026,ansatz,-72554,277
+PG,1502,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2027,planung,-111600,277
+PG,1502,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2028,planung,-115300,277
+PG,1502,true,18,ordentliches_ergebnis,Ordentliches Ergebnis,=,true,2029,planung,-119200,277
+PG,1502,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2024,ergebnis,-104720,277
+PG,1502,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2025,ansatz,-110835,277
+PG,1502,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2026,ansatz,-72554,277
+PG,1502,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2027,planung,-111600,277
+PG,1502,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2028,planung,-115300,277
+PG,1502,true,22,ergebnis_laufende_verwaltung,Ergebnis der lfd. Verw.-tätigkeit,=,true,2029,planung,-119200,277
+PG,1502,true,26,jahresergebnis,Jahresergebnis,=,true,2024,ergebnis,-104720,277
+PG,1502,true,26,jahresergebnis,Jahresergebnis,=,true,2025,ansatz,-110835,277
+PG,1502,true,26,jahresergebnis,Jahresergebnis,=,true,2026,ansatz,-72554,277
+PG,1502,true,26,jahresergebnis,Jahresergebnis,=,true,2027,planung,-111600,277
+PG,1502,true,26,jahresergebnis,Jahresergebnis,=,true,2028,planung,-115300,277
+PG,1502,true,26,jahresergebnis,Jahresergebnis,=,true,2029,planung,-119200,277
+PG,1502,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2024,ergebnis,-104720,277
+PG,1502,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2025,ansatz,-110835,277
+PG,1502,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2026,ansatz,-72554,277
+PG,1502,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2027,planung,-111600,277
+PG,1502,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2028,planung,-115300,277
+PG,1502,true,29,ergebnis_mit_internen_verrechnungen,Ergebnis mit inneren Verrechnungen,=,true,2029,planung,-119200,277
+PG,1502,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2024,ergebnis,-104720,277
+PG,1502,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2025,ansatz,-110835,277
+PG,1502,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2026,ansatz,-72554,277
+PG,1502,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2027,planung,-111600,277
+PG,1502,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2028,planung,-115300,277
+PG,1502,true,31,ergebnis_nach_minderaufwand,Ergebnis nach Abzug glob. Minderaufw.,=,true,2029,planung,-119200,277
 PG,1601,true,01,steuern,Steuern und ähnliche Abgaben,,false,2024,ergebnis,19614808,281
 PG,1601,true,01,steuern,Steuern und ähnliche Abgaben,,false,2025,ansatz,17964000,281
 PG,1601,true,01,steuern,Steuern und ähnliche Abgaben,,false,2026,ansatz,18443000,281

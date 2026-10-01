@@ -8,8 +8,8 @@ Gesamtstatus: grün
 
 | Regel | Status | Geprüfte Werte | Abweichungen | Bekannte Befunde |
 | --- | --- | --- | --- | --- |
-| Regel 1 – Zeilenformeln | grün | 6550 | 0 | 3 |
-| Regel 2 – Produkte → PG → PB | grün | 7920 | 0 | 6 |
+| Regel 1 – Zeilenformeln | grün | 6593 | 0 | 3 |
+| Regel 2 – Produkte → PG → PB | grün | 7994 | 0 | 6 |
 | Regel 3 – Produktbereiche → Gesamtergebnisplan | grün | 114 | 0 | 1 |
 | Regel 4 – Sollwerte (Anhang B, Satzung § 1-3) | grün | 194 | 0 | 0 |
 

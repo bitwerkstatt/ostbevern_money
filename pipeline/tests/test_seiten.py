@@ -8,13 +8,23 @@ bestimmte PDF-Seite selbst Gegenstand des Tests ist.
 
 from __future__ import annotations
 
+import dataclasses
 import re
 
+import polars as pl
 import pytest
 
-from ostbevern.konfiguration import STANDARD_JAHR, lade_jahrgang
+from ostbevern.konfiguration import STANDARD_JAHR, SynthetischeProduktgruppe, lade_jahrgang
 from ostbevern.pdf import PdfDokument
-from ostbevern.seiten import _lies_kopfzeile, klassifiziere_dokument, verbinde_namensteile
+from ostbevern.seiten import (
+    Seite,
+    SeitenFehler,
+    Seitenkopf,
+    _lies_kopfzeile,
+    baue_hierarchie,
+    klassifiziere_dokument,
+    verbinde_namensteile,
+)
 
 
 @pytest.fixture(scope="module")
@@ -78,10 +88,20 @@ def test_jeder_knoten_hat_genau_eine_teilergebnisplanseite(seiten, jahrgang) -> 
     assert len(produkt_knoten) == jahrgang.anzahlen.produkte
 
 
-def test_produktseiten_tragen_pg_aus_produktcode(seiten) -> None:
+def test_produktseiten_tragen_pg_aus_produktcode_oder_jahrgangsdeklaration(
+    seiten, jahrgang
+) -> None:
+    """Die PG einer Produktseite ist der deklarierte Code aus
+    jahrgang.synthetische_produktgruppen, falls das Produkt dort als `produkt`
+    auftaucht (D-14), sonst der Standard (die ersten vier Ziffern des Produktcodes).
+    Berechnet unabhängig von der Produktionslogik, nicht über den Helfer selbst."""
+    deklarierte_produkte = {
+        eintrag.produkt: code for code, eintrag in jahrgang.synthetische_produktgruppen.items()
+    }
     for seite in seiten:
         if seite.produkt is not None:
-            assert seite.pg == seite.produkt[:4]
+            erwartet = deklarierte_produkte.get(seite.produkt, seite.produkt[:4])
+            assert seite.pg == erwartet
 
 
 def test_erste_teilplanseite_ist_teilergebnisplan_eines_pb(seiten, jahrgang) -> None:
@@ -143,3 +163,229 @@ def test_namensteile_werden_verbunden() -> None:
     assert (
         verbinde_namensteile(["Natur-", "und Landschaftspflege"]) == "Natur- und Landschaftspflege"
     )
+
+
+# baue_hierarchie mit konstruierten Seiten/Köpfen (D-08, D-14, 261001-oim): prüft die
+# Validierung von [synthetische_produktgruppen]-Deklarationen gegen die extrahierte
+# Hierarchie. Nutzt NICHT die modulweiten PDF-Fixtures (läuft ohne das PDF zu öffnen),
+# nur die reine `jahrgang`-Fixture. Produktbereich "99" ist frei erfunden (Präzedenzfall
+# test_pruefung.py), Seitenzahlen basieren auf jahrgang.seitenbereiche["teilplaene"].von.
+
+
+def _konstruierter_jahrgang(jahrgang, *, anzahl_pb, anzahl_produkte, synthetische_produktgruppen):
+    return dataclasses.replace(
+        jahrgang,
+        anzahlen=dataclasses.replace(
+            jahrgang.anzahlen, produktbereiche=anzahl_pb, produkte=anzahl_produkte
+        ),
+        synthetische_produktgruppen=synthetische_produktgruppen,
+    )
+
+
+def _konstruierte_seiten(jahrgang, koepfe_je_offset):
+    """koepfe_je_offset: Liste von (Offset, Seitenkopf). pdf_seite ist
+    jahrgang.seitenbereiche['teilplaene'].von + Offset."""
+    basis = jahrgang.seitenbereiche["teilplaene"].von
+    seiten = []
+    koepfe = {}
+    for offset, kopf in koepfe_je_offset:
+        seite_nr = basis + offset
+        seiten.append(
+            Seite(pdf_seite=seite_nr, typ="teilergebnisplan", pb=None, pg=None, produkt=None)
+        )
+        koepfe[seite_nr] = kopf
+    return tuple(seiten), koepfe
+
+
+def test_baue_hierarchie_kollision_ohne_deklaration_meldet_beide_produkte(jahrgang) -> None:
+    """Zwei Produkte, die ohne Deklaration auf denselben synthetischen PG-Code auflösen
+    (D-14 "genau ein Produkt"), sind ein SeitenFehler, der beide Produktcodes nennt."""
+    koepfe_je_offset = [
+        (
+            0,
+            Seitenkopf(
+                pb="99",
+                pb_name="Testbereich",
+                pg=None,
+                pg_name=None,
+                produkt="990101",
+                produkt_name="ProduktEins",
+            ),
+        ),
+        (
+            1,
+            Seitenkopf(
+                pb="99",
+                pb_name="Testbereich",
+                pg=None,
+                pg_name=None,
+                produkt="990102",
+                produkt_name="ProduktZwei",
+            ),
+        ),
+    ]
+    seiten, koepfe = _konstruierte_seiten(jahrgang, koepfe_je_offset)
+    jahrgang_konstr = _konstruierter_jahrgang(
+        jahrgang, anzahl_pb=1, anzahl_produkte=2, synthetische_produktgruppen={}
+    )
+
+    with pytest.raises(SeitenFehler, match="990101") as exc_info:
+        baue_hierarchie(seiten, koepfe, jahrgang_konstr)
+    assert "990102" in str(exc_info.value)
+
+
+def test_baue_hierarchie_deklaration_mit_unbekanntem_produkt_wird_abgelehnt(jahrgang) -> None:
+    """Eine Deklaration, deren produkt nicht unter den extrahierten P-Knoten ist, ist
+    ein SeitenFehler (D-08)."""
+    koepfe_je_offset = [
+        (
+            0,
+            Seitenkopf(
+                pb="99",
+                pb_name="Testbereich",
+                pg=None,
+                pg_name=None,
+                produkt="990101",
+                produkt_name="ProduktEins",
+            ),
+        ),
+    ]
+    seiten, koepfe = _konstruierte_seiten(jahrgang, koepfe_je_offset)
+    synthetische = {
+        "9901": SynthetischeProduktgruppe(code="9901", produkt="990199", name="Falsch", pdf_seite=1)
+    }
+    jahrgang_konstr = _konstruierter_jahrgang(
+        jahrgang, anzahl_pb=1, anzahl_produkte=1, synthetische_produktgruppen=synthetische
+    )
+
+    with pytest.raises(SeitenFehler, match="990199"):
+        baue_hierarchie(seiten, koepfe, jahrgang_konstr)
+
+
+def test_baue_hierarchie_deklaration_fuer_produkt_in_gedruckter_pg_wird_abgelehnt(
+    jahrgang,
+) -> None:
+    """Eine Deklaration, deren produkt bereits zu einer gedruckten PG gehört, ist ein
+    SeitenFehler (D-08) — eine solche Zuordnung kann nie zu einer synthetischen PG
+    führen."""
+    koepfe_je_offset = [
+        (
+            0,
+            Seitenkopf(
+                pb="99",
+                pb_name="Testbereich",
+                pg="9902",
+                pg_name="Gedruckt",
+                produkt=None,
+                produkt_name=None,
+            ),
+        ),
+        (
+            1,
+            Seitenkopf(
+                pb="99",
+                pb_name="Testbereich",
+                pg=None,
+                pg_name=None,
+                produkt="990201",
+                produkt_name="ProduktDrei",
+            ),
+        ),
+    ]
+    seiten, koepfe = _konstruierte_seiten(jahrgang, koepfe_je_offset)
+    synthetische = {
+        "9903": SynthetischeProduktgruppe(code="9903", produkt="990201", name="Y", pdf_seite=1)
+    }
+    jahrgang_konstr = _konstruierter_jahrgang(
+        jahrgang, anzahl_pb=1, anzahl_produkte=1, synthetische_produktgruppen=synthetische
+    )
+
+    with pytest.raises(SeitenFehler, match="990201"):
+        baue_hierarchie(seiten, koepfe, jahrgang_konstr)
+
+
+def test_baue_hierarchie_deklarierter_code_ist_gedruckte_pg_wird_abgelehnt(jahrgang) -> None:
+    """Eine Deklaration, deren Code bereits eine gedruckte PG ist, ist ein SeitenFehler
+    (D-08) — der Code steht schon für eine andere, gedruckte Produktgruppe."""
+    koepfe_je_offset = [
+        (
+            0,
+            Seitenkopf(
+                pb="99",
+                pb_name="Testbereich",
+                pg="9902",
+                pg_name="Gedruckt",
+                produkt=None,
+                produkt_name=None,
+            ),
+        ),
+        (
+            1,
+            Seitenkopf(
+                pb="99",
+                pb_name="Testbereich",
+                pg=None,
+                pg_name=None,
+                produkt="990201",
+                produkt_name="ProduktDrei",
+            ),
+        ),
+        (
+            2,
+            Seitenkopf(
+                pb="99",
+                pb_name="Testbereich",
+                pg=None,
+                pg_name=None,
+                produkt="990301",
+                produkt_name="ProduktVier",
+            ),
+        ),
+    ]
+    seiten, koepfe = _konstruierte_seiten(jahrgang, koepfe_je_offset)
+    synthetische = {
+        "9902": SynthetischeProduktgruppe(code="9902", produkt="990301", name="Z", pdf_seite=1)
+    }
+    jahrgang_konstr = _konstruierter_jahrgang(
+        jahrgang, anzahl_pb=1, anzahl_produkte=2, synthetische_produktgruppen=synthetische
+    )
+
+    with pytest.raises(SeitenFehler, match="9902"):
+        baue_hierarchie(seiten, koepfe, jahrgang_konstr)
+
+
+def test_baue_hierarchie_gueltige_deklaration_ergibt_deklarierte_pg(jahrgang) -> None:
+    """Eine gültige Deklaration ergibt eine synthetische PG mit dem deklarierten Code,
+    dem deklarierten Namen und der Startseite des Produkts (D-14)."""
+    koepfe_je_offset = [
+        (
+            0,
+            Seitenkopf(
+                pb="99",
+                pb_name="Testbereich",
+                pg=None,
+                pg_name=None,
+                produkt="990101",
+                produkt_name="ProduktEins",
+            ),
+        ),
+    ]
+    seiten, koepfe = _konstruierte_seiten(jahrgang, koepfe_je_offset)
+    synthetische = {
+        "9999": SynthetischeProduktgruppe(
+            code="9999", produkt="990101", name="MeinName", pdf_seite=42
+        )
+    }
+    jahrgang_konstr = _konstruierter_jahrgang(
+        jahrgang, anzahl_pb=1, anzahl_produkte=1, synthetische_produktgruppen=synthetische
+    )
+
+    hierarchie = baue_hierarchie(seiten, koepfe, jahrgang_konstr)
+    pg_zeile = hierarchie.filter((pl.col("ebene") == "PG") & (pl.col("code") == "9999")).row(
+        0, named=True
+    )
+    assert pg_zeile["name"] == "MeinName"
+    assert pg_zeile["synthetisch"] is True
+    assert pg_zeile["eltern_code"] == "99"
+    erwartete_startseite = jahrgang.seitenbereiche["teilplaene"].von
+    assert pg_zeile["pdf_seite_start"] == erwartete_startseite

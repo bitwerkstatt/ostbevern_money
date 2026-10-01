@@ -481,63 +481,40 @@ def lies_teilplaene(
 def _synthetische_pg_datensaetze(
     teil_df: pl.DataFrame, hierarchie: pl.DataFrame, plantyp: str
 ) -> list[dict[str, object]]:
-    """Baut synthetische-PG-Zeilen aus den Produktzeilen ihrer Produktgruppe (D-14).
+    """Baut synthetische-PG-Zeilen als exakte Kopie der Zeilen ihres einzigen Kind-
+    Produkts (D-14, 261001-oim: jede synthetische PG hat genau ein Produkt).
 
-    Für jede PG mit `synthetisch=true` in `hierarchie`: pro (zeile, jahr, wertart) ist
-    `betrag` die Summe der Produktzeilen (eine einzige Produktzeile ist also eine exakte
-    Kopie); `pdf_seite` und `operator` kommen vom Produkt mit dem niedrigsten Code, das
-    diese konkrete Zeile druckt (gedruckte_zeilen ist nach Code aufsteigend sortiert, daher
-    gewinnt beim ersten Auftreten je Schlüssel immer der niedrigste Code). Eine synthetische
-    PG ohne jede Produktzeile bricht mit PlaeneFehler ab (D-08).
+    Mitgliedschaft kommt ausschließlich aus `hierarchie.eltern_code` (P-Zeilen, deren
+    eltern_code dem PG-Code entspricht) — keine erneute Ableitung aus einem Code-
+    Präfix, keine Summenbildung. Fehler (D-08): eine synthetische PG mit einer Kind-
+    Anzahl ungleich 1, oder ein Kind ohne Zeilen in `teil_df`.
     """
     synthetische_pg = hierarchie.filter((pl.col("ebene") == "PG") & pl.col("synthetisch"))
     if synthetische_pg.height == 0:
         return []
 
-    zeilen_definition = ZEILEN[plantyp]
-    produkt_zeilen = teil_df.filter(pl.col("ebene") == "P").sort("code")
-    produkt_zeilen_je_pg: dict[str, list[dict[str, object]]] = {}
-    for zeile in produkt_zeilen.iter_rows(named=True):
-        produkt_zeilen_je_pg.setdefault(zeile["code"][:4], []).append(zeile)
+    p_zeilen = hierarchie.filter(pl.col("ebene") == "P")
 
     datensaetze: list[dict[str, object]] = []
     for pg in synthetische_pg.iter_rows(named=True):
         pg_code = pg["code"]
-        zeilen_dieser_pg = produkt_zeilen_je_pg.get(pg_code, [])
-        if not zeilen_dieser_pg:
-            raise PlaeneFehler(f"PG {pg_code}: synthetische Produktgruppe ohne Produktzeilen")
-
-        gruppen: dict[tuple[str, int, str], dict[str, object]] = {}
-        for zeile in zeilen_dieser_pg:
-            schluessel = (zeile["zeile"], zeile["jahr"], zeile["wertart"])
-            gruppe = gruppen.get(schluessel)
-            if gruppe is None:
-                gruppen[schluessel] = {
-                    "betrag": zeile["betrag"],
-                    "pdf_seite": zeile["pdf_seite"],
-                    "operator": zeile["operator"],
-                }
-            else:
-                gruppe["betrag"] += zeile["betrag"]
-
-        for (zeilennummer, jahr, wertart), gruppe in gruppen.items():
-            definition = zeilen_definition[zeilennummer]
-            datensaetze.append(
-                {
-                    "ebene": "PG",
-                    "code": pg_code,
-                    "synthetisch": True,
-                    "zeile": zeilennummer,
-                    "zeile_kanonisch": definition.kanonisch,
-                    "zeile_name": definition.name,
-                    "operator": gruppe["operator"],
-                    "ist_summe": definition.ist_summe,
-                    "jahr": jahr,
-                    "wertart": wertart,
-                    "betrag": gruppe["betrag"],
-                    "pdf_seite": gruppe["pdf_seite"],
-                }
+        kinder = p_zeilen.filter(pl.col("eltern_code") == pg_code)["code"].to_list()
+        if len(kinder) != 1:
+            raise PlaeneFehler(
+                f"PG {pg_code}: synthetische Produktgruppe hat {len(kinder)} Produkte "
+                "als Kinder, erwartet genau 1 (D-14)"
             )
+        kind_code = kinder[0]
+        kind_zeilen = teil_df.filter((pl.col("ebene") == "P") & (pl.col("code") == kind_code))
+        if kind_zeilen.height == 0:
+            raise PlaeneFehler(f"PG {pg_code}: Produkt {kind_code} hat keine Planzeilen")
+
+        for zeile in kind_zeilen.iter_rows(named=True):
+            datensatz = dict(zeile)
+            datensatz["ebene"] = "PG"
+            datensatz["code"] = pg_code
+            datensatz["synthetisch"] = True
+            datensaetze.append(datensatz)
     return datensaetze
 
 

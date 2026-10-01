@@ -121,7 +121,8 @@ P,140101,"Umwelt- und Klimaschutz, Mobilität",1401,269,false
 PB,15,Wirtschaft und Tourismus,,271,false
 PG,1501,Wirtschaftsförderung,15,273,true
 P,150101,Wirtschaftsförderung,1501,273,false
-P,150102,Touristische Öffentlichkeitsarbeit,1501,276,false
+P,150102,Touristische Öffentlichkeitsarbeit,1502,276,false
+PG,1502,Tourismus,15,276,true
 PB,16,Allgemeine Finanzwirtschaft,,278,false
 PG,1601,Allgemeine Finanzwirtschaft,16,280,true
 P,160101,Allgemeine Finanzwirtschaft,1601,280,false
