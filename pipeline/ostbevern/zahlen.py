@@ -42,3 +42,8 @@ def trenne_operator(wort: str) -> tuple[str | None, str]:
         operator = treffer.group(1)
         return operator, wort[len(operator) :]
     return None, wort
+
+
+def trenne_angeklebten_betrag(wort: str) -> tuple[str, str | None]:
+    """Trennt einen angeklebten Betrag vom Label-Ende ab (Spez. 5.4); GREEN folgt in Task 2."""
+    raise NotImplementedError("trenne_angeklebten_betrag: GREEN-Implementierung folgt (RED)")
