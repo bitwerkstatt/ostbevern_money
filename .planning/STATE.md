@@ -4,10 +4,10 @@ current_phase: 3
 current_phase_name: Details
 status: planning
 stopped_at: Phase 02 complete, ready to plan Phase 3
-last_updated: "2026-10-01T15:32:54.334Z"
+last_updated: "2026-10-01T16:31:46.409Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 02 complete, transitioned to Phase 3
-state_head: c23c6dba17403cecd782b864fc1331d6320d46a9
+state_head: 699eb9b7246f06ea8b910c3cbcb854473267a966
 progress:
   total_phases: 7
   completed_phases: 2
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-10-01)
 Phase: 3 — Details
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-10-01 — Phase 02 complete, transitioned to Phase 3
+Last activity: 2026-10-01 - Completed quick task 261001-oim: synthetische PG nach D-14, PG 1502 Tourismus
 
 Progress: [███░░░░░░░] 29%
 
@@ -69,6 +69,7 @@ Recent decisions affecting current work:
 - [Phase 1]: Nummerierte Pipeline-Skripte (01/02/06) entstehen erst in Phase 2 mit ihrer Logik.
 - [Phase 1]: DatenTabelle zeigt `null`-Zellen leer mit „kein Wert“ für Screenreader — vorläufig, bis Phase 2+ weiß, welche Werte fehlen können.
 - [Phase 2]: `alle.py` verkettet Schritt 01 → 02 → 06; Prüfregeln 1–4 grün (6550/7920/114/194 Werte), Regeneration von `daten/` ist deterministisch.
+- [Quick 261001-oim]: Synthetische PG haben genau ein Produkt (D-14, sonst Fehler). PG 1502 „Tourismus“ (nur 150102) ist als Ausnahme in `jahrgaenge/2026.toml` deklariert, Werte gegen Querschnitt S. 299 geprüft.
 - [Phase 2]: Anhang-B.3-Sollwerte PB 09/15 Z. 29 nach PDF-Prüfung (S. 296/299 GESAMTSUMME) korrigiert; 10 gedruckte Rundungsdifferenzen in `befunde.md` belegt.
 
 ### Pending Todos
@@ -80,9 +81,14 @@ None yet.
 - [Phase 4]: Für Schuldenstand, Rücklagen und VE-Übersicht (S. 24/25, 309–311) gibt es keine eigene Datenanforderung. Das ist als Erfolgskriterium in Phase 4 aufgefangen. Bei Bedarf wird daraus eine eigene Anforderung (z. B. MANU-09).
 - [Phase 1]: Die CI ist nur lokal nachgestellt; der erste Lauf auf GitHub steht aus, bis ein Remote angelegt ist.
 - [Phase 1]: `app/node_modules` im gemounteten Repo enthält macOS-Binaries; im Linux-Sandbox App-Checks in einer Scratch-Kopie ausführen.
-- [Phase 3]: PG 1501/1502: Produkt 150102 liegt in der synthetischen PG 1501, der Haushaltsquerschnitt (S. 299/300) führt PG 1502 „Tourismus“ getrennt. Vor Regel 7 entscheiden.
 - [Phase 2]: Code-Review 02-REVIEW.md: 3 Warnungen offen (u. a. Vorzeichen-Beschreibung in `befunde.md`, Kommentar zu PB 09/15 sollte S. 296/299 zitieren).
 - [Phase 2/4]: Die Anhang-B-Eckwerte (B.6), die von `meta.json` oder vom Stellenplan abhängen, lassen sich erst in Phase 4 prüfen. Phase 2 deckt B.1–B.3 und Satzung § 1 ab.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 261001-oim | Synthetische PG nach D-14: genau ein Produkt je PG, PG 1502 Tourismus | 2026-10-01 | 699eb9b | [261001-oim-synthetische-pg-nach-d-14-150102-in-eige](./quick/261001-oim-synthetische-pg-nach-d-14-150102-in-eige/) |
 
 ## Deferred Items
 

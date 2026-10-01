@@ -102,7 +102,7 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 | CI: zwei parallele Jobs, Actions SHA-gepinnt, `contents: read`, Installation nur aus Lockfiles | Lokal nachgestellte CI = Remote-CI | ✓ Good — Phase 1 (Remote-Lauf steht aus, noch kein GitHub-Remote) |
 | Anhang-B-Sollwerte sind unabhängige Referenz, aber nicht unfehlbar: Abweichungen werden erst gegen das PDF geprüft, dann korrigiert | Spez. Anhang B.3 hatte für PB 09/15 Z. 29 den Wert der ersten PG statt der GESAMTSUMME (S. 296/299) übernommen | ✓ Good — Phase 2 |
 | Gedruckte Rundungsdifferenzen (2–3 €) gehen mit Seitenbeleg in `befunde.md`, nie in eine Toleranz | Toleranz bleibt strikt 1 €; jede Ausnahme ist einzeln belegt | ✓ Good — Phase 2 (10 Befunde) |
-| Nicht gedruckte Produktgruppen werden synthetisch gebildet (`synthetisch=true`) | Teilplanbereich druckt nicht jede PG | ⚠️ Revisit — PG 1501/1502 (Querschnitt S. 299/300) vor Phase 3 Regel 7 klären |
+| Nicht gedruckte Produktgruppen werden synthetisch gebildet (`synthetisch=true`) | Teilplanbereich druckt nicht jede PG | ✓ Good — Phase 2; genau ein Produkt je synthetischer PG, PG 1502 „Tourismus“ als deklarierte Ausnahme in der Jahrgangsdatei (Quick 261001-oim) |
 
 ## Evolution
 
