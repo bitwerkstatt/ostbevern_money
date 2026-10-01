@@ -1,0 +1,10 @@
+{
+  "beispieldaten": true,
+  "titel": "Beispiel: Ausgaben nach Bereich",
+  "posten": [
+    { "name": "Bereich A", "wert": 1200000 },
+    { "name": "Bereich B", "wert": 850000 },
+    { "name": "Bereich C", "wert": 430000 },
+    { "name": "Bereich D", "wert": -150000 }
+  ]
+}
