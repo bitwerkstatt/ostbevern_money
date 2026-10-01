@@ -12,6 +12,20 @@ const props = defineProps<{
 
 const istDatenModus = computed(() => props.zeilen !== undefined)
 const istLeer = computed(() => istDatenModus.value && (props.zeilen?.length ?? 0) === 0)
+
+/**
+ * Prüft zur Laufzeit, dass ein Zellwert tatsächlich eine Zahl ist, bevor er
+ * an `<wa-format-number>` übergeben wird. `DatenZeile` erlaubt
+ * `string | number | null` ohne Bezug zu `DatenSpalte.art`, daher schlägt
+ * eine Typinkonsistenz zwischen Spaltendefinition und Daten hier laut fehl,
+ * statt NaN/Garbage stillschweigend zu rendern.
+ */
+function alsZahl(wert: string | number | null | undefined): number {
+  if (typeof wert !== 'number') {
+    throw new TypeError(`Erwartete Zahl für numerische Spalte, erhalten: ${typeof wert}`)
+  }
+  return wert
+}
 </script>
 
 <template>
@@ -63,21 +77,21 @@ const istLeer = computed(() => istDatenModus.value && (props.zeilen?.length ?? 0
                 type="currency"
                 :currency="EURO_OPTIONEN.currency"
                 :maximum-fraction-digits="EURO_OPTIONEN.maximumFractionDigits"
-                :value="zeile[spalte.schluessel] as number"
+                :value="alsZahl(zeile[spalte.schluessel])"
               ></wa-format-number>
               <wa-format-number
                 v-else-if="spalte.art === 'zahl'"
                 lang="de"
                 type="decimal"
                 maximum-fraction-digits="0"
-                :value="zeile[spalte.schluessel] as number"
+                :value="alsZahl(zeile[spalte.schluessel])"
               ></wa-format-number>
               <wa-format-number
                 v-else-if="spalte.art === 'prozent'"
                 lang="de"
                 type="percent"
                 maximum-fraction-digits="1"
-                :value="zeile[spalte.schluessel] as number"
+                :value="alsZahl(zeile[spalte.schluessel])"
               ></wa-format-number>
             </td>
           </template>
