@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pdfplumber
 
-from ostbevern.konfiguration import STANDARD_JAHR, lade_jahrgang
+from ostbevern.konfiguration import STANDARD_JAHR, lade_jahrgang, lade_sollwerte
 
 
 def test_jahrgangsdatei_laedt() -> None:
@@ -17,3 +17,8 @@ def test_pdf_existiert_mit_erwarteter_seitenzahl() -> None:
     assert jahrgang.pdf_pfad.is_file()
     with pdfplumber.open(jahrgang.pdf_pfad) as pdf:
         assert len(pdf.pages) == jahrgang.anzahlen.pdf_seiten
+
+
+def test_sollwertdatei_laedt() -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    assert sollwerte["haushaltsjahr"] == STANDARD_JAHR
