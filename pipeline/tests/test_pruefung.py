@@ -234,7 +234,7 @@ def test_planwerte_formelzyklus_bricht_ab(monkeypatch: pytest.MonkeyPatch) -> No
         {"gesamtergebnisplan": {"10": ((1, "10"),)}},
     )
     planwerte = Planwerte(_LEERER_PLAN, datei="ergebnisplan")
-    with pytest.raises(PruefungsFehler, match="Zyklus"):
+    with pytest.raises(PruefungsFehler, match="Formelzyklus"):
         planwerte.wert("GESAMT", "", "10", STANDARD_JAHR, "ansatz")
 
 

@@ -103,16 +103,22 @@ class Bericht:
         return all(regel.status == "grün" for regel in self.regeln)
 
 
+_PlanwerteSchluessel = tuple[str, str, str, int, str]
+
+
 class Planwerte:
     """Löst Formelketten (FORMELN) für fehlende Zwischenzeilen einer Plan-CSV auf (D-11, Pitfall 1).
 
-    GREEN-Implementierung (Formelkette, Memoisierung, Zyklus-Schutz) folgt im nächsten
-    Commit dieses Plans (02-03 Task 2); dieser Stub liest nur gedruckte Werte (RED).
+    `wert()` liefert den gedruckten Betrag, falls die Zeile existiert; sonst wertet sie die
+    Formel aus `FORMELN[plantyp_fuer(datei, ebene)]` rekursiv über `wert()` aus; fehlt auch
+    eine Formel, ist der Wert 0 (D-11, echte Leerzeile). Ergebnisse werden memoisiert; ein
+    Formelzyklus (sollte nie vorkommen, schützt aber vor einer Endlosrekursion bei einem
+    künftigen FORMELN-Tippfehler) bricht mit PruefungsFehler ab.
     """
 
     def __init__(self, df: pl.DataFrame, *, datei: str) -> None:
         self._datei = datei
-        self._werte: dict[tuple[str, str, str, int, str], int] = {
+        self._werte: dict[_PlanwerteSchluessel, int] = {
             (
                 zeile["ebene"],
                 zeile["code"] or "",
@@ -122,9 +128,35 @@ class Planwerte:
             ): zeile["betrag"]
             for zeile in df.iter_rows(named=True)
         }
+        self._cache: dict[_PlanwerteSchluessel, int] = {}
 
     def wert(self, ebene: str, code: str, zeile: str, jahr: int, wertart: str) -> int:
-        return self._werte.get((ebene, code, zeile, jahr, wertart), 0)
+        return self._wert((ebene, code, zeile, jahr, wertart), unterwegs=frozenset())
+
+    def _wert(self, schluessel: _PlanwerteSchluessel, *, unterwegs: frozenset) -> int:
+        if schluessel in self._cache:
+            return self._cache[schluessel]
+        if schluessel in self._werte:
+            betrag = self._werte[schluessel]
+            self._cache[schluessel] = betrag
+            return betrag
+        if schluessel in unterwegs:
+            raise PruefungsFehler(f"Regel 1: Formelzyklus bei {schluessel}")
+
+        ebene, code, zeile, jahr, wertart = schluessel
+        plantyp = plantyp_fuer(self._datei, ebene)
+        formel = FORMELN.get(plantyp, {}).get(zeile)
+        if formel is None:
+            betrag = 0
+        else:
+            naechste_unterwegs = unterwegs | {schluessel}
+            betrag = sum(
+                vorzeichen
+                * self._wert((ebene, code, komponente, jahr, wertart), unterwegs=naechste_unterwegs)
+                for vorzeichen, komponente in formel
+            )
+        self._cache[schluessel] = betrag
+        return betrag
 
 
 def _pruefe_regel1(*, ergebnisplan: pl.DataFrame, finanzplan: pl.DataFrame) -> Regelergebnis:
@@ -167,23 +199,8 @@ def _pruefe_regel1(*, ergebnisplan: pl.DataFrame, finanzplan: pl.DataFrame) -> R
     )
 
 
-def _csv_wert(df: pl.DataFrame, *, zeile: str, jahr: int, wertart: str, quelle: str) -> int:
-    """Liest genau einen GESAMT-Wert aus einer Plan-CSV; fehlt er, bricht die Prüfung ab."""
-    treffer = df.filter(
-        (pl.col("ebene") == "GESAMT")
-        & (pl.col("zeile") == zeile)
-        & (pl.col("jahr") == jahr)
-        & (pl.col("wertart") == wertart)
-    )
-    if treffer.height == 0:
-        raise PruefungsFehler(
-            f"Regel 4: kein Wert für Zeile {zeile}, Jahr {jahr}, Wertart {wertart} in {quelle}"
-        )
-    return treffer["betrag"][0]
-
-
 def _pruefe_regel4_b1(
-    *, ergebnisplan: pl.DataFrame, sollwerte: dict, spalten: tuple[str, ...]
+    *, planwerte: Planwerte, sollwerte: dict, spalten: tuple[str, ...]
 ) -> tuple[int, list[Pruefpunkt]]:
     gesamtergebnisplan = sollwerte["gesamtergebnisplan"]
     jahre = gesamtergebnisplan["jahre"]
@@ -206,9 +223,7 @@ def _pruefe_regel4_b1(
                     f"gesamtergebnisplan.jahre {jahre!r}"
                 )
             soll = sollwerte_je_jahr[index]
-            ist = _csv_wert(
-                ergebnisplan, zeile=zeile, jahr=jahreszahl, wertart=wertart, quelle=ERGEBNISPLAN_CSV
-            )
+            ist = planwerte.wert("GESAMT", "", zeile, jahreszahl, wertart)
             geprueft += 1
             punkt = Pruefpunkt(
                 regel=4,
@@ -228,7 +243,7 @@ def _pruefe_regel4_b1(
 
 
 def _pruefe_regel4_b2(
-    *, finanzplan: pl.DataFrame, sollwerte: dict, haushaltsjahr: int
+    *, planwerte: Planwerte, sollwerte: dict, haushaltsjahr: int
 ) -> tuple[int, list[Pruefpunkt]]:
     gesamtfinanzplan = sollwerte["gesamtfinanzplan"]
     pdf_seite = gesamtfinanzplan.get("pdf_seite")
@@ -237,9 +252,7 @@ def _pruefe_regel4_b2(
     abweichungen: list[Pruefpunkt] = []
     for wertart in ("ansatz", "ve"):
         for zeile, soll in sorted(gesamtfinanzplan.get(wertart, {}).items()):
-            ist = _csv_wert(
-                finanzplan, zeile=zeile, jahr=haushaltsjahr, wertart=wertart, quelle=FINANZPLAN_CSV
-            )
+            ist = planwerte.wert("GESAMT", "", zeile, haushaltsjahr, wertart)
             geprueft += 1
             punkt = Pruefpunkt(
                 regel=4,
@@ -259,11 +272,15 @@ def _pruefe_regel4_b2(
 
 
 def _pruefe_regel4_satzung(
-    *, ergebnisplan: pl.DataFrame, finanzplan: pl.DataFrame, sollwerte: dict, haushaltsjahr: int
+    *,
+    planwerte_ergebnisplan: Planwerte,
+    planwerte_finanzplan: Planwerte,
+    sollwerte: dict,
+    haushaltsjahr: int,
 ) -> tuple[int, list[Pruefpunkt]]:
     satzung = sollwerte["satzung"]
     pdf_seite = satzung.get("pdf_seite")
-    quellen = {"ergebnisplan": ergebnisplan, "finanzplan": finanzplan}
+    quellen = {"ergebnisplan": planwerte_ergebnisplan, "finanzplan": planwerte_finanzplan}
 
     geprueft = 0
     abweichungen: list[Pruefpunkt] = []
@@ -274,16 +291,9 @@ def _pruefe_regel4_satzung(
         if formel is None:
             raise PruefungsFehler(f"Regel 4: keine Satzungsformel für Schlüssel {schluessel!r}")
         datei, wertart, komponenten = formel
-        quelle_df = quellen[datei]
+        planwerte = quellen[datei]
         ist = sum(
-            vorzeichen
-            * _csv_wert(
-                quelle_df,
-                zeile=zeile,
-                jahr=haushaltsjahr,
-                wertart=wertart,
-                quelle=f"Satzung {schluessel!r} ({datei})",
-            )
+            vorzeichen * planwerte.wert("GESAMT", "", zeile, haushaltsjahr, wertart)
             for vorzeichen, zeile in komponenten
         )
         geprueft += 1
@@ -305,21 +315,23 @@ def _pruefe_regel4_satzung(
 
 
 def _pruefe_regel4(
-    *, daten_wurzel: Path, sollwerte: dict, spalten: tuple[str, ...]
+    *,
+    planwerte_ergebnisplan: Planwerte,
+    planwerte_finanzplan: Planwerte,
+    sollwerte: dict,
+    spalten: tuple[str, ...],
 ) -> Regelergebnis:
     haushaltsjahr = sollwerte["haushaltsjahr"]
-    ergebnisplan = lies_plan_csv(daten_wurzel / ERGEBNISPLAN_CSV)
-    finanzplan = lies_plan_csv(daten_wurzel / FINANZPLAN_CSV)
 
     geprueft_b1, abweichungen_b1 = _pruefe_regel4_b1(
-        ergebnisplan=ergebnisplan, sollwerte=sollwerte, spalten=spalten
+        planwerte=planwerte_ergebnisplan, sollwerte=sollwerte, spalten=spalten
     )
     geprueft_b2, abweichungen_b2 = _pruefe_regel4_b2(
-        finanzplan=finanzplan, sollwerte=sollwerte, haushaltsjahr=haushaltsjahr
+        planwerte=planwerte_finanzplan, sollwerte=sollwerte, haushaltsjahr=haushaltsjahr
     )
     geprueft_satzung, abweichungen_satzung = _pruefe_regel4_satzung(
-        ergebnisplan=ergebnisplan,
-        finanzplan=finanzplan,
+        planwerte_ergebnisplan=planwerte_ergebnisplan,
+        planwerte_finanzplan=planwerte_finanzplan,
         sollwerte=sollwerte,
         haushaltsjahr=haushaltsjahr,
     )
@@ -346,7 +358,10 @@ def pruefe_alles(
 
     regel1 = _pruefe_regel1(ergebnisplan=ergebnisplan, finanzplan=finanzplan)
     regel4 = _pruefe_regel4(
-        daten_wurzel=daten_wurzel, sollwerte=sollwerte, spalten=jahrgang.spalten["ergebnisplan"]
+        planwerte_ergebnisplan=Planwerte(ergebnisplan, datei="ergebnisplan"),
+        planwerte_finanzplan=Planwerte(finanzplan, datei="finanzplan"),
+        sollwerte=sollwerte,
+        spalten=jahrgang.spalten["ergebnisplan"],
     )
     return Bericht(jahr=jahr, regeln=(regel1, regel4))
 

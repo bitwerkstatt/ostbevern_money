@@ -206,9 +206,70 @@ ZWISCHENUEBERSCHRIFTEN: dict[str, tuple[str, ...]] = {
 }
 
 # Zeilenformeln je Plantyp (PRUEF-01, Regel 1): Zeile -> Summe aus (Vorzeichen, Komponente).
-# GREEN-Implementierung folgt im nächsten Commit dieses Plans (02-03 Task 2); dieser Stub
-# hält das Modul importierbar, ohne die Prüfregel bereits zu erfüllen (RED).
-FORMELN: dict[str, dict[str, tuple[tuple[int, str], ...]]] = {}
+# Eine fehlende Komponente wird von pruefung.Planwerte als 0 behandelt (D-11); eine fehlende
+# Formel-Zeile ist absichtlich: GEP Z. 33 ist der nachrichtliche Verrechnungssaldo mit der
+# allgemeinen Rücklage, den weder Spez. 5.5 noch Anhang B als Formel führen (Research Open
+# Question 1). TFP Z. 09/16 haben keine Formel, weil Teilfinanzpläne ihre Komponenten
+# 01-08/10-15 nie drucken (Planungsfakten, verifiziert über alle Teilpläne).
+_GEMEINSAME_ERGEBNISPLAN_FORMELN: dict[str, tuple[tuple[int, str], ...]] = {
+    "10": (
+        (1, "01"),
+        (1, "02"),
+        (1, "03"),
+        (1, "04"),
+        (1, "05"),
+        (1, "06"),
+        (1, "07"),
+        (1, "08"),
+        (1, "09"),
+    ),
+    "17": ((1, "11"), (1, "12"), (1, "13"), (1, "14"), (1, "15"), (1, "16")),
+    "18": ((1, "10"), (-1, "17")),
+    "21": ((1, "19"), (-1, "20")),
+    "22": ((1, "18"), (1, "21")),
+    "25": ((1, "23"), (-1, "24")),
+    "26": ((1, "22"), (1, "25")),
+}
+
+FORMELN: dict[str, dict[str, tuple[tuple[int, str], ...]]] = {
+    "gesamtergebnisplan": {
+        **_GEMEINSAME_ERGEBNISPLAN_FORMELN,
+        "28": ((1, "26"), (-1, "27")),
+    },
+    "teilergebnisplan": {
+        **_GEMEINSAME_ERGEBNISPLAN_FORMELN,
+        "29": ((1, "26"), (1, "27"), (-1, "28")),
+        "31": ((1, "29"), (-1, "30")),
+    },
+    "gesamtfinanzplan": {
+        "09": (
+            (1, "01"),
+            (1, "02"),
+            (1, "03"),
+            (1, "04"),
+            (1, "05"),
+            (1, "06"),
+            (1, "07"),
+            (1, "08"),
+        ),
+        "16": ((1, "10"), (1, "11"), (1, "12"), (1, "13"), (1, "14"), (1, "15")),
+        "17": ((1, "09"), (-1, "16")),
+        "23": ((1, "18"), (1, "19"), (1, "20"), (1, "21"), (1, "22")),
+        "30": ((1, "24"), (1, "25"), (1, "26"), (1, "27"), (1, "28"), (1, "29")),
+        "31": ((1, "23"), (-1, "30")),
+        "32": ((1, "17"), (1, "31")),
+        "37": ((1, "33"), (1, "34"), (-1, "35"), (-1, "36")),
+        "38": ((1, "32"), (1, "37")),
+        "41": ((1, "38"), (1, "39"), (1, "40")),
+    },
+    "teilfinanzplan": {
+        "17": ((1, "09"), (-1, "16")),
+        "23": ((1, "18"), (1, "19"), (1, "20"), (1, "21"), (1, "22")),
+        "30": ((1, "24"), (1, "25"), (1, "26"), (1, "27"), (1, "28"), (1, "29")),
+        "31": ((1, "23"), (-1, "30")),
+        "34": ((1, "33"), (-1, "35")),
+    },
+}
 
 
 def normalisiere_bezeichnung(text: str) -> str:
