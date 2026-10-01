@@ -1,7 +1,7 @@
 ---
 phase: 01-setup
-verified: 2026-10-01T12:30:00Z
-status: human_needed
+verified: 2026-10-01T13:15:00Z
+status: passed
 score: 10/10 must-haves verified
 covered_files:
   - ".claude/CLAUDE.md"
@@ -16,6 +16,18 @@ covered_files:
   - ".planning/phases/01-setup/01-04-SUMMARY.md"
   - ".planning/phases/01-setup/01-05-PLAN.md"
   - ".planning/phases/01-setup/01-05-SUMMARY.md"
+  - ".planning/phases/01-setup/01-CONTEXT.md"
+  - ".planning/phases/01-setup/01-DISCUSSION-LOG.md"
+  - ".planning/phases/01-setup/01-PATTERNS.md"
+  - ".planning/phases/01-setup/01-RESEARCH.md"
+  - ".planning/phases/01-setup/01-REVIEW-DISPOSITION.md"
+  - ".planning/phases/01-setup/01-REVIEW-FIX.md"
+  - ".planning/phases/01-setup/01-REVIEW.md"
+  - ".planning/phases/01-setup/01-SECURITY.md"
+  - ".planning/phases/01-setup/01-UAT.md"
+  - ".planning/phases/01-setup/01-UI-REVIEW.md"
+  - ".planning/phases/01-setup/01-UI-SPEC.md"
+  - ".planning/phases/01-setup/01-VALIDATION.md"
   - "LICENSE"
   - "README.md"
   - "app/.nvmrc"
@@ -37,39 +49,44 @@ covered_files:
   - "app/src/main.ts"
   - "app/src/pages/StartPage.vue"
   - "app/src/router/index.ts"
+  - "app/src/styles/basis.css"
   - "app/vite.config.ts"
   - "pipeline/alle.py"
   - "pipeline/jahrgaenge/2026.toml"
   - "pipeline/jahrgaenge/2026_sollwerte.toml"
+  - "pipeline/ostbevern/__init__.py"
   - "pipeline/ostbevern/konfiguration.py"
+  - "pipeline/pyproject.toml"
   - "pipeline/tests/test_alle.py"
   - "pipeline/tests/test_konfiguration.py"
   - "pipeline/tests/test_rauchtest.py"
-covered_digest: "v2:sha256:28eb71eb684b87ce469dfcf99aad68ccf786a46fd79de85df43dfd0d13a51af0"
+covered_digest: "v2:sha256:4107c5374202c63b29e5054a031b1f5ff66e90c8cbd189da516622028e1dcf14"
 behavior_unverified: 0
 overrides_applied: 0
 behavior_unverified_items: []
-human_verification:
-  - test: "Run `uv --prefix app run dev` resp. `npm --prefix app run dev` (StartPage), set a BaseChart to `:laedt=\"true\"` and to `:fehler=\"true\"` and observe the render"
-    expected: "`laedt=true` shows `<wa-skeleton effect=\"sheen\">` filling the chart area, not the canvas; `fehler=true` shows the triangle-exclamation icon and the German fallback copy, not a broken/empty canvas"
-    why_human: "01-04-PLAN.md explicitly tags these two truths `verification: backstop` — code presence/wiring is not accepted as proof; the v-if branches exist (confirmed by reading BaseChart.vue) but no test exercises `laedt`/`fehler` at runtime and no human has observed the actual render"
-  - test: "Pass `:laedt=\"true\"` to DatenTabelle and observe the render"
-    expected: "Three `<wa-skeleton effect=\"sheen\">` rows render in place of the table, not an empty or broken table"
-    why_human: "01-04-PLAN.md tags this truth `verification: backstop` for the same reason as above"
-  - test: "Open the dev server at a 360 px responsive viewport (DevTools), check the header/nav, PageIntro heading, and open `#/gibt-es-nicht`"
-    expected: "Nav wraps, no horizontal page scroll, PageIntro heading wraps without overflow, active nav link is gold-brown, footer credit visible and working, unknown hash route redirects to start, Network tab shows no third-party host"
-    why_human: "Deferred by 01-03-PLAN.md Task 2 `<human-check>` to end-of-phase UAT (layout/colour/network behaviour needs a browser; Playwright arrives only in Phase 7)"
-  - test: "Open the start page at full width and at 360 px; inspect the Beispieldaten chart colours, the negative bar colour, axis/tooltip number formatting, the horizontal-bar switch at narrow width, the scrollable DatenTabelle with sticky label column, and the second card's empty state"
-    expected: "First bars Ostbevern-Gold, negative 'Bereich D' bar in the danger colour, German amount formatting in tooltip/axis, bars turn horizontal at 360 px, callout/table never overflow sideways, 'Bereich' column stays sticky while scrolling, 'Echte Haushaltszahlen' card shows 'Noch keine Daten' instead of an empty chart"
-    why_human: "Deferred by 01-04-PLAN.md Task 3 `<human-check>` to end-of-phase UAT (rendering, colour and narrow-viewport behaviour need a browser)"
+re_verification:
+  previous_status: human_needed
+  previous_score: "10/10"
+  gaps_closed:
+    - "BaseChart `laedt`/`fehler` visual states (backstop truths in 01-04-PLAN.md) — confirmed by 01-UAT.md test 4, passed"
+    - "DatenTabelle `laedt` visual state (backstop truth in 01-04-PLAN.md) — confirmed by 01-UAT.md test 5, passed"
+    - "360 px responsive layout and no-third-party-request check (deferred by 01-03-PLAN.md Task 2) — confirmed by 01-UAT.md test 3, passed"
+    - "Demo chart/table visual rendering at full width and 360 px (deferred by 01-04-PLAN.md Task 3) — confirmed by 01-UAT.md test 5, passed"
+  gaps_remaining: []
+  regressions: []
+advisory:
+  - finding: "01-VALIDATION.md frontmatter sets `nyquist_compliant: false` while its own \"Validation Sign-Off\" checklist includes a checked item \"`nyquist_compliant: true` set in frontmatter\" — the checklist and the frontmatter disagree"
+    category: other
+    reason: "Internal inconsistency in a supporting planning artifact, not in the verified codebase; does not affect any phase goal truth, artifact, or key link. Flagged for the human/planner to reconcile, not treated as a phase-blocking gap."
+    evidence_status: "observed directly in 01-VALIDATION.md frontmatter vs. body; no code impact found"
 ---
 
 # Phase 1: Setup Verification Report
 
 **Phase Goal:** Pipeline und App lassen sich leer bauen und testen. Die Konventionen und die Jahrgangskonfiguration sind festgelegt, und die CI prüft jeden Push.
-**Verified:** 2026-10-01T12:30:00Z
-**Status:** human_needed
-**Re-verification:** No — initial verification
+**Verified:** 2026-10-01T13:15:00Z
+**Status:** passed
+**Re-verification:** Yes — after gap closure (human UAT completed since the 2026-10-01T12:30:00Z verification; code-review fixes WR-01..WR-05 landed before that UAT ran)
 
 ## Goal Achievement
 
@@ -77,72 +94,74 @@ human_verification:
 
 | # | Truth (Roadmap Success Criterion) | Status | Evidence |
 |---|---|---|---|
-| 1 | Repo structure per Spez. 7 exists (`pipeline/`, `daten/{zwischen,aufbereitet,manuell,pruefberichte}`, `app/`); source PDF under `raw_data/` | ✓ VERIFIED | `ls` confirms all directories; `git ls-files -- 'raw_data/*.pdf' 'discussion/*.pdf'` returns exactly `raw_data/haushalt-2026.pdf`; `git log --follow` shows 2 commits (rename history preserved) |
-| 2 | `uv run pytest` runs green in the uv project `pipeline/` (Python ≥3.12, pdfplumber, polars, typer, pytest) | ✓ VERIFIED | `uv run --directory pipeline pytest -q` → `17 passed`; `pipeline/.python-version` = `3.12`; `pipeline/pyproject.toml` lists pdfplumber, polars, typer as deps and pytest/ruff as dev deps; `uv run --directory pipeline ruff check .` and `ruff format --check .` both clean |
-| 3 | `npm run build` builds the Vue 3 skeleton (TS, Vite, Web Awesome, vue-echarts, Hash-Router) with the Münster base components (`PageIntro`, `ChartCard`, `BaseChart`, `DatenTabelle`, `charts/format.ts`, `echartsTheme.ts` etc.); `vue-tsc` and ESLint run clean in GitHub Actions | ✓ VERIFIED (CI never executed on GitHub — see human item below for first-push confirmation) | `npm --prefix app run build` exits 0 (828 modules, dist/index.html emitted); `npm --prefix app run type-check` (vue-tsc --build) exits 0 with no output; `npm --prefix app run lint` exits 0; all 6 expected component files present (`BaseChart.vue`, `ChartCard.vue`, `DatenTabelle.vue`, `PageIntro.vue`, `chartKontext.ts`, `datenTabelle.ts` — exact match, no extra Phase 5/7 components per D-03); `.github/workflows/ci.yml` wires `npm run type-check`/`lint`/`format:check`/`build` in job `app`; both local CI replays pass (see below) |
-| 4 | Haushaltsjahr, Spaltenköpfe, Seitenbereiche and PDF-Pfad live in a Jahrgangs-Konfigurationsdatei; the pipeline loads them from there, not from code | ✓ VERIFIED | `pipeline/jahrgaenge/2026.toml` contains `haushaltsjahr`, `pdf_pfad`, `[anzahlen]`, `[spalten]` (7 inline tables for ergebnisplan/finanzplan/investitionen), `[seitenbereiche]` (15 chapters), `[kopfzeilen]`; `pipeline/ostbevern/konfiguration.py::lade_jahrgang` is the only module importing `tomllib` (`grep -rl tomllib pipeline` → exactly this file) and validates every required key, rejects absolute/outside-root `pdf_pfad`, rejects `von > bis`, rejects mismatched `haushaltsjahr`; 12 tests in `test_konfiguration.py` plus 3 in `test_rauchtest.py` exercise this, all passing; `STANDARD_JAHR = 2026` is the only year literal in pipeline Python (`grep -rlw 2026 pipeline` → only `konfiguration.py`) |
-| 5 | Project `.claude/CLAUDE.md` names pipeline/app commands and the six conventions (deutsche Bezeichner ohne Umlaute, Beträge als int-Euro, nur 1-basierte PDF-Seiten, keine Jahrgangswerte im Code, Du-Anrede, Zahlen in Texten aus Daten) | ✓ VERIFIED | `.claude/CLAUDE.md` Technology-Stack block lists all pipeline/app commands under "### Befehle"; Conventions block states all six D-17 lead phrases verbatim (confirmed by direct read); GSD-managed blocks (project/skills/workflow/profile) byte-identical to pre-edit state per the plan's own diff check; no root `CLAUDE.md` exists (D-17) |
-| 6 (plan-level, SC3 CI detail) | `.github/workflows/ci.yml` has exactly two parallel jobs (`pipeline`, `app`), no path filters, triggers on push+PR, `permissions: contents: read`, SHA-pinned actions | ✓ VERIFIED | Read file: jobs `pipeline`/`app` only, no `needs:`, no `paths:`, `permissions: contents: read` present; both `uses:` lines pinned to 40-hex SHAs (`3d3c42e5aac5ba805825da76410c181273ba90b1`, `c18668ad3cf93ea998bef934396af7bb5c839dc7`, `820762786026740c76f36085b0efc47a31fe5020`) with version-tag comments |
-| 7 (plan-level) | Every CI `run:` command was executed locally and passed (no GitHub remote yet, D-18) | ✓ VERIFIED | Independently re-ran both chains in this verification pass: `(cd pipeline && uv sync --locked && uv run ruff check . && uv run ruff format --check . && uv run pytest)` → all pass, 17 passed; `(cd app && npm ci ...)` superseded by direct `npm --prefix app run {type-check,lint,format:check,build}` → all exit 0 |
-| 8 (plan-level) | README.md names "Inspiriert von Münster Money (Code for Münster)" with a link; LICENSE is MIT | ✓ VERIFIED | `head -1 LICENSE` = `MIT License`, contains copyright line; README.md contains all required phrases (`Inspiriert von`, Münster repo URL, MIT reference, quick-start commands, Font Awesome credit) |
-| 9 (plan-level) | The running app requests nothing from a third-party host (self-hosted icons, cherry-picked WA imports) | ✓ VERIFIED | `grep -rhoE 'https?://[a-z0-9.-]+' app/src app/index.html` → only `https://github.com` (the credit link); `app/src/lib/webawesome.ts` calls `setIconPath` with `{BASE_URL}icons`; `app/src/main.ts` imports individual `dist/components/*/*.js` modules (no autoloader) |
-| 10 (plan-level) | `format.ts` formatting functions produce the exact specified output | ✓ VERIFIED | Transpiled and ran `format.ts` directly: `euro(2353506)` = "2.353.506 €", `euroKurz(27502063)` = "27,5 Mio. €", `euroKurz(-2353506)` = "-2,35 Mio. €", `zahl(11741)` = "11.741", `prozent(0.341)` = "34,1 %" — all match spec exactly |
+| 1 | Repo structure per Spez. 7 exists (`pipeline/`, `daten/{zwischen,aufbereitet,manuell,pruefberichte}`, `app/`); source PDF under `raw_data/` | ✓ VERIFIED | `git ls-files -- 'raw_data/*.pdf' 'discussion/*.pdf'` → exactly `raw_data/haushalt-2026.pdf`; `git log --follow` on that path shows 2 commits (`358a87b`, `31105eb` — rename history preserved); `git ls-files daten` → exactly the four `.gitkeep` files |
+| 2 | `uv run pytest` runs green in the uv project `pipeline/` (Python ≥3.12, pdfplumber, polars, typer, pytest) | ✓ VERIFIED | Re-ran independently: `uv run --directory pipeline pytest -q` → `17 passed`; `pipeline/.python-version` = `3.12`; `uv run --directory pipeline ruff check .` → "All checks passed!"; `uv run --directory pipeline ruff format --check .` → "6 files already formatted" |
+| 3 | `npm run build` builds the Vue 3 skeleton (TS, Vite, Web Awesome, vue-echarts, Hash-Router) with the Münster base components; `vue-tsc` and ESLint run clean (CI wires the same commands; GitHub execution confirmed at first push, outside this phase per D-18) | ✓ VERIFIED | Ran in a scratch copy of the git-tracked `app/` tree (sandboxed from the macOS-native `app/node_modules`): `npm ci` (EBADENGINE warnings only, expected per plan), `npm run type-check` (vue-tsc --build, exit 0, no output), `npm run lint` (eslint ., exit 0), `npm run format:check` (Prettier, exit 0), `npm run build` (vite build, exit 0, 828 modules, `dist/index.html` emitted); `ls app/src/components` → exactly `BaseChart.vue ChartCard.vue DatenTabelle.vue PageIntro.vue chartKontext.ts datenTabelle.ts` (D-03 — no extra Phase 5/7 component) |
+| 4 | Haushaltsjahr, Spaltenköpfe, Seitenbereiche and PDF-Pfad live in a Jahrgangs-Konfigurationsdatei; the pipeline loads them from there, not from code | ✓ VERIFIED | `pipeline/jahrgaenge/2026.toml` has `haushaltsjahr`, `pdf_pfad`, `[anzahlen]`, `[spalten]`, `[seitenbereiche]` (15 chapters), `[kopfzeilen]`; `grep -rl tomllib pipeline` → only `konfiguration.py`; `grep -rlw 2026 pipeline` → only `konfiguration.py`; 12 tests in `test_konfiguration.py` + 3 in `test_rauchtest.py`, all passing |
+| 5 | Project `.claude/CLAUDE.md` names pipeline/app commands and the six conventions | ✓ VERIFIED | All 6 D-17 lead phrases present verbatim plus command phrases (`lade_jahrgang`, `STANDARD_JAHR`, `uv run --directory pipeline pytest`, `npm --prefix app run build`/`lint`); all 7 GSD marker-pairs intact (`project`, `stack`, `conventions`, `architecture`, `skills`, `workflow`, `profile`); no root `CLAUDE.md` exists |
+| 6 (plan-level, SC3 CI detail) | `.github/workflows/ci.yml` has exactly two parallel jobs, no path filters, triggers on push+PR, `permissions: contents: read`, SHA-pinned actions | ✓ VERIFIED | Jobs = `pipeline app` (exactly two), `needs:` absent, no `paths:`/`paths-ignore:`, `contents: read` present, all 3 `uses:` lines pinned to full 40-hex SHAs with version-tag comments |
+| 7 (plan-level) | Every CI `run:` command was executed locally and passed (no GitHub remote yet, D-18) | ✓ VERIFIED | Independently re-ran: pipeline chain (`uv sync --locked && uv run ruff check . && uv run ruff format --check . && uv run pytest` — all pass) and the four app commands (`npm ci`, `type-check`, `lint`, `format:check`, `build` — all exit 0) |
+| 8 (plan-level) | README.md names "Inspiriert von Münster Money (Code for Münster)" with a link; LICENSE is MIT | ✓ VERIFIED | `head -1 LICENSE` = `MIT License`, contains `Copyright (c) 2026 Thomas Manthey`; README.md contains `Inspiriert von`, the Münster repo URL, `MIT`, both quick-start commands, `Font Awesome Free`, `.claude/CLAUDE.md` |
+| 9 (plan-level) | The running app requests nothing from a third-party host | ✓ VERIFIED | `grep -rhoE 'https?://[a-z0-9.-]+' app/src app/index.html` → only `https://github.com` (credit link); `setIconPath` self-hosts icons; `main.ts` imports individual component modules, no autoloader; no hex colors outside `echartsTheme.ts`; `v-html` absent from `app/src` |
+| 10 (plan-level) | `format.ts` formatting functions produce the exact specified output | ✓ VERIFIED | Transpiled and ran `format.ts` directly: `euro(2353506)`="2.353.506 €", `euroKurz(27502063)`="27,5 Mio. €", `euroKurz(-2353506)`="-2,35 Mio. €", `euroKurz(559000)`="559.000 €", `zahl(11741)`="11.741", `vzae(12.75)`="12,75", `prozent(0.341)`="34,1 %" — all match spec exactly (prints "format ok") |
 
-**Score:** 10/10 truths verified (0 present-but-behavior-unverified; 4 items below route to human verification for visual/runtime confirmation — see Human Verification Required)
+**Score:** 10/10 truths verified (0 present-but-behavior-unverified). The four visual/runtime items the prior verification pass (2026-10-01T12:30:00Z) routed to human verification — BaseChart `laedt`/`fehler` states, DatenTabelle `laedt` skeleton rows, the 360 px responsive layout/no-third-party-request check, and the demo chart/table rendering at full width and 360 px — are now confirmed by completed human UAT (`01-UAT.md`, tests 3, 4, 5; 18/18 passed, 0 issues), closing every gap the previous report carried. No human verification items remain open.
 
 ### Required Artifacts
 
 | Artifact | Expected | Status | Details |
 |---|---|---|---|
-| `pipeline/ostbevern/konfiguration.py` | `STANDARD_JAHR`, `lade_jahrgang`, `lade_sollwerte`, `KonfigurationsFehler`, `Jahrgang` dataclasses | ✓ VERIFIED | 252 lines, all exports present, full validation logic read and confirmed substantive |
+| `pipeline/ostbevern/konfiguration.py` | `STANDARD_JAHR`, `lade_jahrgang`, `lade_sollwerte`, `KonfigurationsFehler`, `Jahrgang` dataclasses | ✓ VERIFIED | All exports present; `uv run pytest` exercises the full validation surface, green |
 | `pipeline/jahrgaenge/2026.toml` | All PDF-specific values of Haushalt 2026 | ✓ VERIFIED | Contains `[seitenbereiche]` and all required tables |
-| `pipeline/jahrgaenge/2026_sollwerte.toml` | Sollwerte Satzung §1, Gesamtergebnisplan head lines | ✓ VERIFIED | Contains `[satzung]`, `pdf_seite = 8`, `ertraege = 27_502_063` |
-| `pipeline/tests/test_rauchtest.py` | D-12 Rauchtest | ✓ VERIFIED | 3 tests, pdfplumber import present, all pass |
-| `pipeline/alle.py` | Thin typer entry point with `--jahr` | ✓ VERIFIED | `STANDARD_JAHR` default, `typer.Option("--jahr"`, exits 1 with `Fehler:` on bad year (tested) |
-| `pipeline/uv.lock` | Pinned dependency set | ✓ VERIFIED | Committed, `uv sync --locked` succeeds |
-| `app/src/components/PageIntro.vue` | `titel`/`beschreibung` props, default slot | ✓ VERIFIED | 37 lines, `defineProps` present |
-| `app/src/router/index.ts` | Hash router, catch-all redirect | ✓ VERIFIED | `createWebHashHistory`, `pathMatch(.*)*` → redirect to `start` |
+| `pipeline/jahrgaenge/2026_sollwerte.toml` | Sollwerte Satzung §1, Gesamtergebnisplan head lines | ✓ VERIFIED | `[satzung]`, `pdf_seite = 8`, `ertraege = 27_502_063` |
+| `pipeline/tests/test_rauchtest.py` | D-12 Rauchtest | ✓ VERIFIED | 3 test functions, pdfplumber import present, all pass |
+| `pipeline/alle.py` | Thin typer entry point with `--jahr` | ✓ VERIFIED | `STANDARD_JAHR` default; `uv run --directory pipeline python alle.py --jahr 2026` → "Jahrgang 2026: ... Sollwerte geladen." exit 0 |
+| `pipeline/uv.lock` | Pinned dependency set | ✓ VERIFIED | Committed; `uv sync --locked` succeeds |
+| `app/src/components/PageIntro.vue` | `titel`/`beschreibung` props, default slot | ✓ VERIFIED | `defineProps` present |
+| `app/src/router/index.ts` | Hash router, catch-all redirect | ✓ VERIFIED | `createWebHashHistory`, `pathMatch(.*)*` → redirect `start`; confirmed live by UAT test 3 (`#/gibt-es-nicht` → start) |
 | `app/src/lib/webawesome.ts` | Styles, German translation, self-hosted icon path | ✓ VERIFIED | `setIconPath`, `translations/de.js` imports present |
 | `app/src/main.ts` | Cherry-picked WA component registrations | ✓ VERIFIED | First import is `./lib/webawesome`; imports `dist/components/{page,callout,icon,skeleton,format-number}/*.js` |
-| `app/src/App.vue` | App shell: header/nav, RouterView, footer credit | ✓ VERIFIED | `wa-page` with header/footer slots, Münster credit link, wrapping nav (`flex-wrap: wrap`) |
+| `app/src/App.vue` | App shell: header/nav, RouterView, footer credit | ✓ VERIFIED | `wa-page` header/footer slots, Münster credit link, wrapping nav; confirmed live by UAT test 3 |
 | `app/src/data/jahrgang.json` | Haushaltsjahr as data | ✓ VERIFIED | `{"haushaltsjahr": 2026}`, no year literal elsewhere in `app/src` |
 | `app/package.json` | Scripts type-check/lint/format:check/build, engines node | ✓ VERIFIED | All scripts present, `engines.node = "^22.18.0"` |
-| `app/src/charts/format.ts` | Number-formatting single source | ✓ VERIFIED | All 5 functions + `LOCALE`/`EURO_OPTIONEN` exported, behaviorally confirmed (see truth #10) |
-| `app/src/charts/echartsTheme.ts` | ECharts registration + WA-token theme | ✓ VERIFIED | `CHART_THEME`, `KATEGORIE_FARBEN`, `SEQUENZ_FARBEN`, `POL_FARBEN` exported; `registerTheme`, `echarts/core` import (no full-library import) |
-| `app/src/components/BaseChart.vue` | vue-echarts wrapper, laedt/fehler/empty states | ✓ VERIFIED (structurally) | 127 lines, all v-if branches present, "Noch keine Daten" copy present; runtime render of laedt/fehler states is a flagged human item (backstop tag in plan) |
-| `app/src/components/ChartCard.vue` | Card chrome, CHART_KONTEXT, Beispieldaten notice | ✓ VERIFIED | 80 lines, `provide(CHART_KONTEXT`, mandatory notice text present, `min-width: 0`, `hyphens: auto` |
-| `app/src/components/DatenTabelle.vue` | Semantic table, slot + data mode, empty/loading states | ✓ VERIFIED (structurally) | 164 lines, sticky label column, `wa-format-number` wired to `EURO_OPTIONEN`, empty state copy present; loading-skeleton runtime render flagged as human item (backstop tag) |
+| `app/src/charts/format.ts` | Number-formatting single source | ✓ VERIFIED | All 5 functions + `LOCALE`/`EURO_OPTIONEN` exported, behaviorally confirmed (truth #10) |
+| `app/src/charts/echartsTheme.ts` | ECharts registration + WA-token theme | ✓ VERIFIED | `CHART_THEME`, `KATEGORIE_FARBEN`, `SEQUENZ_FARBEN`, `POL_FARBEN` exported; `registerTheme`, `echarts/core` import only |
+| `app/src/components/BaseChart.vue` | vue-echarts wrapper, laedt/fehler/empty states | ✓ VERIFIED | All v-if branches present; runtime render of `laedt`/`fehler` now confirmed by UAT test 4 (previously the plan's own `backstop` tag) |
+| `app/src/components/ChartCard.vue` | Card chrome, CHART_KONTEXT, Beispieldaten notice | ✓ VERIFIED | `provide(CHART_KONTEXT`, mandatory notice text present, `min-width: 0`, `hyphens: auto` |
+| `app/src/components/DatenTabelle.vue` | Semantic table, slot + data mode, empty/loading states | ✓ VERIFIED | Sticky label column, `wa-format-number` wired to `EURO_OPTIONEN`, empty state copy present; `as number` casts replaced by `alsZahl()` runtime guard (WR-03 fix confirmed present); loading-skeleton rows now confirmed by UAT test 5 |
 | `app/src/lib/bildschirm.ts` | Reactive narrow-screen flag | ✓ VERIFIED | `SCHMAL_BIS = 699`, `useSchmalerBildschirm`, `onScopeDispose` present |
 | `app/src/data/beispieldaten.json` | Fictional demo fixture | ✓ VERIFIED | `"beispieldaten": true`, fictional "Bereich A–D" labels |
 | `.github/workflows/ci.yml` | Two jobs, SHA-pinned actions | ✓ VERIFIED | See truth #6 |
 | `.claude/CLAUDE.md` | Commands + 6 conventions | ✓ VERIFIED | See truth #5 |
 | `README.md` | Overview, quick start, license, credit | ✓ VERIFIED | See truth #8 |
 | `LICENSE` | MIT | ✓ VERIFIED | See truth #8 |
+| `app/vite.config.ts` | GitHub Pages-safe relative base (WR-01 fix) | ✓ VERIFIED | `base: './'` present; `dist/index.html` references relative asset paths |
+| `app/src/styles/basis.css` | `prefers-reduced-motion` honored for `wa-skeleton` (WR-02 fix) | ✓ VERIFIED | `@media (prefers-reduced-motion: reduce) { wa-skeleton::part(indicator) { animation: none; } }` present |
 
 ### Key Link Verification
 
 | From | To | Via | Status | Details |
 |---|---|---|---|---|
-| `test_rauchtest.py` | `konfiguration.py` | imports `lade_jahrgang`, `lade_sollwerte`, `STANDARD_JAHR` | ✓ WIRED | Tests pass (3/3) |
+| `test_rauchtest.py` | `konfiguration.py` | imports `lade_jahrgang`, `lade_sollwerte`, `STANDARD_JAHR` | ✓ WIRED | Tests pass |
 | `konfiguration.py` | `jahrgaenge/2026.toml` | `tomllib.load` via `JAHRGAENGE_VERZEICHNIS / f"{jahr}.toml"` | ✓ WIRED | Confirmed by reading `lade_jahrgang` |
-| `jahrgaenge/2026.toml` | `raw_data/haushalt-2026.pdf` | `pdf_pfad` resolved against `PROJEKT_WURZEL` | ✓ WIRED | `pdf_pfad = "raw_data/haushalt-2026.pdf"`; file exists and Rauchtest confirms page count |
-| `alle.py` | `konfiguration.py` | `--jahr` defaults to `STANDARD_JAHR` | ✓ WIRED | `grep -q 'STANDARD_JAHR' pipeline/alle.py` and CLI test pass |
+| `jahrgaenge/2026.toml` | `raw_data/haushalt-2026.pdf` | `pdf_pfad` resolved against `PROJEKT_WURZEL` | ✓ WIRED | File exists; Rauchtest confirms page count |
+| `alle.py` | `konfiguration.py` | `--jahr` defaults to `STANDARD_JAHR` | ✓ WIRED | `grep -q 'STANDARD_JAHR' pipeline/alle.py`; CLI run confirms |
 | `app/src/main.ts` | `app/src/lib/webawesome.ts` | first import, so `setIconPath` runs first | ✓ WIRED | Confirmed by reading `main.ts` import order |
-| `app/src/router/index.ts` | `StartPage.vue` | route name `start` at `/` | ✓ WIRED | Confirmed |
-| `StartPage.vue` | `app/src/data/jahrgang.json` | `titel` interpolates `jahrgang.haushaltsjahr` | ✓ WIRED | Confirmed; also `beispieldaten.json` flows into chart/table (data-flow trace below) |
+| `app/src/router/index.ts` | `StartPage.vue` | route name `start` at `/` | ✓ WIRED | Confirmed; also behaviorally confirmed by UAT test 3 |
+| `StartPage.vue` | `app/src/data/jahrgang.json` | `titel` interpolates `jahrgang.haushaltsjahr` | ✓ WIRED | Confirmed; also `beispieldaten.json` flows into chart/table |
 | `vite.config.ts` | `wa-*` custom elements | `isCustomElement` | ✓ WIRED | Confirmed |
-| `BaseChart.vue` | `echartsTheme.ts` | imports `CHART_THEME`, passed to `VChart` | ✓ WIRED | Confirmed |
+| `BaseChart.vue` | `echartsTheme.ts` | imports `CHART_THEME`, passed to `VChart` | ✓ WIRED | Confirmed; colors behaviorally confirmed by UAT test 5 |
 | `BaseChart.vue` | `ChartCard.vue` | `inject(CHART_KONTEXT)` | ✓ WIRED | Confirmed |
 | `DatenTabelle.vue` | `charts/format.ts` | `wa-format-number` attrs from `EURO_OPTIONEN` | ✓ WIRED | Confirmed |
 | `.github/workflows/ci.yml` | `pipeline/uv.lock` | `uv sync --locked` | ✓ WIRED | Replayed locally, passes |
-| `.github/workflows/ci.yml` | `app/package.json` | npm scripts in job `app` | ✓ WIRED | Replayed locally, passes |
+| `.github/workflows/ci.yml` | `app/package.json` | npm scripts in job `app` | ✓ WIRED | Replayed locally (scratch copy), passes |
 | `.github/workflows/ci.yml` | `app/.nvmrc` | `node-version-file: app/.nvmrc` | ✓ WIRED | Confirmed |
 
 ### Data-Flow Trace (Level 4)
 
 | Artifact | Data Variable | Source | Produces Real Data | Status |
 |---|---|---|---|---|
-| `StartPage.vue` PageIntro titel | `jahrgang.haushaltsjahr` | `app/src/data/jahrgang.json` import | Yes (not hardcoded in .vue/.ts) | ✓ FLOWING |
+| `StartPage.vue` PageIntro titel | `jahrgang.haushaltsjahr` | `app/src/data/jahrgang.json` import | Yes (not hardcoded) | ✓ FLOWING |
 | `StartPage.vue` chart option | `beispieldaten.posten` | `app/src/data/beispieldaten.json` import | Yes (flagged fictional demo data, by design) | ✓ FLOWING |
 | `StartPage.vue` DatenTabelle `zeilen` | computed from `beispieldaten.posten` | same JSON | Yes | ✓ FLOWING |
 | `konfiguration.py` `Jahrgang` | TOML file contents | `tomllib.load` on `2026.toml` | Yes | ✓ FLOWING |
@@ -154,15 +173,19 @@ human_verification:
 |---|---|---|---|
 | Pipeline tests pass | `uv run --directory pipeline pytest -q` | `17 passed` | ✓ PASS |
 | Pipeline lint/format clean | `uv run --directory pipeline ruff check .` / `ruff format --check .` | "All checks passed!" / "6 files already formatted" | ✓ PASS |
-| App build | `npm --prefix app run build` | exit 0, `dist/index.html` emitted | ✓ PASS |
-| App type-check | `npm --prefix app run type-check` | exit 0, no output | ✓ PASS |
-| App lint | `npm --prefix app run lint` | exit 0, no output | ✓ PASS |
-| App format check | `npm --prefix app run format:check` | "All matched files use Prettier code style!" | ✓ PASS |
-| `format.ts` numeric output matches spec | inline Node transpile+run of `format.ts` | `2.353.506 €\|27,5 Mio. €\|-2,35 Mio. €\|11.741\|34,1 %` | ✓ PASS |
-| CI YAML structurally valid, two parallel SHA-pinned jobs | manual read + grep | jobs=`pipeline app`, no `needs:`, no path filter, `contents: read`, 3 actions all 40-hex SHA | ✓ PASS |
+| `alle.py` default-year run | `uv run --directory pipeline python alle.py --jahr 2026` | exit 0, "Jahrgang 2026: ... Sollwerte geladen." | ✓ PASS |
+| App dependency install (scratch copy, isolated from macOS-native `app/node_modules`) | `npm ci` | exit 0, EBADENGINE warnings only (expected per plan) | ✓ PASS |
+| App type-check | `npm run type-check` | exit 0, no output | ✓ PASS |
+| App lint | `npm run lint` | exit 0, no output | ✓ PASS |
+| App format check | `npm run format:check` | "All matched files use Prettier code style!" | ✓ PASS |
+| App build | `npm run build` | exit 0, 828 modules, `dist/index.html` emitted | ✓ PASS |
+| `format.ts` numeric output matches spec | inline Node transpile+run of `format.ts` | `2.353.506 €\|27,5 Mio. €\|-2,35 Mio. €\|559.000 €\|11.741\|12,75\|34,1 %` | ✓ PASS |
+| CI YAML structurally valid, two parallel SHA-pinned jobs | manual read + grep | jobs=`pipeline app`, no `needs:`, no path filter, `contents: read`, all `uses:` 40-hex SHA | ✓ PASS |
 | CI commands replayed locally | both chains from `.github/workflows/ci.yml` | both exit 0 | ✓ PASS |
-| `laedt`/`fehler` prop visually render skeleton/error instead of canvas | — | not run (requires browser) | ? SKIP — routed to human verification (plan's own `backstop` tag) |
-| DatenTabelle `laedt` visually renders skeleton rows | — | not run (requires browser) | ? SKIP — routed to human verification (plan's own `backstop` tag) |
+| `laedt`/`fehler` prop visually render skeleton/error instead of canvas | 01-UAT.md test 4 (human, browser) | pass | ✓ PASS (human-executed; closes prior backstop gap) |
+| DatenTabelle `laedt` visually renders skeleton rows | 01-UAT.md test 5 (human, browser) | pass | ✓ PASS (human-executed; closes prior backstop gap) |
+| 360 px layout, no horizontal scroll, no third-party requests | 01-UAT.md test 3 (human, browser) | pass | ✓ PASS (human-executed; closes prior deferred human-check) |
+| Demo chart/table colors, formatting, horizontal-bar switch, sticky column at 360 px | 01-UAT.md test 5 (human, browser) | pass | ✓ PASS (human-executed; closes prior deferred human-check) |
 
 ### Probe Execution
 
@@ -173,57 +196,37 @@ No `scripts/*/tests/probe-*.sh` convention and no probe references found in PLAN
 | Requirement | Source Plan | Description | Status | Evidence |
 |---|---|---|---|---|
 | SETUP-01 | 01-02, 01-05 | Repo-Struktur nach Spez. 7, Quell-PDF unter raw_data/ | ✓ SATISFIED | Directory structure + README/LICENSE complete it |
-| SETUP-02 | 01-01, 01-02 | Pipeline uv-Projekt, `uv run pytest` läuft | ✓ SATISFIED | 17 tests pass; package approval recorded |
-| SETUP-03 | 01-01, 01-03, 01-04 | App-Grundgerüst mit Münster-Basiskomponenten, `npm run build` läuft | ✓ SATISFIED | Build green, all 6 base component files present |
-| SETUP-04 | 01-05 | Projekt-CLAUDE.md dokumentiert Befehle und Konventionen | ✓ SATISFIED | Confirmed by direct read |
-| SETUP-05 | 01-02 | Jahrgangsspezifisches steht in Konfigurationsdatei | ✓ SATISFIED | `2026.toml`/`2026_sollwerte.toml` + loader validated |
-| QUAL-01 | 01-03, 01-04, 01-05 | vue-tsc und ESLint laufen fehlerfrei in CI | ✓ SATISFIED (local replay only — see human item for first-push GitHub confirmation) | Local vue-tsc/ESLint clean; ci.yml wires them; no GitHub remote exists yet to observe an actual Actions run |
+| SETUP-02 | 01-01, 01-02 | Pipeline uv-Projekt, `uv run pytest` läuft | ✓ SATISFIED | 17 tests pass; package approval recorded in 01-01-SUMMARY.md |
+| SETUP-03 | 01-01, 01-03, 01-04 | App-Grundgerüst mit Münster-Basiskomponenten, `npm run build` läuft | ✓ SATISFIED | Build green; all 6 base component files present, no extras (D-03) |
+| SETUP-04 | 01-05 | Projekt-CLAUDE.md dokumentiert Befehle und Konventionen | ✓ SATISFIED | Confirmed by direct read and grep |
+| SETUP-05 | 01-02 | Jahrgangsspezifisches steht in Konfigurationsdatei | ✓ SATISFIED | `2026.toml`/`2026_sollwerte.toml` + loader validated by tests |
+| QUAL-01 | 01-03, 01-04, 01-05 | vue-tsc und ESLint laufen fehlerfrei in CI | ✓ SATISFIED | Local vue-tsc/ESLint clean (re-verified independently in a scratch copy); `ci.yml` wires the identical commands; actual GitHub Actions execution requires a remote the user has not yet created (D-18 — a deliberate, documented project decision, not a phase gap) |
 
-No orphaned requirements found — REQUIREMENTS.md's Phase 1 mapping (SETUP-01..05, QUAL-01) matches exactly the `requirements:` fields declared across the five plans.
+No orphaned requirements found — REQUIREMENTS.md's Phase 1 mapping (SETUP-01..05, QUAL-01) matches exactly the `requirements:` fields declared across the five plans and the phase requirement IDs given for this verification run.
 
 ### Anti-Patterns Found
 
-None. Scanned all phase-modified files under `app/src`, `pipeline/ostbevern`, `pipeline/alle.py`, `pipeline/tests`, `.github`, `.claude/CLAUDE.md`, `README.md`, `LICENSE` for `TBD|FIXME|XXX|TODO|HACK|PLACEHOLDER` and placeholder-style copy — zero matches. No hardcoded-empty-prop stub patterns found in rendering paths (BaseChart/DatenTabelle empty states are real copy strings driven by computed conditions, not unconditional stubs).
+None blocking. Scanned all phase-modified files under `app/src`, `pipeline/ostbevern`, `pipeline/alle.py`, `pipeline/tests`, `.github`, `.claude/CLAUDE.md`, `README.md`, `LICENSE` for `TBD|FIXME|XXX|TODO|HACK|PLACEHOLDER` and placeholder-style copy ("coming soon", "not yet implemented", etc.) — zero matches, so no debt-marker gate applies. No hardcoded-empty-prop stub patterns found in rendering paths (BaseChart/DatenTabelle empty states are real copy strings driven by computed conditions, not unconditional stubs).
 
-Code review (`01-REVIEW.md`, disposition `01-REVIEW-DISPOSITION.md`) found 0 critical findings; 5 warnings (WR-01 GitHub Pages `base` path not yet set — correctly out of scope for Phase 1, no deploy job exists yet; WR-02 `prefers-reduced-motion` not implemented anywhere despite being a project constraint in `.claude/CLAUDE.md`; WR-03 unsafe `as number` casts in DatenTabelle; WR-04 echarts theme tokens read once, not reactive; WR-05 DatenTabelle `spalten`/`zeilen` prop coupling not enforced) and 5 info findings, all still `open` (not `fixed`/`skipped`/`deferred`). None are debt markers (no `TBD`/`FIXME`/`XXX` with or without issue references) and none are Critical/Blocker — they do not block this phase's goal (an empty-buildable, tested, CI-checked scaffold) but WR-02 is worth flagging because it contradicts a documented project constraint; it is forward-looking risk, not a phase-1 deliverable failure, since no Phase 1 success criterion mentions motion preferences.
+Code review (`01-REVIEW.md`, disposition `01-REVIEW-DISPOSITION.md`): 0 critical findings; 5 warnings, all fixed per `01-REVIEW-FIX.md` and independently confirmed present in the current code (WR-01 `base: './'` in `vite.config.ts`; WR-02 `prefers-reduced-motion` media query in `basis.css`; WR-03 `alsZahl()` runtime guard replacing unsafe casts in `DatenTabelle.vue`; WR-04 documentation-only `ACHTUNG` comment in `echartsTheme.ts`; WR-05 dev-only `watchEffect` warning in `DatenTabelle.vue`); 5 info findings remain `open` (unused icon asset, duplicate computation, icon/variant mismatch, missing overlap validation, redundant ARIA labeling) — all forward-looking, non-blocking, none are debt markers.
+
+One informational inconsistency was noted in a supporting planning artifact (not the codebase) and recorded under `advisory:` in the frontmatter: `01-VALIDATION.md`'s frontmatter states `nyquist_compliant: false` while its own sign-off checklist has a checked item claiming the opposite. This does not affect any phase-goal truth, artifact, or key link.
 
 ### Human Verification Required
 
-### 1. BaseChart `laedt`/`fehler` visual states
+None. All items the prior verification pass (2026-10-01T12:30:00Z) routed to human verification have been closed by the completed `01-UAT.md` (18/18 passed, 0 issues):
+- BaseChart `laedt`/`fehler` visual states → UAT test 4, pass
+- DatenTabelle `laedt` visual state (three skeleton rows) → UAT test 5, pass
+- 360 px responsive layout, no horizontal scroll, no third-party requests → UAT test 3, pass
+- Demo chart/table colors, formatting, narrow-viewport behavior, sticky column → UAT test 5, pass
 
-**Test:** Pass `:laedt="true"` and separately `:fehler="true"` to a `BaseChart` instance and observe the render in a browser.
-**Expected:** `laedt=true` shows a `<wa-skeleton effect="sheen">` filling the chart area (not the canvas, not blank); `fehler=true` shows the `triangle-exclamation` icon with the German fallback copy, not a broken or empty canvas.
-**Why human:** `01-04-PLAN.md`'s `must_haves.truths` explicitly tags both as `verification: backstop` — the planner deliberately marked these as requiring evidence beyond code presence. The `v-if`/`v-else-if` branches exist and read correctly (confirmed), but no test exercises them at runtime and no human has observed the actual render.
-
-### 2. DatenTabelle `laedt` visual state
-
-**Test:** Pass `:laedt="true"` to `DatenTabelle` and observe the render.
-**Expected:** Three `<wa-skeleton effect="sheen">` rows render in place of the table.
-**Why human:** Same `backstop` tag in `01-04-PLAN.md`.
-
-### 3. 360 px responsive layout and no-third-party-request check (deferred from 01-03 Task 2)
-
-**Test:** Run `npm --prefix app run dev`, open the printed URL, switch DevTools to a 360 px responsive viewport, then open `#/gibt-es-nicht`.
-**Expected:** Header shows "Ostbevern Money" and nav item "Start"; nav wraps and the page never scrolls sideways; PageIntro heading wraps without overflow; active nav link is gold-brown; footer shows the Münster credit with a working link; `#/gibt-es-nicht` redirects to start; Network tab shows only local dev-server requests.
-**Why human:** Explicitly deferred by `01-03-PLAN.md` Task 2's `<human-check>` block to end-of-phase UAT — layout, colour and network behaviour need a real browser; Playwright arrives only in Phase 7.
-
-### 4. Demo chart/table visual rendering at full width and 360 px (deferred from 01-04 Task 3)
-
-**Test:** Run `npm --prefix app run dev`, open the start page at full width and at 360 px.
-**Expected:** Beispieldaten card shows the warning callout above a bar chart with Ostbevern-Gold bars and a red "Bereich D" negative bar; German amount formatting in tooltip/axis; bars turn horizontal at 360 px; callout and table never overflow sideways; table's "Bereich" column stays sticky while scrolling, amounts right-aligned; "Echte Haushaltszahlen" card shows "Noch keine Daten" instead of an empty chart.
-**Why human:** Explicitly deferred by `01-04-PLAN.md` Task 3's `<human-check>` block — rendering, colour and narrow-viewport behaviour need a browser.
-
-### 5. GitHub Actions first-run confirmation (contextual, not phase-blocking)
-
-**Test:** After the user creates the GitHub remote and pushes, check the Actions tab.
-**Expected:** Both `pipeline` and `app` jobs run green.
-**Why human:** There is no git remote in this sandbox (D-18); `.github/workflows/ci.yml` has therefore never executed on GitHub. All its `run:` commands were independently re-verified by local replay in this verification pass (see Behavioral Spot-Checks), which is the accepted stand-in per `01-05-PLAN.md`'s own flagged assumption. This item is informational, carried over from the plan's own documented follow-up, not a new gap.
+The GitHub Actions first-push confirmation noted informationally in the prior report (item 5) is not treated as a human-verification item here: it requires a GitHub remote that does not exist in this sandbox by explicit project decision (D-18 — "Der Executor legt kein Repo an und pusht nicht"), the plan's own accepted stand-in is the local command-for-command replay (independently re-verified in this pass), and the ROADMAP success criterion for this phase is satisfied by that local proof plus the correctly wired `ci.yml`. It is a one-time follow-up the user performs after creating the remote, not a recurring or phase-blocking gate, and is unchanged from the prior pass's own classification as "contextual, not phase-blocking."
 
 ## Gaps Summary
 
-No gaps found. All five ROADMAP Success Criteria and all plan-level must-haves are backed by passing automated evidence (pytest, ruff, vue-tsc, ESLint, Prettier, vite build, local CI replay, direct file/grep inspection, and a direct behavioral run of `format.ts`). Status is `human_needed` rather than `passed` solely because: (a) two truths in `01-04-PLAN.md` are explicitly tagged `verification: backstop` and have no behavioral test exercising them, and (b) two `<human-check>` blocks in `01-03-PLAN.md` and `01-04-PLAN.md` were deliberately deferred by the planner to end-of-phase UAT rather than mid-execution checkpoints. None of these represent missing, stub, or unwired artifacts — the code backing all four items is present, substantive, and wired; only the runtime/visual confirmation is outstanding.
+No gaps found. All five ROADMAP Success Criteria and all plan-level must-haves are backed by passing automated evidence (pytest, ruff, vue-tsc, ESLint, Prettier, vite build, local CI replay, direct file/grep inspection, a direct behavioral run of `format.ts`) plus completed human UAT (18/18, 0 issues) covering every visual/runtime item the prior verification pass could not confirm programmatically. The five code-review warnings (WR-01..WR-05) are fixed and independently confirmed present in the code. Security (`01-SECURITY.md`: `threats_open: 0`, all 12 threats closed) and the retroactive UI audit (`01-UI-REVIEW.md`: 24/24 across all six pillars) both corroborate this result. Status is `passed`.
 
 ---
 
-_Verified: 2026-10-01T12:30:00Z_
+_Verified: 2026-10-01T13:15:00Z_
 _Verifier: Claude (gsd-verifier)_
