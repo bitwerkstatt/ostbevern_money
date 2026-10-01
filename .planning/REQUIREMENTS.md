@@ -42,14 +42,14 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 ### Prüfung
 
 - [x] **PRUEF-01**: Zeilenformeln jedes Ergebnis- und Finanzplans stimmen (Spez. 5.5 Regel 1)
-- [ ] **PRUEF-02**: Summe der Produkt-Teilpläne = PG = PB-Teilplan, je Zeile und Jahr
-- [ ] **PRUEF-03**: Summe der 15 PB = Gesamtergebnisplan (Z. 01–17, 19, 20; ohne TP 27/28)
-- [ ] **PRUEF-04**: Sollwerte aus Anhang B (Gesamtergebnisplan, Gesamtfinanzplan/Satzung § 1, PB-Summen, Eckwerte) werden getroffen
+- [x] **PRUEF-02**: Summe der Produkt-Teilpläne = PG = PB-Teilplan, je Zeile und Jahr
+- [x] **PRUEF-03**: Summe der 15 PB = Gesamtergebnisplan (Z. 01–17, 19, 20; ohne TP 27/28)
+- [x] **PRUEF-04**: Sollwerte aus Anhang B (Gesamtergebnisplan, Gesamtfinanzplan/Satzung § 1, PB-Summen, Eckwerte) werden getroffen
 - [ ] **PRUEF-05**: Manuelle Tabellen stimmen mit den jeweiligen Planzeilen überein (Toleranz ±1 T€ bei T€-Tabellen; bekannte Differenzen dokumentiert)
 - [ ] **PRUEF-06**: Investitionssummen je Produkt = Teilfinanzplan Z. 23/30; Summe aller = Gesamtfinanzplan (2026: 7.224.830 € / 12.280.484 €)
 - [ ] **PRUEF-07**: Querschnitte S. 291 ff. stimmen mit den eigenen PG-Aggregaten überein
 - [ ] **PRUEF-08**: Vollständigkeit: 63 Produkte mit Produktinformationen, Bindungsgrad, Teilergebnisplan und Teilfinanzplan
-- [ ] **PRUEF-09**: Alle Prüfungen laufen in pytest und erzeugen `daten/pruefberichte/konsistenz.md`; Abweichungen über 1 € sind Fehler, außer sie stehen in `befunde.md`
+- [x] **PRUEF-09**: Alle Prüfungen laufen in pytest und erzeugen `daten/pruefberichte/konsistenz.md`; Abweichungen über 1 € sind Fehler, außer sie stehen in `befunde.md`
 - [ ] **PRUEF-10**: `pipeline/alle.py` läuft alle Schritte in Reihenfolge; CI prüft, dass sie keinen Diff an eingecheckten Daten erzeugt
 
 ### App-Daten
@@ -202,14 +202,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MANU-07 | Phase 4 | Pending |
 | MANU-08 | Phase 4 | Pending |
 | PRUEF-01 | Phase 2 | Complete |
-| PRUEF-02 | Phase 2 | Pending |
-| PRUEF-03 | Phase 2 | Pending |
-| PRUEF-04 | Phase 2 | Pending |
+| PRUEF-02 | Phase 2 | Complete |
+| PRUEF-03 | Phase 2 | Complete |
+| PRUEF-04 | Phase 2 | Complete |
 | PRUEF-05 | Phase 4 | Pending |
 | PRUEF-06 | Phase 3 | Pending |
 | PRUEF-07 | Phase 3 | Pending |
 | PRUEF-08 | Phase 3 | Pending |
-| PRUEF-09 | Phase 2 | Pending |
+| PRUEF-09 | Phase 2 | Complete |
 | PRUEF-10 | Phase 4 | Pending |
 | DATA-01 | Phase 4 | Pending |
 | DATA-02 | Phase 4 | Pending |
