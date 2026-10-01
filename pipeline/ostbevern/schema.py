@@ -18,6 +18,8 @@ SEITEN_CSV = Path("zwischen/seiten.csv")
 HIERARCHIE_CSV = Path("aufbereitet/hierarchie.csv")
 ERGEBNISPLAN_CSV = Path("aufbereitet/ergebnisplan.csv")
 FINANZPLAN_CSV = Path("aufbereitet/finanzplan.csv")
+# Kontrollquelle (nie Datenquelle der App), daher unter zwischen/ statt aufbereitet/ (D-14).
+QUERSCHNITTE_CSV = Path("zwischen/querschnitte.csv")
 KONSISTENZ_MD = Path("pruefberichte/konsistenz.md")
 BEFUNDE_MD = Path("pruefberichte/befunde.md")
 
@@ -142,3 +144,27 @@ def schreibe_hierarchie_csv(df: pl.DataFrame, pfad: Path) -> None:
 def lies_hierarchie_csv(pfad: Path) -> pl.DataFrame:
     """Liest hierarchie.csv über `lies_csv` mit HIERARCHIE_SPALTEN."""
     return lies_csv(pfad, HIERARCHIE_SPALTEN)
+
+
+# Haushaltsquerschnitte (Phase 3, D-14/D-15): Langformat, ein Wert je (PB, PG oder
+# GESAMTSUMME, Plan, Kennzahl). `pg` ist null auf der GESAMTSUMME-Zeile.
+QUERSCHNITTE_SPALTEN: dict[str, pl.PolarsDataType] = {
+    "pb": pl.Utf8,
+    "pg": pl.Utf8,
+    "gesamtsumme": pl.Boolean,
+    "plan": pl.Utf8,
+    "kennzahl": pl.Utf8,
+    "betrag": pl.Int64,
+    "pdf_seite": pl.Int64,
+}
+
+
+def schreibe_querschnitte_csv(df: pl.DataFrame, pfad: Path) -> None:
+    """Schreibt querschnitte.csv sortiert nach plan, pb, gesamtsumme, pg (nulls first),
+    kennzahl (D-14, D-15)."""
+    schreibe_csv(df, pfad, QUERSCHNITTE_SPALTEN, ["plan", "pb", "gesamtsumme", "pg", "kennzahl"])
+
+
+def lies_querschnitte_csv(pfad: Path) -> pl.DataFrame:
+    """Liest querschnitte.csv über `lies_csv` mit QUERSCHNITTE_SPALTEN."""
+    return lies_csv(pfad, QUERSCHNITTE_SPALTEN)
