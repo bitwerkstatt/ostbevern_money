@@ -1,0 +1,288 @@
+ebene,code,synthetisch,zeile,zeile_kanonisch,zeile_name,operator,ist_summe,jahr,wertart,betrag,pdf_seite
+GESAMT,,false,01,steuern,Steuern und ähnliche Abgaben,+,false,2024,ergebnis,19406548,63
+GESAMT,,false,01,steuern,Steuern und ähnliche Abgaben,+,false,2025,ansatz,17964000,63
+GESAMT,,false,01,steuern,Steuern und ähnliche Abgaben,+,false,2026,ansatz,18443000,63
+GESAMT,,false,01,steuern,Steuern und ähnliche Abgaben,+,false,2026,ve,0,63
+GESAMT,,false,01,steuern,Steuern und ähnliche Abgaben,+,false,2027,planung,19866000,63
+GESAMT,,false,01,steuern,Steuern und ähnliche Abgaben,+,false,2028,planung,20801000,63
+GESAMT,,false,01,steuern,Steuern und ähnliche Abgaben,+,false,2029,planung,21721000,63
+GESAMT,,false,02,zuwendungen,Zuwendungen und allgemeine Umlagen,+,false,2024,ergebnis,2806098,63
+GESAMT,,false,02,zuwendungen,Zuwendungen und allgemeine Umlagen,+,false,2025,ansatz,3742500,63
+GESAMT,,false,02,zuwendungen,Zuwendungen und allgemeine Umlagen,+,false,2026,ansatz,2217800,63
+GESAMT,,false,02,zuwendungen,Zuwendungen und allgemeine Umlagen,+,false,2026,ve,0,63
+GESAMT,,false,02,zuwendungen,Zuwendungen und allgemeine Umlagen,+,false,2027,planung,3657200,63
+GESAMT,,false,02,zuwendungen,Zuwendungen und allgemeine Umlagen,+,false,2028,planung,3736200,63
+GESAMT,,false,02,zuwendungen,Zuwendungen und allgemeine Umlagen,+,false,2029,planung,3440200,63
+GESAMT,,false,03,sonstige_transfereinzahlungen,Sonstige Transfereinzahlungen,+,false,2024,ergebnis,36321,63
+GESAMT,,false,03,sonstige_transfereinzahlungen,Sonstige Transfereinzahlungen,+,false,2025,ansatz,0,63
+GESAMT,,false,03,sonstige_transfereinzahlungen,Sonstige Transfereinzahlungen,+,false,2026,ansatz,0,63
+GESAMT,,false,03,sonstige_transfereinzahlungen,Sonstige Transfereinzahlungen,+,false,2026,ve,0,63
+GESAMT,,false,03,sonstige_transfereinzahlungen,Sonstige Transfereinzahlungen,+,false,2027,planung,0,63
+GESAMT,,false,03,sonstige_transfereinzahlungen,Sonstige Transfereinzahlungen,+,false,2028,planung,0,63
+GESAMT,,false,03,sonstige_transfereinzahlungen,Sonstige Transfereinzahlungen,+,false,2029,planung,0,63
+GESAMT,,false,04,oeffentlich_rechtliche_entgelte,Öffentlich-rechtliche Leistungsentgelte,+,false,2024,ergebnis,1808085,63
+GESAMT,,false,04,oeffentlich_rechtliche_entgelte,Öffentlich-rechtliche Leistungsentgelte,+,false,2025,ansatz,1978900,63
+GESAMT,,false,04,oeffentlich_rechtliche_entgelte,Öffentlich-rechtliche Leistungsentgelte,+,false,2026,ansatz,1927222,63
+GESAMT,,false,04,oeffentlich_rechtliche_entgelte,Öffentlich-rechtliche Leistungsentgelte,+,false,2026,ve,0,63
+GESAMT,,false,04,oeffentlich_rechtliche_entgelte,Öffentlich-rechtliche Leistungsentgelte,+,false,2027,planung,1998100,63
+GESAMT,,false,04,oeffentlich_rechtliche_entgelte,Öffentlich-rechtliche Leistungsentgelte,+,false,2028,planung,2055210,63
+GESAMT,,false,04,oeffentlich_rechtliche_entgelte,Öffentlich-rechtliche Leistungsentgelte,+,false,2029,planung,2172780,63
+GESAMT,,false,05,privatrechtliche_entgelte,Privatrechtliche Leistungsentgelte,+,false,2024,ergebnis,486152,63
+GESAMT,,false,05,privatrechtliche_entgelte,Privatrechtliche Leistungsentgelte,+,false,2025,ansatz,360201,63
+GESAMT,,false,05,privatrechtliche_entgelte,Privatrechtliche Leistungsentgelte,+,false,2026,ansatz,389800,63
+GESAMT,,false,05,privatrechtliche_entgelte,Privatrechtliche Leistungsentgelte,+,false,2026,ve,0,63
+GESAMT,,false,05,privatrechtliche_entgelte,Privatrechtliche Leistungsentgelte,+,false,2027,planung,389800,63
+GESAMT,,false,05,privatrechtliche_entgelte,Privatrechtliche Leistungsentgelte,+,false,2028,planung,389800,63
+GESAMT,,false,05,privatrechtliche_entgelte,Privatrechtliche Leistungsentgelte,+,false,2029,planung,389800,63
+GESAMT,,false,06,kostenerstattungen,Kostenerstattungen und Kostenumlagen,+,false,2024,ergebnis,1653273,63
+GESAMT,,false,06,kostenerstattungen,Kostenerstattungen und Kostenumlagen,+,false,2025,ansatz,686150,63
+GESAMT,,false,06,kostenerstattungen,Kostenerstattungen und Kostenumlagen,+,false,2026,ansatz,762070,63
+GESAMT,,false,06,kostenerstattungen,Kostenerstattungen und Kostenumlagen,+,false,2026,ve,0,63
+GESAMT,,false,06,kostenerstattungen,Kostenerstattungen und Kostenumlagen,+,false,2027,planung,770970,63
+GESAMT,,false,06,kostenerstattungen,Kostenerstattungen und Kostenumlagen,+,false,2028,planung,760720,63
+GESAMT,,false,06,kostenerstattungen,Kostenerstattungen und Kostenumlagen,+,false,2029,planung,781750,63
+GESAMT,,false,07,sonstige_einzahlungen,Sonstige Einzahlungen,+,false,2024,ergebnis,37954,63
+GESAMT,,false,07,sonstige_einzahlungen,Sonstige Einzahlungen,+,false,2025,ansatz,490500,63
+GESAMT,,false,07,sonstige_einzahlungen,Sonstige Einzahlungen,+,false,2026,ansatz,503300,63
+GESAMT,,false,07,sonstige_einzahlungen,Sonstige Einzahlungen,+,false,2026,ve,0,63
+GESAMT,,false,07,sonstige_einzahlungen,Sonstige Einzahlungen,+,false,2027,planung,503300,63
+GESAMT,,false,07,sonstige_einzahlungen,Sonstige Einzahlungen,+,false,2028,planung,503300,63
+GESAMT,,false,07,sonstige_einzahlungen,Sonstige Einzahlungen,+,false,2029,planung,503300,63
+GESAMT,,false,08,finanzeinzahlungen,Zinsen und sonstige Finanzeinzahlungen,+,false,2024,ergebnis,573945,63
+GESAMT,,false,08,finanzeinzahlungen,Zinsen und sonstige Finanzeinzahlungen,+,false,2025,ansatz,320000,63
+GESAMT,,false,08,finanzeinzahlungen,Zinsen und sonstige Finanzeinzahlungen,+,false,2026,ansatz,460000,63
+GESAMT,,false,08,finanzeinzahlungen,Zinsen und sonstige Finanzeinzahlungen,+,false,2026,ve,0,63
+GESAMT,,false,08,finanzeinzahlungen,Zinsen und sonstige Finanzeinzahlungen,+,false,2027,planung,390000,63
+GESAMT,,false,08,finanzeinzahlungen,Zinsen und sonstige Finanzeinzahlungen,+,false,2028,planung,390000,63
+GESAMT,,false,08,finanzeinzahlungen,Zinsen und sonstige Finanzeinzahlungen,+,false,2029,planung,390000,63
+GESAMT,,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,26808377,63
+GESAMT,,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,25542251,63
+GESAMT,,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,24703192,63
+GESAMT,,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,63
+GESAMT,,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,27575370,63
+GESAMT,,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,28636230,63
+GESAMT,,false,09,einzahlungen_laufende_verwaltung,Einzahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,29398830,63
+GESAMT,,false,10,personalauszahlungen,Personalauszahlungen,-,false,2024,ergebnis,4120041,63
+GESAMT,,false,10,personalauszahlungen,Personalauszahlungen,-,false,2025,ansatz,4977200,63
+GESAMT,,false,10,personalauszahlungen,Personalauszahlungen,-,false,2026,ansatz,5204054,63
+GESAMT,,false,10,personalauszahlungen,Personalauszahlungen,-,false,2026,ve,0,63
+GESAMT,,false,10,personalauszahlungen,Personalauszahlungen,-,false,2027,planung,5448900,63
+GESAMT,,false,10,personalauszahlungen,Personalauszahlungen,-,false,2028,planung,5666700,63
+GESAMT,,false,10,personalauszahlungen,Personalauszahlungen,-,false,2029,planung,5893100,63
+GESAMT,,false,11,versorgungsauszahlungen,Versorgungsauszahlungen,-,false,2024,ergebnis,401115,63
+GESAMT,,false,11,versorgungsauszahlungen,Versorgungsauszahlungen,-,false,2025,ansatz,373400,63
+GESAMT,,false,11,versorgungsauszahlungen,Versorgungsauszahlungen,-,false,2026,ansatz,258000,63
+GESAMT,,false,11,versorgungsauszahlungen,Versorgungsauszahlungen,-,false,2026,ve,0,63
+GESAMT,,false,11,versorgungsauszahlungen,Versorgungsauszahlungen,-,false,2027,planung,265700,63
+GESAMT,,false,11,versorgungsauszahlungen,Versorgungsauszahlungen,-,false,2028,planung,273800,63
+GESAMT,,false,11,versorgungsauszahlungen,Versorgungsauszahlungen,-,false,2029,planung,281900,63
+GESAMT,,false,12,sach_und_dienstleistungen,Auszahlg. Sach- und Dienstleistungen,-,false,2024,ergebnis,5575480,63
+GESAMT,,false,12,sach_und_dienstleistungen,Auszahlg. Sach- und Dienstleistungen,-,false,2025,ansatz,6961896,63
+GESAMT,,false,12,sach_und_dienstleistungen,Auszahlg. Sach- und Dienstleistungen,-,false,2026,ansatz,7023472,63
+GESAMT,,false,12,sach_und_dienstleistungen,Auszahlg. Sach- und Dienstleistungen,-,false,2026,ve,0,63
+GESAMT,,false,12,sach_und_dienstleistungen,Auszahlg. Sach- und Dienstleistungen,-,false,2027,planung,6578021,63
+GESAMT,,false,12,sach_und_dienstleistungen,Auszahlg. Sach- und Dienstleistungen,-,false,2028,planung,6658705,63
+GESAMT,,false,12,sach_und_dienstleistungen,Auszahlg. Sach- und Dienstleistungen,-,false,2029,planung,6713846,63
+GESAMT,,false,13,finanzauszahlungen,Zinsen und sonstige Finanzauszahlungen,-,false,2024,ergebnis,152962,63
+GESAMT,,false,13,finanzauszahlungen,Zinsen und sonstige Finanzauszahlungen,-,false,2025,ansatz,246000,63
+GESAMT,,false,13,finanzauszahlungen,Zinsen und sonstige Finanzauszahlungen,-,false,2026,ansatz,200000,63
+GESAMT,,false,13,finanzauszahlungen,Zinsen und sonstige Finanzauszahlungen,-,false,2026,ve,0,63
+GESAMT,,false,13,finanzauszahlungen,Zinsen und sonstige Finanzauszahlungen,-,false,2027,planung,350000,63
+GESAMT,,false,13,finanzauszahlungen,Zinsen und sonstige Finanzauszahlungen,-,false,2028,planung,600000,63
+GESAMT,,false,13,finanzauszahlungen,Zinsen und sonstige Finanzauszahlungen,-,false,2029,planung,600000,63
+GESAMT,,false,14,transferauszahlungen,Transferauszahlungen,-,false,2024,ergebnis,13363303,63
+GESAMT,,false,14,transferauszahlungen,Transferauszahlungen,-,false,2025,ansatz,13782286,63
+GESAMT,,false,14,transferauszahlungen,Transferauszahlungen,-,false,2026,ansatz,13764981,63
+GESAMT,,false,14,transferauszahlungen,Transferauszahlungen,-,false,2026,ve,0,63
+GESAMT,,false,14,transferauszahlungen,Transferauszahlungen,-,false,2027,planung,15756800,63
+GESAMT,,false,14,transferauszahlungen,Transferauszahlungen,-,false,2028,planung,16232800,63
+GESAMT,,false,14,transferauszahlungen,Transferauszahlungen,-,false,2029,planung,16746800,63
+GESAMT,,false,15,sonstige_auszahlungen,Sonstige Auszahlungen,-,false,2024,ergebnis,1728230,63
+GESAMT,,false,15,sonstige_auszahlungen,Sonstige Auszahlungen,-,false,2025,ansatz,1436600,63
+GESAMT,,false,15,sonstige_auszahlungen,Sonstige Auszahlungen,-,false,2026,ansatz,1247120,63
+GESAMT,,false,15,sonstige_auszahlungen,Sonstige Auszahlungen,-,false,2026,ve,0,63
+GESAMT,,false,15,sonstige_auszahlungen,Sonstige Auszahlungen,-,false,2027,planung,1242420,63
+GESAMT,,false,15,sonstige_auszahlungen,Sonstige Auszahlungen,-,false,2028,planung,1798108,63
+GESAMT,,false,15,sonstige_auszahlungen,Sonstige Auszahlungen,-,false,2029,planung,2399995,63
+GESAMT,,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,25341131,63
+GESAMT,,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,27777382,63
+GESAMT,,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,27697627,63
+GESAMT,,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,63
+GESAMT,,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2027,planung,29641841,63
+GESAMT,,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2028,planung,31230113,63
+GESAMT,,false,16,auszahlungen_laufende_verwaltung,Auszahlungen aus lfd. Verw.-tätigkeit,=,true,2029,planung,32635641,63
+GESAMT,,false,17,saldo_laufende_verwaltung,Saldo aus lfd. Verw.-tätigkeit,=,true,2024,ergebnis,1467246,63
+GESAMT,,false,17,saldo_laufende_verwaltung,Saldo aus lfd. Verw.-tätigkeit,=,true,2025,ansatz,-2235131,63
+GESAMT,,false,17,saldo_laufende_verwaltung,Saldo aus lfd. Verw.-tätigkeit,=,true,2026,ansatz,-2994435,63
+GESAMT,,false,17,saldo_laufende_verwaltung,Saldo aus lfd. Verw.-tätigkeit,=,true,2026,ve,0,63
+GESAMT,,false,17,saldo_laufende_verwaltung,Saldo aus lfd. Verw.-tätigkeit,=,true,2027,planung,-2066471,63
+GESAMT,,false,17,saldo_laufende_verwaltung,Saldo aus lfd. Verw.-tätigkeit,=,true,2028,planung,-2593883,63
+GESAMT,,false,17,saldo_laufende_verwaltung,Saldo aus lfd. Verw.-tätigkeit,=,true,2029,planung,-3236811,63
+GESAMT,,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2024,ergebnis,3970656,63
+GESAMT,,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2025,ansatz,3692000,63
+GESAMT,,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ansatz,3742000,63
+GESAMT,,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2026,ve,0,63
+GESAMT,,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2027,planung,6361000,63
+GESAMT,,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2028,planung,2511000,63
+GESAMT,,false,18,investitionszuwendungen,Zuwendungen für Investitionsmaßnahmen,+,false,2029,planung,2066000,63
+GESAMT,,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2024,ergebnis,2593849,63
+GESAMT,,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2025,ansatz,3199990,63
+GESAMT,,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2026,ansatz,2245830,63
+GESAMT,,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2026,ve,0,63
+GESAMT,,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2027,planung,2181640,63
+GESAMT,,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2028,planung,3516928,63
+GESAMT,,false,19,veraeusserung_sachanlagen,Einz. aus Veräußerung v. Sachanlagen,+,false,2029,planung,1830000,63
+GESAMT,,false,20,veraeusserung_finanzanlagen,Einz. aus Veräußerung v. Finanzanlagen,+,false,2024,ergebnis,0,63
+GESAMT,,false,20,veraeusserung_finanzanlagen,Einz. aus Veräußerung v. Finanzanlagen,+,false,2025,ansatz,0,63
+GESAMT,,false,20,veraeusserung_finanzanlagen,Einz. aus Veräußerung v. Finanzanlagen,+,false,2026,ansatz,0,63
+GESAMT,,false,20,veraeusserung_finanzanlagen,Einz. aus Veräußerung v. Finanzanlagen,+,false,2026,ve,0,63
+GESAMT,,false,20,veraeusserung_finanzanlagen,Einz. aus Veräußerung v. Finanzanlagen,+,false,2027,planung,0,63
+GESAMT,,false,20,veraeusserung_finanzanlagen,Einz. aus Veräußerung v. Finanzanlagen,+,false,2028,planung,0,63
+GESAMT,,false,20,veraeusserung_finanzanlagen,Einz. aus Veräußerung v. Finanzanlagen,+,false,2029,planung,0,63
+GESAMT,,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2024,ergebnis,75969,63
+GESAMT,,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2025,ansatz,80000,63
+GESAMT,,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2026,ansatz,1237000,63
+GESAMT,,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2026,ve,0,63
+GESAMT,,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2027,planung,154140,63
+GESAMT,,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2028,planung,2229815,63
+GESAMT,,false,21,beitraege,Einz. aus Beiträgen u. ä. Entgelten,+,false,2029,planung,1848825,63
+GESAMT,,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2024,ergebnis,86187,63
+GESAMT,,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2025,ansatz,0,63
+GESAMT,,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2026,ansatz,0,63
+GESAMT,,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2026,ve,0,63
+GESAMT,,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2027,planung,0,63
+GESAMT,,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2028,planung,0,63
+GESAMT,,false,22,sonstige_investitionseinzahlungen,Sonstige Investitionseinzahlungen,+,false,2029,planung,0,63
+GESAMT,,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,6726660,63
+GESAMT,,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2025,ansatz,6971990,63
+GESAMT,,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ansatz,7224830,63
+GESAMT,,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2026,ve,0,63
+GESAMT,,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2027,planung,8696780,63
+GESAMT,,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2028,planung,8257743,63
+GESAMT,,false,23,einzahlungen_investitionen,Einzahlungen aus Investitionstätigkeit,=,true,2029,planung,5744825,63
+GESAMT,,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2024,ergebnis,409500,63
+GESAMT,,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2025,ansatz,5563000,63
+GESAMT,,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ansatz,2631384,63
+GESAMT,,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2026,ve,0,63
+GESAMT,,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2027,planung,900000,63
+GESAMT,,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2028,planung,850000,63
+GESAMT,,false,24,erwerb_grundstuecke_gebaeude,Ausz. f. Erwerb von Grundst. u. Gebäuden,-,false,2029,planung,350000,63
+GESAMT,,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2024,ergebnis,2953171,63
+GESAMT,,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2025,ansatz,8171000,63
+GESAMT,,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ansatz,7915000,63
+GESAMT,,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2026,ve,11600000,63
+GESAMT,,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2027,planung,15220000,63
+GESAMT,,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2028,planung,5230000,63
+GESAMT,,false,25,baumassnahmen,Ausz. f. Baumaßnahmen,-,false,2029,planung,0,63
+GESAMT,,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb v. bewegl. Anlageverm.,-,false,2024,ergebnis,358197,63
+GESAMT,,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb v. bewegl. Anlageverm.,-,false,2025,ansatz,1342950,63
+GESAMT,,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb v. bewegl. Anlageverm.,-,false,2026,ansatz,1514100,63
+GESAMT,,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb v. bewegl. Anlageverm.,-,false,2026,ve,0,63
+GESAMT,,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb v. bewegl. Anlageverm.,-,false,2027,planung,603100,63
+GESAMT,,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb v. bewegl. Anlageverm.,-,false,2028,planung,417600,63
+GESAMT,,false,26,erwerb_bewegliches_anlagevermoegen,Ausz. f. Erwerb v. bewegl. Anlageverm.,-,false,2029,planung,312600,63
+GESAMT,,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2024,ergebnis,51963,63
+GESAMT,,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2025,ansatz,550000,63
+GESAMT,,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2026,ansatz,50000,63
+GESAMT,,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2026,ve,0,63
+GESAMT,,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2027,planung,50000,63
+GESAMT,,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2028,planung,50000,63
+GESAMT,,false,27,erwerb_finanzanlagen,Ausz. f. Erwerb v. Finanzanlagen,-,false,2029,planung,50000,63
+GESAMT,,false,28,aktivierbare_zuwendungen,Ausz. v. aktivierbaren Zuwendungen,-,false,2024,ergebnis,0,63
+GESAMT,,false,28,aktivierbare_zuwendungen,Ausz. v. aktivierbaren Zuwendungen,-,false,2025,ansatz,119000,63
+GESAMT,,false,28,aktivierbare_zuwendungen,Ausz. v. aktivierbaren Zuwendungen,-,false,2026,ansatz,170000,63
+GESAMT,,false,28,aktivierbare_zuwendungen,Ausz. v. aktivierbaren Zuwendungen,-,false,2026,ve,0,63
+GESAMT,,false,28,aktivierbare_zuwendungen,Ausz. v. aktivierbaren Zuwendungen,-,false,2027,planung,30000,63
+GESAMT,,false,28,aktivierbare_zuwendungen,Ausz. v. aktivierbaren Zuwendungen,-,false,2028,planung,18000,63
+GESAMT,,false,28,aktivierbare_zuwendungen,Ausz. v. aktivierbaren Zuwendungen,-,false,2029,planung,0,63
+GESAMT,,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2024,ergebnis,5071,63
+GESAMT,,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2025,ansatz,0,63
+GESAMT,,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2026,ansatz,0,63
+GESAMT,,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2026,ve,0,63
+GESAMT,,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2027,planung,0,63
+GESAMT,,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2028,planung,0,63
+GESAMT,,false,29,sonstige_investitionsauszahlungen,Sonstige Investitionsauszahlungen,-,false,2029,planung,0,63
+GESAMT,,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2024,ergebnis,3777901,63
+GESAMT,,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2025,ansatz,15745950,63
+GESAMT,,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ansatz,12280484,63
+GESAMT,,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2026,ve,11600000,63
+GESAMT,,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2027,planung,16803100,63
+GESAMT,,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2028,planung,6565600,63
+GESAMT,,false,30,auszahlungen_investitionen,Auszahlungen aus Investitionstätigkeit,=,true,2029,planung,712600,63
+GESAMT,,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2024,ergebnis,2948759,63
+GESAMT,,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2025,ansatz,-8773960,63
+GESAMT,,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2026,ansatz,-5055654,63
+GESAMT,,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2026,ve,-11600000,63
+GESAMT,,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2027,planung,-8106320,63
+GESAMT,,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2028,planung,1692143,63
+GESAMT,,false,31,saldo_investitionen,Saldo aus Investitionstätigkeit,=,true,2029,planung,5032225,63
+GESAMT,,false,32,finanzmittelueberschuss,Überschuss/Fehlbetrag,=,true,2024,ergebnis,4416005,63
+GESAMT,,false,32,finanzmittelueberschuss,Überschuss/Fehlbetrag,=,true,2025,ansatz,-11009091,63
+GESAMT,,false,32,finanzmittelueberschuss,Überschuss/Fehlbetrag,=,true,2026,ansatz,-8050089,63
+GESAMT,,false,32,finanzmittelueberschuss,Überschuss/Fehlbetrag,=,true,2026,ve,-11600000,63
+GESAMT,,false,32,finanzmittelueberschuss,Überschuss/Fehlbetrag,=,true,2027,planung,-10172791,63
+GESAMT,,false,32,finanzmittelueberschuss,Überschuss/Fehlbetrag,=,true,2028,planung,-901740,63
+GESAMT,,false,32,finanzmittelueberschuss,Überschuss/Fehlbetrag,=,true,2029,planung,1795414,63
+GESAMT,,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2024,ergebnis,0,63
+GESAMT,,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2025,ansatz,7400000,63
+GESAMT,,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2026,ansatz,5200000,63
+GESAMT,,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2026,ve,0,63
+GESAMT,,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2027,planung,9500000,63
+GESAMT,,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2028,planung,0,63
+GESAMT,,false,33,kreditaufnahme,Aufnahme und Rückflüsse von Darlehen,+,false,2029,planung,0,63
+GESAMT,,false,34,liquiditaetskredite_aufnahme,Aufn. v. Krediten z. Liquiditätssicherung,+,false,2024,ergebnis,0,63
+GESAMT,,false,34,liquiditaetskredite_aufnahme,Aufn. v. Krediten z. Liquiditätssicherung,+,false,2025,ansatz,0,63
+GESAMT,,false,34,liquiditaetskredite_aufnahme,Aufn. v. Krediten z. Liquiditätssicherung,+,false,2026,ansatz,0,63
+GESAMT,,false,34,liquiditaetskredite_aufnahme,Aufn. v. Krediten z. Liquiditätssicherung,+,false,2026,ve,0,63
+GESAMT,,false,34,liquiditaetskredite_aufnahme,Aufn. v. Krediten z. Liquiditätssicherung,+,false,2027,planung,0,63
+GESAMT,,false,34,liquiditaetskredite_aufnahme,Aufn. v. Krediten z. Liquiditätssicherung,+,false,2028,planung,0,63
+GESAMT,,false,34,liquiditaetskredite_aufnahme,Aufn. v. Krediten z. Liquiditätssicherung,+,false,2029,planung,0,63
+GESAMT,,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2024,ergebnis,400183,63
+GESAMT,,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2025,ansatz,490000,63
+GESAMT,,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2026,ansatz,450000,63
+GESAMT,,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2026,ve,0,63
+GESAMT,,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2027,planung,570000,63
+GESAMT,,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2028,planung,850000,63
+GESAMT,,false,35,tilgung,Tilgung und Gewährung von Darlehen,-,false,2029,planung,830000,63
+GESAMT,,false,36,liquiditaetskredite_tilgung,Tilgung v. Krediten z. Liquiditätssicherung,-,false,2024,ergebnis,0,63
+GESAMT,,false,36,liquiditaetskredite_tilgung,Tilgung v. Krediten z. Liquiditätssicherung,-,false,2025,ansatz,0,63
+GESAMT,,false,36,liquiditaetskredite_tilgung,Tilgung v. Krediten z. Liquiditätssicherung,-,false,2026,ansatz,0,63
+GESAMT,,false,36,liquiditaetskredite_tilgung,Tilgung v. Krediten z. Liquiditätssicherung,-,false,2026,ve,0,63
+GESAMT,,false,36,liquiditaetskredite_tilgung,Tilgung v. Krediten z. Liquiditätssicherung,-,false,2027,planung,0,63
+GESAMT,,false,36,liquiditaetskredite_tilgung,Tilgung v. Krediten z. Liquiditätssicherung,-,false,2028,planung,0,63
+GESAMT,,false,36,liquiditaetskredite_tilgung,Tilgung v. Krediten z. Liquiditätssicherung,-,false,2029,planung,0,63
+GESAMT,,false,37,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2024,ergebnis,-400183,63
+GESAMT,,false,37,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2025,ansatz,6910000,63
+GESAMT,,false,37,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2026,ansatz,4750000,63
+GESAMT,,false,37,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2026,ve,0,63
+GESAMT,,false,37,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2027,planung,8930000,63
+GESAMT,,false,37,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2028,planung,-850000,63
+GESAMT,,false,37,saldo_finanzierung,Saldo aus Finanzierungstätigkeit,=,true,2029,planung,-830000,63
+GESAMT,,false,38,aenderung_finanzbestand,Änd. des Finanzbestandes,=,true,2024,ergebnis,4015822,63
+GESAMT,,false,38,aenderung_finanzbestand,Änd. des Finanzbestandes,=,true,2025,ansatz,-4099091,63
+GESAMT,,false,38,aenderung_finanzbestand,Änd. des Finanzbestandes,=,true,2026,ansatz,-3300089,63
+GESAMT,,false,38,aenderung_finanzbestand,Änd. des Finanzbestandes,=,true,2026,ve,-11600000,63
+GESAMT,,false,38,aenderung_finanzbestand,Änd. des Finanzbestandes,=,true,2027,planung,-1242791,63
+GESAMT,,false,38,aenderung_finanzbestand,Änd. des Finanzbestandes,=,true,2028,planung,-1751740,63
+GESAMT,,false,38,aenderung_finanzbestand,Änd. des Finanzbestandes,=,true,2029,planung,965414,63
+GESAMT,,false,39,anfangsbestand_finanzmittel,Anfangsbestand an Finanzmitteln,+/-,false,2024,ergebnis,3500137,63
+GESAMT,,false,39,anfangsbestand_finanzmittel,Anfangsbestand an Finanzmitteln,+/-,false,2025,ansatz,7528342,63
+GESAMT,,false,39,anfangsbestand_finanzmittel,Anfangsbestand an Finanzmitteln,+/-,false,2026,ansatz,7499809,63
+GESAMT,,false,39,anfangsbestand_finanzmittel,Anfangsbestand an Finanzmitteln,+/-,false,2026,ve,0,63
+GESAMT,,false,39,anfangsbestand_finanzmittel,Anfangsbestand an Finanzmitteln,+/-,false,2027,planung,4199420,63
+GESAMT,,false,39,anfangsbestand_finanzmittel,Anfangsbestand an Finanzmitteln,+/-,false,2028,planung,2956329,63
+GESAMT,,false,39,anfangsbestand_finanzmittel,Anfangsbestand an Finanzmitteln,+/-,false,2029,planung,1204289,63
+GESAMT,,false,40,fremde_finanzmittel,Bestand an fremden Finanzmitteln,+/-,false,2024,ergebnis,12383,63
+GESAMT,,false,40,fremde_finanzmittel,Bestand an fremden Finanzmitteln,+/-,false,2025,ansatz,-300,63
+GESAMT,,false,40,fremde_finanzmittel,Bestand an fremden Finanzmitteln,+/-,false,2026,ansatz,-300,63
+GESAMT,,false,40,fremde_finanzmittel,Bestand an fremden Finanzmitteln,+/-,false,2026,ve,0,63
+GESAMT,,false,40,fremde_finanzmittel,Bestand an fremden Finanzmitteln,+/-,false,2027,planung,-300,63
+GESAMT,,false,40,fremde_finanzmittel,Bestand an fremden Finanzmitteln,+/-,false,2028,planung,-300,63
+GESAMT,,false,40,fremde_finanzmittel,Bestand an fremden Finanzmitteln,+/-,false,2029,planung,-300,63
+GESAMT,,false,41,liquide_mittel,Liquide Mittel,=,true,2024,ergebnis,7528342,63
+GESAMT,,false,41,liquide_mittel,Liquide Mittel,=,true,2025,ansatz,3428951,63
+GESAMT,,false,41,liquide_mittel,Liquide Mittel,=,true,2026,ansatz,4199420,63
+GESAMT,,false,41,liquide_mittel,Liquide Mittel,=,true,2026,ve,-11600000,63
+GESAMT,,false,41,liquide_mittel,Liquide Mittel,=,true,2027,planung,2956329,63
+GESAMT,,false,41,liquide_mittel,Liquide Mittel,=,true,2028,planung,1204289,63
+GESAMT,,false,41,liquide_mittel,Liquide Mittel,=,true,2029,planung,2169403,63

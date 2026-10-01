@@ -34,13 +34,14 @@ def main(
 ) -> None:
     try:
         jahrgang = lade_jahrgang(jahr)
-        ergebnis = extrahiere_plaene(jahrgang)
+        ergebnisse = extrahiere_plaene(jahrgang)
     except (KonfigurationsFehler, PdfFehler, PlaeneFehler, SchemaFehler) as fehler:
         typer.echo(f"Fehler: {fehler}", err=True)
         raise typer.Exit(code=1) from fehler
 
-    pfad_relativ = ergebnis.pfad.relative_to(PROJEKT_WURZEL)
-    typer.echo(f"{ergebnis.zeilen_geschrieben} Zeilen geschrieben: {pfad_relativ}")
+    for ergebnis in ergebnisse:
+        pfad_relativ = ergebnis.pfad.relative_to(PROJEKT_WURZEL)
+        typer.echo(f"{ergebnis.zeilen_geschrieben} Zeilen geschrieben: {pfad_relativ}")
 
 
 if __name__ == "__main__":

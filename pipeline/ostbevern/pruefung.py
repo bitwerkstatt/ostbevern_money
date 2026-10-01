@@ -17,12 +17,34 @@ from ostbevern.konfiguration import JAHRGAENGE_VERZEICHNIS, lade_jahrgang, lade_
 from ostbevern.schema import (
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
+    FINANZPLAN_CSV,
     KONSISTENZ_MD,
     lies_plan_csv,
     zerlege_spaltenkopf,
 )
 
 TOLERANZ_EURO = 1
+
+# Satzung § 1-3 (PDF S. 8) als Formel aus Ergebnis-/Finanzplan-Zeilen (GESAMT, Haushaltsjahr):
+# Schlüssel -> (Zieldatei, Wertart, Komponenten als (Vorzeichen, Zeile)).
+SATZUNG_FORMELN: dict[str, tuple[str, str, tuple[tuple[int, str], ...]]] = {
+    "ertraege": ("ergebnisplan", "ansatz", ((1, "10"), (1, "19"))),
+    "aufwendungen": ("ergebnisplan", "ansatz", ((1, "17"), (1, "20"))),
+    "globaler_minderaufwand": ("ergebnisplan", "ansatz", ((-1, "27"),)),
+    "aufwendungen_nach_minderaufwand": (
+        "ergebnisplan",
+        "ansatz",
+        ((1, "17"), (1, "20"), (1, "27")),
+    ),
+    "einzahlungen_laufende_verwaltung": ("finanzplan", "ansatz", ((1, "09"),)),
+    "auszahlungen_laufende_verwaltung": ("finanzplan", "ansatz", ((1, "16"),)),
+    "einzahlungen_investitionen": ("finanzplan", "ansatz", ((1, "23"),)),
+    "auszahlungen_investitionen": ("finanzplan", "ansatz", ((1, "30"),)),
+    "einzahlungen_finanzierung": ("finanzplan", "ansatz", ((1, "33"), (1, "34"))),
+    "auszahlungen_finanzierung": ("finanzplan", "ansatz", ((1, "35"), (1, "36"))),
+    "kredite_investitionen": ("finanzplan", "ansatz", ((1, "33"),)),
+    "verpflichtungsermaechtigungen": ("finanzplan", "ve", ((1, "30"),)),
+}
 
 
 class PruefungsFehler(ValueError):
@@ -80,14 +102,28 @@ class Bericht:
         return all(regel.status == "grün" for regel in self.regeln)
 
 
-def _pruefe_regel4(
-    *, daten_wurzel: Path, sollwerte: dict, spalten: tuple[str, ...]
-) -> Regelergebnis:
+def _csv_wert(df: pl.DataFrame, *, zeile: str, jahr: int, wertart: str, quelle: str) -> int:
+    """Liest genau einen GESAMT-Wert aus einer Plan-CSV; fehlt er, bricht die Prüfung ab."""
+    treffer = df.filter(
+        (pl.col("ebene") == "GESAMT")
+        & (pl.col("zeile") == zeile)
+        & (pl.col("jahr") == jahr)
+        & (pl.col("wertart") == wertart)
+    )
+    if treffer.height == 0:
+        raise PruefungsFehler(
+            f"Regel 4: kein Wert für Zeile {zeile}, Jahr {jahr}, Wertart {wertart} in {quelle}"
+        )
+    return treffer["betrag"][0]
+
+
+def _pruefe_regel4_b1(
+    *, ergebnisplan: pl.DataFrame, sollwerte: dict, spalten: tuple[str, ...]
+) -> tuple[int, list[Pruefpunkt]]:
     gesamtergebnisplan = sollwerte["gesamtergebnisplan"]
     jahre = gesamtergebnisplan["jahre"]
     pdf_seite = gesamtergebnisplan.get("pdf_seite")
     spalten_zu_wertart = [zerlege_spaltenkopf(kopf) for kopf in spalten]
-    ergebnisplan = lies_plan_csv(daten_wurzel / ERGEBNISPLAN_CSV)
 
     geprueft = 0
     abweichungen: list[Pruefpunkt] = []
@@ -105,18 +141,9 @@ def _pruefe_regel4(
                     f"gesamtergebnisplan.jahre {jahre!r}"
                 )
             soll = sollwerte_je_jahr[index]
-            treffer = ergebnisplan.filter(
-                (pl.col("ebene") == "GESAMT")
-                & (pl.col("zeile") == zeile)
-                & (pl.col("jahr") == jahreszahl)
-                & (pl.col("wertart") == wertart)
+            ist = _csv_wert(
+                ergebnisplan, zeile=zeile, jahr=jahreszahl, wertart=wertart, quelle=ERGEBNISPLAN_CSV
             )
-            if treffer.height == 0:
-                raise PruefungsFehler(
-                    f"Regel 4: kein Wert für Zeile {zeile}, Jahr {jahreszahl}, "
-                    f"Wertart {wertart} in {ERGEBNISPLAN_CSV}"
-                )
-            ist = treffer["betrag"][0]
             geprueft += 1
             punkt = Pruefpunkt(
                 regel=4,
@@ -132,12 +159,111 @@ def _pruefe_regel4(
             )
             if abs(punkt.abweichung) > TOLERANZ_EURO:
                 abweichungen.append(punkt)
+    return geprueft, abweichungen
+
+
+def _pruefe_regel4_b2(
+    *, finanzplan: pl.DataFrame, sollwerte: dict, haushaltsjahr: int
+) -> tuple[int, list[Pruefpunkt]]:
+    gesamtfinanzplan = sollwerte["gesamtfinanzplan"]
+    pdf_seite = gesamtfinanzplan.get("pdf_seite")
+
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for wertart in ("ansatz", "ve"):
+        for zeile, soll in sorted(gesamtfinanzplan.get(wertart, {}).items()):
+            ist = _csv_wert(
+                finanzplan, zeile=zeile, jahr=haushaltsjahr, wertart=wertart, quelle=FINANZPLAN_CSV
+            )
+            geprueft += 1
+            punkt = Pruefpunkt(
+                regel=4,
+                plan="gesamtfinanzplan",
+                ebene="GESAMT",
+                code="",
+                zeile=zeile,
+                jahr=haushaltsjahr,
+                wertart=wertart,
+                soll=soll,
+                ist=ist,
+                pdf_seite=pdf_seite,
+            )
+            if abs(punkt.abweichung) > TOLERANZ_EURO:
+                abweichungen.append(punkt)
+    return geprueft, abweichungen
+
+
+def _pruefe_regel4_satzung(
+    *, ergebnisplan: pl.DataFrame, finanzplan: pl.DataFrame, sollwerte: dict, haushaltsjahr: int
+) -> tuple[int, list[Pruefpunkt]]:
+    satzung = sollwerte["satzung"]
+    pdf_seite = satzung.get("pdf_seite")
+    quellen = {"ergebnisplan": ergebnisplan, "finanzplan": finanzplan}
+
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for schluessel, soll in sorted(satzung.items()):
+        if schluessel == "pdf_seite":
+            continue
+        formel = SATZUNG_FORMELN.get(schluessel)
+        if formel is None:
+            raise PruefungsFehler(f"Regel 4: keine Satzungsformel für Schlüssel {schluessel!r}")
+        datei, wertart, komponenten = formel
+        quelle_df = quellen[datei]
+        ist = sum(
+            vorzeichen
+            * _csv_wert(
+                quelle_df,
+                zeile=zeile,
+                jahr=haushaltsjahr,
+                wertart=wertart,
+                quelle=f"Satzung {schluessel!r} ({datei})",
+            )
+            for vorzeichen, zeile in komponenten
+        )
+        geprueft += 1
+        punkt = Pruefpunkt(
+            regel=4,
+            plan="satzung",
+            ebene="GESAMT",
+            code="",
+            zeile=schluessel,
+            jahr=haushaltsjahr,
+            wertart=wertart,
+            soll=soll,
+            ist=ist,
+            pdf_seite=pdf_seite,
+        )
+        if abs(punkt.abweichung) > TOLERANZ_EURO:
+            abweichungen.append(punkt)
+    return geprueft, abweichungen
+
+
+def _pruefe_regel4(
+    *, daten_wurzel: Path, sollwerte: dict, spalten: tuple[str, ...]
+) -> Regelergebnis:
+    haushaltsjahr = sollwerte["haushaltsjahr"]
+    ergebnisplan = lies_plan_csv(daten_wurzel / ERGEBNISPLAN_CSV)
+    finanzplan = lies_plan_csv(daten_wurzel / FINANZPLAN_CSV)
+
+    geprueft_b1, abweichungen_b1 = _pruefe_regel4_b1(
+        ergebnisplan=ergebnisplan, sollwerte=sollwerte, spalten=spalten
+    )
+    geprueft_b2, abweichungen_b2 = _pruefe_regel4_b2(
+        finanzplan=finanzplan, sollwerte=sollwerte, haushaltsjahr=haushaltsjahr
+    )
+    geprueft_satzung, abweichungen_satzung = _pruefe_regel4_satzung(
+        ergebnisplan=ergebnisplan,
+        finanzplan=finanzplan,
+        sollwerte=sollwerte,
+        haushaltsjahr=haushaltsjahr,
+    )
 
     return Regelergebnis(
         regel=4,
-        titel="Regel 4 – Sollwerte (Anhang B, Satzung § 1)",
-        geprueft=geprueft,
-        abweichungen=tuple(abweichungen),
+        titel="Regel 4 – Sollwerte (Anhang B, Satzung § 1-3)",
+        geprueft=geprueft_b1 + geprueft_b2 + geprueft_satzung,
+        abweichungen=tuple(abweichungen_b1 + abweichungen_b2 + abweichungen_satzung),
     )
 
 

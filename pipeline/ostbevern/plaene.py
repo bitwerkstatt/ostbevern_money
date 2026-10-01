@@ -18,6 +18,7 @@ from ostbevern.pdf import PdfDokument, Textzeile, Wort
 from ostbevern.schema import (
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
+    FINANZPLAN_CSV,
     PLAN_SPALTEN,
     schreibe_plan_csv,
     zerlege_spaltenkopf,
@@ -221,17 +222,42 @@ def lies_plantabelle(
 
 def extrahiere_plaene(
     jahrgang: Jahrgang, *, daten_wurzel: Path = DATEN_WURZEL
-) -> ExtraktionsErgebnis:
-    """Extrahiert den Gesamtergebnisplan (GESAMT) nach daten_wurzel/ERGEBNISPLAN_CSV."""
-    bereich = jahrgang.seitenbereiche["gesamtergebnisplan"]
-    spalten = jahrgang.spalten["ergebnisplan"]
-    plantyp = plantyp_fuer("ergebnisplan", "GESAMT")
-
+) -> tuple[ExtraktionsErgebnis, ExtraktionsErgebnis]:
+    """Extrahiert Gesamtergebnis- und Gesamtfinanzplan (GESAMT) nach daten_wurzel (EXTR-04/05)."""
     with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
-        zeilen = dokument.zeilen(bereich.von)
-        gedruckte_zeilen = lies_plantabelle(
-            zeilen, plantyp=plantyp, spalten=spalten, pdf_seite=bereich.von
+        ergebnisplan = _extrahiere_gesamtplan(
+            dokument,
+            jahrgang,
+            daten_wurzel=daten_wurzel,
+            datei="ergebnisplan",
+            ziel_csv=ERGEBNISPLAN_CSV,
         )
+        finanzplan = _extrahiere_gesamtplan(
+            dokument,
+            jahrgang,
+            daten_wurzel=daten_wurzel,
+            datei="finanzplan",
+            ziel_csv=FINANZPLAN_CSV,
+        )
+    return ergebnisplan, finanzplan
+
+
+def _extrahiere_gesamtplan(
+    dokument: PdfDokument,
+    jahrgang: Jahrgang,
+    *,
+    daten_wurzel: Path,
+    datei: str,
+    ziel_csv: Path,
+) -> ExtraktionsErgebnis:
+    plantyp = plantyp_fuer(datei, "GESAMT")
+    bereich = jahrgang.seitenbereiche[plantyp]
+    spalten = jahrgang.spalten[datei]
+
+    zeilen = dokument.zeilen(bereich.von)
+    gedruckte_zeilen = lies_plantabelle(
+        zeilen, plantyp=plantyp, spalten=spalten, pdf_seite=bereich.von
+    )
 
     zeilen_definition = ZEILEN[plantyp]
     datensaetze: list[dict[str, object]] = []
@@ -257,6 +283,6 @@ def extrahiere_plaene(
             )
 
     df = pl.DataFrame(datensaetze, schema=PLAN_SPALTEN)
-    pfad = daten_wurzel / ERGEBNISPLAN_CSV
+    pfad = daten_wurzel / ziel_csv
     schreibe_plan_csv(df, pfad)
     return ExtraktionsErgebnis(zeilen_geschrieben=df.height, pfad=pfad)

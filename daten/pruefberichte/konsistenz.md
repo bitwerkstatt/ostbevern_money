@@ -6,7 +6,7 @@ Diese Datei wird von `pipeline/06_pruefen.py` und von pytest erzeugt und darf ni
 
 | Regel | Status | Geprüfte Werte | Abweichungen |
 | --- | --- | --- | --- |
-| Regel 4 – Sollwerte (Anhang B, Satzung § 1) | grün | 126 | 0 |
+| Regel 4 – Sollwerte (Anhang B, Satzung § 1-3) | grün | 147 | 0 |
 
 ## Abweichungen
 

@@ -14,9 +14,11 @@ import pytest
 from ostbevern.konfiguration import STANDARD_JAHR, Jahrgang, lade_jahrgang, lade_sollwerte
 from ostbevern.pdf import PdfDokument, Textzeile
 from ostbevern.plaene import PlaeneFehler, lies_plantabelle
+from ostbevern.schema import zerlege_spaltenkopf
 from ostbevern.zeilen import ZEILEN, plantyp_fuer
 
 _PLANTYP = plantyp_fuer("ergebnisplan", "GESAMT")
+_FINANZPLANTYP = plantyp_fuer("finanzplan", "GESAMT")
 
 
 def _gesamtergebnisplan_zeilen() -> tuple[tuple[Textzeile, ...], int, Jahrgang]:
@@ -26,11 +28,30 @@ def _gesamtergebnisplan_zeilen() -> tuple[tuple[Textzeile, ...], int, Jahrgang]:
         return dokument.zeilen(bereich.von), bereich.von, jahrgang
 
 
+def _gesamtfinanzplan_zeilen() -> tuple[tuple[Textzeile, ...], int, Jahrgang]:
+    jahrgang = lade_jahrgang(STANDARD_JAHR)
+    bereich = jahrgang.seitenbereiche["gesamtfinanzplan"]
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        return dokument.zeilen(bereich.von), bereich.von, jahrgang
+
+
 def _gedruckte_zeilen_als_dict(
     zeilen: tuple[Textzeile, ...], pdf_seite: int, jahrgang: Jahrgang
 ) -> dict[str, object]:
     gedruckte_zeilen = lies_plantabelle(
         zeilen, plantyp=_PLANTYP, spalten=jahrgang.spalten["ergebnisplan"], pdf_seite=pdf_seite
+    )
+    return {z.zeile: z for z in gedruckte_zeilen}
+
+
+def _gedruckte_finanzplan_zeilen_als_dict(
+    zeilen: tuple[Textzeile, ...], pdf_seite: int, jahrgang: Jahrgang
+) -> dict[str, object]:
+    gedruckte_zeilen = lies_plantabelle(
+        zeilen,
+        plantyp=_FINANZPLANTYP,
+        spalten=jahrgang.spalten["finanzplan"],
+        pdf_seite=pdf_seite,
     )
     return {z.zeile: z for z in gedruckte_zeilen}
 
@@ -137,5 +158,82 @@ def test_gesamtergebnisplan_falscher_text_bricht_ab() -> None:
             tuple(zeilen_liste),
             plantyp=_PLANTYP,
             spalten=jahrgang.spalten["ergebnisplan"],
+            pdf_seite=pdf_seite,
+        )
+
+
+def test_gesamtfinanzplan_zeilen_entsprechen_woerterbuch() -> None:
+    zeilen, pdf_seite, jahrgang = _gesamtfinanzplan_zeilen()
+    gedruckte_zeilen = lies_plantabelle(
+        zeilen,
+        plantyp=_FINANZPLANTYP,
+        spalten=jahrgang.spalten["finanzplan"],
+        pdf_seite=pdf_seite,
+    )
+
+    gefundene_nummern = {z.zeile for z in gedruckte_zeilen}
+    assert gefundene_nummern == set(ZEILEN[_FINANZPLANTYP].keys())
+    assert len(gefundene_nummern) == 41
+
+    erwartete_laenge = len(jahrgang.spalten["finanzplan"])
+    for gedruckt in gedruckte_zeilen:
+        assert len(gedruckt.werte) == erwartete_laenge
+        assert gedruckt.pdf_seite == pdf_seite
+
+
+def test_gesamtfinanzplan_trifft_sollwerte_b2() -> None:
+    zeilen, pdf_seite, jahrgang = _gesamtfinanzplan_zeilen()
+    gedruckte_zeilen = _gedruckte_finanzplan_zeilen_als_dict(zeilen, pdf_seite, jahrgang)
+    spalten = jahrgang.spalten["finanzplan"]
+
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    gesamtfinanzplan = sollwerte["gesamtfinanzplan"]
+
+    for zeile, erwarteter_wert in gesamtfinanzplan["ansatz"].items():
+        index = next(
+            i for i, kopf in enumerate(spalten) if zerlege_spaltenkopf(kopf) == ("ansatz", 2026)
+        )
+        assert gedruckte_zeilen[zeile].werte[index] == erwarteter_wert
+
+    for zeile, erwarteter_wert in gesamtfinanzplan["ve"].items():
+        index = next(
+            i for i, kopf in enumerate(spalten) if zerlege_spaltenkopf(kopf) == ("ve", 2026)
+        )
+        assert gedruckte_zeilen[zeile].werte[index] == erwarteter_wert
+
+    # Beweist, dass die doppelte Jahreszahl "2026" (Ansatz/VE) über x-Position
+    # und nicht über Text aufgelöst wird: beide Werte der VE-Sollwertzeile
+    # unterscheiden sich tatsächlich (EXTR-05, Pattern 1).
+    ve_zeile = next(iter(gesamtfinanzplan["ve"]))
+    ansatz_index = next(
+        i for i, kopf in enumerate(spalten) if zerlege_spaltenkopf(kopf) == ("ansatz", 2026)
+    )
+    ve_index = next(
+        i for i, kopf in enumerate(spalten) if zerlege_spaltenkopf(kopf) == ("ve", 2026)
+    )
+    assert (
+        gedruckte_zeilen[ve_zeile].werte[ansatz_index] != gedruckte_zeilen[ve_zeile].werte[ve_index]
+    )
+
+
+def test_gesamtfinanzplan_falscher_spaltenkopf_bricht_ab() -> None:
+    zeilen, pdf_seite, jahrgang = _gesamtfinanzplan_zeilen()
+
+    zeilen_liste = list(zeilen)
+    for index, zeile in enumerate(zeilen_liste):
+        if any(wort.text == "VE" for wort in zeile.woerter):
+            woerter = list(zeile.woerter)
+            ve_index = next(i for i, w in enumerate(woerter) if w.text == "VE")
+            woerter[ve_index] = dataclasses.replace(woerter[ve_index], text="XY")
+            zeilen_liste[index] = dataclasses.replace(zeile, woerter=tuple(woerter))
+            break
+    else:
+        pytest.fail("Kopfzeile mit 'VE' nicht gefunden")
+
+    with pytest.raises(PlaeneFehler, match=rf"S\. {pdf_seite}"):
+        lies_plantabelle(
+            tuple(zeilen_liste),
+            plantyp=_FINANZPLANTYP,
+            spalten=jahrgang.spalten["finanzplan"],
             pdf_seite=pdf_seite,
         )
