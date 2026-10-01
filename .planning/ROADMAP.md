@@ -98,7 +98,23 @@ Plans:
   3. `investitionen.csv` stammt nur aus den Produktseiten. Die Summe je Produkt entspricht Teilfinanzplan Z. 23/30, und die Summe aller Maßnahmen 2026 ergibt 7.224.830 € / 12.280.484 € (Regel 6). „(Kassenwirksamkeit)“-Zeilen stehen in `ve_faelligkeiten.csv` und nicht in den Summen.
   4. Die Querschnitte ab S. 291 stimmen mit den eigenen PG-Aggregaten überein (Regel 7). `konsistenz.md` meldet die Regeln 1–4 und 6–8 als grün.
 
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+**Wave 1**
+- [ ] 03-01-PLAN.md — Tracer Querschnitte S. 291–300 → querschnitte.csv → Regel 7 → konsistenz.md; Layout-Tabellen der Jahrgangsdatei, spalten.py, Fail-fast-Prüfungen, alle.py (Wave 1)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 03-02-PLAN.md — Investitionen aus den Produktseiten → investitionen.csv (art, D-08-Saldenprüfung, Finanzierungskonten geprüft und ausgeschlossen), ve_faelligkeiten.csv, Schritt 04, Regel 6 (Wave 2)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 03-03-PLAN.md — PB-Investitionslisten → investitionen_pb.csv (Kontrollquelle), Regel 6 PB-Gegenprobe, Lücken im Prüfbericht (Wave 3)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+- [ ] 03-04-PLAN.md — Produktinformationen → produkte.json ohne Personennamen (D-09), Erläuterungen → erlaeuterungen.csv mit D-04-Plausibilität, Schritt 03 in alle.py (Wave 4)
+
+**Wave 5** *(blocked on Wave 4 completion)*
+- [ ] 03-05-PLAN.md — Grundzahlen → grundzahlen.csv (Stichtag-Hinweise, Gruppen, Steuer-Istwerte 160101), Regel 8 Vollständigkeit, Phasen-Gate Regeln 1–4 und 6–8 grün (Wave 5)
 
 ### Phase 4: Manuelle Daten und App-Daten
 
@@ -182,7 +198,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 |-------|----------------|--------|-----------|
 | 1. Setup | 5/5 | Complete    | 2026-10-01 |
 | 2. Kernzahlen | 5/5 | Complete    | 2026-10-01 |
-| 3. Details | 0/TBD | Not started | - |
+| 3. Details | 0/5 | Not started | - |
 | 4. Manuelle Daten und App-Daten | 0/TBD | Not started | - |
 | 5. Leitfragen-Seiten | 0/TBD | Not started | - |
 | 6. Kontext-Seiten | 0/TBD | Not started | - |
