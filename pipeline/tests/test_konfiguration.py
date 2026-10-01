@@ -20,6 +20,8 @@ from ostbevern.konfiguration import (
     KonfigurationsFehler,
     lade_jahrgang,
     lade_sollwerte,
+    layout_liste,
+    layout_text,
 )
 
 
@@ -462,3 +464,82 @@ def test_sollwertdatei_ohne_haushaltsquerschnitt_pg_bleibt_gueltig(tmp_path: Pat
     _schreibe_sollwertdatei(tmp_path, text)
     sollwerte = lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
     assert "haushaltsquerschnitt_pg" not in sollwerte
+
+
+# [layout.*] (Phase 3, D-07-Stil): generische Tabellen gedruckter Texte/Muster der
+# Detailseiten. Mutiert die echte [layout.querschnitte]-Tabelle der 2026.toml.
+
+
+def _ohne_layout_querschnitte(text: str) -> str:
+    """Entfernt die vorhandene [layout.querschnitte]-Tabelle (steht am Dateiende)."""
+    return re.sub(r"(?ms)^\[layout\.querschnitte\]\n.*", "", text)
+
+
+def test_layout_nicht_tabelle_wird_abgelehnt(tmp_path: Path) -> None:
+    ohne = _ohne_layout_querschnitte(_jahrgangsdatei_text())
+    text = re.sub(
+        r"(?m)^(haushaltsjahr\s*=\s*\d+)$",
+        r'\1\nlayout = "nicht-tabelle"',
+        ohne,
+        count=1,
+    )
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="layout"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_layout_bereich_nicht_tabelle_wird_abgelehnt(tmp_path: Path) -> None:
+    ohne = _ohne_layout_querschnitte(_jahrgangsdatei_text())
+    text = ohne + '\n[layout]\nquerschnitte = "nicht-tabelle"\n'
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="layout.querschnitte"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_layout_leerer_string_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(
+        r'(?m)^kopf_beginn\s*=\s*".*"$', 'kopf_beginn = ""', _jahrgangsdatei_text(), count=1
+    )
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="layout.querschnitte.kopf_beginn"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_layout_liste_mit_duplikat_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(
+        r'(?m)^    "ordentliche_aufwendungen",$',
+        '    "ordentliche_ertraege",',
+        _jahrgangsdatei_text(),
+        count=1,
+    )
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="layout.querschnitte.kennzahlen_ergebnisplan"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_layout_muster_ungueltiger_regex_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(
+        r"(?m)^titel_muster\s*=.*$", "titel_muster = '('", _jahrgangsdatei_text(), count=1
+    )
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="layout.querschnitte.titel_muster"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_layout_querschnitte_vollstaendig() -> None:
+    jahrgang = lade_jahrgang(STANDARD_JAHR)
+    kennzahlen_ergebnisplan = layout_liste(jahrgang, "querschnitte", "kennzahlen_ergebnisplan")
+    kennzahlen_finanzplan = layout_liste(jahrgang, "querschnitte", "kennzahlen_finanzplan")
+    assert len(kennzahlen_ergebnisplan) == 7
+    assert len(kennzahlen_finanzplan) == 11
+    assert len(set(kennzahlen_ergebnisplan)) == len(kennzahlen_ergebnisplan)
+    assert len(set(kennzahlen_finanzplan)) == len(kennzahlen_finanzplan)
+    re.compile(layout_text(jahrgang, "querschnitte", "titel_muster"))
+
+
+def test_layout_text_fehlender_schluessel_meldet_pfad() -> None:
+    jahrgang = lade_jahrgang(STANDARD_JAHR)
+    with pytest.raises(KonfigurationsFehler, match="layout.querschnitte.nicht_vorhanden"):
+        layout_text(jahrgang, "querschnitte", "nicht_vorhanden")
+    with pytest.raises(KonfigurationsFehler, match="layout.unbekannter_bereich.nix"):
+        layout_text(jahrgang, "unbekannter_bereich", "nix")

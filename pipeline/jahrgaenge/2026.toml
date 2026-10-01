@@ -71,3 +71,38 @@ investitionen = '^(Investitionen$|Investitionsmaßnahmen\(inC\))'
 produkt = "150102"
 name = "Tourismus"
 pdf_seite = 299
+
+# [layout.*] (Phase 3): generische Tabellen mit gedruckten Texten und Regex-Mustern der
+# Detailseiten (Produktinformationen, Investitionen, Querschnitte, ...). Jeder Wert wird
+# gegen Textzeile.text geprüft, sofern an der jeweiligen Verwendungsstelle nicht anders
+# dokumentiert. Ein Schlüssel, der auf "_muster" endet, wird beim Laden mit re.compile
+# kompiliert (ostbevern.konfiguration.lade_jahrgang).
+[layout.querschnitte]
+# Erfasst den zweistelligen PB-Code am Zeilenanfang vor einem Nicht-Ziffern-Zeichen;
+# erfasst sowohl "01 Innere Verwaltung - ..." als auch "12 Verkehrsflächen und
+# -anlagen- ..." (kein Leerzeichen vor dem Bindestrich, D-14).
+titel_muster = '^(?P<pb>\d{2}) \D'
+kopf_beginn = "Produktgruppen"
+gesamtsumme = "GESAMTSUMME"
+kennzahlen_ergebnisplan = [
+    "ordentliche_ertraege",
+    "ordentliche_aufwendungen",
+    "ordentliches_ergebnis",
+    "finanzergebnis",
+    "ergebnis_laufende_verwaltung",
+    "ausserordentliches_ergebnis",
+    "ergebnis_teilhaushalt",
+]
+kennzahlen_finanzplan = [
+    "einzahlungen_laufende_verwaltung",
+    "auszahlungen_laufende_verwaltung",
+    "saldo_laufende_verwaltung",
+    "einzahlungen_investitionen",
+    "auszahlungen_investitionen",
+    "saldo_investitionen",
+    "finanzmittelueberschuss",
+    "einzahlungen_finanzierung",
+    "auszahlungen_finanzierung",
+    "saldo_finanzierung",
+    "verpflichtungsermaechtigungen",
+]

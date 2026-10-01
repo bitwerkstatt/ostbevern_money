@@ -23,10 +23,12 @@ from ostbevern.schema import (
     FINANZPLAN_CSV,
     HIERARCHIE_CSV,
     KONSISTENZ_MD,
+    QUERSCHNITTE_CSV,
     SEITEN_CSV,
     WERTARTEN,
     lies_hierarchie_csv,
     lies_plan_csv,
+    lies_querschnitte_csv,
     lies_seiten_csv,
     zerlege_spaltenkopf,
 )
@@ -73,6 +75,33 @@ SATZUNG_FORMELN: dict[str, tuple[str, str, tuple[tuple[int, str], ...]]] = {
     "einzahlungen_finanzierung": ("finanzplan", "ansatz", ((1, "33"), (1, "34"))),
     "auszahlungen_finanzierung": ("finanzplan", "ansatz", ((1, "35"), (1, "36"))),
     "kredite_investitionen": ("finanzplan", "ansatz", ((1, "33"),)),
+    "verpflichtungsermaechtigungen": ("finanzplan", "ve", ((1, "30"),)),
+}
+
+# Regel 7 (PRUEF-07, D-15): Kennzahl-Schlüssel (querschnitte.csv Spalte `kennzahl`) ->
+# (Zieldatei, Wertart, Komponenten als (Vorzeichen, Zeile)). Fachliche Regel, verifiziert
+# gegen ergebnisplan.csv: "Ergebnis des Teilhaushaltes" entspricht TP Z. 26
+# (Jahresergebnis), NICHT Z. 29 (PG 0102 Ansatz Haushaltsjahr: Z. 26 = -178.200 =
+# Querschnitt, Z. 29 = -174.000; Teilfinanzpläne drucken kein Z. 32, daher
+# Finanzmittelüberschuss = Z. 17 + Z. 31; TFP Z. 34 = Z. 33 - Z. 35, Saldo Finanzierung).
+REGEL7_KENNZAHLEN: dict[str, tuple[str, str, tuple[tuple[int, str], ...]]] = {
+    "ordentliche_ertraege": ("ergebnisplan", "ansatz", ((1, "10"),)),
+    "ordentliche_aufwendungen": ("ergebnisplan", "ansatz", ((1, "17"),)),
+    "ordentliches_ergebnis": ("ergebnisplan", "ansatz", ((1, "18"),)),
+    "finanzergebnis": ("ergebnisplan", "ansatz", ((1, "21"),)),
+    "ergebnis_laufende_verwaltung": ("ergebnisplan", "ansatz", ((1, "22"),)),
+    "ausserordentliches_ergebnis": ("ergebnisplan", "ansatz", ((1, "25"),)),
+    "ergebnis_teilhaushalt": ("ergebnisplan", "ansatz", ((1, "26"),)),
+    "einzahlungen_laufende_verwaltung": ("finanzplan", "ansatz", ((1, "09"),)),
+    "auszahlungen_laufende_verwaltung": ("finanzplan", "ansatz", ((1, "16"),)),
+    "saldo_laufende_verwaltung": ("finanzplan", "ansatz", ((1, "17"),)),
+    "einzahlungen_investitionen": ("finanzplan", "ansatz", ((1, "23"),)),
+    "auszahlungen_investitionen": ("finanzplan", "ansatz", ((1, "30"),)),
+    "saldo_investitionen": ("finanzplan", "ansatz", ((1, "31"),)),
+    "finanzmittelueberschuss": ("finanzplan", "ansatz", ((1, "17"), (1, "31"))),
+    "einzahlungen_finanzierung": ("finanzplan", "ansatz", ((1, "33"),)),
+    "auszahlungen_finanzierung": ("finanzplan", "ansatz", ((1, "35"),)),
+    "saldo_finanzierung": ("finanzplan", "ansatz", ((1, "34"),)),
     "verpflichtungsermaechtigungen": ("finanzplan", "ve", ((1, "30"),)),
 }
 
@@ -775,6 +804,65 @@ def _pruefe_regel4(
     )
 
 
+def _pruefe_regel7(
+    *,
+    querschnitte: pl.DataFrame,
+    planwerte_ergebnisplan: Planwerte,
+    planwerte_finanzplan: Planwerte,
+    haushaltsjahr: int,
+) -> Regelergebnis:
+    """Regel 7 – Haushaltsquerschnitte → PG-/PB-Teilpläne (PRUEF-07, D-15).
+
+    Vergleicht jeden gedruckten Querschnittswert (CSV-only, `querschnitte.py` liest das
+    PDF, dieses Modul nie) mit der über `REGEL7_KENNZAHLEN` hergeleiteten Formelkette aus
+    den eigenen PG-Teilplänen (GESAMTSUMME-Zeilen gegen den PB-Teilplan).
+    """
+    planwerte_je_datei = {
+        "ergebnisplan": planwerte_ergebnisplan,
+        "finanzplan": planwerte_finanzplan,
+    }
+    plantyp = "querschnitt"
+
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for zeile in querschnitte.iter_rows(named=True):
+        formel = REGEL7_KENNZAHLEN.get(zeile["kennzahl"])
+        if formel is None:
+            raise PruefungsFehler(f"Regel 7: keine Zuordnung für Kennzahl {zeile['kennzahl']!r}")
+        datei, wertart, komponenten = formel
+        planwerte = planwerte_je_datei[datei]
+        if zeile["gesamtsumme"]:
+            ebene, code = "PB", zeile["pb"]
+        else:
+            ebene, code = "PG", zeile["pg"]
+        ist = sum(
+            vorzeichen * planwerte.wert(ebene, code, komponente, haushaltsjahr, wertart)
+            for vorzeichen, komponente in komponenten
+        )
+        soll = zeile["betrag"]
+        geprueft += 1
+        punkt = Pruefpunkt(
+            regel=7,
+            plan=f"{plantyp}_{zeile['plan']}",
+            ebene=ebene,
+            code=code,
+            zeile=zeile["kennzahl"],
+            jahr=haushaltsjahr,
+            wertart=wertart,
+            soll=soll,
+            ist=ist,
+            pdf_seite=zeile["pdf_seite"],
+        )
+        if abs(punkt.abweichung) > TOLERANZ_EURO:
+            abweichungen.append(punkt)
+    return Regelergebnis(
+        regel=7,
+        titel="Regel 7 – Haushaltsquerschnitte → PG-/PB-Teilpläne",
+        geprueft=geprueft,
+        abweichungen=tuple(abweichungen),
+    )
+
+
 def pruefe_alles(
     jahr: int,
     *,
@@ -793,6 +881,7 @@ def pruefe_alles(
     finanzplan = lies_plan_csv(daten_wurzel / FINANZPLAN_CSV)
     hierarchie = lies_hierarchie_csv(daten_wurzel / HIERARCHIE_CSV)
     seiten = lies_seiten_csv(daten_wurzel / SEITEN_CSV)
+    querschnitte = lies_querschnitte_csv(daten_wurzel / QUERSCHNITTE_CSV)
     pfad_befunde = befunde_pfad if befunde_pfad is not None else daten_wurzel / BEFUNDE_MD
     befunde = lies_befunde(pfad_befunde)
 
@@ -816,8 +905,14 @@ def pruefe_alles(
         sollwerte=sollwerte,
         spalten=jahrgang.spalten["ergebnisplan"],
     )
+    regel7 = _pruefe_regel7(
+        querschnitte=querschnitte,
+        planwerte_ergebnisplan=Planwerte(ergebnisplan, datei="ergebnisplan"),
+        planwerte_finanzplan=Planwerte(finanzplan, datei="finanzplan"),
+        haushaltsjahr=jahrgang.haushaltsjahr,
+    )
 
-    regeln, veraltete_befunde = _wende_befunde_an((regel1, regel2, regel3, regel4), befunde)
+    regeln, veraltete_befunde = _wende_befunde_an((regel1, regel2, regel3, regel4, regel7), befunde)
     unbekannte_seiten = tuple(
         sorted(seiten.filter(pl.col("typ") == "unbekannt")["pdf_seite"].to_list())
     )

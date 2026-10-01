@@ -12,7 +12,7 @@ import itertools
 import re
 import tomllib
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -111,6 +111,10 @@ class Jahrgang:
     seitenbereiche: Mapping[str, Seitenbereich]
     kopfzeilen: Kopfzeilen
     synthetische_produktgruppen: Mapping[str, SynthetischeProduktgruppe]
+    # Generische [layout.*]-Tabellen der Detailseiten (Phase 3): gedruckte Texte und
+    # Regex-Muster, die gegen Textzeile.text geprüft werden, sofern nicht anders
+    # angegeben. Optional, Standard ist eine leere Zuordnung (D-07-Stil).
+    layout: Mapping[str, Mapping[str, str | tuple[str, ...]]] = field(default_factory=dict)
 
 
 def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> Jahrgang:
@@ -350,6 +354,64 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
             code=code, produkt=produkt, name=name, pdf_seite=pdf_seite
         )
 
+    # [layout.*] (Phase 3): generische Tabellen gedruckter Texte/Muster der Detailseiten.
+    # Optional, Standard ist eine leere Zuordnung. Jeder Wert ist entweder ein nicht-
+    # leerer String oder eine nicht-leere Liste paarweise verschiedener, nicht-leerer
+    # Strings (als Tupel gespeichert); ein Schlüssel, der auf "_muster" endet, muss ein
+    # einzelner String sein, der mit re.compile kompiliert.
+    layout_rohdaten = rohdaten.get("layout", {})
+    if not isinstance(layout_rohdaten, dict):
+        raise KonfigurationsFehler(
+            f"Jahrgangsdatei {pfad}: layout muss eine Tabelle sein, nicht {layout_rohdaten!r}"
+        )
+    layout: dict[str, dict[str, str | tuple[str, ...]]] = {}
+    for bereich, eintraege in layout_rohdaten.items():
+        if not isinstance(eintraege, dict):
+            raise KonfigurationsFehler(
+                f"Jahrgangsdatei {pfad}: layout.{bereich} muss eine Tabelle sein, "
+                f"nicht {eintraege!r}"
+            )
+        bereich_werte: dict[str, str | tuple[str, ...]] = {}
+        for schluessel, wert in eintraege.items():
+            pfad_hinweis = f"layout.{bereich}.{schluessel}"
+            if isinstance(wert, str):
+                if not wert:
+                    raise KonfigurationsFehler(
+                        f"Jahrgangsdatei {pfad}: {pfad_hinweis} ist ein leerer String"
+                    )
+                bereich_werte[schluessel] = wert
+            elif isinstance(wert, list):
+                if not wert or not all(isinstance(w, str) and w for w in wert):
+                    raise KonfigurationsFehler(
+                        f"Jahrgangsdatei {pfad}: {pfad_hinweis} ist eine leere Liste oder "
+                        "enthält leere bzw. nicht-String-Einträge"
+                    )
+                if len(set(wert)) != len(wert):
+                    raise KonfigurationsFehler(
+                        f"Jahrgangsdatei {pfad}: {pfad_hinweis} enthält doppelte Einträge"
+                    )
+                bereich_werte[schluessel] = tuple(wert)
+            else:
+                raise KonfigurationsFehler(
+                    f"Jahrgangsdatei {pfad}: {pfad_hinweis} muss ein String oder eine "
+                    f"Liste von Strings sein, nicht {wert!r}"
+                )
+            if schluessel.endswith("_muster"):
+                muster_wert = bereich_werte[schluessel]
+                if not isinstance(muster_wert, str):
+                    raise KonfigurationsFehler(
+                        f"Jahrgangsdatei {pfad}: {pfad_hinweis} muss für ein "
+                        "'_muster'-Suffix ein einzelner String sein"
+                    )
+                try:
+                    re.compile(muster_wert)
+                except re.error as fehler:
+                    raise KonfigurationsFehler(
+                        f"Jahrgangsdatei {pfad}: {pfad_hinweis} ist kein gültiger "
+                        f"regulärer Ausdruck: {fehler}"
+                    ) from fehler
+        layout[bereich] = bereich_werte
+
     return Jahrgang(
         haushaltsjahr=rohdaten["haushaltsjahr"],
         pdf_pfad=pdf_pfad,
@@ -358,7 +420,28 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
         seitenbereiche=seitenbereiche,
         kopfzeilen=kopfzeilen,
         synthetische_produktgruppen=synthetische_produktgruppen,
+        layout=layout,
     )
+
+
+def layout_text(jahrgang: Jahrgang, bereich: str, schluessel: str) -> str:
+    """Liest einen String aus `jahrgang.layout` (Phase 3); meldet Pfad statt KeyError."""
+    wert = jahrgang.layout.get(bereich, {}).get(schluessel)
+    if not isinstance(wert, str):
+        raise KonfigurationsFehler(
+            f"Jahrgangsdatei {jahrgang.haushaltsjahr}: layout.{bereich}.{schluessel} fehlt"
+        )
+    return wert
+
+
+def layout_liste(jahrgang: Jahrgang, bereich: str, schluessel: str) -> tuple[str, ...]:
+    """Liest eine String-Liste aus `jahrgang.layout` (Phase 3); meldet Pfad statt KeyError."""
+    wert = jahrgang.layout.get(bereich, {}).get(schluessel)
+    if not isinstance(wert, tuple):
+        raise KonfigurationsFehler(
+            f"Jahrgangsdatei {jahrgang.haushaltsjahr}: layout.{bereich}.{schluessel} fehlt"
+        )
+    return wert
 
 
 def _pruefe_nur_ganzzahlen(wert: object, pfad_hinweis: str) -> None:

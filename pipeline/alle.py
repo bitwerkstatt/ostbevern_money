@@ -2,9 +2,10 @@
 
 Prüft den gewählten Jahrgang (Jahrgangs- und Sollwertdatei, PDF-Existenz) und führt die
 nummerierten Schritte in Reihenfolge aus (D-09): 01 (Seiten klassifizieren), 02 (Pläne
-extrahieren), 06 (Konsistenzprüfung). Spätere Phasen hängen 03-05 und 07 zwischen bzw. nach
-diesen Schritten an. Die eigentliche Logik lebt in `ostbevern/`; dieses Modul bleibt ein
-dünner typer-Einstiegspunkt.
+extrahieren), Querschnitte (Kontrollquelle, PDF-lesend, D-14), 06 (Konsistenzprüfung, liest
+danach nur noch CSVs, D-06). Spätere Phasen hängen 03-05 und 07 zwischen bzw. nach diesen
+Schritten an. Die eigentliche Logik lebt in `ostbevern/`; dieses Modul bleibt ein dünner
+typer-Einstiegspunkt.
 """
 
 from __future__ import annotations
@@ -13,7 +14,7 @@ from typing import Annotated
 
 import typer
 
-from ostbevern import plaene, pruefung, seiten
+from ostbevern import plaene, pruefung, querschnitte, seiten
 from ostbevern.konfiguration import (
     PROJEKT_WURZEL,
     STANDARD_JAHR,
@@ -24,6 +25,7 @@ from ostbevern.konfiguration import (
 from ostbevern.pdf import PdfFehler
 from ostbevern.plaene import PlaeneFehler
 from ostbevern.pruefung import PruefungsFehler
+from ostbevern.querschnitte import QuerschnitteFehler
 from ostbevern.schema import SchemaFehler
 from ostbevern.seiten import SeitenFehler
 
@@ -79,6 +81,15 @@ def main(
         raise typer.Exit(code=1) from fehler
     zeilen_gesamt = sum(ergebnis.zeilen_geschrieben for ergebnis in ergebnisse_plaene)
     typer.echo(f"Schritt 02: {zeilen_gesamt} Planzeilen geschrieben.")
+
+    try:
+        ergebnis_querschnitte = querschnitte.extrahiere_querschnitte(jahrgang)
+    except (PdfFehler, QuerschnitteFehler, SchemaFehler, KonfigurationsFehler) as fehler:
+        typer.echo(f"Fehler: {fehler}", err=True)
+        raise typer.Exit(code=1) from fehler
+    typer.echo(
+        f"Schritt 06: Querschnitte: {ergebnis_querschnitte.zeilen_geschrieben} Werte geschrieben."
+    )
 
     try:
         bericht = pruefung.pruefe_alles(jahr)

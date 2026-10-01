@@ -47,7 +47,7 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [x] **PRUEF-04**: Sollwerte aus Anhang B (Gesamtergebnisplan, Gesamtfinanzplan/Satzung § 1, PB-Summen, Eckwerte) werden getroffen
 - [ ] **PRUEF-05**: Manuelle Tabellen stimmen mit den jeweiligen Planzeilen überein (Toleranz ±1 T€ bei T€-Tabellen; bekannte Differenzen dokumentiert)
 - [ ] **PRUEF-06**: Investitionssummen je Produkt = Teilfinanzplan Z. 23/30; Summe aller = Gesamtfinanzplan (2026: 7.224.830 € / 12.280.484 €)
-- [ ] **PRUEF-07**: Querschnitte S. 291 ff. stimmen mit den eigenen PG-Aggregaten überein
+- [x] **PRUEF-07**: Querschnitte S. 291 ff. stimmen mit den eigenen PG-Aggregaten überein
 - [ ] **PRUEF-08**: Vollständigkeit: 63 Produkte mit Produktinformationen, Bindungsgrad, Teilergebnisplan und Teilfinanzplan
 - [x] **PRUEF-09**: Alle Prüfungen laufen in pytest und erzeugen `daten/pruefberichte/konsistenz.md`; Abweichungen über 1 € sind Fehler, außer sie stehen in `befunde.md`
 - [ ] **PRUEF-10**: `pipeline/alle.py` läuft alle Schritte in Reihenfolge; CI prüft, dass sie keinen Diff an eingecheckten Daten erzeugt
@@ -207,7 +207,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PRUEF-04 | Phase 2 | Complete |
 | PRUEF-05 | Phase 4 | Pending |
 | PRUEF-06 | Phase 3 | Pending |
-| PRUEF-07 | Phase 3 | Pending |
+| PRUEF-07 | Phase 3 | Complete |
 | PRUEF-08 | Phase 3 | Pending |
 | PRUEF-09 | Phase 2 | Complete |
 | PRUEF-10 | Phase 4 | Pending |
