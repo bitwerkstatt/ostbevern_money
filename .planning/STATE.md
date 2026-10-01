@@ -68,6 +68,8 @@ Recent decisions affecting current work:
 - [Phase 1]: Jahrgangs- und Sollwertdatei sind vollständig und validiert; Phase 2 liest Seitenbereiche und Spaltenköpfe ausschließlich über `lade_jahrgang`.
 - [Phase 1]: Nummerierte Pipeline-Skripte (01/02/06) entstehen erst in Phase 2 mit ihrer Logik.
 - [Phase 1]: DatenTabelle zeigt `null`-Zellen leer mit „kein Wert“ für Screenreader — vorläufig, bis Phase 2+ weiß, welche Werte fehlen können.
+- [Phase 2]: `alle.py` verkettet Schritt 01 → 02 → 06; Prüfregeln 1–4 grün (6550/7920/114/194 Werte), Regeneration von `daten/` ist deterministisch.
+- [Phase 2]: Anhang-B.3-Sollwerte PB 09/15 Z. 29 nach PDF-Prüfung (S. 296/299 GESAMTSUMME) korrigiert; 10 gedruckte Rundungsdifferenzen in `befunde.md` belegt.
 
 ### Pending Todos
 
@@ -78,6 +80,8 @@ None yet.
 - [Phase 4]: Für Schuldenstand, Rücklagen und VE-Übersicht (S. 24/25, 309–311) gibt es keine eigene Datenanforderung. Das ist als Erfolgskriterium in Phase 4 aufgefangen. Bei Bedarf wird daraus eine eigene Anforderung (z. B. MANU-09).
 - [Phase 1]: Die CI ist nur lokal nachgestellt; der erste Lauf auf GitHub steht aus, bis ein Remote angelegt ist.
 - [Phase 1]: `app/node_modules` im gemounteten Repo enthält macOS-Binaries; im Linux-Sandbox App-Checks in einer Scratch-Kopie ausführen.
+- [Phase 3]: PG 1501/1502: Produkt 150102 liegt in der synthetischen PG 1501, der Haushaltsquerschnitt (S. 299/300) führt PG 1502 „Tourismus“ getrennt. Vor Regel 7 entscheiden.
+- [Phase 2]: Code-Review 02-REVIEW.md: 3 Warnungen offen (u. a. Vorzeichen-Beschreibung in `befunde.md`, Kommentar zu PB 09/15 sollte S. 296/299 zitieren).
 - [Phase 2/4]: Die Anhang-B-Eckwerte (B.6), die von `meta.json` oder vom Stellenplan abhängen, lassen sich erst in Phase 4 prüfen. Phase 2 deckt B.1–B.3 und Satzung § 1 ab.
 
 ## Deferred Items
@@ -90,6 +94,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-01T11:30:48.043Z
-Stopped at: Phase 02 complete, ready to plan Phase 3
-Resume file: .planning/phases/02-kernzahlen/02-CONTEXT.md
+Last session: 2026-10-01T15:30:00Z
+Stopped at: Phase 2 complete, ready to plan Phase 3
+Resume file: None

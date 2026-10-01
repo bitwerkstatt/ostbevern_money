@@ -14,18 +14,17 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Seitenklassifikation aller PDF-Seiten (Typ, PB, PG, Produkt); Startseiten aller 63 Produkte stimmen mit Anhang A überein — Phase 2
+- ✓ Extraktion von Gesamtergebnisplan, Gesamtfinanzplan, Teilergebnis- und Teilfinanzplänen (PB, PG und Produkt) im Langformat, Spalten über x-Koordinaten — Phase 2
 
 ### Active
 
 **Pipeline (Python, uv):**
-- [ ] Seitenklassifikation aller PDF-Seiten (Typ, PB, PG, Produkt); Startseiten aller 63 Produkte stimmen mit Anhang A überein
-- [ ] Extraktion von Gesamtergebnisplan, Gesamtfinanzplan, Teilergebnis- und Teilfinanzplänen (PB und Produkt) im Langformat, Spalten über x-Koordinaten
 - [ ] Produktinformationen (inkl. Bindungsgrad, Grundzahlen, Erläuterungsposten) für alle 63 Produkte
 - [ ] Investitionsmaßnahmen (nur aus Produktseiten) und VE-Fälligkeiten
 - [ ] Stellenplan (Teil A Beamte, Teil B Tarif, Stellenübersicht nach PB)
 - [ ] Manuell gepflegte Vorberichtstabellen (Steuerarten, Zuwendungen, Transferaufwendungen, Kita-Zuschüsse, weitere) und `meta.json`, automatisch gegen Planzeilen geprüft
-- [ ] Konsistenzprüfung (Prüfregeln 1–8 aus Spez. 5.5) in pytest und als Markdown-Bericht; bekannte Abweichungen in `befunde.md`
+- [ ] Konsistenzprüfung (Prüfregeln 1–8 aus Spez. 5.5) in pytest und als Markdown-Bericht; bekannte Abweichungen in `befunde.md` (Regeln 1–4 grün seit Phase 2; 5–8 folgen)
 - [ ] Erzeugung der App-JSON-Dateien (ohne Personennamen)
 - [ ] Quellenbelege: Zeilenrechteck + gerenderte WebP-Seiten, `quellen.json`
 - [ ] Pipeline ist für das ProFIS-Layout generisch: Jahr, Spalten und Seitenbereiche konfigurierbar, sodass der Haushalt 2027 mit wenig Änderung verarbeitet werden kann
@@ -101,6 +100,9 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 | ESLint-only (oxlint und vue-devtools aus dem Scaffold entfernt) | Nur freigegebene Pakete | ✓ Good — Phase 1 |
 | ECharts-Module nur in `echartsTheme.ts` registriert; Beispieldaten-Hinweis rendert ausschließlich `ChartCard` | Kleines Bundle; Demo-Zahlen können nie ohne Hinweis erscheinen | ✓ Good — Phase 1 |
 | CI: zwei parallele Jobs, Actions SHA-gepinnt, `contents: read`, Installation nur aus Lockfiles | Lokal nachgestellte CI = Remote-CI | ✓ Good — Phase 1 (Remote-Lauf steht aus, noch kein GitHub-Remote) |
+| Anhang-B-Sollwerte sind unabhängige Referenz, aber nicht unfehlbar: Abweichungen werden erst gegen das PDF geprüft, dann korrigiert | Spez. Anhang B.3 hatte für PB 09/15 Z. 29 den Wert der ersten PG statt der GESAMTSUMME (S. 296/299) übernommen | ✓ Good — Phase 2 |
+| Gedruckte Rundungsdifferenzen (2–3 €) gehen mit Seitenbeleg in `befunde.md`, nie in eine Toleranz | Toleranz bleibt strikt 1 €; jede Ausnahme ist einzeln belegt | ✓ Good — Phase 2 (10 Befunde) |
+| Nicht gedruckte Produktgruppen werden synthetisch gebildet (`synthetisch=true`) | Teilplanbereich druckt nicht jede PG | ⚠️ Revisit — PG 1501/1502 (Querschnitt S. 299/300) vor Phase 3 Regel 7 klären |
 
 ## Evolution
 
@@ -120,4 +122,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-01 after Phase 1*
+*Last updated: 2026-10-01 after Phase 2*
