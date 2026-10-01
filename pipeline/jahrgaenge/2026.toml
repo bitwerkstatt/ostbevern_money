@@ -58,3 +58,16 @@ teilergebnisplan = '^Teilergebnisplan$'
 erlaeuterungen = '^Erläuterung'
 teilfinanzplan = '^(Teilfinanzplan$|Nr\.Ein-undAuszahlungsarten)'
 investitionen = '^(Investitionen$|Investitionsmaßnahmen\(inC\))'
+
+# Synthetische Produktgruppen (D-14): Standard ist Code = die ersten vier Ziffern
+# des Produktcodes, Name = Produktname. Jede synthetische PG hat genau ein Produkt.
+# Diese Tabelle deklariert nur die Zuordnungen und Namen, die vom Standard abweichen.
+# Quelle ist der Haushaltsquerschnitt (Ergebnisplan S. 299, Finanzplan S. 300), der
+# Produkt 150102 als eigene PG 1502 "Tourismus" führt, während der Teilplanbereich
+# (S. 66-282) keine PG-1502-Kopfzeile druckt. pdf_seite ist die Quellseite der
+# Zuordnung und des Namens; in hierarchie.csv behält die PG die Startseite ihres
+# Produkts als pdf_seite_start (D-14).
+[synthetische_produktgruppen."1502"]
+produkt = "150102"
+name = "Tourismus"
+pdf_seite = 299
