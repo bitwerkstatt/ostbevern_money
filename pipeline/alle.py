@@ -1,9 +1,10 @@
 """Pipeline-Einstiegspunkt (Spez. 5.2).
 
-Prüft den gewählten Jahrgang (Jahrgangs- und Sollwertdatei, PDF-Existenz) und ist
-die Stelle, an der spätere Phasen die nummerierten Schritte 01-07 in Reihenfolge
-anhängen (D-10). Die eigentliche Logik lebt in `ostbevern/`; dieses Modul bleibt
-ein dünner typer-Einstiegspunkt.
+Prüft den gewählten Jahrgang (Jahrgangs- und Sollwertdatei, PDF-Existenz) und führt die
+nummerierten Schritte in Reihenfolge aus (D-09): 01 (Seiten klassifizieren), 02 (Pläne
+extrahieren), 06 (Konsistenzprüfung). Spätere Phasen hängen 03-05 und 07 zwischen bzw. nach
+diesen Schritten an. Die eigentliche Logik lebt in `ostbevern/`; dieses Modul bleibt ein
+dünner typer-Einstiegspunkt.
 """
 
 from __future__ import annotations
@@ -12,6 +13,7 @@ from typing import Annotated
 
 import typer
 
+from ostbevern import plaene, pruefung, seiten
 from ostbevern.konfiguration import (
     PROJEKT_WURZEL,
     STANDARD_JAHR,
@@ -19,6 +21,11 @@ from ostbevern.konfiguration import (
     lade_jahrgang,
     lade_sollwerte,
 )
+from ostbevern.pdf import PdfFehler
+from ostbevern.plaene import PlaeneFehler
+from ostbevern.pruefung import PruefungsFehler
+from ostbevern.schema import SchemaFehler
+from ostbevern.seiten import SeitenFehler
 
 app = typer.Typer(
     add_completion=False,
@@ -51,6 +58,42 @@ def main(
         f"({jahrgang.anzahlen.pdf_seiten} Seiten erwartet), "
         f"{len(jahrgang.seitenbereiche)} Seitenbereiche, Sollwerte geladen."
     )
+
+    try:
+        ergebnis_seiten = seiten.klassifiziere_seiten(jahrgang)
+    except (PdfFehler, SeitenFehler, SchemaFehler) as fehler:
+        typer.echo(f"Fehler: {fehler}", err=True)
+        raise typer.Exit(code=1) from fehler
+    typer.echo(
+        f"Schritt 01: {ergebnis_seiten.anzahl_seiten} Seiten klassifiziert, "
+        f"{len(ergebnis_seiten.unbekannte_seiten)} unbekannt, "
+        f"{ergebnis_seiten.anzahl_pb} PB, {ergebnis_seiten.anzahl_pg} PG "
+        f"({ergebnis_seiten.anzahl_pg_synthetisch} synthetisch), "
+        f"{ergebnis_seiten.anzahl_p} Produkte."
+    )
+
+    try:
+        ergebnisse_plaene = plaene.extrahiere_plaene(jahrgang)
+    except (PdfFehler, PlaeneFehler, SchemaFehler) as fehler:
+        typer.echo(f"Fehler: {fehler}", err=True)
+        raise typer.Exit(code=1) from fehler
+    zeilen_gesamt = sum(ergebnis.zeilen_geschrieben for ergebnis in ergebnisse_plaene)
+    typer.echo(f"Schritt 02: {zeilen_gesamt} Planzeilen geschrieben.")
+
+    try:
+        bericht = pruefung.pruefe_alles(jahr)
+    except (KonfigurationsFehler, PruefungsFehler, SchemaFehler) as fehler:
+        typer.echo(f"Fehler: {fehler}", err=True)
+        raise typer.Exit(code=1) from fehler
+    pruefung.schreibe_konsistenzbericht(bericht)
+    for regel in bericht.regeln:
+        titel_kurz = regel.titel.split(" – ")[0]
+        typer.echo(f"Schritt 06: {titel_kurz}: {regel.status} ({regel.geprueft} Werte)")
+    typer.echo(f"Schritt 06: Veraltete Befunde: {len(bericht.veraltete_befunde)}")
+
+    if not bericht.ist_gruen:
+        typer.echo("Fehler: Konsistenzbericht rot oder veraltete Befunde.", err=True)
+        raise typer.Exit(code=1)
 
 
 if __name__ == "__main__":
