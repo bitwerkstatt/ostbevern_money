@@ -6,6 +6,8 @@ oder werden aus den eingecheckten Dateien abgeleitet.
 
 from __future__ import annotations
 
+import dataclasses
+from collections.abc import Sequence
 from pathlib import Path
 
 import polars as pl
@@ -15,14 +17,20 @@ from ostbevern.konfiguration import JAHRGAENGE_VERZEICHNIS, STANDARD_JAHR, lade_
 from ostbevern.pruefung import (
     SATZUNG_FORMELN,
     TOLERANZ_EURO,
+    Abgleich,
+    Befund,
     Planwerte,
+    Pruefpunkt,
     PruefungsFehler,
     _pruefe_regel1,
+    gleiche_befunde_ab,
+    lies_befunde,
     pruefe_alles,
     rendere_konsistenzbericht,
     schreibe_konsistenzbericht,
 )
 from ostbevern.schema import (
+    BEFUNDE_MD,
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
     FINANZPLAN_CSV,
@@ -31,6 +39,48 @@ from ostbevern.schema import (
     lies_plan_csv,
     schreibe_plan_csv,
 )
+
+_SCHLUESSELTABELLE_KOPF = (
+    "| regel | plan | ebene | code | zeile | jahr | wertart | abweichung | pdf_seite | "
+    "begruendung |"
+)
+_SCHLUESSELTABELLE_TRENNZEILE = "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"
+
+
+def _schreibe_befunde_md(pfad: Path, *, zeilen: Sequence[str] = ()) -> None:
+    """Schreibt eine Test-befunde.md mit gültiger Überschrift und Kopfzeile (D-02)."""
+    inhalt = [
+        "# Befunde – Test",
+        "",
+        "## Schlüsseltabelle",
+        "",
+        _SCHLUESSELTABELLE_KOPF,
+        _SCHLUESSELTABELLE_TRENNZEILE,
+        *zeilen,
+        "",
+    ]
+    pfad.parent.mkdir(parents=True, exist_ok=True)
+    pfad.write_text("\n".join(inhalt), encoding="utf-8")
+
+
+def _befunde_zeile(
+    *,
+    regel: int,
+    plan: str,
+    ebene: str,
+    code: str,
+    zeile: str,
+    jahr: int,
+    wertart: str,
+    abweichung: int,
+    pdf_seite: int,
+    begruendung: str,
+) -> str:
+    return (
+        f"| {regel} | {plan} | {ebene} | {code} | {zeile} | {jahr} | {wertart} | "
+        f"{abweichung} | {pdf_seite} | {begruendung} |"
+    )
+
 
 _LEERER_PLAN = pl.DataFrame([], schema=PLAN_SPALTEN)
 
@@ -236,6 +286,232 @@ def test_planwerte_formelzyklus_bricht_ab(monkeypatch: pytest.MonkeyPatch) -> No
     planwerte = Planwerte(_LEERER_PLAN, datei="ergebnisplan")
     with pytest.raises(PruefungsFehler, match="Formelzyklus"):
         planwerte.wert("GESAMT", "", "10", STANDARD_JAHR, "ansatz")
+
+
+def test_befund_deckt_abweichung_innerhalb_toleranz_ab() -> None:
+    punkt = Pruefpunkt(
+        regel=4,
+        plan="gesamtergebnisplan",
+        ebene="GESAMT",
+        code="",
+        zeile="02",
+        jahr=STANDARD_JAHR,
+        wertart="ansatz",
+        soll=1000,
+        ist=1005,
+        pdf_seite=62,
+    )
+    befund_exakt = Befund(
+        regel=4,
+        plan="gesamtergebnisplan",
+        ebene="GESAMT",
+        code="",
+        zeile="02",
+        jahr=STANDARD_JAHR,
+        wertart="ansatz",
+        abweichung=5,
+        pdf_seite=62,
+        begruendung="Rundungsdifferenz laut PDF",
+    )
+    abgleich = gleiche_befunde_ab((punkt,), (befund_exakt,))
+    assert isinstance(abgleich, Abgleich)
+    assert abgleich.offen == ()
+    assert abgleich.veraltet == ()
+    assert abgleich.bekannt == ((punkt, befund_exakt),)
+
+    # D-05: die dokumentierte Abweichung darf bis zu TOLERANZ_EURO von der tatsächlichen
+    # abweichen (hier: 6 statt 5) und deckt die Abweichung trotzdem ab.
+    befund_plus_toleranz = dataclasses.replace(befund_exakt, abweichung=5 + TOLERANZ_EURO)
+    abgleich_toleranz = gleiche_befunde_ab((punkt,), (befund_plus_toleranz,))
+    assert abgleich_toleranz.offen == ()
+    assert len(abgleich_toleranz.bekannt) == 1
+
+
+def test_veralteter_befund_wenn_abweichung_nicht_mehr_passt() -> None:
+    punkt = Pruefpunkt(
+        regel=4,
+        plan="gesamtergebnisplan",
+        ebene="GESAMT",
+        code="",
+        zeile="02",
+        jahr=STANDARD_JAHR,
+        wertart="ansatz",
+        soll=1000,
+        ist=1008,
+        pdf_seite=62,
+    )
+    befund = Befund(
+        regel=4,
+        plan="gesamtergebnisplan",
+        ebene="GESAMT",
+        code="",
+        zeile="02",
+        jahr=STANDARD_JAHR,
+        wertart="ansatz",
+        abweichung=5,
+        pdf_seite=62,
+        begruendung="Rundungsdifferenz laut PDF",
+    )
+    abgleich = gleiche_befunde_ab((punkt,), (befund,))
+    assert abgleich.offen == (punkt,)
+    assert abgleich.bekannt == ()
+    assert abgleich.veraltet == (befund,)
+
+
+def test_veralteter_befund_ohne_passende_abweichung() -> None:
+    befund = Befund(
+        regel=4,
+        plan="gesamtergebnisplan",
+        ebene="GESAMT",
+        code="",
+        zeile="02",
+        jahr=STANDARD_JAHR,
+        wertart="ansatz",
+        abweichung=5,
+        pdf_seite=62,
+        begruendung="tritt nicht mehr auf",
+    )
+    abgleich = gleiche_befunde_ab((), (befund,))
+    assert abgleich.offen == ()
+    assert abgleich.bekannt == ()
+    assert abgleich.veraltet == (befund,)
+
+
+def test_veralteter_befund_macht_bericht_nicht_gruen(tmp_path: Path) -> None:
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_finanzplan_nach(tmp_path)
+    zeile = _befunde_zeile(
+        regel=4,
+        plan="gesamtergebnisplan",
+        ebene="GESAMT",
+        code="",
+        zeile="02",
+        jahr=STANDARD_JAHR,
+        wertart="ansatz",
+        abweichung=5,
+        pdf_seite=62,
+        begruendung="nie aufgetreten",
+    )
+    _schreibe_befunde_md(tmp_path / BEFUNDE_MD, zeilen=[zeile])
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    assert bericht.ist_gruen is False
+    assert len(bericht.veraltete_befunde) == 1
+
+
+def test_kaputte_schluesseltabelle_falsche_zellenzahl(tmp_path: Path) -> None:
+    pfad = tmp_path / "befunde.md"
+    # Nur 9 Zellen statt 10 (Begründung fehlt).
+    zeile = f"| 4 | gesamtergebnisplan | GESAMT |  | 02 | {STANDARD_JAHR} | ansatz | 5 | 62 |"
+    _schreibe_befunde_md(pfad, zeilen=[zeile])
+    with pytest.raises(PruefungsFehler, match="10"):
+        lies_befunde(pfad)
+
+
+def test_kaputte_schluesseltabelle_abweichung_nicht_int(tmp_path: Path) -> None:
+    pfad = tmp_path / "befunde.md"
+    zeile = _befunde_zeile(
+        regel=4,
+        plan="gesamtergebnisplan",
+        ebene="GESAMT",
+        code="",
+        zeile="02",
+        jahr=STANDARD_JAHR,
+        wertart="ansatz",
+        abweichung="fuenf",  # type: ignore[arg-type]
+        pdf_seite=62,
+        begruendung="x",
+    )
+    _schreibe_befunde_md(pfad, zeilen=[zeile])
+    with pytest.raises(PruefungsFehler):
+        lies_befunde(pfad)
+
+
+def test_kaputte_schluesseltabelle_abweichung_zu_klein(tmp_path: Path) -> None:
+    pfad = tmp_path / "befunde.md"
+    zeile = _befunde_zeile(
+        regel=4,
+        plan="gesamtergebnisplan",
+        ebene="GESAMT",
+        code="",
+        zeile="02",
+        jahr=STANDARD_JAHR,
+        wertart="ansatz",
+        abweichung=TOLERANZ_EURO,
+        pdf_seite=62,
+        begruendung="x",
+    )
+    _schreibe_befunde_md(pfad, zeilen=[zeile])
+    with pytest.raises(PruefungsFehler):
+        lies_befunde(pfad)
+
+
+def test_kaputte_schluesseltabelle_leere_begruendung(tmp_path: Path) -> None:
+    pfad = tmp_path / "befunde.md"
+    zeile = f"| 4 | gesamtergebnisplan | GESAMT |  | 02 | {STANDARD_JAHR} | ansatz | 5 | 62 |  |"
+    _schreibe_befunde_md(pfad, zeilen=[zeile])
+    with pytest.raises(PruefungsFehler):
+        lies_befunde(pfad)
+
+
+def test_kaputte_schluesseltabelle_fehlende_ueberschrift(tmp_path: Path) -> None:
+    pfad = tmp_path / "befunde.md"
+    pfad.write_text("# Befunde – Test\n\nKein Schlüsseltabelle-Abschnitt hier.\n", encoding="utf-8")
+    with pytest.raises(PruefungsFehler):
+        lies_befunde(pfad)
+
+
+def test_kaputte_schluesseltabelle_fehlende_datei(tmp_path: Path) -> None:
+    with pytest.raises(PruefungsFehler):
+        lies_befunde(tmp_path / "existiert-nicht.md")
+
+
+def test_lies_befunde_leere_schluesseltabelle_ist_gueltig(tmp_path: Path) -> None:
+    pfad = tmp_path / "befunde.md"
+    _schreibe_befunde_md(pfad, zeilen=[])
+    assert lies_befunde(pfad) == ()
+
+
+def test_konsistenzbericht_listet_bekannten_befund(tmp_path: Path) -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    gesamtergebnisplan = sollwerte["gesamtergebnisplan"]
+    zeile_sollwert = sorted(gesamtergebnisplan["zeilen"])[0]
+    # Das Haushaltsjahr selbst ist immer Teil von B.1's Jahresreihe (Ansatz-Spalte).
+    assert STANDARD_JAHR in gesamtergebnisplan["jahre"]
+    jahr = STANDARD_JAHR
+
+    df = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    manipuliert = _manipuliere_betrag(df, zeile=zeile_sollwert, jahr=jahr, delta=5)
+    schreibe_plan_csv(manipuliert, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_finanzplan_nach(tmp_path)
+
+    befund_zeile = _befunde_zeile(
+        regel=4,
+        plan="gesamtergebnisplan",
+        ebene="GESAMT",
+        code="",
+        zeile=zeile_sollwert,
+        jahr=jahr,
+        wertart="ansatz",
+        abweichung=5,
+        pdf_seite=62,
+        begruendung="Testabweichung",
+    )
+    _schreibe_befunde_md(tmp_path / BEFUNDE_MD, zeilen=[befund_zeile])
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel4 = next(regel for regel in bericht.regeln if regel.regel == 4)
+    assert regel4.status == "grün"
+    assert bericht.ist_gruen is True
+    assert len(regel4.bekannte) == 1
+    assert regel4.bekannte[0][1].begruendung == "Testabweichung"
+
+    # Ohne passenden Befund bleibt dieselbe Abweichung offen (rot).
+    _schreibe_befunde_md(tmp_path / BEFUNDE_MD, zeilen=[])
+    bericht_ohne_befund = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel4_ohne = next(regel for regel in bericht_ohne_befund.regeln if regel.regel == 4)
+    assert regel4_ohne.status == "rot"
 
 
 def test_konsistenzbericht_wird_geschrieben() -> None:

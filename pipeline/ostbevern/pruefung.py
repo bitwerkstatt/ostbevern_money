@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import os
 import tempfile
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -74,15 +75,50 @@ class Pruefpunkt:
     def abweichung(self) -> int:
         return self.ist - self.soll
 
+    @property
+    def schluessel(self) -> tuple[int, str, str, str, str, int, str]:
+        """Identifiziert den Soll/Ist-Vergleich unabhängig von Soll/Ist/PDF-Seite (D-05)."""
+        return (self.regel, self.plan, self.ebene, self.code, self.zeile, self.jahr, self.wertart)
+
+
+@dataclass(frozen=True)
+class Befund:
+    """Ein in `befunde.md` dokumentierter, bekannter Abweichungs-Befund (D-02)."""
+
+    regel: int
+    plan: str
+    ebene: str
+    code: str
+    zeile: str
+    jahr: int
+    wertart: str
+    abweichung: int
+    pdf_seite: int
+    begruendung: str
+
+    @property
+    def schluessel(self) -> tuple[int, str, str, str, str, int, str]:
+        return (self.regel, self.plan, self.ebene, self.code, self.zeile, self.jahr, self.wertart)
+
+
+@dataclass(frozen=True)
+class Abgleich:
+    """Ergebnis des Abgleichs von Abweichungen gegen bekannte Befunde (D-04, D-05)."""
+
+    offen: tuple[Pruefpunkt, ...]
+    bekannt: tuple[tuple[Pruefpunkt, Befund], ...]
+    veraltet: tuple[Befund, ...]
+
 
 @dataclass(frozen=True)
 class Regelergebnis:
-    """Ergebnis einer einzelnen Prüfregel."""
+    """Ergebnis einer einzelnen Prüfregel. `abweichungen` sind die offenen (D-04/D-05)."""
 
     regel: int
     titel: str
     geprueft: int
     abweichungen: tuple[Pruefpunkt, ...]
+    bekannte: tuple[tuple[Pruefpunkt, Befund], ...] = ()
 
     @property
     def status(self) -> str:
@@ -97,10 +133,11 @@ class Bericht:
 
     jahr: int
     regeln: tuple[Regelergebnis, ...]
+    veraltete_befunde: tuple[Befund, ...] = ()
 
     @property
     def ist_gruen(self) -> bool:
-        return all(regel.status == "grün" for regel in self.regeln)
+        return all(regel.status == "grün" for regel in self.regeln) and not self.veraltete_befunde
 
 
 _PlanwerteSchluessel = tuple[str, str, str, int, str]
@@ -157,6 +194,27 @@ class Planwerte:
             )
         self._cache[schluessel] = betrag
         return betrag
+
+
+def lies_befunde(pfad: Path) -> tuple[Befund, ...]:
+    """Parst die maschinenlesbare Schlüsseltabelle aus befunde.md streng (D-02, D-08).
+
+    GREEN-Implementierung (Zellen-Validierung je Behavior-Test) folgt im nächsten Commit
+    dieses Plans (02-03 Task 3); dieser Stub prüft nur, dass die Datei existiert (RED).
+    """
+    if not pfad.is_file():
+        raise PruefungsFehler(f"Befunde-Datei nicht gefunden: {pfad}")
+    return ()
+
+
+def gleiche_befunde_ab(abweichungen: Sequence[Pruefpunkt], befunde: Sequence[Befund]) -> Abgleich:
+    """Ordnet Abweichungen bekannten Befunden zu (D-05) und markiert ungenutzte als veraltet (D-04).
+
+    GREEN-Implementierung (Schlüssel- und Betragsabgleich) folgt im nächsten Commit dieses
+    Plans (02-03 Task 3); dieser Stub behandelt jede Abweichung als offen und jeden Befund
+    als veraltet (RED).
+    """
+    return Abgleich(offen=tuple(abweichungen), bekannt=(), veraltet=tuple(befunde))
 
 
 def _pruefe_regel1(*, ergebnisplan: pl.DataFrame, finanzplan: pl.DataFrame) -> Regelergebnis:
