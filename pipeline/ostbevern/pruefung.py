@@ -22,6 +22,7 @@ from ostbevern.schema import (
     lies_plan_csv,
     zerlege_spaltenkopf,
 )
+from ostbevern.zeilen import FORMELN, plantyp_fuer
 
 TOLERANZ_EURO = 1
 
@@ -100,6 +101,70 @@ class Bericht:
     @property
     def ist_gruen(self) -> bool:
         return all(regel.status == "grün" for regel in self.regeln)
+
+
+class Planwerte:
+    """Löst Formelketten (FORMELN) für fehlende Zwischenzeilen einer Plan-CSV auf (D-11, Pitfall 1).
+
+    GREEN-Implementierung (Formelkette, Memoisierung, Zyklus-Schutz) folgt im nächsten
+    Commit dieses Plans (02-03 Task 2); dieser Stub liest nur gedruckte Werte (RED).
+    """
+
+    def __init__(self, df: pl.DataFrame, *, datei: str) -> None:
+        self._datei = datei
+        self._werte: dict[tuple[str, str, str, int, str], int] = {
+            (
+                zeile["ebene"],
+                zeile["code"] or "",
+                zeile["zeile"],
+                zeile["jahr"],
+                zeile["wertart"],
+            ): zeile["betrag"]
+            for zeile in df.iter_rows(named=True)
+        }
+
+    def wert(self, ebene: str, code: str, zeile: str, jahr: int, wertart: str) -> int:
+        return self._werte.get((ebene, code, zeile, jahr, wertart), 0)
+
+
+def _pruefe_regel1(*, ergebnisplan: pl.DataFrame, finanzplan: pl.DataFrame) -> Regelergebnis:
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for datei, df in (("ergebnisplan", ergebnisplan), ("finanzplan", finanzplan)):
+        planwerte = Planwerte(df, datei=datei)
+        for zeile in df.iter_rows(named=True):
+            plantyp = plantyp_fuer(datei, zeile["ebene"])
+            formel = FORMELN.get(plantyp, {}).get(zeile["zeile"])
+            if formel is None:
+                continue
+            code = zeile["code"] or ""
+            soll = zeile["betrag"]
+            ist = sum(
+                vorzeichen
+                * planwerte.wert(zeile["ebene"], code, komponente, zeile["jahr"], zeile["wertart"])
+                for vorzeichen, komponente in formel
+            )
+            geprueft += 1
+            punkt = Pruefpunkt(
+                regel=1,
+                plan=plantyp,
+                ebene=zeile["ebene"],
+                code=code,
+                zeile=zeile["zeile"],
+                jahr=zeile["jahr"],
+                wertart=zeile["wertart"],
+                soll=soll,
+                ist=ist,
+                pdf_seite=zeile["pdf_seite"],
+            )
+            if abs(punkt.abweichung) > TOLERANZ_EURO:
+                abweichungen.append(punkt)
+    return Regelergebnis(
+        regel=1,
+        titel="Regel 1 – Zeilenformeln",
+        geprueft=geprueft,
+        abweichungen=tuple(abweichungen),
+    )
 
 
 def _csv_wert(df: pl.DataFrame, *, zeile: str, jahr: int, wertart: str, quelle: str) -> int:
@@ -276,10 +341,14 @@ def pruefe_alles(
     """Lädt Jahrgang/Sollwerte und führt alle implementierten Prüfregeln aus (D-01, D-06)."""
     jahrgang = lade_jahrgang(jahr)
     sollwerte = lade_sollwerte(jahr, verzeichnis=sollwerte_verzeichnis)
+    ergebnisplan = lies_plan_csv(daten_wurzel / ERGEBNISPLAN_CSV)
+    finanzplan = lies_plan_csv(daten_wurzel / FINANZPLAN_CSV)
+
+    regel1 = _pruefe_regel1(ergebnisplan=ergebnisplan, finanzplan=finanzplan)
     regel4 = _pruefe_regel4(
         daten_wurzel=daten_wurzel, sollwerte=sollwerte, spalten=jahrgang.spalten["ergebnisplan"]
     )
-    return Bericht(jahr=jahr, regeln=(regel4,))
+    return Bericht(jahr=jahr, regeln=(regel1, regel4))
 
 
 def rendere_konsistenzbericht(bericht: Bericht) -> str:

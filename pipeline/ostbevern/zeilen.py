@@ -205,6 +205,11 @@ ZWISCHENUEBERSCHRIFTEN: dict[str, tuple[str, ...]] = {
     ),
 }
 
+# Zeilenformeln je Plantyp (PRUEF-01, Regel 1): Zeile -> Summe aus (Vorzeichen, Komponente).
+# GREEN-Implementierung folgt im nächsten Commit dieses Plans (02-03 Task 2); dieser Stub
+# hält das Modul importierbar, ohne die Prüfregel bereits zu erfüllen (RED).
+FORMELN: dict[str, dict[str, tuple[tuple[int, str], ...]]] = {}
+
 
 def normalisiere_bezeichnung(text: str) -> str:
     """Entfernt Leerzeichen, einen abschließenden Formelhinweis und Bindestriche (D-12).
