@@ -1,0 +1,9 @@
+# Jahrgangsdatei für den Haushalt 2026 der Gemeinde Ostbevern (D-07).
+# Jeder PDF-spezifische Wert steht hier, nie im Python-Code. Die Pipeline liest
+# diese Datei ausschließlich über ostbevern.konfiguration.lade_jahrgang.
+
+haushaltsjahr = 2026
+pdf_pfad = "raw_data/haushalt-2026.pdf"
+
+[anzahlen]
+pdf_seiten = 400
