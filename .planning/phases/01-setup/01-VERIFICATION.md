@@ -60,7 +60,7 @@ covered_files:
   - "pipeline/tests/test_alle.py"
   - "pipeline/tests/test_konfiguration.py"
   - "pipeline/tests/test_rauchtest.py"
-covered_digest: "v2:sha256:4107c5374202c63b29e5054a031b1f5ff66e90c8cbd189da516622028e1dcf14"
+covered_digest: "v2:sha256:d8e7afdc1775097edec5cc484d631365ae4461fc385ef90997a97f18d4d4c630"
 behavior_unverified: 0
 overrides_applied: 0
 behavior_unverified_items: []
@@ -210,7 +210,7 @@ None blocking. Scanned all phase-modified files under `app/src`, `pipeline/ostbe
 
 Code review (`01-REVIEW.md`, disposition `01-REVIEW-DISPOSITION.md`): 0 critical findings; 5 warnings, all fixed per `01-REVIEW-FIX.md` and independently confirmed present in the current code (WR-01 `base: './'` in `vite.config.ts`; WR-02 `prefers-reduced-motion` media query in `basis.css`; WR-03 `alsZahl()` runtime guard replacing unsafe casts in `DatenTabelle.vue`; WR-04 documentation-only `ACHTUNG` comment in `echartsTheme.ts`; WR-05 dev-only `watchEffect` warning in `DatenTabelle.vue`); 5 info findings remain `open` (unused icon asset, duplicate computation, icon/variant mismatch, missing overlap validation, redundant ARIA labeling) — all forward-looking, non-blocking, none are debt markers.
 
-One informational inconsistency was noted in a supporting planning artifact (not the codebase) and recorded under `advisory:` in the frontmatter: `01-VALIDATION.md`'s frontmatter states `nyquist_compliant: false` while its own sign-off checklist has a checked item claiming the opposite. This does not affect any phase-goal truth, artifact, or key link.
+One informational inconsistency was noted in a supporting planning artifact (not the codebase) and recorded under `advisory:` in the frontmatter: `01-VALIDATION.md`'s frontmatter states `nyquist_compliant: false` while its own sign-off checklist has a checked item claiming the opposite. This does not affect any phase-goal truth, artifact, or key link. **Resolved 2026-10-01:** frontmatter corrected to `nyquist_compliant: true` (the validate-phase edit had hit the comment line instead of the field); digest recomputed via `verification.fingerprint`.
 
 ### Human Verification Required
 
