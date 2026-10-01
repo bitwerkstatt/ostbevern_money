@@ -78,10 +78,20 @@ def test_jeder_knoten_hat_genau_eine_teilergebnisplanseite(seiten, jahrgang) -> 
     assert len(produkt_knoten) == jahrgang.anzahlen.produkte
 
 
-def test_produktseiten_tragen_pg_aus_produktcode(seiten) -> None:
+def test_produktseiten_tragen_pg_aus_produktcode_oder_jahrgangsdeklaration(
+    seiten, jahrgang
+) -> None:
+    """Die PG einer Produktseite ist der deklarierte Code aus
+    jahrgang.synthetische_produktgruppen, falls das Produkt dort als `produkt`
+    auftaucht (D-14), sonst der Standard (die ersten vier Ziffern des Produktcodes).
+    Berechnet unabhängig von der Produktionslogik, nicht über den Helfer selbst."""
+    deklarierte_produkte = {
+        eintrag.produkt: code for code, eintrag in jahrgang.synthetische_produktgruppen.items()
+    }
     for seite in seiten:
         if seite.produkt is not None:
-            assert seite.pg == seite.produkt[:4]
+            erwartet = deklarierte_produkte.get(seite.produkt, seite.produkt[:4])
+            assert seite.pg == erwartet
 
 
 def test_erste_teilplanseite_ist_teilergebnisplan_eines_pb(seiten, jahrgang) -> None:

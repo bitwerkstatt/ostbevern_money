@@ -45,10 +45,3 @@ Parsing-Fehlern.
   (Einzahlungen aus lfd. Verw.-tätigkeit), Spalte Ergebnis des ersten Jahres (Summe der
   Zeilen 01–08 liegt 1 € unter dem gedruckten Wert), und Gesamtergebnisplan Zeile 21
   (Finanzergebnis), Spalte Ergebnis des ersten Jahres.
-- PG 1501/1502 (Wirtschaftsförderung, PB 15): Produkt 150102 (Touristische Öffentlichkeitsarbeit)
-  wird nach D-14 in die synthetische Produktgruppe 1501 (aus Produkt 150101) einsortiert, da
-  `hierarchie.csv` nur eine PG je Produktgruppencode kennt und 1502 im Teilplanbereich (S. 66-282)
-  nicht gedruckt ist. Die Haushaltsquerschnitt-Seiten 299/300 führen PG 1502 "Tourismus" jedoch als
-  eigenen Posten. Vor Phase 3 Regel 7 (Produkt→PG→PB-Summen auf den Querschnittsseiten) muss
-  entschieden werden, ob die App diese PG-Aufteilung übernimmt oder bei der synthetischen
-  Zusammenfassung 1501 bleibt.
