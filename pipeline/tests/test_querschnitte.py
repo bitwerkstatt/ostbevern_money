@@ -8,6 +8,9 @@ lade_sollwerte(STANDARD_JAHR) oder der pdf_klassifikation-Fixture.
 
 from __future__ import annotations
 
+import dataclasses
+import re
+
 import polars as pl
 import pytest
 
@@ -16,9 +19,15 @@ from ostbevern.konfiguration import (
     Jahrgang,
     lade_sollwerte,
     layout_liste,
+    layout_text,
 )
-from ostbevern.pdf import PdfDokument
-from ostbevern.querschnitte import Querschnittwert, lies_querschnitte
+from ostbevern.pdf import PdfDokument, Textzeile
+from ostbevern.querschnitte import (
+    QuerschnitteFehler,
+    Querschnittwert,
+    lies_querschnitte,
+    pruefe_vollstaendigkeit,
+)
 
 
 @pytest.fixture(scope="module")
@@ -165,3 +174,155 @@ def test_querschnitte_seitenzahl_am_rand_wird_entfernt(
                 (pl.col("pb") == pb) & (pl.col("plan") == plan) & ~pl.col("gesamtsumme")
             )["pg"].n_unique()
             assert gefundene_anzahl == erwartete_anzahl, (pb, plan)
+
+
+@dataclasses.dataclass
+class _FehlerhaftesDokument:
+    """Ersetzt die Zeilen genau einer Seite eines echten PdfDokument (D-07, Task 2).
+
+    `lies_querschnitte` ruft nur `.zeilen(pdf_seite)` auf (duck-typed) — dieser Wrapper
+    delegiert an das echte Dokument, außer für `seite`, wo `ersatz` zurückgegeben wird.
+    """
+
+    echt: PdfDokument
+    seite: int
+    ersatz: tuple[Textzeile, ...]
+
+    def zeilen(self, pdf_seite: int) -> tuple[Textzeile, ...]:
+        if pdf_seite == self.seite:
+            return self.ersatz
+        return self.echt.zeilen(pdf_seite)
+
+
+def _finde_zeile(zeilen, praedikat) -> tuple[int, Textzeile]:  # noqa: ANN001
+    for index, zeile in enumerate(zeilen):
+        if praedikat(zeile):
+            return index, zeile
+    pytest.fail("Keine passende Zeile gefunden")
+
+
+def _ersetze_zeile(
+    zeilen: tuple[Textzeile, ...], index: int, neue_zeile: Textzeile
+) -> tuple[Textzeile, ...]:
+    liste = list(zeilen)
+    liste[index] = neue_zeile
+    return tuple(liste)
+
+
+def test_querschnitte_bricht_ab_bei_fehlendem_betrag(jahrgang: Jahrgang) -> None:
+    """Eine Datenzeile mit einem entfernten Betragswort bricht mit PDF-Seite und PG ab."""
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        zeilen = dokument.zeilen(291)
+        index, zeile = _finde_zeile(
+            zeilen, lambda z: bool(z.woerter) and z.woerter[0].text.startswith("0101")
+        )
+        manipuliert = dataclasses.replace(zeile, woerter=zeile.woerter[:-1])
+        ersatz = _ersetze_zeile(zeilen, index, manipuliert)
+        fehlerhaft = _FehlerhaftesDokument(echt=dokument, seite=291, ersatz=ersatz)
+        with pytest.raises(QuerschnitteFehler, match=r"S\. 291.*0101"):
+            lies_querschnitte(fehlerhaft, jahrgang)
+
+
+def test_querschnitte_bricht_ab_bei_pg_aus_anderer_pb(jahrgang: Jahrgang) -> None:
+    """Eine PG, deren Code nicht zur PB ihres Blocks passt, bricht ab (D-08)."""
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        zeilen = dokument.zeilen(291)
+        index, zeile = _finde_zeile(
+            zeilen, lambda z: bool(z.woerter) and z.woerter[0].text.startswith("0101")
+        )
+        erstes_wort = zeile.woerter[0]
+        fremde_pg = dataclasses.replace(erstes_wort, text="0201" + erstes_wort.text[4:])
+        manipuliert = dataclasses.replace(zeile, woerter=(fremde_pg, *zeile.woerter[1:]))
+        ersatz = _ersetze_zeile(zeilen, index, manipuliert)
+        fehlerhaft = _FehlerhaftesDokument(echt=dokument, seite=291, ersatz=ersatz)
+        with pytest.raises(QuerschnitteFehler, match=r"S\. 291.*PG 0201.*PB 01"):
+            lies_querschnitte(fehlerhaft, jahrgang)
+
+
+def test_querschnitte_bricht_ab_bei_fehlender_gesamtsumme(jahrgang: Jahrgang) -> None:
+    """Ein Block, dessen GESAMTSUMME-Zeile entfernt wurde, bricht spätestens bei der
+    nächsten Titelzeile ab (fehlende GESAMTSUMME, D-08)."""
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        zeilen = dokument.zeilen(291)
+        index, _zeile = _finde_zeile(
+            zeilen, lambda z: bool(z.woerter) and z.woerter[0].text == "GESAMTSUMME"
+        )
+        ohne_gesamtsumme = zeilen[:index] + zeilen[index + 1 :]
+        fehlerhaft = _FehlerhaftesDokument(echt=dokument, seite=291, ersatz=ohne_gesamtsumme)
+        with pytest.raises(QuerschnitteFehler, match=r"S\. 291"):
+            lies_querschnitte(fehlerhaft, jahrgang)
+
+
+def test_querschnitte_bricht_ab_bei_kopfzeile_ohne_block(jahrgang: Jahrgang) -> None:
+    """Eine Kopfzeile ohne ausstehenden Titel und ohne vorherige Fortsetzung-Markierung
+    bricht ab (D-08) — Gegenprobe zum legitimen Vorschau-Fall S. 297->298."""
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        kopf_beginn = layout_text(jahrgang, "querschnitte", "kopf_beginn")
+        header_zeile = next(
+            zeile
+            for zeile in dokument.zeilen(291)
+            if zeile.woerter and zeile.woerter[0].text == kopf_beginn
+        )
+        zeilen_293 = dokument.zeilen(293)
+        eingefuegt = (header_zeile, *zeilen_293)
+        fehlerhaft = _FehlerhaftesDokument(echt=dokument, seite=293, ersatz=eingefuegt)
+        with pytest.raises(QuerschnitteFehler, match=r"S\. 293.*Kopfzeile"):
+            lies_querschnitte(fehlerhaft, jahrgang)
+
+
+def test_querschnitte_bricht_ab_bei_titel_kopfzeilen_widerspruch(jahrgang: Jahrgang) -> None:
+    """Ein Titel, der "Finanzplan" durch "Ergebnisplan" ersetzt bekommt, widerspricht der
+    tatsächlichen (11-spaltigen) Kopfzeile und bricht ab (D-08)."""
+    titel_muster = layout_text(jahrgang, "querschnitte", "titel_muster")
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        zeilen = dokument.zeilen(294)
+        index, titel_zeile = _finde_zeile(
+            zeilen, lambda z: bool(z.woerter) and re.match(titel_muster, z.text) is not None
+        )
+        letzter_index = len(titel_zeile.woerter) - 1
+        letztes_wort = titel_zeile.woerter[letzter_index]
+        assert letztes_wort.text == "Finanzplan"
+        ersetzt = dataclasses.replace(letztes_wort, text="Ergebnisplan")
+        neue_woerter = (*titel_zeile.woerter[:letzter_index], ersetzt)
+        manipuliert = dataclasses.replace(titel_zeile, woerter=neue_woerter)
+        ersatz = _ersetze_zeile(zeilen, index, manipuliert)
+        fehlerhaft = _FehlerhaftesDokument(echt=dokument, seite=294, ersatz=ersatz)
+        with pytest.raises(QuerschnitteFehler, match=r"S\. 294.*Widerspruch"):
+            lies_querschnitte(fehlerhaft, jahrgang)
+
+
+def test_querschnitte_vollstaendigkeit_erkennt_fehlende_pg(
+    querschnittwerte: tuple[Querschnittwert, ...],
+    pdf_klassifikation: tuple[pl.DataFrame, pl.DataFrame],
+) -> None:
+    _seiten_df, hierarchie_df = pdf_klassifikation
+    ziel = next(w for w in querschnittwerte if w.pg is not None)
+    gefiltert = [
+        w
+        for w in querschnittwerte
+        if not (w.pb == ziel.pb and w.pg == ziel.pg and w.plan == ziel.plan)
+    ]
+    with pytest.raises(QuerschnitteFehler):
+        pruefe_vollstaendigkeit(gefiltert, hierarchie_df)
+
+
+def test_querschnitte_vollstaendigkeit_erkennt_unbekannte_pg(
+    querschnittwerte: tuple[Querschnittwert, ...],
+    pdf_klassifikation: tuple[pl.DataFrame, pl.DataFrame],
+) -> None:
+    _seiten_df, hierarchie_df = pdf_klassifikation
+    basis = next(w for w in querschnittwerte if w.pg is not None)
+    unbekannt = dataclasses.replace(basis, pg="9999")
+    with pytest.raises(QuerschnitteFehler):
+        pruefe_vollstaendigkeit([*querschnittwerte, unbekannt], hierarchie_df)
+
+
+def test_querschnitte_vollstaendigkeit_erkennt_fehlenden_plan(
+    querschnittwerte: tuple[Querschnittwert, ...],
+    pdf_klassifikation: tuple[pl.DataFrame, pl.DataFrame],
+) -> None:
+    _seiten_df, hierarchie_df = pdf_klassifikation
+    ziel_pb = next(iter(querschnittwerte)).pb
+    gefiltert = [w for w in querschnittwerte if not (w.pb == ziel_pb and w.plan == "finanzplan")]
+    with pytest.raises(QuerschnitteFehler):
+        pruefe_vollstaendigkeit(gefiltert, hierarchie_df)
