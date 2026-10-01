@@ -38,6 +38,8 @@ def main(
         titel_kurz = regel.titel.split(" – ")[0]
         typer.echo(f"{titel_kurz}: {regel.status} ({regel.geprueft} Werte)")
 
+    typer.echo(f"Veraltete Befunde: {len(bericht.veraltete_befunde)}")
+
     if not bericht.ist_gruen:
         raise typer.Exit(code=1)
 

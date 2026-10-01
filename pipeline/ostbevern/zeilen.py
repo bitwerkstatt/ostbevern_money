@@ -2,8 +2,8 @@
 
 Das Wörterbuch und die Zwischenüberschriften sind fachliche Regeln (Phase 1 D-07),
 keine Jahrgangswerte: sie stehen hier im Code, nicht in `pipeline/jahrgaenge/*.toml`.
-Dieses Modul deckt bislang nur den Plantyp "gesamtergebnisplan" ab; Teilergebnis-,
-Gesamtfinanz- und Teilfinanzplan folgen in späteren Plänen dieser Phase.
+Dieses Modul deckt bislang die Plantypen "gesamtergebnisplan" und "gesamtfinanzplan" ab;
+Teilergebnis- und Teilfinanzplan folgen in Plan 02-04 dieser Phase.
 """
 
 from __future__ import annotations
@@ -99,13 +99,176 @@ ZEILEN: dict[str, dict[str, Zeilendefinition]] = {
             False,
         ),
         "33": Zeilendefinition("Verrechnungssaldo", "nachrichtlich_verrechnungssaldo", True),
-    }
+    },
+    "gesamtfinanzplan": {
+        "01": Zeilendefinition("Steuern und ähnliche Abgaben", "steuern", False),
+        "02": Zeilendefinition("Zuwendungen und allgemeine Umlagen", "zuwendungen", False),
+        "03": Zeilendefinition(
+            "Sonstige Transfereinzahlungen", "sonstige_transfereinzahlungen", False
+        ),
+        "04": Zeilendefinition(
+            "Öffentlich-rechtliche Leistungsentgelte",
+            "oeffentlich_rechtliche_entgelte",
+            False,
+        ),
+        "05": Zeilendefinition(
+            "Privatrechtliche Leistungsentgelte", "privatrechtliche_entgelte", False
+        ),
+        "06": Zeilendefinition("Kostenerstattungen und Kostenumlagen", "kostenerstattungen", False),
+        "07": Zeilendefinition("Sonstige Einzahlungen", "sonstige_einzahlungen", False),
+        "08": Zeilendefinition(
+            "Zinsen und sonstige Finanzeinzahlungen", "finanzeinzahlungen", False
+        ),
+        "09": Zeilendefinition(
+            "Einzahlungen aus lfd. Verw.-tätigkeit",
+            "einzahlungen_laufende_verwaltung",
+            True,
+        ),
+        "10": Zeilendefinition("Personalauszahlungen", "personalauszahlungen", False),
+        "11": Zeilendefinition("Versorgungsauszahlungen", "versorgungsauszahlungen", False),
+        "12": Zeilendefinition(
+            "Auszahlg. Sach- und Dienstleistungen", "sach_und_dienstleistungen", False
+        ),
+        "13": Zeilendefinition(
+            "Zinsen und sonstige Finanzauszahlungen", "finanzauszahlungen", False
+        ),
+        "14": Zeilendefinition("Transferauszahlungen", "transferauszahlungen", False),
+        "15": Zeilendefinition("Sonstige Auszahlungen", "sonstige_auszahlungen", False),
+        "16": Zeilendefinition(
+            "Auszahlungen aus lfd. Verw.-tätigkeit",
+            "auszahlungen_laufende_verwaltung",
+            True,
+        ),
+        "17": Zeilendefinition("Saldo aus lfd. Verw.-tätigkeit", "saldo_laufende_verwaltung", True),
+        "18": Zeilendefinition(
+            "Zuwendungen für Investitionsmaßnahmen", "investitionszuwendungen", False
+        ),
+        "19": Zeilendefinition(
+            "Einz. aus Veräußerung v. Sachanlagen", "veraeusserung_sachanlagen", False
+        ),
+        "20": Zeilendefinition(
+            "Einz. aus Veräußerung v. Finanzanlagen", "veraeusserung_finanzanlagen", False
+        ),
+        "21": Zeilendefinition("Einz. aus Beiträgen u. ä. Entgelten", "beitraege", False),
+        "22": Zeilendefinition(
+            "Sonstige Investitionseinzahlungen", "sonstige_investitionseinzahlungen", False
+        ),
+        "23": Zeilendefinition(
+            "Einzahlungen aus Investitionstätigkeit", "einzahlungen_investitionen", True
+        ),
+        "24": Zeilendefinition(
+            "Ausz. f. Erwerb von Grundst. u. Gebäuden", "erwerb_grundstuecke_gebaeude", False
+        ),
+        "25": Zeilendefinition("Ausz. f. Baumaßnahmen", "baumassnahmen", False),
+        "26": Zeilendefinition(
+            "Ausz. f. Erwerb v. bewegl. Anlageverm.",
+            "erwerb_bewegliches_anlagevermoegen",
+            False,
+        ),
+        "27": Zeilendefinition("Ausz. f. Erwerb v. Finanzanlagen", "erwerb_finanzanlagen", False),
+        "28": Zeilendefinition(
+            "Ausz. v. aktivierbaren Zuwendungen", "aktivierbare_zuwendungen", False
+        ),
+        "29": Zeilendefinition(
+            "Sonstige Investitionsauszahlungen", "sonstige_investitionsauszahlungen", False
+        ),
+        "30": Zeilendefinition(
+            "Auszahlungen aus Investitionstätigkeit", "auszahlungen_investitionen", True
+        ),
+        "31": Zeilendefinition("Saldo aus Investitionstätigkeit", "saldo_investitionen", True),
+        "32": Zeilendefinition("Überschuss/Fehlbetrag", "finanzmittelueberschuss", True),
+        "33": Zeilendefinition("Aufnahme und Rückflüsse von Darlehen", "kreditaufnahme", False),
+        "34": Zeilendefinition(
+            "Aufn. v. Krediten z. Liquiditätssicherung",
+            "liquiditaetskredite_aufnahme",
+            False,
+        ),
+        "35": Zeilendefinition("Tilgung und Gewährung von Darlehen", "tilgung", False),
+        "36": Zeilendefinition(
+            "Tilgung v. Krediten z. Liquiditätssicherung",
+            "liquiditaetskredite_tilgung",
+            False,
+        ),
+        "37": Zeilendefinition("Saldo aus Finanzierungstätigkeit", "saldo_finanzierung", True),
+        "38": Zeilendefinition("Änd. des Finanzbestandes", "aenderung_finanzbestand", True),
+        "39": Zeilendefinition(
+            "Anfangsbestand an Finanzmitteln", "anfangsbestand_finanzmittel", False
+        ),
+        "40": Zeilendefinition("Bestand an fremden Finanzmitteln", "fremde_finanzmittel", False),
+        "41": Zeilendefinition("Liquide Mittel", "liquide_mittel", True),
+    },
 }
 
 ZWISCHENUEBERSCHRIFTEN: dict[str, tuple[str, ...]] = {
     "gesamtergebnisplan": (
         "Nachrichtlich: Verrechnung von Erträgen und Aufwendungen mit der allgemeinen Rücklage",
     ),
+}
+
+# Zeilenformeln je Plantyp (PRUEF-01, Regel 1): Zeile -> Summe aus (Vorzeichen, Komponente).
+# Eine fehlende Komponente wird von pruefung.Planwerte als 0 behandelt (D-11); eine fehlende
+# Formel-Zeile ist absichtlich: GEP Z. 33 ist der nachrichtliche Verrechnungssaldo mit der
+# allgemeinen Rücklage, den weder Spez. 5.5 noch Anhang B als Formel führen (Research Open
+# Question 1). TFP Z. 09/16 haben keine Formel, weil Teilfinanzpläne ihre Komponenten
+# 01-08/10-15 nie drucken (Planungsfakten, verifiziert über alle Teilpläne).
+_GEMEINSAME_ERGEBNISPLAN_FORMELN: dict[str, tuple[tuple[int, str], ...]] = {
+    "10": (
+        (1, "01"),
+        (1, "02"),
+        (1, "03"),
+        (1, "04"),
+        (1, "05"),
+        (1, "06"),
+        (1, "07"),
+        (1, "08"),
+        (1, "09"),
+    ),
+    "17": ((1, "11"), (1, "12"), (1, "13"), (1, "14"), (1, "15"), (1, "16")),
+    "18": ((1, "10"), (-1, "17")),
+    "21": ((1, "19"), (-1, "20")),
+    "22": ((1, "18"), (1, "21")),
+    "25": ((1, "23"), (-1, "24")),
+    "26": ((1, "22"), (1, "25")),
+}
+
+FORMELN: dict[str, dict[str, tuple[tuple[int, str], ...]]] = {
+    "gesamtergebnisplan": {
+        **_GEMEINSAME_ERGEBNISPLAN_FORMELN,
+        "28": ((1, "26"), (-1, "27")),
+    },
+    "teilergebnisplan": {
+        **_GEMEINSAME_ERGEBNISPLAN_FORMELN,
+        "29": ((1, "26"), (1, "27"), (-1, "28")),
+        "31": ((1, "29"), (-1, "30")),
+    },
+    "gesamtfinanzplan": {
+        "09": (
+            (1, "01"),
+            (1, "02"),
+            (1, "03"),
+            (1, "04"),
+            (1, "05"),
+            (1, "06"),
+            (1, "07"),
+            (1, "08"),
+        ),
+        "16": ((1, "10"), (1, "11"), (1, "12"), (1, "13"), (1, "14"), (1, "15")),
+        "17": ((1, "09"), (-1, "16")),
+        "23": ((1, "18"), (1, "19"), (1, "20"), (1, "21"), (1, "22")),
+        "30": ((1, "24"), (1, "25"), (1, "26"), (1, "27"), (1, "28"), (1, "29")),
+        "31": ((1, "23"), (-1, "30")),
+        "32": ((1, "17"), (1, "31")),
+        "37": ((1, "33"), (1, "34"), (-1, "35"), (-1, "36")),
+        "38": ((1, "32"), (1, "37")),
+        "41": ((1, "38"), (1, "39"), (1, "40")),
+    },
+    "teilfinanzplan": {
+        "17": ((1, "09"), (-1, "16")),
+        "23": ((1, "18"), (1, "19"), (1, "20"), (1, "21"), (1, "22")),
+        "30": ((1, "24"), (1, "25"), (1, "26"), (1, "27"), (1, "28"), (1, "29")),
+        "31": ((1, "23"), (-1, "30")),
+        "34": ((1, "33"), (-1, "35")),
+    },
 }
 
 
