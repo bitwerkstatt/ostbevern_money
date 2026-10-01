@@ -132,6 +132,44 @@ def test_seitenbereich_von_groesser_bis_wird_abgelehnt(tmp_path: Path) -> None:
         lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
 
 
+def test_fehlende_produktgruppe_kopfzeile_meldet_schluessel(tmp_path: Path) -> None:
+    text = re.sub(r"(?m)^produktgruppe\s*=.*\n", "", _jahrgangsdatei_text())
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="kopfzeilen.produktgruppe"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_seitentypen_ohne_teilfinanzplan_meldet_schluessel(tmp_path: Path) -> None:
+    text = re.sub(r"(?m)^teilfinanzplan\s*=.*\n", "", _jahrgangsdatei_text())
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="teilfinanzplan"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_ungueltiges_kopfzeilen_muster_meldet_schluessel(tmp_path: Path) -> None:
+    text = re.sub(
+        r"(?m)^produktgruppe\s*=.*$",
+        "produktgruppe = '('",
+        _jahrgangsdatei_text(),
+        count=1,
+    )
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="kopfzeilen.produktgruppe"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_ueberlappende_seitenbereiche_werden_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(
+        r"(?m)^teilplaene\s*=\s*\{\s*von\s*=\s*\d+",
+        "teilplaene = { von = 63",
+        _jahrgangsdatei_text(),
+        count=1,
+    )
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="überlappen"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
 def test_lade_sollwerte_gibt_satzung_und_gesamtergebnisplan_zurueck() -> None:
     sollwerte = lade_sollwerte(STANDARD_JAHR)
     assert sollwerte["haushaltsjahr"] == STANDARD_JAHR
@@ -222,4 +260,26 @@ def test_gesamtfinanzplan_ansatz_schluessel_ohne_zweistellige_zeile_wird_abgeleh
     text = re.sub(r'(?m)^"09" = (\d+)$', r'"9" = \1', _sollwertdatei_text(), count=1)
     _schreibe_sollwertdatei(tmp_path, text)
     with pytest.raises(KonfigurationsFehler):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def _ohne_anhang_a(text: str) -> str:
+    """Entfernt eine vorhandene [anhang_a]-Tabelle (steht am Dateiende); ist sie
+    noch nicht vorhanden, bleibt der Text unverändert."""
+    return re.sub(r"(?ms)^\[anhang_a\]\n.*", "", text)
+
+
+def test_lade_sollwerte_lehnt_ungueltigen_anhang_a_schluessel_ab(tmp_path: Path) -> None:
+    text = _ohne_anhang_a(_sollwertdatei_text())
+    text += '\n[anhang_a]\n"1" = { name = "Testfall", pdf_seite = 1 }\n'
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="anhang_a"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_lade_sollwerte_lehnt_anhang_a_eintrag_ohne_namen_ab(tmp_path: Path) -> None:
+    text = _ohne_anhang_a(_sollwertdatei_text())
+    text += '\n[anhang_a]\n"01" = { pdf_seite = 1 }\n'
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="anhang_a"):
         lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)

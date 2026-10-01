@@ -1,0 +1,127 @@
+ebene,code,name,eltern_code,pdf_seite_start,synthetisch
+PB,01,Innere Verwaltung,,66,false
+PG,0101,Politische Gremien,01,72,true
+P,010101,Politische Gremien,0101,72,false
+PG,0102,Verwaltungsführung,01,74,true
+P,010201,Verwaltungsführung,0102,74,false
+PG,0103,Gleichstellung von Frau und Mann,01,76,true
+P,010301,Gleichstellung von Frau und Mann,0103,76,false
+PG,0104,Beschäftigtenvertretung/Personalrat,01,79,true
+P,010401,Beschäftigtenvertretung/Personalrat,0104,79,false
+PG,0105,Durchführung gesetzlich vorgeschriebener und übertragener Prüfungen,01,81,true
+P,010501,Durchführung gesetzlich vorgeschriebener und übertragener Prüfungen,0105,81,false
+PG,0106,Zentrale Dienste,01,83,false
+P,010601,Zentrale Dienste für Organisationseinheiten im Hause und Dritter,0106,84,false
+P,010602,Bauhof,0106,88,false
+P,010603,Zentrale Dienste für Beteiligungen und verbundene Unternehmen,0106,92,false
+PG,0107,Presse- und Öffentlichkeitsarbeit,01,94,true
+P,010701,Presse- und Öffentlichkeitsarbeit,0107,94,false
+PG,0108,Gemeinde-/Städtepartnerschaften,01,96,true
+P,010801,Gemeinde-/Städtepartnerschaften,0108,96,false
+PG,0109,Personalmanagement,01,98,true
+P,010901,Personalmanagement,0109,98,false
+PG,0110,Finanzmanagement und Rechnungswesen,01,102,false
+P,011001,Finanzmanagement und Geschäftsbuchführung,0110,103,false
+P,011002,Zahlungsabwicklung und Vollstreckung,0110,105,false
+P,011003,Steuerveranlagung sowie Wasser- und Bodenverbandsgebühren,0110,107,false
+PG,0111,Dienstleistung im Bereich IT,01,109,true
+P,011101,Dienstleistung im Bereich IT,0111,109,false
+PG,0112,Grundstücks- und Gebäudemanagement,01,112,false
+P,011201,Bauunterhaltung von kommunal genutzten Gebäuden,0112,113,false
+P,011202,Bereitstellung und Bewirtschaftung von Gebäuden,0112,116,false
+P,011203,Baumaßnahmen,0112,118,false
+P,011204,Bereitstellung und Bewirtschaftung von Grundstücken,0112,120,false
+PB,02,Sicherheit und Ordnung,,124,false
+PG,0201,Allgemeine Gefahrenabwehr,02,127,true
+P,020101,Allgemeine Gefahrenabwehr,0201,127,false
+PG,0202,Gewerbewesen,02,130,true
+P,020201,Gewerbewesen,0202,130,false
+PG,0203,Verkehrsangelegenheiten,02,132,true
+P,020301,Verkehrsangelegenheiten,0203,132,false
+PG,0204,Einwohnerangelegenheiten,02,134,true
+P,020401,Einwohnerangelegenheiten,0204,134,false
+PG,0205,Standesamtswesen,02,136,true
+P,020501,Standesamtswesen,0205,136,false
+PG,0206,Wahlen und Abstimmungen,02,138,true
+P,020601,Wahlen und Abstimmungen,0206,138,false
+PG,0207,Feuer- und Bevölkerungsschutz,02,140,true
+P,020701,Feuer- und Bevölkerungsschutz,0207,140,false
+PB,03,Schulträgeraufgaben,,145,false
+PG,0301,Schulische Einrichtungen und schülerbezogene Leistungen,03,150,false
+P,030101,Ambrosius-Grundschule,0301,151,false
+P,030102,Franz-von-Assisi-Grundschule,0301,155,false
+P,030103,Josef-Annegarn-Schule,0301,158,false
+P,030104,"Offene Ganztagsgrundschule, Ganztägige Förder- und Betreuungsangebote",0301,162,false
+PG,0302,Schülerbeförderung,03,165,true
+P,030201,Schülerbeförderung,0302,165,false
+PG,0303,Zentrale Leistungen für Schüler/innen und am Schulleben Beteiligte,03,167,true
+P,030301,Zentrale Leistungen für Schüler/innen und am Schulleben Beteiligte,0303,167,false
+PB,04,Kultur,,169,false
+PG,0401,"Kulturförderung, Heimatpflege",04,171,true
+P,040101,"Kulturförderung, Heimatpflege",0401,171,false
+PG,0402,Volkshochschule und sonstige Weiterbildung,04,174,true
+P,040201,Volkshochschule und sonstige Weiterbildung,0402,174,false
+PG,0403,Schule für Musik im Kreis Warendorf,04,176,true
+P,040301,Schule für Musik im Kreis Warendorf,0403,176,false
+PB,05,Soziale Leistungen,,178,false
+PG,0501,Gesetzliche Leistungen,05,180,false
+P,050102,Leistungen nach dem Asylbewerberleistungsgesetz,0501,181,false
+P,050103,Leistungen der Sozialhilfe nach SGB XII,0501,183,false
+PG,0502,Zuschüsse an Dritte im Bereich des sozialen Lebens,05,185,true
+P,050201,Zuschüsse an Dritte im Bereich des sozialen Lebens,0502,185,false
+PG,0503,Dienstleistung und Beratung,05,188,true
+P,050301,Dienstleistung und Beratung,0503,188,false
+PG,0504,Demographie,05,190,true
+P,050401,Demographie,0504,190,false
+PB,06,"Kinder-, Jugend- und Familienhilfe",,192,false
+PG,0601,Unterstützung von Kindertagesstätten anderer Träger,06,194,true
+P,060101,Unterstützung von Kindertagesstätten anderer Träger,0601,194,false
+PG,0602,Kinder- und Jugendarbeit,06,196,false
+P,060201,Jugendzentrum und Unterstützung Dritter im Bereich der Jugendarbeit,0602,197,false
+P,060202,Sportfreianlagen und Kinderspielplätze,0602,200,false
+PB,08,Sportförderung,,203,false
+PG,0801,"Beverhalle, Förderung des Vereins- und Breitensports",08,205,true
+P,080101,"Beverhalle, Förderung des Vereins- und Breitensports",0801,205,false
+PB,09,"Räumliche Planung und Entwicklung, Geoinformationen",,208,false
+PG,0901,Räumliche Planung und Entwicklung,09,211,true
+P,090101,Räumliche Planung und Entwicklung,0901,211,false
+PG,0902,Grundstücksneuordnung und grundstücksbezogene Ordnungsmaßnahmen,09,214,false
+P,090201,Grundstücksneuordnung und - ordnungsmaßnahmen,0902,215,false
+P,090202,Grundstücksbezogene Informationen,0902,218,false
+PB,10,Bauen und Wohnen,,220,false
+PG,1001,Maßnahmen der Bauordnung,10,222,true
+P,100101,Maßnahmen der Bauordnung,1001,222,false
+PG,1002,Denkmalschutz und Denkmalpflege,10,224,true
+P,100201,Denkmalschutz und Denkmalpflege,1002,224,false
+PG,1003,"Wohnungsbau- und Wohnraumförderung, Wohnraumsicherung und -versorgung",10,226,true
+P,100301,"Wohnungsbau- und Wohnraumförderung, Wohnraumsicherung und -versorgung",1003,226,false
+PG,1004,Unterkunft für Flüchtlinge und Asylbewerber,10,228,true
+P,100401,Unterkunft für Flüchtlinge und Asylbewerber,1004,228,false
+PB,11,Ver- und Entsorgung,,231,false
+PG,1101,Abfallbeseitigung und -entsorgung,11,232,true
+P,110101,Abfallbeseitigung und -entsorgung,1101,232,false
+PB,12,Verkehrsflächen und -anlagen,,234,false
+PG,1201,Öffentliche Verkehrsflächen und Verkehrsanlagen,12,240,false
+P,120101,"Bau von Straßen, Wegen, Plätzen und sonstigen Verkehrsanlagen",1201,241,false
+P,120102,"Unterhaltung von Straßen, Wegen, Plätzen und sonstigen Verkehrsanlagen",1201,247,false
+PG,1202,ÖPNV,12,250,true
+P,120201,ÖPNV,1202,250,false
+PG,1203,Straßenreinigung,12,253,true
+P,120301,Straßenreinigung,1203,253,false
+PB,13,Natur- und Landschaftspflege,,255,false
+PG,1301,Natur- und Landschaftsschutz,13,258,true
+P,130101,Natur- und Landschaftsschutz,1301,258,false
+PG,1302,Öffentliche Grünanlagen,13,261,true
+P,130201,Öffentliche Grünanlagen,1302,261,false
+PG,1303,Friedhofs- und Bestattungswesen,13,264,true
+P,130301,Friedhofs- und Bestattungswesen,1303,264,false
+PB,14,Umweltschutz,,268,false
+PG,1401,"Umwelt- und Klimaschutz, Mobilität",14,269,true
+P,140101,"Umwelt- und Klimaschutz, Mobilität",1401,269,false
+PB,15,Wirtschaft und Tourismus,,271,false
+PG,1501,Wirtschaftsförderung,15,273,true
+P,150101,Wirtschaftsförderung,1501,273,false
+P,150102,Touristische Öffentlichkeitsarbeit,1501,276,false
+PB,16,Allgemeine Finanzwirtschaft,,278,false
+PG,1601,Allgemeine Finanzwirtschaft,16,280,true
+P,160101,Allgemeine Finanzwirtschaft,1601,280,false

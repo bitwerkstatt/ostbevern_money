@@ -8,6 +8,7 @@ die `tomllib` importiert.
 
 from __future__ import annotations
 
+import itertools
 import re
 import tomllib
 from collections.abc import Mapping
@@ -36,6 +37,16 @@ PFLICHT_SEITENBEREICHE = (
     "querschnitte",
     "verpflichtungen_schulden",
 )
+# Feines Typ-Vokabular im Teilplanbereich (D-17), das jede Jahrgangsdatei unter
+# [kopfzeilen.seitentypen] mit einem Muster belegen muss.
+PFLICHT_SEITENTYPEN = (
+    "produktinformationen",
+    "grundzahlen",
+    "teilergebnisplan",
+    "erlaeuterungen",
+    "teilfinanzplan",
+    "investitionen",
+)
 
 
 class KonfigurationsFehler(ValueError):
@@ -55,8 +66,9 @@ class Kopfzeilen:
     """Kopfzeilen-Muster für die Seitenklassifikation (Spez. 5.3)."""
 
     produktbereich: str
+    produktgruppe: str
     produkt: str
-    seitentypen: tuple[str, ...]
+    seitentypen: Mapping[str, str]
     fortsetzung: str
 
 
@@ -108,7 +120,13 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
             fehlende_schluessel.append(f"anzahlen.{teil_schluessel}")
 
     kopfzeilen_rohdaten = rohdaten.get("kopfzeilen", {})
-    for teil_schluessel in ("produktbereich", "produkt", "seitentypen", "fortsetzung"):
+    for teil_schluessel in (
+        "produktbereich",
+        "produktgruppe",
+        "produkt",
+        "seitentypen",
+        "fortsetzung",
+    ):
         if teil_schluessel not in kopfzeilen_rohdaten:
             fehlende_schluessel.append(f"kopfzeilen.{teil_schluessel}")
 
@@ -170,6 +188,16 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
             )
         seitenbereiche[name] = bereich
 
+    for (name_a, bereich_a), (name_b, bereich_b) in itertools.combinations(
+        seitenbereiche.items(), 2
+    ):
+        if bereich_a.von <= bereich_b.bis and bereich_b.von <= bereich_a.bis:
+            raise KonfigurationsFehler(
+                f"Jahrgangsdatei {pfad}: Seitenbereiche {name_a!r} und {name_b!r} überlappen "
+                f"(von={bereich_a.von}, bis={bereich_a.bis} / von={bereich_b.von}, "
+                f"bis={bereich_b.bis})"
+            )
+
     fehlende_seitenbereiche = [
         name for name in PFLICHT_SEITENBEREICHE if name not in seitenbereiche
     ]
@@ -178,14 +206,50 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
             f"Jahrgangsdatei {pfad} fehlen Seitenbereiche: {', '.join(fehlende_seitenbereiche)}"
         )
 
+    seitentypen_rohdaten = kopfzeilen_rohdaten["seitentypen"]
+    if not isinstance(seitentypen_rohdaten, dict):
+        raise KonfigurationsFehler(
+            f"Jahrgangsdatei {pfad}: kopfzeilen.seitentypen muss eine Tabelle sein, "
+            f"nicht {seitentypen_rohdaten!r}"
+        )
+    fehlende_seitentypen = [
+        name for name in PFLICHT_SEITENTYPEN if name not in seitentypen_rohdaten
+    ]
+    if fehlende_seitentypen:
+        raise KonfigurationsFehler(
+            f"Jahrgangsdatei {pfad}: kopfzeilen.seitentypen fehlen Schlüssel: "
+            f"{', '.join(fehlende_seitentypen)}"
+        )
+    for name, muster in seitentypen_rohdaten.items():
+        if not isinstance(muster, str):
+            raise KonfigurationsFehler(
+                f"Jahrgangsdatei {pfad}: kopfzeilen.seitentypen.{name} muss ein String "
+                f"sein, nicht {muster!r}"
+            )
+
     kopfzeilen = Kopfzeilen(
         produktbereich=kopfzeilen_rohdaten["produktbereich"],
+        produktgruppe=kopfzeilen_rohdaten["produktgruppe"],
         produkt=kopfzeilen_rohdaten["produkt"],
-        seitentypen=tuple(kopfzeilen_rohdaten["seitentypen"]),
+        seitentypen=dict(seitentypen_rohdaten),
         fortsetzung=kopfzeilen_rohdaten["fortsetzung"],
     )
-    re.compile(kopfzeilen.produktbereich)
-    re.compile(kopfzeilen.produkt)
+    for muster_name, muster in (
+        ("kopfzeilen.produktbereich", kopfzeilen.produktbereich),
+        ("kopfzeilen.produktgruppe", kopfzeilen.produktgruppe),
+        ("kopfzeilen.produkt", kopfzeilen.produkt),
+        *(
+            (f"kopfzeilen.seitentypen.{name}", teilmuster)
+            for name, teilmuster in kopfzeilen.seitentypen.items()
+        ),
+    ):
+        try:
+            re.compile(muster)
+        except re.error as fehler:
+            raise KonfigurationsFehler(
+                f"Jahrgangsdatei {pfad}: {muster_name} ist kein gültiger regulärer "
+                f"Ausdruck: {fehler}"
+            ) from fehler
 
     return Jahrgang(
         haushaltsjahr=rohdaten["haushaltsjahr"],
@@ -217,6 +281,7 @@ _ZWEISTELLIGE_ZEILE_MUSTER = re.compile(r"^\d{2}$")
 _TEILERGEBNISPLAENE_PB_FELDER = frozenset(
     {"ordentliche_ertraege", "ordentliche_aufwendungen", "ergebnis_mit_internen_verrechnungen"}
 )
+_ANHANG_A_CODE_MUSTER = re.compile(r"^(\d{2}|\d{4}|\d{6})$")
 
 
 def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> dict[str, Any]:
@@ -237,6 +302,7 @@ def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> 
             "gesamtfinanzplan",
             "teilergebnisplaene_pb",
             "teilergebnisplaene_pb_summe",
+            "anhang_a",
         )
         if schluessel not in rohdaten
     ]
@@ -295,6 +361,21 @@ def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> 
             f"Sollwertdatei {pfad}: teilergebnisplaene_pb_summe fehlen Felder: "
             f"{', '.join(fehlende_summenfelder)}"
         )
+
+    anhang_a = rohdaten["anhang_a"]
+    for code, eintrag in anhang_a.items():
+        if not _ANHANG_A_CODE_MUSTER.match(code):
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: anhang_a hat keinen 2-, 4- oder 6-stelligen Code: {code!r}"
+            )
+        name = eintrag.get("name")
+        if not isinstance(name, str) or not name:
+            raise KonfigurationsFehler(f"Sollwertdatei {pfad}: anhang_a.{code} hat keinen Namen")
+        pdf_seite = eintrag.get("pdf_seite")
+        if not isinstance(pdf_seite, int) or isinstance(pdf_seite, bool) or pdf_seite < 1:
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: anhang_a.{code} hat keine gültige pdf_seite"
+            )
 
     _pruefe_nur_ganzzahlen(rohdaten, "sollwerte")
 
