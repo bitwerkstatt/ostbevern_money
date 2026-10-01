@@ -39,6 +39,7 @@ from ostbevern.schema import (
     lies_plan_csv,
     schreibe_plan_csv,
 )
+from ostbevern.zeilen import FORMELN
 
 _SCHLUESSELTABELLE_KOPF = (
     "| regel | plan | ebene | code | zeile | jahr | wertart | abweichung | pdf_seite | "
@@ -137,6 +138,13 @@ def _kopiere_finanzplan_nach(tmp_path: Path) -> None:
     """Kopiert die eingecheckte finanzplan.csv unverändert in den tmp-Datenbaum (D-06)."""
     finanzplan = lies_plan_csv(DATEN_WURZEL / FINANZPLAN_CSV)
     schreibe_plan_csv(finanzplan, tmp_path / FINANZPLAN_CSV)
+
+
+def _kopiere_befunde_nach(tmp_path: Path) -> None:
+    """Kopiert die eingecheckte befunde.md unverändert in den tmp-Datenbaum (D-02)."""
+    pfad_ziel = tmp_path / BEFUNDE_MD
+    pfad_ziel.parent.mkdir(parents=True, exist_ok=True)
+    pfad_ziel.write_bytes((DATEN_WURZEL / BEFUNDE_MD).read_bytes())
 
 
 def _manipuliere_betrag(df: pl.DataFrame, *, zeile: str, jahr: int, delta: int) -> pl.DataFrame:
@@ -263,6 +271,7 @@ def test_regel1_keine_formel_fuer_nachrichtlich_zeile_33(tmp_path: Path) -> None
     manipuliert = _manipuliere_betrag(ergebnisplan, zeile="33", jahr=2024, delta=1_000_000)
     schreibe_plan_csv(manipuliert, tmp_path / ERGEBNISPLAN_CSV)
     _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_befunde_nach(tmp_path)
 
     bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
     regel1 = next(regel for regel in bericht.regeln if regel.regel == 1)
@@ -481,12 +490,22 @@ def test_konsistenzbericht_listet_bekannten_befund(tmp_path: Path) -> None:
     assert STANDARD_JAHR in gesamtergebnisplan["jahre"]
     jahr = STANDARD_JAHR
 
+    # zeile_sollwert ist eine Komponente einer Regel-1-Formelzeile (z. B. Zeile 10 = Summe
+    # 01-09): eine Manipulation von zeile_sollwert erzeugt deshalb zwei Abweichungen, die
+    # beide einen passenden Befund brauchen — Regel 4 (Sollwert) und Regel 1 (Formelzeile,
+    # deren gedruckte Summe nun von den manipulierten Komponenten abweicht).
+    formelzeile = next(
+        zeile
+        for zeile, formel in FORMELN["gesamtergebnisplan"].items()
+        if any(komponente == zeile_sollwert for _, komponente in formel)
+    )
+
     df = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
     manipuliert = _manipuliere_betrag(df, zeile=zeile_sollwert, jahr=jahr, delta=5)
     schreibe_plan_csv(manipuliert, tmp_path / ERGEBNISPLAN_CSV)
     _kopiere_finanzplan_nach(tmp_path)
 
-    befund_zeile = _befunde_zeile(
+    befund_regel4 = _befunde_zeile(
         regel=4,
         plan="gesamtergebnisplan",
         ebene="GESAMT",
@@ -496,16 +515,31 @@ def test_konsistenzbericht_listet_bekannten_befund(tmp_path: Path) -> None:
         wertart="ansatz",
         abweichung=5,
         pdf_seite=62,
-        begruendung="Testabweichung",
+        begruendung="Testabweichung Sollwert",
     )
-    _schreibe_befunde_md(tmp_path / BEFUNDE_MD, zeilen=[befund_zeile])
+    befund_regel1 = _befunde_zeile(
+        regel=1,
+        plan="gesamtergebnisplan",
+        ebene="GESAMT",
+        code="",
+        zeile=formelzeile,
+        jahr=jahr,
+        wertart="ansatz",
+        abweichung=5,
+        pdf_seite=62,
+        begruendung="Testabweichung Formelzeile",
+    )
+    _schreibe_befunde_md(tmp_path / BEFUNDE_MD, zeilen=[befund_regel4, befund_regel1])
 
     bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel1 = next(regel for regel in bericht.regeln if regel.regel == 1)
     regel4 = next(regel for regel in bericht.regeln if regel.regel == 4)
     assert regel4.status == "grün"
+    assert regel1.status == "grün"
     assert bericht.ist_gruen is True
     assert len(regel4.bekannte) == 1
-    assert regel4.bekannte[0][1].begruendung == "Testabweichung"
+    assert regel4.bekannte[0][1].begruendung == "Testabweichung Sollwert"
+    assert len(regel1.bekannte) == 1
 
     # Ohne passenden Befund bleibt dieselbe Abweichung offen (rot).
     _schreibe_befunde_md(tmp_path / BEFUNDE_MD, zeilen=[])
@@ -535,6 +569,7 @@ def test_konsistenzbericht_meldet_abweichung_ueber_einem_euro(tmp_path: Path) ->
     manipuliert = _manipuliere_betrag(df, zeile=zeile, jahr=jahr, delta=TOLERANZ_EURO + 1)
     schreibe_plan_csv(manipuliert, tmp_path / ERGEBNISPLAN_CSV)
     _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_befunde_nach(tmp_path)
 
     bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
     regel4 = next(regel for regel in bericht.regeln if regel.regel == 4)
@@ -557,6 +592,7 @@ def test_konsistenzbericht_toleriert_einen_euro(tmp_path: Path) -> None:
     manipuliert = _manipuliere_betrag(df, zeile=zeile, jahr=jahr, delta=TOLERANZ_EURO)
     schreibe_plan_csv(manipuliert, tmp_path / ERGEBNISPLAN_CSV)
     _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_befunde_nach(tmp_path)
 
     bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
     regel4 = next(regel for regel in bericht.regeln if regel.regel == 4)

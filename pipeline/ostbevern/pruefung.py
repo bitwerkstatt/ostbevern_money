@@ -9,21 +9,32 @@ from __future__ import annotations
 import os
 import tempfile
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 import polars as pl
 
 from ostbevern.konfiguration import JAHRGAENGE_VERZEICHNIS, lade_jahrgang, lade_sollwerte
 from ostbevern.schema import (
+    BEFUNDE_MD,
     DATEN_WURZEL,
+    EBENEN,
     ERGEBNISPLAN_CSV,
     FINANZPLAN_CSV,
     KONSISTENZ_MD,
+    WERTARTEN,
     lies_plan_csv,
     zerlege_spaltenkopf,
 )
 from ostbevern.zeilen import FORMELN, plantyp_fuer
+
+# Kopfzeile der maschinenlesbaren Schlüsseltabelle in befunde.md (D-02); wird sowohl beim
+# Lesen (lies_befunde) als auch beim Schreiben des Konsistenzberichts verwendet, damit eine
+# Zeile 1:1 zwischen beiden Dateien kopierbar bleibt.
+_SCHLUESSELTABELLE_KOPF = (
+    "| regel | plan | ebene | code | zeile | jahr | wertart | abweichung | pdf_seite | "
+    "begruendung |"
+)
 
 TOLERANZ_EURO = 1
 
@@ -199,22 +210,147 @@ class Planwerte:
 def lies_befunde(pfad: Path) -> tuple[Befund, ...]:
     """Parst die maschinenlesbare Schlüsseltabelle aus befunde.md streng (D-02, D-08).
 
-    GREEN-Implementierung (Zellen-Validierung je Behavior-Test) folgt im nächsten Commit
-    dieses Plans (02-03 Task 3); dieser Stub prüft nur, dass die Datei existiert (RED).
+    Eine leere Schlüsseltabelle (nur Kopf- und Trennzeile) ist gültig. Jede Verletzung
+    (fehlende Datei, fehlende Überschrift, abweichende Kopfzeile, falsche Zellenzahl,
+    unbekannte Ebene/Wertart, nicht-ganzzahlige Zelle, Abweichung innerhalb der Toleranz,
+    leere Begründung) bricht sofort mit Datei und Zeilennummer ab.
     """
     if not pfad.is_file():
         raise PruefungsFehler(f"Befunde-Datei nicht gefunden: {pfad}")
-    return ()
+    zeilen = pfad.read_text(encoding="utf-8").splitlines()
+
+    ueberschrift_index = next(
+        (i for i, z in enumerate(zeilen) if z.strip() == "## Schlüsseltabelle"), None
+    )
+    if ueberschrift_index is None:
+        raise PruefungsFehler(f"{pfad}: Überschrift '## Schlüsseltabelle' nicht gefunden")
+
+    kopfzeile_index = next(
+        (i for i in range(ueberschrift_index + 1, len(zeilen)) if zeilen[i].strip()), None
+    )
+    if kopfzeile_index is None or zeilen[kopfzeile_index].strip() != _SCHLUESSELTABELLE_KOPF:
+        raise PruefungsFehler(
+            f"{pfad}: Kopfzeile der Schlüsseltabelle fehlt oder weicht ab "
+            f"(erwartet {_SCHLUESSELTABELLE_KOPF!r})"
+        )
+
+    befunde: list[Befund] = []
+    for index in range(kopfzeile_index + 2, len(zeilen)):
+        text = zeilen[index].strip()
+        if not text.startswith("|"):
+            break
+        zeilennummer = index + 1  # 1-basiert für Fehlermeldungen
+        zellen = [zelle.strip() for zelle in text.strip("|").split("|")]
+        if len(zellen) != 10:
+            raise PruefungsFehler(
+                f"{pfad}:{zeilennummer}: Schlüsseltabelle-Zeile hat {len(zellen)} Zellen, "
+                "erwartet 10"
+            )
+        (
+            regel_text,
+            plan,
+            ebene,
+            code,
+            zeile,
+            jahr_text,
+            wertart,
+            abweichung_text,
+            pdf_seite_text,
+            begruendung,
+        ) = zellen
+
+        if ebene not in EBENEN:
+            raise PruefungsFehler(f"{pfad}:{zeilennummer}: unbekannte Ebene {ebene!r}")
+        if wertart not in WERTARTEN:
+            raise PruefungsFehler(f"{pfad}:{zeilennummer}: unbekannte Wertart {wertart!r}")
+        if not begruendung:
+            raise PruefungsFehler(f"{pfad}:{zeilennummer}: Begründung fehlt")
+
+        try:
+            regel = int(regel_text)
+            jahr = int(jahr_text)
+            abweichung = int(abweichung_text)
+            pdf_seite = int(pdf_seite_text)
+        except ValueError as fehler:
+            raise PruefungsFehler(
+                f"{pfad}:{zeilennummer}: Zelle ist keine Ganzzahl ({fehler})"
+            ) from fehler
+
+        if abs(abweichung) <= TOLERANZ_EURO:
+            raise PruefungsFehler(
+                f"{pfad}:{zeilennummer}: Abweichung {abweichung} liegt innerhalb der "
+                f"Toleranz von {TOLERANZ_EURO} EUR; ein Befund ist dafür nicht nötig"
+            )
+
+        befunde.append(
+            Befund(
+                regel=regel,
+                plan=plan,
+                ebene=ebene,
+                code=code,
+                zeile=zeile,
+                jahr=jahr,
+                wertart=wertart,
+                abweichung=abweichung,
+                pdf_seite=pdf_seite,
+                begruendung=begruendung,
+            )
+        )
+    return tuple(befunde)
 
 
 def gleiche_befunde_ab(abweichungen: Sequence[Pruefpunkt], befunde: Sequence[Befund]) -> Abgleich:
     """Ordnet Abweichungen bekannten Befunden zu (D-05) und markiert ungenutzte als veraltet (D-04).
 
-    GREEN-Implementierung (Schlüssel- und Betragsabgleich) folgt im nächsten Commit dieses
-    Plans (02-03 Task 3); dieser Stub behandelt jede Abweichung als offen und jeden Befund
-    als veraltet (RED).
+    Ein Befund deckt eine Abweichung ab, wenn beide denselben Schlüssel tragen und sich ihre
+    Abweichungsbeträge um höchstens TOLERANZ_EURO unterscheiden. Jeder Befund wird höchstens
+    einmal verwendet; ungenutzte Befunde gelten als veraltet.
     """
-    return Abgleich(offen=tuple(abweichungen), bekannt=(), veraltet=tuple(befunde))
+    befunde_nach_schluessel: dict[tuple, list[Befund]] = {}
+    for befund in befunde:
+        befunde_nach_schluessel.setdefault(befund.schluessel, []).append(befund)
+
+    offen: list[Pruefpunkt] = []
+    bekannt: list[tuple[Pruefpunkt, Befund]] = []
+    genutzt: set[int] = set()
+
+    for punkt in abweichungen:
+        kandidaten = befunde_nach_schluessel.get(punkt.schluessel, [])
+        treffer = next(
+            (
+                kandidat
+                for kandidat in kandidaten
+                if id(kandidat) not in genutzt
+                and abs(punkt.abweichung - kandidat.abweichung) <= TOLERANZ_EURO
+            ),
+            None,
+        )
+        if treffer is not None:
+            bekannt.append((punkt, treffer))
+            genutzt.add(id(treffer))
+        else:
+            offen.append(punkt)
+
+    veraltet = tuple(befund for befund in befunde if id(befund) not in genutzt)
+    return Abgleich(offen=tuple(offen), bekannt=tuple(bekannt), veraltet=veraltet)
+
+
+def _wende_befunde_an(
+    regelergebnisse: tuple[Regelergebnis, ...], befunde: tuple[Befund, ...]
+) -> tuple[tuple[Regelergebnis, ...], tuple[Befund, ...]]:
+    """Gleicht alle Abweichungen aller Regeln einmalig gegen die Befunde ab (D-04, D-05)."""
+    alle_abweichungen = tuple(punkt for regel in regelergebnisse for punkt in regel.abweichungen)
+    abgleich = gleiche_befunde_ab(alle_abweichungen, befunde)
+
+    aktualisiert = tuple(
+        replace(
+            regel,
+            abweichungen=tuple(p for p in abgleich.offen if p.regel == regel.regel),
+            bekannte=tuple(paar for paar in abgleich.bekannt if paar[0].regel == regel.regel),
+        )
+        for regel in regelergebnisse
+    )
+    return aktualisiert, abgleich.veraltet
 
 
 def _pruefe_regel1(*, ergebnisplan: pl.DataFrame, finanzplan: pl.DataFrame) -> Regelergebnis:
@@ -407,12 +543,19 @@ def pruefe_alles(
     *,
     daten_wurzel: Path = DATEN_WURZEL,
     sollwerte_verzeichnis: Path = JAHRGAENGE_VERZEICHNIS,
+    befunde_pfad: Path | None = None,
 ) -> Bericht:
-    """Lädt Jahrgang/Sollwerte und führt alle implementierten Prüfregeln aus (D-01, D-06)."""
+    """Lädt Jahrgang/Sollwerte und führt alle implementierten Prüfregeln aus (D-01, D-06).
+
+    `befunde_pfad` ist standardmäßig `daten_wurzel / BEFUNDE_MD`; jede Abweichung wird gegen
+    die dort dokumentierten Befunde abgeglichen (D-04, D-05).
+    """
     jahrgang = lade_jahrgang(jahr)
     sollwerte = lade_sollwerte(jahr, verzeichnis=sollwerte_verzeichnis)
     ergebnisplan = lies_plan_csv(daten_wurzel / ERGEBNISPLAN_CSV)
     finanzplan = lies_plan_csv(daten_wurzel / FINANZPLAN_CSV)
+    pfad_befunde = befunde_pfad if befunde_pfad is not None else daten_wurzel / BEFUNDE_MD
+    befunde = lies_befunde(pfad_befunde)
 
     regel1 = _pruefe_regel1(ergebnisplan=ergebnisplan, finanzplan=finanzplan)
     regel4 = _pruefe_regel4(
@@ -421,28 +564,38 @@ def pruefe_alles(
         sollwerte=sollwerte,
         spalten=jahrgang.spalten["ergebnisplan"],
     )
-    return Bericht(jahr=jahr, regeln=(regel1, regel4))
+
+    regeln, veraltete_befunde = _wende_befunde_an((regel1, regel4), befunde)
+    return Bericht(jahr=jahr, regeln=regeln, veraltete_befunde=veraltete_befunde)
+
+
+def _pruefpunkt_sortierschluessel(punkt: Pruefpunkt) -> tuple:
+    return punkt.schluessel
 
 
 def rendere_konsistenzbericht(bericht: Bericht) -> str:
     """Erzeugt den Markdown-Text von konsistenz.md deterministisch, ohne Zeitstempel (D-03)."""
+    gesamtstatus = "grün" if bericht.ist_gruen else "rot"
     zeilen = [
         f"# Konsistenzbericht Haushalt {bericht.jahr}",
         "",
         "Diese Datei wird von `pipeline/06_pruefen.py` und von pytest erzeugt und darf "
         "nicht von Hand bearbeitet werden.",
         "",
+        f"Gesamtstatus: {gesamtstatus}",
+        "",
         "## Übersicht",
         "",
-        "| Regel | Status | Geprüfte Werte | Abweichungen |",
-        "| --- | --- | --- | --- |",
+        "| Regel | Status | Geprüfte Werte | Abweichungen | Bekannte Befunde |",
+        "| --- | --- | --- | --- | --- |",
     ]
     for regel in bericht.regeln:
         zeilen.append(
-            f"| {regel.titel} | {regel.status} | {regel.geprueft} | {len(regel.abweichungen)} |"
+            f"| {regel.titel} | {regel.status} | {regel.geprueft} | "
+            f"{len(regel.abweichungen)} | {len(regel.bekannte)} |"
         )
-    zeilen += ["", "## Abweichungen", ""]
 
+    zeilen += ["", "## Abweichungen", ""]
     alle_abweichungen = [(regel, punkt) for regel in bericht.regeln for punkt in regel.abweichungen]
     if not alle_abweichungen:
         zeilen.append("Keine.")
@@ -453,22 +606,43 @@ def rendere_konsistenzbericht(bericht: Bericht) -> str:
         )
         zeilen.append("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |")
         for _, punkt in sorted(
-            alle_abweichungen,
-            key=lambda rp: (
-                rp[1].regel,
-                rp[1].plan,
-                rp[1].ebene,
-                rp[1].code,
-                rp[1].zeile,
-                rp[1].jahr,
-                rp[1].wertart,
-            ),
+            alle_abweichungen, key=lambda rp: _pruefpunkt_sortierschluessel(rp[1])
         ):
             zeilen.append(
                 f"| {punkt.regel} | {punkt.plan} | {punkt.ebene} | {punkt.code} | "
                 f"{punkt.zeile} | {punkt.jahr} | {punkt.wertart} | {punkt.soll} | "
                 f"{punkt.ist} | {punkt.abweichung} | {punkt.pdf_seite} |"
             )
+
+    zeilen += ["", "## Bekannte Befunde", ""]
+    alle_bekannten = [paar for regel in bericht.regeln for paar in regel.bekannte]
+    if not alle_bekannten:
+        zeilen.append("Keine.")
+    else:
+        zeilen.append(_SCHLUESSELTABELLE_KOPF)
+        zeilen.append("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |")
+        for punkt, befund in sorted(
+            alle_bekannten, key=lambda paar: _pruefpunkt_sortierschluessel(paar[0])
+        ):
+            zeilen.append(
+                f"| {punkt.regel} | {punkt.plan} | {punkt.ebene} | {punkt.code} | "
+                f"{punkt.zeile} | {punkt.jahr} | {punkt.wertart} | {punkt.abweichung} | "
+                f"{punkt.pdf_seite} | {befund.begruendung} |"
+            )
+
+    zeilen += ["", "## Veraltete Befunde", ""]
+    if not bericht.veraltete_befunde:
+        zeilen.append("Keine.")
+    else:
+        zeilen.append(_SCHLUESSELTABELLE_KOPF)
+        zeilen.append("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |")
+        for befund in sorted(bericht.veraltete_befunde, key=lambda b: b.schluessel):
+            zeilen.append(
+                f"| {befund.regel} | {befund.plan} | {befund.ebene} | {befund.code} | "
+                f"{befund.zeile} | {befund.jahr} | {befund.wertart} | {befund.abweichung} | "
+                f"{befund.pdf_seite} | {befund.begruendung} |"
+            )
+
     zeilen.append("")
     return "\n".join(zeilen)
 
