@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watchEffect } from 'vue'
 import { EURO_OPTIONEN } from '@/charts/format'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 
@@ -12,6 +12,18 @@ const props = defineProps<{
 
 const istDatenModus = computed(() => props.zeilen !== undefined)
 const istLeer = computed(() => istDatenModus.value && (props.zeilen?.length ?? 0) === 0)
+
+// `spalten` ist unabhängig von `zeilen` optional, wird im Datenmodus aber
+// zwingend für Kopf- und Datenzellen benötigt. Ohne `spalten` rendert die
+// Tabelle still eine leere Kopf-/Datenzeile ohne <th>/<td> — daher ein
+// lautes Dev-Warning statt eines unsichtbaren Fehlers.
+if (import.meta.env.DEV) {
+  watchEffect(() => {
+    if (istDatenModus.value && !props.spalten?.length) {
+      console.warn('DatenTabelle: `zeilen` wurde ohne `spalten` übergeben.')
+    }
+  })
+}
 
 /**
  * Prüft zur Laufzeit, dass ein Zellwert tatsächlich eine Zahl ist, bevor er
