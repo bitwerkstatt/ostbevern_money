@@ -5,23 +5,23 @@ titles: json
 findings:
   - id: WR-01
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "No `base` path configured for GitHub Pages project hosting"
   - id: WR-02
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "`prefers-reduced-motion` is a stated a11y requirement but is implemented nowhere"
   - id: WR-03
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "Unsafe `as number` casts in `DatenTabelle.vue` with no runtime check against `spalte.art`"
   - id: WR-04
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "ECharts theme tokens are read once at module load and never update"
   - id: WR-05
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "`DatenTabelle`'s `spalten` prop is optional but required whenever `zeilen` is passed"
   - id: IN-01
     severity: info
@@ -43,20 +43,20 @@ findings:
     severity: info
     disposition: open
     title: "Redundant double-labeling of data tables for screen readers"
-open: 10
+open: 5
 total: 10
-recorded: 2026-10-01T09:51:16.231Z
+recorded: 2026-10-01T10:02:48.325Z
 ---
 
 # Phase 01: Code Review Disposition
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| WR-01 | warning | open | - |
-| WR-02 | warning | open | - |
-| WR-03 | warning | open | - |
-| WR-04 | warning | open | - |
-| WR-05 | warning | open | - |
+| WR-01 | warning | fixed | 01-REVIEW-FIX.md |
+| WR-02 | warning | fixed | 01-REVIEW-FIX.md |
+| WR-03 | warning | fixed | 01-REVIEW-FIX.md |
+| WR-04 | warning | fixed | 01-REVIEW-FIX.md |
+| WR-05 | warning | fixed | 01-REVIEW-FIX.md |
 | IN-01 | info | open | - |
 | IN-02 | info | open | - |
 | IN-03 | info | open | - |
