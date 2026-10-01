@@ -71,7 +71,7 @@ Plans:
      - Satzung § 1 (Erträge 27.502.063 €, Aufwendungen 30.455.569 €)
   5. `uv run pytest` erzeugt `daten/pruefberichte/konsistenz.md`. Eine Abweichung über 1 €, die nicht in `befunde.md` steht, lässt den Lauf scheitern.
 
-**Plans**: 3/5 plans executed
+**Plans**: 4/5 plans executed
 
 Plans:
 **Wave 1**
@@ -82,7 +82,7 @@ Plans:
 - [x] 02-03-PLAN.md — Gesamtfinanzplan inkl. VE, Prüfregel 1 mit Formelkette, Regel 4 B.2/Satzung, befunde.md-Regeln D-02/D-04/D-05 (Wave 2)
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 02-04-PLAN.md — Alle Teilergebnis- und Teilfinanzpläne (PB, PG, Produkt, synthetische PG), Fortsetzungsseiten, Regel 1 grün (Wave 3)
+- [x] 02-04-PLAN.md — Alle Teilergebnis- und Teilfinanzpläne (PB, PG, Produkt, synthetische PG), Fortsetzungsseiten, Regel 1 grün (Wave 3)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 - [ ] 02-05-PLAN.md — alle.py 01 → 02 → 06, Regel 2 (Produkte → PG → PB), Regel 3 (PB → Gesamt), Regel 4 B.3, unbekannte Seiten im Bericht (Wave 4)
@@ -181,7 +181,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Setup | 5/5 | Complete    | 2026-10-01 |
-| 2. Kernzahlen | 3/5 | In Progress|  |
+| 2. Kernzahlen | 4/5 | In Progress|  |
 | 3. Details | 0/TBD | Not started | - |
 | 4. Manuelle Daten und App-Daten | 0/TBD | Not started | - |
 | 5. Leitfragen-Seiten | 0/TBD | Not started | - |
