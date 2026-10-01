@@ -1,0 +1,37 @@
+# Sollwertdatei für den Haushalt 2026 der Gemeinde Ostbevern (D-08, Anhang B).
+# Beträge sind int-Euro. Diese Datei deckt Phase 1 nur Satzung § 1-3 und die
+# B.1-Kopfwerte ab; Phase 2 ergänzt B.1 vollständig, B.2 und B.3.
+
+haushaltsjahr = 2026
+quelle = "raw_data/haushalt-2026.pdf; übertragen aus discussion/SPEZIFIKATION.md Anhang B"
+
+# Haushaltssatzung § 1-3 (PDF S. 8).
+[satzung]
+pdf_seite = 8
+ertraege = 27502063
+aufwendungen = 30455569
+globaler_minderaufwand = 600000
+aufwendungen_nach_minderaufwand = 29855569
+einzahlungen_laufende_verwaltung = 24703192
+auszahlungen_laufende_verwaltung = 27697627
+einzahlungen_investitionen = 7224830
+auszahlungen_investitionen = 12280484
+einzahlungen_finanzierung = 5200000
+auszahlungen_finanzierung = 450000
+kredite_investitionen = 5200000
+verpflichtungsermaechtigungen = 11600000
+
+# Gesamtergebnisplan (Anhang B.1, PDF S. 62). Phase 2 ergänzt die restlichen Zeilen.
+[gesamtergebnisplan]
+pdf_seite = 62
+jahre = [2024, 2025, 2026, 2027, 2028, 2029]
+
+[gesamtergebnisplan.zeilen]
+"10" = [30336461, 28513035, 27042063, 29565930, 31252417, 30835772]
+"17" = [30551079, 30483155, 30255569, 31868458, 33461244, 34843472]
+"18" = [-214618, -1970120, -3213506, -2302528, -2208827, -4007700]
+"19" = [559158, 320000, 460000, 390000, 390000, 390000]
+"20" = [152549, 246000, 200000, 350000, 600000, 600000]
+"26" = [191990, -1896120, -2953506, -2262528, -2418827, -4217700]
+"27" = [0, -564600, -600000, -620000, -660000, -660000]
+"28" = [191990, -1331520, -2353506, -1642528, -1758827, -3557700]
