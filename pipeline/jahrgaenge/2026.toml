@@ -1,0 +1,43 @@
+# Jahrgangsdatei für den Haushalt 2026 der Gemeinde Ostbevern (D-07).
+# Jeder PDF-spezifische Wert steht hier, nie im Python-Code. Die Pipeline liest
+# diese Datei ausschließlich über ostbevern.konfiguration.lade_jahrgang.
+
+haushaltsjahr = 2026
+pdf_pfad = "raw_data/haushalt-2026.pdf"
+
+[anzahlen]
+pdf_seiten = 400
+produktbereiche = 15
+produkte = 63
+
+# Spaltenköpfe je Plantyp (Spez. 2.2). Die PDF druckt Bezeichnung und Jahr auf
+# zwei Zeilen (S. 62/63); Phase 2 ordnet die Spalten über x-Koordinaten zu.
+[spalten]
+ergebnisplan = ["Ergebnis 2024", "Ansatz 2025", "Ansatz 2026", "Planung 2027", "Planung 2028", "Planung 2029"]
+finanzplan = ["Ergebnis 2024", "Ansatz 2025", "Ansatz 2026", "VE 2026", "Planung 2027", "Planung 2028", "Planung 2029"]
+investitionen = ["Ergebnis 2024", "Ansatz 2025", "Ansatz 2026", "VE 2026", "Planung 2027", "Planung 2028", "Planung 2029"]
+
+# Seitenbereiche der Kapitel (Spez. 2), 1-basierte PDF-Seiten.
+[seitenbereiche]
+inhaltsverzeichnis = { von = 2, bis = 5 }
+leitbild = { von = 6, bis = 6 }
+haushaltssatzung = { von = 7, bis = 9 }
+statistik = { von = 10, bis = 10 }
+vorbericht = { von = 13, bis = 60 }
+gesamtergebnisplan = { von = 62, bis = 62 }
+gesamtfinanzplan = { von = 63, bis = 63 }
+teilplaene = { von = 65, bis = 282 }
+stellenplan = { von = 284, bis = 290 }
+querschnitte = { von = 291, bis = 300 }
+jahresabschluss = { von = 301, bis = 306 }
+zuwendungen_fraktionen = { von = 307, bis = 307 }
+verpflichtungen_schulden = { von = 309, bis = 311 }
+wirtschaftsplaene = { von = 312, bis = 375 }
+kostenstellen_budgets = { von = 376, bis = 400 }
+
+# Kopfzeilen-Muster für die Seitenklassifikation (Spez. 5.3).
+[kopfzeilen]
+produktbereich = '^Produktbereich (\d{2}) (.+)$'
+produkt = '^Produkt (\d{6}) (.+)$'
+seitentypen = ["Produktinformationen", "Teilergebnisplan", "Teilfinanzplan", "Investitionen", "Investitionsmaßnahmen"]
+fortsetzung = "Fortsetzung folgt"

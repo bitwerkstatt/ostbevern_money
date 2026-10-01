@@ -1,0 +1,31 @@
+[project]
+name = "ostbevern-money-pipeline"
+version = "0.1.0"
+description = "Extraktionspipeline für Ostbevern Money: liest den Haushaltsplan aus dem ProFIS-PDF"
+requires-python = ">=3.12"
+dependencies = [
+    "pdfplumber>=0.11.10",
+    "polars>=1.44.2",
+    "typer>=0.27.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.9",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.format]
+quote-style = "double"
