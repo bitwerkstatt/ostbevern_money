@@ -103,3 +103,22 @@ def schreibe_plan_csv(df: pl.DataFrame, pfad: Path) -> None:
 def lies_plan_csv(pfad: Path) -> pl.DataFrame:
     """Liest eine Plan-CSV über `lies_csv` mit PLAN_SPALTEN."""
     return lies_csv(pfad, PLAN_SPALTEN)
+
+
+SEITEN_SPALTEN: dict[str, pl.PolarsDataType] = {
+    "pdf_seite": pl.Int64,
+    "typ": pl.Utf8,
+    "pb": pl.Utf8,
+    "pg": pl.Utf8,
+    "produkt": pl.Utf8,
+}
+
+
+def schreibe_seiten_csv(df: pl.DataFrame, pfad: Path) -> None:
+    """Schreibt seiten.csv sortiert nach pdf_seite (D-16, D-17, D-21)."""
+    schreibe_csv(df, pfad, SEITEN_SPALTEN, ["pdf_seite"])
+
+
+def lies_seiten_csv(pfad: Path) -> pl.DataFrame:
+    """Liest seiten.csv über `lies_csv` mit SEITEN_SPALTEN."""
+    return lies_csv(pfad, SEITEN_SPALTEN)
