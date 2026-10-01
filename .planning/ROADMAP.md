@@ -17,7 +17,7 @@ Abweichungen vom Spez.-Phasenplan:
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Setup** - Repo-Struktur, uv-Pipeline, Vue-Grundgerüst mit Münster-Komponenten, Jahrgangskonfiguration, CLAUDE.md und CI (Spez. P0)
+- [x] **Phase 1: Setup** - Repo-Struktur, uv-Pipeline, Vue-Grundgerüst mit Münster-Komponenten, Jahrgangskonfiguration, CLAUDE.md und CI (Spez. P0) (completed 2026-10-01)
 - [ ] **Phase 2: Kernzahlen** - Seitenklassifikation, Hierarchie, alle Ergebnis- und Finanzpläne; Prüfregeln 1–4 grün, Anhang-B-Sollwerte getroffen (Spez. P1)
 - [ ] **Phase 3: Details** - Produktinformationen, Grundzahlen, Erläuterungen, Investitionen; Prüfregeln 6–8 grün, 63 Produkte vollständig (Spez. P2)
 - [ ] **Phase 4: Manuelle Daten und App-Daten** - Vorberichtstabellen, meta.json, Erklärtexte, Stellenplan, App-JSON; Prüfregel 5 grün, `alle.py` reproduzierbar (Spez. P3)
@@ -39,7 +39,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Haushaltsjahr, Spaltenköpfe, Seitenbereiche und PDF-Pfad stehen in einer Jahrgangs-Konfigurationsdatei, und die Pipeline lädt sie von dort statt aus dem Code.
   5. Die Projekt-`CLAUDE.md` nennt die Befehle für Pipeline und App sowie die Konventionen: deutsche Bezeichner ohne Umlaute, Beträge als int-Euro, nur 1-basierte PDF-Seiten, keine Jahrgangswerte im Code, Du-Anrede, Zahlen in Texten aus Daten.
 
-**Plans**: 5/5 plans executed
+**Plans**: 5/5 plans complete
 
 Plans:
 **Wave 1**
@@ -166,7 +166,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Setup | 5/5 | In Progress|  |
+| 1. Setup | 5/5 | Complete    | 2026-10-01 |
 | 2. Kernzahlen | 0/TBD | Not started | - |
 | 3. Details | 0/TBD | Not started | - |
 | 4. Manuelle Daten und App-Daten | 0/TBD | Not started | - |

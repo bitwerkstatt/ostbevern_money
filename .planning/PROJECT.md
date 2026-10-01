@@ -57,7 +57,7 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 
 ## Context
 
-- **Quelle:** `raw_data/Haushalt 2026 komplett.pdf` (Kopie auch in `discussion/`), Gemeinde Ostbevern, 400 Seiten, ProFIS+, Satzungsbeschluss 03.03.2026. Im Code werden ausschließlich 1-basierte PDF-Seiten verwendet.
+- **Quelle:** `raw_data/haushalt-2026.pdf` (seit Phase 1 einzige eingecheckte Kopie; Pfad steht in `pipeline/jahrgaenge/2026.toml`), Gemeinde Ostbevern, 400 Seiten, ProFIS+, Satzungsbeschluss 03.03.2026. Im Code werden ausschließlich 1-basierte PDF-Seiten verwendet.
 - **Vorbild:** https://github.com/codeformuenster/haushalt-muenster-2026. Die Erlaubnis von Code for Münster zur Übernahme von Code liegt vor. Komponenten (`PageIntro`, `ChartCard`, `BaseChart`, `DatenTabelle`, `GlossarBegriff`, `BegriffeListe`, `ProduktAkkordeon`, `QuelleSeitenleiste`, Sankey, `charts/format.ts`, `echartsTheme.ts`, `lib/bildschirm.ts`) können übernommen werden.
 - **Fachliche Fallstricke** (Details in Spez. Abschnitt 3):
   - Der Ergebnisplan ist die Hauptsicht. Der Finanzplan wird nur für Investitionen, Kredite und Liquidität genutzt. Beide werden nie in einem Diagramm gemischt.
@@ -95,6 +95,12 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 | v1 = Pipeline + Leitfragen + Kontextseiten + Feinschliff; Spiele in v2 | Fokus auf korrekte Kernaussagen; Planspiel-Regeln brauchen fachliche Klärung | — Pending |
 | Ergebnisplan als Hauptsicht, Kreisumlage herausgelöst | Fachlich korrekt für eine kreisangehörige Gemeinde (Spez. 3.1, 3.4) | — Pending |
 | BBO/TEO nur als Hinweis | Außerhalb des Kernhaushalts; eigene Seite ggf. später | — Pending |
+| Paketliste vor Installation menschlich freigegeben (5 PyPI, 21 npm); Minor-/Patch-Drift ok, neue Major-Versionen brauchen erneute Freigabe | Supply-Chain-Schutz vor jeder Installation | ✓ Good — Phase 1 |
+| Jahrgangswerte nur in `jahrgaenge/{jahr}.toml` und `{jahr}_sollwerte.toml`, gelesen über `lade_jahrgang`/`lade_sollwerte` mit vollständiger Validierung | Pipeline generisch für spätere Jahrgänge | ✓ Good — Phase 1 |
+| Nummerierte Pipeline-Skripte entstehen erst mit ihrer Logik in der jeweiligen Phase; Phase 1 liefert nur `alle.py` | Keine leeren Platzhaltermodule | ✓ Good — Phase 1 |
+| ESLint-only (oxlint und vue-devtools aus dem Scaffold entfernt) | Nur freigegebene Pakete | ✓ Good — Phase 1 |
+| ECharts-Module nur in `echartsTheme.ts` registriert; Beispieldaten-Hinweis rendert ausschließlich `ChartCard` | Kleines Bundle; Demo-Zahlen können nie ohne Hinweis erscheinen | ✓ Good — Phase 1 |
+| CI: zwei parallele Jobs, Actions SHA-gepinnt, `contents: read`, Installation nur aus Lockfiles | Lokal nachgestellte CI = Remote-CI | ✓ Good — Phase 1 (Remote-Lauf steht aus, noch kein GitHub-Remote) |
 
 ## Evolution
 
@@ -114,4 +120,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-01 after initialization*
+*Last updated: 2026-10-01 after Phase 1*
