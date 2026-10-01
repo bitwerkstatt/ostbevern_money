@@ -16,6 +16,8 @@ actuals:
   tokens: 2800
   tasks: 1
   commits: 1
+  plan_head_before: a0fd14f839603e877fe76fdb597ace03f282c8fc
+  plan_head_after: 4e630c15f60c4895d84cf0e1f1350e826cbd387a
 
 # Tech tracking
 tech-stack:
@@ -164,3 +166,10 @@ None - no external service configuration required.
 ---
 *Phase: 01-setup*
 *Completed: 2026-10-01*
+
+## Self-Check: PASSED
+
+- `FOUND: 01-01-SUMMARY.md` — file exists on disk at `.planning/phases/01-setup/01-01-SUMMARY.md`
+- `FOUND: 4e630c1` — commit `4e630c1` ("docs(01-01): record approved package list") exists in `git log --oneline --all`
+- Commit ledger: `plan_head_before=a0fd14f839603e877fe76fdb597ace03f282c8fc`, `plan_head_after=4e630c15f60c4895d84cf0e1f1350e826cbd387a`, `git rev-list --count` = 1 (matches `actuals.commits: 1`)
+- Acceptance criteria re-verified: human reply "approved" recorded verbatim (above); all 5 PyPI + 21 npm names present with registry URLs (Approved Package List table); no drops/replacements so no substitution note was needed
