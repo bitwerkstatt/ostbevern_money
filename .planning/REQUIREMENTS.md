@@ -20,8 +20,8 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [ ] **EXTR-01**: Zahlenparser verarbeitet deutsches Format, Minus, „–“ als „kein Wert“, an Bezeichnungen klebende Beträge und `C` als Eurozeichen (mit Unit-Tests)
 - [x] **EXTR-02**: Seitenklassifikation erzeugt `daten/zwischen/seiten.csv` (Seite, Typ, PB, PG, Produkt); Fortsetzungsseiten erben den Kontext; Startseiten aller 63 Produkte stimmen mit Anhang A überein
 - [x] **EXTR-03**: `hierarchie.csv` enthält 15 PB, alle PG (synthetische mit `synthetisch=true`) und 63 Produkte mit Namen aus der Produktseite
-- [ ] **EXTR-04**: Gesamtergebnisplan und alle Teilergebnispläne (PB, Produkt) stehen im Langformat in `ergebnisplan.csv` mit `zeile`, `zeile_kanonisch`, `ist_summe` und `pdf_seite`; Spalten werden über x-Koordinaten zugeordnet; fehlende Zeilen gelten als 0
-- [ ] **EXTR-05**: Gesamtfinanzplan und alle Teilfinanzpläne inklusive VE-Spalte stehen in `finanzplan.csv`
+- [x] **EXTR-04**: Gesamtergebnisplan und alle Teilergebnispläne (PB, Produkt) stehen im Langformat in `ergebnisplan.csv` mit `zeile`, `zeile_kanonisch`, `ist_summe` und `pdf_seite`; Spalten werden über x-Koordinaten zugeordnet; fehlende Zeilen gelten als 0
+- [x] **EXTR-05**: Gesamtfinanzplan und alle Teilfinanzpläne inklusive VE-Spalte stehen in `finanzplan.csv`
 - [ ] **EXTR-06**: Produktinformationen aller 63 Produkte stehen in `produkte.json` (Fachbereich, Gremium, Beschreibung, Leistungen, Auftragsgrundlage, Bindungsgrad normalisiert und original, Klassifizierung, Zielgruppe, Ziele, PDF-Seiten)
 - [ ] **EXTR-07**: Grundzahlen je Produkt stehen in `grundzahlen.csv` mit Einheit, Jahr und Stichtagshinweis; die Steuer-Istwerte 2022–2025 aus 160101 sind enthalten
 - [ ] **EXTR-08**: Erläuterungsposten („Erläuterung zu Nr. …“) sind je Produkt mit Betrag, Text und Zeilenbezug extrahiert
@@ -41,7 +41,7 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 
 ### Prüfung
 
-- [ ] **PRUEF-01**: Zeilenformeln jedes Ergebnis- und Finanzplans stimmen (Spez. 5.5 Regel 1)
+- [x] **PRUEF-01**: Zeilenformeln jedes Ergebnis- und Finanzplans stimmen (Spez. 5.5 Regel 1)
 - [ ] **PRUEF-02**: Summe der Produkt-Teilpläne = PG = PB-Teilplan, je Zeile und Jahr
 - [ ] **PRUEF-03**: Summe der 15 PB = Gesamtergebnisplan (Z. 01–17, 19, 20; ohne TP 27/28)
 - [ ] **PRUEF-04**: Sollwerte aus Anhang B (Gesamtergebnisplan, Gesamtfinanzplan/Satzung § 1, PB-Summen, Eckwerte) werden getroffen
@@ -186,8 +186,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXTR-01 | Phase 2 | Pending |
 | EXTR-02 | Phase 2 | Complete |
 | EXTR-03 | Phase 2 | Complete |
-| EXTR-04 | Phase 2 | Pending |
-| EXTR-05 | Phase 2 | Pending |
+| EXTR-04 | Phase 2 | Complete |
+| EXTR-05 | Phase 2 | Complete |
 | EXTR-06 | Phase 3 | Pending |
 | EXTR-07 | Phase 3 | Pending |
 | EXTR-08 | Phase 3 | Pending |
@@ -201,7 +201,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MANU-06 | Phase 4 | Pending |
 | MANU-07 | Phase 4 | Pending |
 | MANU-08 | Phase 4 | Pending |
-| PRUEF-01 | Phase 2 | Pending |
+| PRUEF-01 | Phase 2 | Complete |
 | PRUEF-02 | Phase 2 | Pending |
 | PRUEF-03 | Phase 2 | Pending |
 | PRUEF-04 | Phase 2 | Pending |
