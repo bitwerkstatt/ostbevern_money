@@ -5,38 +5,38 @@ titles: json
 findings:
   - id: WR-01
     severity: warning
-    disposition: open
-    title: "`befunde.md` header describes the Regel-1 deviation formula with the wrong sign"
+    disposition: fixed
+    title: "`_synthetische_pg_datensaetze` keeps a `plantyp` parameter that is now dead code"
   - id: WR-02
     severity: warning
+    disposition: fixed
+    title: "`befunde.md`'s Regel-1 sign description is still inverted relative to the code"
+  - id: IN-01
+    severity: info
     disposition: open
-    title: "Anhang B.3 sollwerte for PB 09/15 Zeile 29 are derived via the same formula the pipeline itself uses, weakening that specific check's independence"
+    title: "Duplicate derivation of the D-14 PG-resolution rule in tests vs. production code"
   - id: WR-03
     severity: warning
     disposition: open
     title: "`_pruefe_regel4_b1` can raise an unhandled `IndexError` instead of a clear `PruefungsFehler` if `spalten` and `jahre` ever go out of sync"
-  - id: IN-01
-    severity: info
-    disposition: open
-    title: "`REGEL3_ZEILEN` comment only explains a subset of the excluded lines"
   - id: IN-02
     severity: info
     disposition: open
     title: "`lies_befunde`'s hand-rolled Markdown table parser has no defence against a `|` inside `begruendung`"
-open: 5
+open: 3
 total: 5
-recorded: 2026-10-01T15:26:00.127Z
+recorded: 2026-10-01T16:53:08.685Z
 ---
 
 # Phase 02: Code Review Disposition
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| WR-01 | warning | open | - |
-| WR-02 | warning | open | - |
-| WR-03 | warning | open | - |
+| WR-01 | warning | fixed | 02-REVIEW-FIX.md |
+| WR-02 | warning | fixed | 02-REVIEW-FIX.md |
 | IN-01 | info | open | - |
-| IN-02 | info | open | - |
+| WR-03 | warning | open | - (not in the current review) |
+| IN-02 | info | open | - (not in the current review) |
 
 Dispositions: `open` (recorded, not yet triaged), `fixed`, `skipped`, `deferred`.
 Set `deferred` by hand and put the reason in the Source cell; both are preserved. A `|` in the reason is kept as prose and escaped on the next run.
