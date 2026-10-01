@@ -39,15 +39,15 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Haushaltsjahr, Spaltenköpfe, Seitenbereiche und PDF-Pfad stehen in einer Jahrgangs-Konfigurationsdatei, und die Pipeline lädt sie von dort statt aus dem Code.
   5. Die Projekt-`CLAUDE.md` nennt die Befehle für Pipeline und App sowie die Konventionen: deutsche Bezeichner ohne Umlaute, Beträge als int-Euro, nur 1-basierte PDF-Seiten, keine Jahrgangswerte im Code, Du-Anrede, Zahlen in Texten aus Daten.
 
-**Plans**: 1/5 plans executed
+**Plans**: 3/5 plans executed
 
 Plans:
 **Wave 1**
 - [x] 01-01-PLAN.md — Paketprüfung: Mensch bestätigt alle PyPI- und npm-Pakete vor jeder Installation (Wave 1, Checkpoint)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01-02-PLAN.md — Pipeline: PDF umbenannt, uv-Projekt, Jahrgangs- und Sollwertdatei, Lader mit Prüfung, Rauchtest, alle.py --jahr, ruff, daten/ (Wave 2)
-- [ ] 01-03-PLAN.md — App-Gerüst: create-vue, Web Awesome, Hash-Router, PageIntro, Rahmen mit Navigation und Münster-Dank, Lint-/Format-Skripte (Wave 2)
+- [x] 01-02-PLAN.md — Pipeline: PDF umbenannt, uv-Projekt, Jahrgangs- und Sollwertdatei, Lader mit Prüfung, Rauchtest, alle.py --jahr, ruff, daten/ (Wave 2)
+- [x] 01-03-PLAN.md — App-Gerüst: create-vue, Web Awesome, Hash-Router, PageIntro, Rahmen mit Navigation und Münster-Dank, Lint-/Format-Skripte (Wave 2)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 01-04-PLAN.md — Basiskomponenten: format.ts, echartsTheme.ts, BaseChart, ChartCard mit Beispieldaten-Hinweis, DatenTabelle, bildschirm.ts (Wave 3)
@@ -166,7 +166,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Setup | 1/5 | In Progress|  |
+| 1. Setup | 3/5 | In Progress|  |
 | 2. Kernzahlen | 0/TBD | Not started | - |
 | 3. Details | 0/TBD | Not started | - |
 | 4. Manuelle Daten und App-Daten | 0/TBD | Not started | - |
