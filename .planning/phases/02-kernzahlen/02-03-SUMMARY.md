@@ -234,3 +234,7 @@ None - keine externen Dienste erforderlich.
 ---
 *Phase: 02-kernzahlen*
 *Completed: 2026-10-01*
+
+## Self-Check: PASSED
+
+All files claimed as created/modified verified present on disk (`daten/pruefberichte/befunde.md`, `daten/aufbereitet/finanzplan.csv`, `pipeline/ostbevern/pruefung.py`); all 7 commit hashes (3986b53, 655e9d4, 95efa90, f7641b8, 6adf713, 4915416, 8fbe618) verified present via `git log --oneline` on the plan's own branch range.
