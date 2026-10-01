@@ -9,10 +9,11 @@ import pytest
 from typer.testing import CliRunner
 
 import alle
-from ostbevern import plaene, pruefung, seiten
+from ostbevern import plaene, pruefung, querschnitte, seiten
 from ostbevern.konfiguration import STANDARD_JAHR
 from ostbevern.plaene import ExtraktionsErgebnis
 from ostbevern.pruefung import Bericht, Pruefpunkt, Regelergebnis
+from ostbevern.querschnitte import QuerschnitteFehler
 from ostbevern.seiten import KlassifizierungsErgebnis, SeitenFehler
 
 runner = CliRunner()
@@ -46,6 +47,12 @@ def _extraktions_ergebnisse() -> tuple[ExtraktionsErgebnis, ExtraktionsErgebnis]
             zeilen_geschrieben=10128, pfad=Path("daten/aufbereitet/ergebnisplan.csv")
         ),
         ExtraktionsErgebnis(zeilen_geschrieben=4697, pfad=Path("daten/aufbereitet/finanzplan.csv")),
+    )
+
+
+def _querschnitte_ergebnis() -> ExtraktionsErgebnis:
+    return ExtraktionsErgebnis(
+        zeilen_geschrieben=1152, pfad=Path("daten/zwischen/querschnitte.csv")
     )
 
 
@@ -87,6 +94,11 @@ def aufrufe(monkeypatch: pytest.MonkeyPatch) -> _Aufrufe:
         aufzeichnung.jahre["plaene"] = jahrgang.haushaltsjahr
         return _extraktions_ergebnisse()
 
+    def _extrahiere_querschnitte(jahrgang, **kwargs):  # noqa: ANN001, ANN003, ANN202
+        aufzeichnung.reihenfolge.append("querschnitte")
+        aufzeichnung.jahre["querschnitte"] = jahrgang.haushaltsjahr
+        return _querschnitte_ergebnis()
+
     def _pruefe_alles(jahr, **kwargs):  # noqa: ANN001, ANN003, ANN202
         aufzeichnung.reihenfolge.append("pruefe")
         aufzeichnung.jahre["pruefe"] = jahr
@@ -99,6 +111,7 @@ def aufrufe(monkeypatch: pytest.MonkeyPatch) -> _Aufrufe:
 
     monkeypatch.setattr(seiten, "klassifiziere_seiten", _klassifiziere_seiten)
     monkeypatch.setattr(plaene, "extrahiere_plaene", _extrahiere_plaene)
+    monkeypatch.setattr(querschnitte, "extrahiere_querschnitte", _extrahiere_querschnitte)
     monkeypatch.setattr(pruefung, "pruefe_alles", _pruefe_alles)
     monkeypatch.setattr(pruefung, "schreibe_konsistenzbericht", _schreibe_konsistenzbericht)
     return aufzeichnung
@@ -108,10 +121,11 @@ def test_ohne_jahr_nutzt_standardjahr(aufrufe: _Aufrufe) -> None:
     ergebnis = runner.invoke(alle.app, [])
     assert ergebnis.exit_code == 0
     assert str(STANDARD_JAHR) in ergebnis.output
-    assert aufrufe.reihenfolge == ["seiten", "plaene", "pruefe", "schreibe"]
+    assert aufrufe.reihenfolge == ["seiten", "plaene", "querschnitte", "pruefe", "schreibe"]
     assert aufrufe.jahre == {
         "seiten": STANDARD_JAHR,
         "plaene": STANDARD_JAHR,
+        "querschnitte": STANDARD_JAHR,
         "pruefe": STANDARD_JAHR,
     }
 
@@ -138,7 +152,7 @@ def test_roter_bericht_beendet_mit_fehler(
     ergebnis = runner.invoke(alle.app, [])
     assert ergebnis.exit_code == 1
     # Der Bericht wird trotz Fehlerabbruch geschrieben (D-01: Transparenz über rote Berichte).
-    assert aufrufe.reihenfolge == ["seiten", "plaene", "pruefe", "schreibe"]
+    assert aufrufe.reihenfolge == ["seiten", "plaene", "querschnitte", "pruefe", "schreibe"]
     assert len(aufrufe.geschriebene_berichte) == 1
 
 
@@ -158,3 +172,22 @@ def test_schrittfehler_beendet_mit_fehler(
     assert "Fehler:" in ausgabe
     # plaene und pruefung wurden nicht aufgerufen (D-09: Abbruch nach dem ersten Fehler).
     assert aufrufe.reihenfolge == []
+
+
+def test_querschnittfehler_beendet_mit_fehler(
+    aufrufe: _Aufrufe, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def _bricht_ab(jahrgang, **kwargs):  # noqa: ANN001, ANN003, ANN202
+        aufrufe.reihenfolge.append("querschnitte")
+        raise QuerschnitteFehler("Testfehler: Querschnitt nicht lesbar")
+
+    monkeypatch.setattr(querschnitte, "extrahiere_querschnitte", _bricht_ab)
+
+    ergebnis = runner.invoke(alle.app, [])
+    assert ergebnis.exit_code == 1
+    ausgabe = (
+        ergebnis.output if ergebnis.stderr_bytes is None else ergebnis.output + ergebnis.stderr
+    )
+    assert "Fehler:" in ausgabe
+    # pruefung wurde nicht aufgerufen (D-09: Abbruch nach dem ersten Fehler).
+    assert aufrufe.reihenfolge == ["seiten", "plaene", "querschnitte"]

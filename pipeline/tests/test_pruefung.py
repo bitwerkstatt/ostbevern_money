@@ -1098,6 +1098,84 @@ def test_regel7_toleriert_einen_euro(tmp_path: Path) -> None:
     assert regel7.status == "grün"
 
 
+def test_regel7_bekannter_befund_bleibt_gruen(tmp_path: Path) -> None:
+    """Eine dokumentierte Regel-7-Abweichung (gleicher Betrag) bleibt grün (D-02, D-04, D-05)."""
+    querschnitte = lies_querschnitte_csv(DATEN_WURZEL / QUERSCHNITTE_CSV)
+    ziel = querschnitte.filter(
+        (pl.col("kennzahl") == "ordentliche_ertraege") & (~pl.col("gesamtsumme"))
+    ).row(0, named=True)
+
+    manipuliert = _manipuliere_querschnittwert(
+        querschnitte,
+        pb=ziel["pb"],
+        pg=ziel["pg"],
+        plan=ziel["plan"],
+        kennzahl=ziel["kennzahl"],
+        delta=5,
+    )
+    schreibe_querschnitte_csv(manipuliert, tmp_path / QUERSCHNITTE_CSV)
+    _kopiere_regel7_abhaengigkeiten(tmp_path)
+
+    befund_zeile = _befunde_zeile(
+        regel=7,
+        plan=f"querschnitt_{ziel['plan']}",
+        ebene="PG",
+        code=ziel["pg"],
+        zeile=ziel["kennzahl"],
+        jahr=STANDARD_JAHR,
+        wertart="ansatz",
+        abweichung=-5,
+        pdf_seite=ziel["pdf_seite"],
+        begruendung="Testabweichung Regel 7",
+    )
+    reale_befunde_zeilen = _lies_schluesseltabelle_markdown_zeilen(DATEN_WURZEL / BEFUNDE_MD)
+    _schreibe_befunde_md(tmp_path / BEFUNDE_MD, zeilen=[*reale_befunde_zeilen, befund_zeile])
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel7 = next((regel for regel in bericht.regeln if regel.regel == 7), None)
+    assert regel7 is not None, "Regel 7 fehlt im Bericht"
+    assert regel7.status == "grün"
+    assert bericht.ist_gruen is True
+    assert any(
+        punkt.code == ziel["pg"] and punkt.zeile == ziel["kennzahl"]
+        for punkt, _befund in regel7.bekannte
+    )
+
+
+def test_regel7_veralteter_befund_macht_bericht_rot(tmp_path: Path) -> None:
+    """Ein Regel-7-Befund ohne passende tatsächliche Abweichung gilt als veraltet (D-04)."""
+    schreibe_querschnitte_csv(
+        lies_querschnitte_csv(DATEN_WURZEL / QUERSCHNITTE_CSV), tmp_path / QUERSCHNITTE_CSV
+    )
+    _kopiere_regel7_abhaengigkeiten(tmp_path)
+
+    querschnitte = lies_querschnitte_csv(DATEN_WURZEL / QUERSCHNITTE_CSV)
+    ziel = querschnitte.filter(
+        (pl.col("kennzahl") == "ordentliche_ertraege") & (~pl.col("gesamtsumme"))
+    ).row(0, named=True)
+    veralteter_befund = _befunde_zeile(
+        regel=7,
+        plan=f"querschnitt_{ziel['plan']}",
+        ebene="PG",
+        code=ziel["pg"],
+        zeile=ziel["kennzahl"],
+        jahr=STANDARD_JAHR,
+        wertart="ansatz",
+        abweichung=5,
+        pdf_seite=ziel["pdf_seite"],
+        begruendung="tritt nicht mehr auf",
+    )
+    reale_befunde_zeilen = _lies_schluesseltabelle_markdown_zeilen(DATEN_WURZEL / BEFUNDE_MD)
+    _schreibe_befunde_md(tmp_path / BEFUNDE_MD, zeilen=[*reale_befunde_zeilen, veralteter_befund])
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    assert bericht.ist_gruen is False
+    assert any(
+        befund.code == ziel["pg"] and befund.zeile == ziel["kennzahl"]
+        for befund in bericht.veraltete_befunde
+    )
+
+
 def test_regel7_kennzahlen_decken_alle_querschnitt_werte_ab() -> None:
     """REGEL7_KENNZAHLEN deckt jede in querschnitte.csv vorkommende Kennzahl ab (D-15)."""
     querschnitte = lies_querschnitte_csv(DATEN_WURZEL / QUERSCHNITTE_CSV)
