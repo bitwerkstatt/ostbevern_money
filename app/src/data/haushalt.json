@@ -1,0 +1,176 @@
+{
+  "haushaltsjahr": 2026,
+  "jahre": [
+    2024,
+    2025,
+    2026,
+    2027,
+    2028,
+    2029
+  ],
+  "wertarten": [
+    "ergebnis",
+    "ansatz",
+    "ansatz",
+    "planung",
+    "planung",
+    "planung"
+  ],
+  "vorbericht": {
+    "steuerarten": {
+      "tabelle": "steuerarten",
+      "quelle_einheit": "teur",
+      "planzeile": "steuern",
+      "gesamt_plan": [
+        19614808,
+        17964000,
+        18443000,
+        19866000,
+        20801000,
+        21721000
+      ],
+      "gesamt_vorbericht": {
+        "werte": [
+          19615000,
+          17964000,
+          18443000,
+          19866000,
+          20801000,
+          21721000
+        ],
+        "gerundet": true,
+        "quelle": 27
+      },
+      "posten": [
+        {
+          "posten": "grundsteuer_a",
+          "name": "Grundsteuer A",
+          "werte": [
+            160000,
+            130000,
+            90000,
+            90000,
+            90000,
+            90000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "grundsteuer_b",
+          "name": "Grundsteuer B",
+          "werte": [
+            1851000,
+            2000000,
+            2060000,
+            2285000,
+            2312000,
+            2340000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "gewerbesteuer",
+          "name": "Gewerbesteuer",
+          "werte": [
+            9511000,
+            7165000,
+            7800000,
+            8300000,
+            8800000,
+            9300000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "anteil_einkommensteuer",
+          "name": "Anteil Einkommensteuer",
+          "werte": [
+            6471000,
+            7002000,
+            6830000,
+            7421000,
+            7784000,
+            8134000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "anteil_umsatzsteuer",
+          "name": "Anteil Umsatzsteuer",
+          "werte": [
+            855000,
+            879000,
+            887000,
+            931000,
+            954000,
+            974000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "vergnuegungssteuer",
+          "name": "Vergnügungssteuer",
+          "werte": [
+            54000,
+            50000,
+            55000,
+            55000,
+            55000,
+            55000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "hundesteuer",
+          "name": "Hundesteuer",
+          "werte": [
+            65000,
+            65000,
+            66000,
+            66000,
+            66000,
+            66000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "kompensationszahlungen",
+          "name": "Kompensationszahlungen",
+          "werte": [
+            648000,
+            673000,
+            655000,
+            718000,
+            740000,
+            762000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        }
+      ]
+    }
+  }
+}

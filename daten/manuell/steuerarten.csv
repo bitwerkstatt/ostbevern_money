@@ -1,0 +1,55 @@
+tabelle,position,posten,posten_name,ist_gesamt,jahr,wertart,betrag_teur,anmerkung,quelle
+steuerarten,1,grundsteuer_a,Grundsteuer A,false,2024,ergebnis,160,,27
+steuerarten,1,grundsteuer_a,Grundsteuer A,false,2025,ansatz,130,,27
+steuerarten,1,grundsteuer_a,Grundsteuer A,false,2026,ansatz,90,,27
+steuerarten,1,grundsteuer_a,Grundsteuer A,false,2027,planung,90,,27
+steuerarten,1,grundsteuer_a,Grundsteuer A,false,2028,planung,90,,27
+steuerarten,1,grundsteuer_a,Grundsteuer A,false,2029,planung,90,,27
+steuerarten,2,grundsteuer_b,Grundsteuer B,false,2024,ergebnis,1851,,27
+steuerarten,2,grundsteuer_b,Grundsteuer B,false,2025,ansatz,2000,,27
+steuerarten,2,grundsteuer_b,Grundsteuer B,false,2026,ansatz,2060,,27
+steuerarten,2,grundsteuer_b,Grundsteuer B,false,2027,planung,2285,,27
+steuerarten,2,grundsteuer_b,Grundsteuer B,false,2028,planung,2312,,27
+steuerarten,2,grundsteuer_b,Grundsteuer B,false,2029,planung,2340,,27
+steuerarten,3,gewerbesteuer,Gewerbesteuer,false,2024,ergebnis,9511,,27
+steuerarten,3,gewerbesteuer,Gewerbesteuer,false,2025,ansatz,7165,,27
+steuerarten,3,gewerbesteuer,Gewerbesteuer,false,2026,ansatz,7800,,27
+steuerarten,3,gewerbesteuer,Gewerbesteuer,false,2027,planung,8300,,27
+steuerarten,3,gewerbesteuer,Gewerbesteuer,false,2028,planung,8800,,27
+steuerarten,3,gewerbesteuer,Gewerbesteuer,false,2029,planung,9300,,27
+steuerarten,4,anteil_einkommensteuer,Anteil Einkommensteuer,false,2024,ergebnis,6471,,27
+steuerarten,4,anteil_einkommensteuer,Anteil Einkommensteuer,false,2025,ansatz,7002,,27
+steuerarten,4,anteil_einkommensteuer,Anteil Einkommensteuer,false,2026,ansatz,6830,,27
+steuerarten,4,anteil_einkommensteuer,Anteil Einkommensteuer,false,2027,planung,7421,,27
+steuerarten,4,anteil_einkommensteuer,Anteil Einkommensteuer,false,2028,planung,7784,,27
+steuerarten,4,anteil_einkommensteuer,Anteil Einkommensteuer,false,2029,planung,8134,,27
+steuerarten,5,anteil_umsatzsteuer,Anteil Umsatzsteuer,false,2024,ergebnis,855,,27
+steuerarten,5,anteil_umsatzsteuer,Anteil Umsatzsteuer,false,2025,ansatz,879,,27
+steuerarten,5,anteil_umsatzsteuer,Anteil Umsatzsteuer,false,2026,ansatz,887,,27
+steuerarten,5,anteil_umsatzsteuer,Anteil Umsatzsteuer,false,2027,planung,931,,27
+steuerarten,5,anteil_umsatzsteuer,Anteil Umsatzsteuer,false,2028,planung,954,,27
+steuerarten,5,anteil_umsatzsteuer,Anteil Umsatzsteuer,false,2029,planung,974,,27
+steuerarten,6,vergnuegungssteuer,Vergnügungssteuer,false,2024,ergebnis,54,,27
+steuerarten,6,vergnuegungssteuer,Vergnügungssteuer,false,2025,ansatz,50,,27
+steuerarten,6,vergnuegungssteuer,Vergnügungssteuer,false,2026,ansatz,55,,27
+steuerarten,6,vergnuegungssteuer,Vergnügungssteuer,false,2027,planung,55,,27
+steuerarten,6,vergnuegungssteuer,Vergnügungssteuer,false,2028,planung,55,,27
+steuerarten,6,vergnuegungssteuer,Vergnügungssteuer,false,2029,planung,55,,27
+steuerarten,7,hundesteuer,Hundesteuer,false,2024,ergebnis,65,,27
+steuerarten,7,hundesteuer,Hundesteuer,false,2025,ansatz,65,,27
+steuerarten,7,hundesteuer,Hundesteuer,false,2026,ansatz,66,,27
+steuerarten,7,hundesteuer,Hundesteuer,false,2027,planung,66,,27
+steuerarten,7,hundesteuer,Hundesteuer,false,2028,planung,66,,27
+steuerarten,7,hundesteuer,Hundesteuer,false,2029,planung,66,,27
+steuerarten,8,kompensationszahlungen,Kompensationszahlungen,false,2024,ergebnis,648,,27
+steuerarten,8,kompensationszahlungen,Kompensationszahlungen,false,2025,ansatz,673,,27
+steuerarten,8,kompensationszahlungen,Kompensationszahlungen,false,2026,ansatz,655,,27
+steuerarten,8,kompensationszahlungen,Kompensationszahlungen,false,2027,planung,718,,27
+steuerarten,8,kompensationszahlungen,Kompensationszahlungen,false,2028,planung,740,,27
+steuerarten,8,kompensationszahlungen,Kompensationszahlungen,false,2029,planung,762,,27
+steuerarten,9,gesamt,Gesamt,true,2024,ergebnis,19615,,27
+steuerarten,9,gesamt,Gesamt,true,2025,ansatz,17964,,27
+steuerarten,9,gesamt,Gesamt,true,2026,ansatz,18443,,27
+steuerarten,9,gesamt,Gesamt,true,2027,planung,19866,,27
+steuerarten,9,gesamt,Gesamt,true,2028,planung,20801,,27
+steuerarten,9,gesamt,Gesamt,true,2029,planung,21721,,27

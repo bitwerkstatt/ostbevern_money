@@ -38,6 +38,13 @@ INVESTITIONEN_PB_CSV = Path("zwischen/investitionen_pb.csv")
 KONSISTENZ_MD = Path("pruefberichte/konsistenz.md")
 BEFUNDE_MD = Path("pruefberichte/befunde.md")
 
+# Manuell gepflegte Vorberichtstabellen (Phase 4, D-05, D-06, D-09): einmalig von Hand
+# abgeschrieben, danach eingecheckte Handdaten, die kein Pipeline-Schritt überschreibt.
+# Die Schreibfunktion `schreibe_vorbericht_csv` unten wird deshalb nur für diese einmalige
+# Transkription und in Tests aufgerufen, nie aus einem Pipeline-Schritt heraus.
+MANUELL_WURZEL = Path("manuell")
+STEUERARTEN_CSV = MANUELL_WURZEL / "steuerarten.csv"
+
 
 class SchemaFehler(ValueError):
     """Wird ausgelöst, wenn eine CSV-Datei nicht dem zentralen Schema entspricht."""
@@ -414,3 +421,35 @@ def schreibe_grundzahlen_csv(df: pl.DataFrame, pfad: Path) -> None:
 def lies_grundzahlen_csv(pfad: Path) -> pl.DataFrame:
     """Liest grundzahlen.csv über `lies_csv` mit GRUNDZAHLEN_SPALTEN."""
     return lies_csv(pfad, GRUNDZAHLEN_SPALTEN)
+
+
+# Manuelle Vorberichtstabellen (Phase 4, D-05, D-06, D-09, MANU-01 bis MANU-04): ein Wert
+# je Posten, Jahr und Wertart (Langformat). `betrag_teur` ist T€ wie gedruckt (nie Euro,
+# D-05) — erst Schritt 07 rechnet × 1000 und setzt das Kennzeichen `gerundet`. `quelle`
+# ist die 1-basierte PDF-Seite der gedruckten Zeile (MANU-07); `anmerkung` ist null ohne
+# Fußnotentext. `ist_gesamt` markiert die mit abgeschriebene, gedruckte Gesamtzeile
+# (D-07 Stufe a); genau eine je (tabelle, jahr).
+VORBERICHT_SPALTEN: dict[str, pl.PolarsDataType] = {
+    "tabelle": pl.Utf8,
+    "position": pl.Int64,
+    "posten": pl.Utf8,
+    "posten_name": pl.Utf8,
+    "ist_gesamt": pl.Boolean,
+    "jahr": pl.Int64,
+    "wertart": pl.Utf8,
+    "betrag_teur": pl.Int64,
+    "anmerkung": pl.Utf8,
+    "quelle": pl.Int64,
+}
+
+
+def schreibe_vorbericht_csv(df: pl.DataFrame, pfad: Path) -> None:
+    """Schreibt eine manuelle Vorberichtstabelle sortiert nach tabelle, position, jahr
+    (D-05, D-06). Nur für die einmalige Abschrift (D-09) und Tests — kein Pipeline-Schritt
+    schreibt unter daten/manuell/."""
+    schreibe_csv(df, pfad, VORBERICHT_SPALTEN, ["tabelle", "position", "jahr"])
+
+
+def lies_vorbericht_csv(pfad: Path) -> pl.DataFrame:
+    """Liest eine manuelle Vorberichtstabelle über `lies_csv` mit VORBERICHT_SPALTEN."""
+    return lies_csv(pfad, VORBERICHT_SPALTEN)

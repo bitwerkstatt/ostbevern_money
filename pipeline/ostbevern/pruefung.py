@@ -29,6 +29,7 @@ from ostbevern.schema import (
     PRODUKTE_JSON,
     QUERSCHNITTE_CSV,
     SEITEN_CSV,
+    STEUERARTEN_CSV,
     VE_FAELLIGKEITEN_CSV,
     WERTARTEN,
     lies_hierarchie_csv,
@@ -39,6 +40,7 @@ from ostbevern.schema import (
     lies_querschnitte_csv,
     lies_seiten_csv,
     lies_ve_faelligkeiten_csv,
+    lies_vorbericht_csv,
     zerlege_spaltenkopf,
 )
 from ostbevern.zeilen import FORMELN, plantyp_fuer
@@ -832,6 +834,90 @@ def _pruefe_regel4(
     )
 
 
+# Regel 5 (PRUEF-05, D-05 bis D-07): manuelle Vorberichtstabelle (schema.py-Tabellenname,
+# z. B. "steuerarten") -> Gesamtergebnisplan-Zeile, gegen die die gedruckte Gesamtzeile der
+# Tabelle in Stufe (b) geprüft wird (fachliche Regel, nicht jede Tabelle hat eine GEP-Zeile).
+REGEL5_GEP_ZEILEN: dict[str, str] = {"steuerarten": "01"}
+# Stufe (b) vergleicht die gedruckte, nur in T€ geführte Gesamtzeile (×1000) gegen die
+# eurogenaue GEP-Zeile; eine eigene, gröbere Toleranz als TOLERANZ_EURO (Stufe a bleibt
+# bei der strengen 1-€-Toleranz, da dort beide Seiten aus derselben Tabelle stammen).
+REGEL5_TOLERANZ_GEP_EURO = 1000
+
+
+def _pruefe_regel5(
+    *,
+    vorbericht: Mapping[str, pl.DataFrame],
+    planwerte_ergebnisplan: Planwerte,
+) -> Regelergebnis:
+    """Regel 5 – manuelle Vorberichtstabellen → Planzeilen (PRUEF-05, D-07).
+
+    Zweistufig je (Tabelle, Jahr): Stufe (a) vergleicht die Summe der Nicht-Gesamt-Posten
+    mit der mit abgeschriebenen, gedruckten Gesamtzeile (beide × 1000, damit eine 1-T€-
+    Differenz zu 1.000 € wird und über TOLERANZ_EURO=1 dokumentierbar bleibt, D-07a). Stufe
+    (b) vergleicht die Gesamtzeile × 1000 mit der über REGEL5_GEP_ZEILEN zugeordneten
+    GEP-Zeile, mit der gröberen REGEL5_TOLERANZ_GEP_EURO-Toleranz (D-07b). `ebene`/`code`
+    bleiben "GESAMT"/"" (Research Pattern 3 — Vorbericht-Tabellen sind kein PB/PG/P-Knoten),
+    der fachliche Kontext steht in `plan` (`vorbericht_{tabelle}`), der Posten-/Vergleichs-
+    schlüssel in `zeile` ("summe_posten" bzw. "gep_{nr}").
+    """
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for tabelle, df in sorted(vorbericht.items()):
+        gep_zeile = REGEL5_GEP_ZEILEN.get(tabelle)
+        for jahr in sorted(df["jahr"].unique().to_list()):
+            jahr_df = df.filter(pl.col("jahr") == jahr)
+            gesamt_zeilen = jahr_df.filter(pl.col("ist_gesamt"))
+            if gesamt_zeilen.height != 1:
+                raise PruefungsFehler(
+                    f"Regel 5: {tabelle} Jahr {jahr} hat {gesamt_zeilen.height} "
+                    "ist_gesamt-Zeilen, erwartet genau 1"
+                )
+            gesamt = gesamt_zeilen.row(0, named=True)
+            wertart = gesamt["wertart"]
+            pdf_seite = gesamt["quelle"]
+            posten_summe = jahr_df.filter(~pl.col("ist_gesamt"))["betrag_teur"].sum() or 0
+
+            geprueft += 1
+            punkt_a = Pruefpunkt(
+                regel=5,
+                plan=f"vorbericht_{tabelle}",
+                ebene="GESAMT",
+                code="",
+                zeile="summe_posten",
+                jahr=jahr,
+                wertart=wertart,
+                soll=gesamt["betrag_teur"] * 1000,
+                ist=posten_summe * 1000,
+                pdf_seite=pdf_seite,
+            )
+            if abs(punkt_a.abweichung) > TOLERANZ_EURO:
+                abweichungen.append(punkt_a)
+
+            if gep_zeile is not None:
+                geprueft += 1
+                punkt_b = Pruefpunkt(
+                    regel=5,
+                    plan=f"vorbericht_{tabelle}",
+                    ebene="GESAMT",
+                    code="",
+                    zeile=f"gep_{gep_zeile}",
+                    jahr=jahr,
+                    wertart=wertart,
+                    soll=planwerte_ergebnisplan.wert("GESAMT", "", gep_zeile, jahr, wertart),
+                    ist=gesamt["betrag_teur"] * 1000,
+                    pdf_seite=pdf_seite,
+                )
+                if abs(punkt_b.abweichung) > REGEL5_TOLERANZ_GEP_EURO:
+                    abweichungen.append(punkt_b)
+
+    return Regelergebnis(
+        regel=5,
+        titel="Regel 5 – Manuelle Tabellen → Planzeilen",
+        geprueft=geprueft,
+        abweichungen=tuple(abweichungen),
+    )
+
+
 # Regel 6 (PRUEF-06, D-05): Teilfinanzplan-Zeile -> Richtung der Investitionsmaßnahmen.
 REGEL6_ZEILEN: tuple[tuple[str, str], ...] = (("23", "einzahlung"), ("30", "auszahlung"))
 
@@ -1359,6 +1445,7 @@ def pruefe_alles(
     investitionen_pb = lies_investitionen_pb_csv(daten_wurzel / INVESTITIONEN_PB_CSV)
     ve_faelligkeiten = lies_ve_faelligkeiten_csv(daten_wurzel / VE_FAELLIGKEITEN_CSV)
     produkte = lies_produkte_json(daten_wurzel / PRODUKTE_JSON)
+    vorbericht = {"steuerarten": lies_vorbericht_csv(daten_wurzel / STEUERARTEN_CSV)}
     pfad_befunde = befunde_pfad if befunde_pfad is not None else daten_wurzel / BEFUNDE_MD
     befunde = lies_befunde(pfad_befunde)
 
@@ -1381,6 +1468,10 @@ def pruefe_alles(
         hierarchie=hierarchie,
         sollwerte=sollwerte,
         spalten=jahrgang.spalten["ergebnisplan"],
+    )
+    regel5 = _pruefe_regel5(
+        vorbericht=vorbericht,
+        planwerte_ergebnisplan=Planwerte(ergebnisplan, datei="ergebnisplan"),
     )
     regel6 = _pruefe_regel6(
         investitionen=investitionen,
@@ -1405,7 +1496,7 @@ def pruefe_alles(
     )
 
     regeln, veraltete_befunde = _wende_befunde_an(
-        (regel1, regel2, regel3, regel4, regel6, regel7, regel8), befunde
+        (regel1, regel2, regel3, regel4, regel5, regel6, regel7, regel8), befunde
     )
     unbekannte_seiten = tuple(
         sorted(seiten.filter(pl.col("typ") == "unbekannt")["pdf_seite"].to_list())

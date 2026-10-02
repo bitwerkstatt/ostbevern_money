@@ -9,7 +9,8 @@ import pytest
 from typer.testing import CliRunner
 
 import alle
-from ostbevern import investitionen, plaene, produkte, pruefung, querschnitte, seiten
+from ostbevern import app_daten, investitionen, plaene, produkte, pruefung, querschnitte, seiten
+from ostbevern.app_daten import AppDatenFehler
 from ostbevern.investitionen import ExtraktionsErgebnis as InvestitionenErgebnis
 from ostbevern.investitionen import InvestitionenFehler
 from ostbevern.konfiguration import PROJEKT_WURZEL, STANDARD_JAHR
@@ -77,6 +78,13 @@ def _querschnitte_ergebnis() -> ExtraktionsErgebnis:
     return ExtraktionsErgebnis(
         zeilen_geschrieben=1152, pfad=Path("daten/zwischen/querschnitte.csv")
     )
+
+
+def _app_daten_ergebnis() -> list[Path]:
+    # alle.py ruft .relative_to(PROJEKT_WURZEL) auf diesen Pfaden auf (wie
+    # 07_app_daten.py); die Fixture braucht deshalb einen absoluten Pfad, wie
+    # _investitionen_ergebnisse() oben.
+    return [PROJEKT_WURZEL / "app/src/data/haushalt.json"]
 
 
 def _investitionen_ergebnisse() -> tuple[InvestitionenErgebnis, InvestitionenErgebnis]:
@@ -158,6 +166,11 @@ def aufrufe(monkeypatch: pytest.MonkeyPatch) -> _Aufrufe:
         aufzeichnung.geschriebene_berichte.append(bericht)
         return Path("daten/pruefberichte/konsistenz.md")
 
+    def _erzeuge_app_daten(jahr, **kwargs):  # noqa: ANN001, ANN003, ANN202
+        aufzeichnung.reihenfolge.append("app_daten")
+        aufzeichnung.jahre["app_daten"] = jahr
+        return _app_daten_ergebnis()
+
     monkeypatch.setattr(seiten, "klassifiziere_seiten", _klassifiziere_seiten)
     monkeypatch.setattr(plaene, "extrahiere_plaene", _extrahiere_plaene)
     monkeypatch.setattr(produkte, "extrahiere_produkte", _extrahiere_produkte)
@@ -165,6 +178,7 @@ def aufrufe(monkeypatch: pytest.MonkeyPatch) -> _Aufrufe:
     monkeypatch.setattr(querschnitte, "extrahiere_querschnitte", _extrahiere_querschnitte)
     monkeypatch.setattr(pruefung, "pruefe_alles", _pruefe_alles)
     monkeypatch.setattr(pruefung, "schreibe_konsistenzbericht", _schreibe_konsistenzbericht)
+    monkeypatch.setattr(app_daten, "erzeuge_app_daten", _erzeuge_app_daten)
     return aufzeichnung
 
 
@@ -180,6 +194,7 @@ def test_ohne_jahr_nutzt_standardjahr(aufrufe: _Aufrufe) -> None:
         "querschnitte",
         "pruefe",
         "schreibe",
+        "app_daten",
     ]
     assert aufrufe.jahre == {
         "seiten": STANDARD_JAHR,
@@ -188,6 +203,7 @@ def test_ohne_jahr_nutzt_standardjahr(aufrufe: _Aufrufe) -> None:
         "investitionen": STANDARD_JAHR,
         "querschnitte": STANDARD_JAHR,
         "pruefe": STANDARD_JAHR,
+        "app_daten": STANDARD_JAHR,
     }
 
 
@@ -299,3 +315,55 @@ def test_querschnittfehler_beendet_mit_fehler(
     assert "Fehler:" in ausgabe
     # pruefung wurde nicht aufgerufen (D-09: Abbruch nach dem ersten Fehler).
     assert aufrufe.reihenfolge == ["seiten", "plaene", "produkte", "investitionen", "querschnitte"]
+
+
+def test_roter_bericht_ruft_app_daten_nicht_auf(
+    aufrufe: _Aufrufe, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def _rot(jahr, **kwargs):  # noqa: ANN001, ANN003, ANN202
+        aufrufe.reihenfolge.append("pruefe")
+        return _roter_bericht(jahr)
+
+    monkeypatch.setattr(pruefung, "pruefe_alles", _rot)
+
+    ergebnis = runner.invoke(alle.app, [])
+    assert ergebnis.exit_code == 1
+    # Schritt 07 läuft nur nach einem grünen Bericht (D-24); der Bericht wird trotzdem
+    # geschrieben (D-01: Transparenz über rote Berichte).
+    assert aufrufe.reihenfolge == [
+        "seiten",
+        "plaene",
+        "produkte",
+        "investitionen",
+        "querschnitte",
+        "pruefe",
+        "schreibe",
+    ]
+    assert "app_daten" not in aufrufe.reihenfolge
+
+
+def test_app_daten_fehler_beendet_mit_fehler(
+    aufrufe: _Aufrufe, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def _bricht_ab(jahr, **kwargs):  # noqa: ANN001, ANN003, ANN202
+        aufrufe.reihenfolge.append("app_daten")
+        raise AppDatenFehler("Testfehler: App-Daten nicht erzeugbar")
+
+    monkeypatch.setattr(app_daten, "erzeuge_app_daten", _bricht_ab)
+
+    ergebnis = runner.invoke(alle.app, [])
+    assert ergebnis.exit_code == 1
+    ausgabe = (
+        ergebnis.output if ergebnis.stderr_bytes is None else ergebnis.output + ergebnis.stderr
+    )
+    assert "Fehler:" in ausgabe
+    assert aufrufe.reihenfolge == [
+        "seiten",
+        "plaene",
+        "produkte",
+        "investitionen",
+        "querschnitte",
+        "pruefe",
+        "schreibe",
+        "app_daten",
+    ]

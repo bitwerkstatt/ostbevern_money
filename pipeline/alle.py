@@ -4,8 +4,9 @@ Prüft den gewählten Jahrgang (Jahrgangs- und Sollwertdatei, PDF-Existenz) und 
 nummerierten Schritte in Reihenfolge aus (D-09): 01 (Seiten klassifizieren), 02 (Pläne
 extrahieren), 03 (Produktinformationen und Erläuterungen), 04 (Investitionsmaßnahmen),
 Querschnitte (Kontrollquelle, PDF-lesend, D-14), 06 (Konsistenzprüfung, liest danach nur
-noch CSVs, D-06). Spätere Phasen hängen 05 nach diesen Schritten an. Die eigentliche
-Logik lebt in `ostbevern/`; dieses Modul bleibt ein dünner typer-Einstiegspunkt.
+noch CSVs, D-06), 07 (App-JSON-Erzeugung, nur nach einem grünen Bericht, D-24). Spätere
+Phasen hängen 05 nach Schritt 04 an. Die eigentliche Logik lebt in `ostbevern/`; dieses
+Modul bleibt ein dünner typer-Einstiegspunkt.
 """
 
 from __future__ import annotations
@@ -14,7 +15,8 @@ from typing import Annotated
 
 import typer
 
-from ostbevern import investitionen, plaene, produkte, pruefung, querschnitte, seiten
+from ostbevern import app_daten, investitionen, plaene, produkte, pruefung, querschnitte, seiten
+from ostbevern.app_daten import AppDatenFehler
 from ostbevern.investitionen import InvestitionenFehler
 from ostbevern.konfiguration import (
     PROJEKT_WURZEL,
@@ -125,6 +127,15 @@ def main(
     if not bericht.ist_gruen:
         typer.echo("Fehler: Konsistenzbericht rot oder veraltete Befunde.", err=True)
         raise typer.Exit(code=1)
+
+    try:
+        pfade_app_daten = app_daten.erzeuge_app_daten(jahr)
+    except (AppDatenFehler, SchemaFehler, KonfigurationsFehler, PruefungsFehler) as fehler:
+        typer.echo(f"Fehler: {fehler}", err=True)
+        raise typer.Exit(code=1) from fehler
+    for pfad in pfade_app_daten:
+        pfad_relativ = pfad.relative_to(PROJEKT_WURZEL)
+        typer.echo(f"Schritt 07: geschrieben: {pfad_relativ}")
 
 
 if __name__ == "__main__":

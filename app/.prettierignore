@@ -1,0 +1,9 @@
+# Von pipeline/07_app_daten.py generierte JSON-Dateien (D-24). Ihr Format (Schlüssel-
+# reihenfolge, Einrückung) gibt die Pipeline deterministisch vor (ostbevern.app_daten.
+# schreibe_app_json); Prettier würde dasselbe JSON anders formatieren und bei jedem
+# Pipeline-Lauf einen Diff erzeugen. Einige Dateien entstehen erst in späteren Phasen.
+src/data/haushalt.json
+src/data/produkte.json
+src/data/investitionen.json
+src/data/stellenplan.json
+src/data/texte.json

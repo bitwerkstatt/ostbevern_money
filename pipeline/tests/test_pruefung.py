@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import ast
 import dataclasses
+import shutil
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -52,6 +53,7 @@ from ostbevern.schema import (
     INVESTITIONEN_CSV,
     INVESTITIONEN_PB_CSV,
     KONSISTENZ_MD,
+    MANUELL_WURZEL,
     PLAN_SPALTEN,
     PRODUKT_SCHLUESSEL,
     PRODUKTE_JSON,
@@ -213,11 +215,14 @@ def _kopiere_hierarchie_nach(tmp_path: Path) -> None:
 
     Kopiert außerdem produkte.json mit (03-05, Regel 8 liest beide bei jedem
     `pruefe_alles()`-Aufruf; praktisch jeder Aufrufer dieser Funktion braucht sie,
-    wie `_kopiere_finanzplan_nach` es für investitionen*.csv bereits tut)."""
+    wie `_kopiere_finanzplan_nach` es für investitionen*.csv bereits tut) sowie den
+    gesamten `daten/manuell/`-Baum (Phase 4, Regel 5 liest ihn bei jedem
+    `pruefe_alles()`-Aufruf, derselbe Huckepack-Mechanismus)."""
     pfad_ziel = tmp_path / HIERARCHIE_CSV
     pfad_ziel.parent.mkdir(parents=True, exist_ok=True)
     pfad_ziel.write_bytes((DATEN_WURZEL / HIERARCHIE_CSV).read_bytes())
     _kopiere_produkte_nach(tmp_path)
+    shutil.copytree(DATEN_WURZEL / MANUELL_WURZEL, tmp_path / MANUELL_WURZEL, dirs_exist_ok=True)
 
 
 def _kopiere_befunde_nach(tmp_path: Path) -> None:
