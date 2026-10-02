@@ -25,7 +25,7 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [ ] **EXTR-06**: Produktinformationen aller 63 Produkte stehen in `produkte.json` (Fachbereich, Gremium, Beschreibung, Leistungen, Auftragsgrundlage, Bindungsgrad normalisiert und original, Klassifizierung, Zielgruppe, Ziele, PDF-Seiten)
 - [ ] **EXTR-07**: Grundzahlen je Produkt stehen in `grundzahlen.csv` mit Einheit, Jahr und Stichtagshinweis; die Steuer-Istwerte 2022–2025 aus 160101 sind enthalten
 - [ ] **EXTR-08**: Erläuterungsposten („Erläuterung zu Nr. …“) sind je Produkt mit Betrag, Text und Zeilenbezug extrahiert
-- [ ] **EXTR-09**: Investitionsmaßnahmen werden nur aus den Produktseiten in `investitionen.csv` extrahiert (Konto, Richtung, Jahr, Wertart); „(Kassenwirksamkeit)“-Zeilen landen in `ve_faelligkeiten.csv` und nicht in Summen
+- [x] **EXTR-09**: Investitionsmaßnahmen werden nur aus den Produktseiten in `investitionen.csv` extrahiert (Konto, Richtung, Jahr, Wertart); „(Kassenwirksamkeit)“-Zeilen landen in `ve_faelligkeiten.csv` und nicht in Summen
 - [ ] **EXTR-10**: Der Stellenplan (Teil A Beamte, Teil B Tarif, Stellenübersicht nach PB) steht in `stellenplan.csv` mit Stellen 2026, 2025, besetzt 30.06.2025 und Vermerken
 
 ### Manuelle Daten
@@ -46,7 +46,7 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [x] **PRUEF-03**: Summe der 15 PB = Gesamtergebnisplan (Z. 01–17, 19, 20; ohne TP 27/28)
 - [x] **PRUEF-04**: Sollwerte aus Anhang B (Gesamtergebnisplan, Gesamtfinanzplan/Satzung § 1, PB-Summen, Eckwerte) werden getroffen
 - [ ] **PRUEF-05**: Manuelle Tabellen stimmen mit den jeweiligen Planzeilen überein (Toleranz ±1 T€ bei T€-Tabellen; bekannte Differenzen dokumentiert)
-- [ ] **PRUEF-06**: Investitionssummen je Produkt = Teilfinanzplan Z. 23/30; Summe aller = Gesamtfinanzplan (2026: 7.224.830 € / 12.280.484 €)
+- [x] **PRUEF-06**: Investitionssummen je Produkt = Teilfinanzplan Z. 23/30; Summe aller = Gesamtfinanzplan (2026: 7.224.830 € / 12.280.484 €)
 - [x] **PRUEF-07**: Querschnitte S. 291 ff. stimmen mit den eigenen PG-Aggregaten überein
 - [ ] **PRUEF-08**: Vollständigkeit: 63 Produkte mit Produktinformationen, Bindungsgrad, Teilergebnisplan und Teilfinanzplan
 - [x] **PRUEF-09**: Alle Prüfungen laufen in pytest und erzeugen `daten/pruefberichte/konsistenz.md`; Abweichungen über 1 € sind Fehler, außer sie stehen in `befunde.md`
@@ -191,7 +191,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXTR-06 | Phase 3 | Pending |
 | EXTR-07 | Phase 3 | Pending |
 | EXTR-08 | Phase 3 | Pending |
-| EXTR-09 | Phase 3 | Pending |
+| EXTR-09 | Phase 3 | Complete |
 | EXTR-10 | Phase 4 | Pending |
 | MANU-01 | Phase 4 | Pending |
 | MANU-02 | Phase 4 | Pending |
@@ -206,7 +206,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PRUEF-03 | Phase 2 | Complete |
 | PRUEF-04 | Phase 2 | Complete |
 | PRUEF-05 | Phase 4 | Pending |
-| PRUEF-06 | Phase 3 | Pending |
+| PRUEF-06 | Phase 3 | Complete |
 | PRUEF-07 | Phase 3 | Complete |
 | PRUEF-08 | Phase 3 | Pending |
 | PRUEF-09 | Phase 2 | Complete |
