@@ -11,6 +11,13 @@ PG-/PB-Teilplänen hergeleitete Wert (REGEL7_KENNZAHLEN-Formelkette); `zeile` tr
 Kennzahl-Schlüssel (z. B. `ordentliche_ertraege`), `plan` ist `querschnitt_ergebnisplan` oder
 `querschnitt_finanzplan`, `pdf_seite` ist die Querschnitt-Seite (291-300).
 
+Regel 6 (Investitionsmaßnahmen → Teil-/Gesamtfinanzplan, PRUEF-06): `abweichung = ist − soll`;
+bei `plan` `investitionen_produkt`/`investitionen_gesamt` ist `soll` die Teilfinanzplan- bzw.
+Gesamtfinanzplan-Zeile 23 (Einzahlungen, `zeile` "23") oder 30 (Auszahlungen, `zeile` "30") und
+`ist` die Summe der Maßnahmen in `investitionen.csv` dieser Richtung; bei `plan`
+`ve_faelligkeiten` ist `soll` die VE einer Kontozeile und `ist` die Summe ihrer Fälligkeiten in
+`ve_faelligkeiten.csv`, `zeile` = `Maßnahme/Konto`.
+
 Ein Befund deckt eine Abweichung nur ab, wenn Regel, Plan, Ebene, Code, Zeile, Jahr und
 Wertart übereinstimmen **und** die tatsächliche Abweichung um höchstens 1 € von der hier
 dokumentierten abweicht (D-05). `abweichung = ist − soll`, je nach Regel in `pruefung.py`
@@ -55,6 +62,14 @@ Parsing-Fehlern.
 | 7 | querschnitt_finanzplan | PB | 12 | saldo_investitionen | 2026 | ansatz | -100000 | 298 | Folge derselben Differenz wie PB 12 "auszahlungen_investitionen" oben. |
 | 7 | querschnitt_finanzplan | PB | 12 | finanzmittelueberschuss | 2026 | ansatz | -100000 | 298 | Folge derselben Differenz wie PB 12 "auszahlungen_investitionen" oben. |
 | 7 | querschnitt_finanzplan | PB | 12 | verpflichtungsermaechtigungen | 2026 | ve | 2700000 | 298 | Folge derselben leeren VE-Spalte wie PG 1201 oben: PB 12 hat nur die eine Produktgruppe 1201 mit einer Verpflichtungsermächtigung, daher trägt die GESAMTSUMME (S. 298) dieselbe Differenz von 2.700.000 C. |
+| 6 | investitionen_produkt | P | 011201 | 23 | 2024 | ergebnis | -36145 | 115 | Produkt 011201 (Bauunterhaltung von kommunal genutzten Gebäuden), Teilfinanzplan Zeile 23 (Einzahlungen aus Investitionstätigkeit), Spalte Ergebnis 2024 (S. 115): gedruckt 36.145 C. Die Summe der in der Investitionsmaßnahmen-Tabelle (ab S. 115) gedruckten Einzahlungs-Kontozeilen ergibt für dieselbe Spalte 0 C. Wortweise gegen das PDF verifiziert: die 2024 tatsächlich gebuchte Einzahlung ist im aktuellen Haushalt keiner der dort aufgeführten, 2026 laufenden Maßnahmen mehr zugeordnet (historische Ist-Buchung auf einer inzwischen abgeschlossenen Maßnahme), kein Extraktionsfehler. |
+| 6 | investitionen_produkt | P | 020701 | 30 | 2024 | ergebnis | -6328 | 142 | Produkt 020701 (Feuer- und Bevölkerungsschutz), Teilfinanzplan Zeile 30 (Auszahlungen aus Investitionstätigkeit), Spalte Ergebnis 2024 (S. 142): gedruckt 253.204 C. Die Summe der in der Investitionsmaßnahmen-Tabelle (ab S. 143) gedruckten Auszahlungs-Kontozeilen derselben Spalte ergibt 246.876 C. Wortweise gegen das PDF verifiziert: dieselbe Art historischer Ist-Differenz wie bei Produkt 011201 (siehe oben), kein Extraktionsfehler. |
+| 6 | investitionen_produkt | P | 030102 | 23 | 2024 | ergebnis | -30940 | 157 | Produkt 030102 (Franz-von-Assisi-Grundschule), Teilfinanzplan Zeile 23, Spalte Ergebnis 2024 (S. 157): gedruckt 36.444 C. Die Summe der Einzahlungs-Kontozeilen der Investitionsmaßnahmen-Tabelle (ab S. 157) ergibt 5.504 C für dieselbe Spalte. Wortweise gegen das PDF verifiziert: dieselbe Art historischer Ist-Differenz wie bei Produkt 011201 (siehe oben), kein Extraktionsfehler. |
+| 6 | investitionen_produkt | P | 050201 | 23 | 2024 | ergebnis | 2322 | 185 | Produkt 050201 (Zuschüsse an Dritte im Bereich des sozialen Lebens), Teilfinanzplan Zeile 23, Spalte Ergebnis 2024 (S. 185): gedruckt -2.322 C. Das Produkt druckt im aktuellen Haushalt keine Investitionsmaßnahmen-Tabelle mehr (EXTR-09, Flagged assumption: ohne Tabelle 0 C), die Summe ist daher 0 C. Wortweise gegen das PDF verifiziert: eine 2024 gebuchte, im aktuellen Haushalt nicht mehr geführte historische Ist-Buchung, kein Extraktionsfehler. |
+| 6 | investitionen_produkt | P | 120101 | 23 | 2024 | ergebnis | -425849 | 243 | Produkt 120101 (Bau von Straßen, Wegen, Plätzen und sonstigen Verkehrsanlagen), Teilfinanzplan Zeile 23, Spalte Ergebnis 2024 (S. 243): gedruckt 1.335.695 C. Die Summe der Einzahlungs-Kontozeilen der Investitionsmaßnahmen-Tabelle (ab S. 245) ergibt 909.846 C für dieselbe Spalte. Wortweise gegen das PDF verifiziert: dieselbe Art historischer Ist-Differenz wie bei Produkt 011201 (siehe oben), kein Extraktionsfehler. |
+| 6 | investitionen_produkt | P | 120102 | 30 | 2024 | ergebnis | -134535 | 249 | Produkt 120102 (Unterhaltung von Straßen, Wegen, Plätzen und sonstigen Verkehrsanlagen), Teilfinanzplan Zeile 30, Spalte Ergebnis 2024 (S. 249): gedruckt 134.535 C. Das Produkt druckt im aktuellen Haushalt keine Investitionsmaßnahmen-Tabelle mehr (EXTR-09, Flagged assumption: ohne Tabelle 0 C), die Summe ist daher 0 C. Wortweise gegen das PDF verifiziert: eine 2024 gebuchte, im aktuellen Haushalt nicht mehr geführte historische Ist-Buchung, kein Extraktionsfehler. |
+| 6 | investitionen_gesamt | GESAMT |  | 23 | 2024 | ergebnis | -490612 | 63 | Gesamtfinanzplan Zeile 23, Spalte Ergebnis 2024 (S. 63): Summe der sechs produktweisen Ergebnis-2024-Differenzen bei Zeile 23 (011201, 030102, 050201, 120101, siehe oben), da alle anderen Produkte exakt übereinstimmen. Folge derselben historischen Ist-Differenzen, kein Extraktionsfehler. |
+| 6 | investitionen_gesamt | GESAMT |  | 30 | 2024 | ergebnis | -142826 | 63 | Gesamtfinanzplan Zeile 30, Spalte Ergebnis 2024 (S. 63): Summe der produktweisen Ergebnis-2024-Differenzen bei Zeile 30 (020701, 120102, siehe oben), da alle anderen Produkte exakt übereinstimmen. Folge derselben historischen Ist-Differenzen, kein Extraktionsfehler. |
 
 ## Beobachtungen ohne Prüfregel
 

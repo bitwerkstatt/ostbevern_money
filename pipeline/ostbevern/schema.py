@@ -18,6 +18,8 @@ SEITEN_CSV = Path("zwischen/seiten.csv")
 HIERARCHIE_CSV = Path("aufbereitet/hierarchie.csv")
 ERGEBNISPLAN_CSV = Path("aufbereitet/ergebnisplan.csv")
 FINANZPLAN_CSV = Path("aufbereitet/finanzplan.csv")
+INVESTITIONEN_CSV = Path("aufbereitet/investitionen.csv")
+VE_FAELLIGKEITEN_CSV = Path("aufbereitet/ve_faelligkeiten.csv")
 # Kontrollquelle (nie Datenquelle der App), daher unter zwischen/ statt aufbereitet/ (D-14).
 QUERSCHNITTE_CSV = Path("zwischen/querschnitte.csv")
 KONSISTENZ_MD = Path("pruefberichte/konsistenz.md")
@@ -168,3 +170,65 @@ def schreibe_querschnitte_csv(df: pl.DataFrame, pfad: Path) -> None:
 def lies_querschnitte_csv(pfad: Path) -> pl.DataFrame:
     """Liest querschnitte.csv über `lies_csv` mit QUERSCHNITTE_SPALTEN."""
     return lies_csv(pfad, QUERSCHNITTE_SPALTEN)
+
+
+# Investitionsmaßnahmen (Phase 3, 03-02, D-07/D-08, EXTR-09): ein Wert je Konto-Zeile
+# und bespieltem Jahr. Nur Produktseiten (D-06); Finanzierungs-Konten (692/792) und
+# Kassenwirksamkeit-Werte sind ausdrücklich nicht enthalten.
+INVESTITIONEN_SPALTEN: dict[str, pl.PolarsDataType] = {
+    "produkt": pl.Utf8,
+    "massnahme_id": pl.Utf8,
+    "massnahme_name": pl.Utf8,
+    "konto": pl.Utf8,
+    "konto_name": pl.Utf8,
+    "richtung": pl.Utf8,
+    "art": pl.Utf8,
+    "jahr": pl.Int64,
+    "wertart": pl.Utf8,
+    "betrag": pl.Int64,
+    "pdf_seite": pl.Int64,
+}
+
+
+def schreibe_investitionen_csv(df: pl.DataFrame, pfad: Path) -> None:
+    """Schreibt investitionen.csv sortiert nach produkt, massnahme_id, konto, jahr,
+    wertart, pdf_seite, betrag (D-21)."""
+    schreibe_csv(
+        df,
+        pfad,
+        INVESTITIONEN_SPALTEN,
+        ["produkt", "massnahme_id", "konto", "jahr", "wertart", "pdf_seite", "betrag"],
+    )
+
+
+def lies_investitionen_csv(pfad: Path) -> pl.DataFrame:
+    """Liest investitionen.csv über `lies_csv` mit INVESTITIONEN_SPALTEN."""
+    return lies_csv(pfad, INVESTITIONEN_SPALTEN)
+
+
+# VE-Fälligkeiten (Phase 3, 03-02, EXTR-09): eine Zeile je "(Kassenwirksamkeit)"-Wert
+# einer Investitions-Kontozeile, nie in investitionen.csv oder einer Summe enthalten.
+VE_FAELLIGKEITEN_SPALTEN: dict[str, pl.PolarsDataType] = {
+    "produkt": pl.Utf8,
+    "massnahme_id": pl.Utf8,
+    "konto": pl.Utf8,
+    "jahr": pl.Int64,
+    "betrag": pl.Int64,
+    "pdf_seite": pl.Int64,
+}
+
+
+def schreibe_ve_faelligkeiten_csv(df: pl.DataFrame, pfad: Path) -> None:
+    """Schreibt ve_faelligkeiten.csv sortiert nach produkt, massnahme_id, konto, jahr,
+    pdf_seite (D-21)."""
+    schreibe_csv(
+        df,
+        pfad,
+        VE_FAELLIGKEITEN_SPALTEN,
+        ["produkt", "massnahme_id", "konto", "jahr", "pdf_seite"],
+    )
+
+
+def lies_ve_faelligkeiten_csv(pfad: Path) -> pl.DataFrame:
+    """Liest ve_faelligkeiten.csv über `lies_csv` mit VE_FAELLIGKEITEN_SPALTEN."""
+    return lies_csv(pfad, VE_FAELLIGKEITEN_SPALTEN)

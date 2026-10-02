@@ -106,3 +106,14 @@ kennzahlen_finanzplan = [
     "saldo_finanzierung",
     "verpflichtungsermaechtigungen",
 ]
+
+# [layout.investitionen] (Phase 3, 03-02): gedruckte Texte der Investitionsmaßnahmen-
+# Tabelle auf Produktseiten (Spez. 3.8, 4.2). Jeder Wert wird gegen die space-freie
+# Konkatenation der Label-Wörter einer Zeile verglichen (ostbevern.investitionen).
+[layout.investitionen]
+tabellenkopf = "Investitionsmaßnahmen(inC)"
+einzahlungen_summe = "EinzahlungenausInvestitionstätigkeit"
+auszahlungen_summe = "AuszahlungenausInvestitionstätigkeit"
+saldo_praefix = "Saldo"
+saldo_gesamt = "SaldoInvestitionstätigkeit"
+kassenwirksamkeit = "(Kassenwirksamkeit)"

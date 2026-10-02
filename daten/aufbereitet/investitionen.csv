@@ -1,0 +1,960 @@
+produkt,massnahme_id,massnahme_name,konto,konto_name,richtung,art,jahr,wertart,betrag,pdf_seite
+010601,010601,Zentrale Dienste für Organisatioseinheiten im Hause und Dritter,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,0,87
+010601,010601,Zentrale Dienste für Organisatioseinheiten im Hause und Dritter,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,3000,87
+010601,010601,Zentrale Dienste für Organisatioseinheiten im Hause und Dritter,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,3000,87
+010601,010601,Zentrale Dienste für Organisatioseinheiten im Hause und Dritter,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,87
+010601,010601,Zentrale Dienste für Organisatioseinheiten im Hause und Dritter,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,0,87
+010601,010601,Zentrale Dienste für Organisatioseinheiten im Hause und Dritter,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,87
+010601,010601,Zentrale Dienste für Organisatioseinheiten im Hause und Dritter,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,87
+010601,BGA010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,3480,87
+010601,BGA010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,0,87
+010601,BGA010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,5000,87
+010601,BGA010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,87
+010601,BGA010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,5000,87
+010601,BGA010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,5000,87
+010601,BGA010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,5000,87
+010601,BÜR010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,0,87
+010601,BÜR010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,5000,87
+010601,BÜR010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,5000,87
+010601,BÜR010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,87
+010601,BÜR010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,5000,87
+010601,BÜR010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,5000,87
+010601,BÜR010601,Büro- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,0,87
+010602,AIBH010602,Baumaßnahmen am Bauhof,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2024,ergebnis,50,90
+010602,AIBH010602,Baumaßnahmen am Bauhof,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2025,ansatz,0,90
+010602,AIBH010602,Baumaßnahmen am Bauhof,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2026,ansatz,0,90
+010602,AIBH010602,Baumaßnahmen am Bauhof,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2026,ve,0,90
+010602,AIBH010602,Baumaßnahmen am Bauhof,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2027,planung,0,90
+010602,AIBH010602,Baumaßnahmen am Bauhof,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2028,planung,0,90
+010602,AIBH010602,Baumaßnahmen am Bauhof,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2029,planung,0,90
+010602,AIBH010602,Baumaßnahmen am Bauhof,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2024,ergebnis,988,90
+010602,AIBH010602,Baumaßnahmen am Bauhof,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2025,ansatz,300000,90
+010602,AIBH010602,Baumaßnahmen am Bauhof,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ansatz,250000,90
+010602,AIBH010602,Baumaßnahmen am Bauhof,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ve,0,90
+010602,AIBH010602,Baumaßnahmen am Bauhof,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2027,planung,300000,90
+010602,AIBH010602,Baumaßnahmen am Bauhof,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2028,planung,0,90
+010602,AIBH010602,Baumaßnahmen am Bauhof,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2029,planung,0,90
+010602,BGA010602,Betriebs- u. Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,949,90
+010602,BGA010602,Betriebs- u. Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,3500,90
+010602,BGA010602,Betriebs- u. Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,20000,90
+010602,BGA010602,Betriebs- u. Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,90
+010602,BGA010602,Betriebs- u. Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,4000,90
+010602,BGA010602,Betriebs- u. Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,4000,90
+010602,BGA010602,Betriebs- u. Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,4000,90
+010602,FAHRZ004,Kauf oder Verkauf von Bauhoffahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,50126,90
+010602,FAHRZ004,Kauf oder Verkauf von Bauhoffahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,226500,90
+010602,FAHRZ004,Kauf oder Verkauf von Bauhoffahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,132500,90
+010602,FAHRZ004,Kauf oder Verkauf von Bauhoffahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,90
+010602,FAHRZ004,Kauf oder Verkauf von Bauhoffahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,50000,90
+010602,FAHRZ004,Kauf oder Verkauf von Bauhoffahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,50000,90
+010602,FAHRZ004,Kauf oder Verkauf von Bauhoffahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,50000,90
+010602,KLIMA1,PV-Anlage Bauhof,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,0,90
+010602,KLIMA1,PV-Anlage Bauhof,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,0,90
+010602,KLIMA1,PV-Anlage Bauhof,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,185000,90
+010602,KLIMA1,PV-Anlage Bauhof,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,90
+010602,KLIMA1,PV-Anlage Bauhof,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,0,90
+010602,KLIMA1,PV-Anlage Bauhof,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,90
+010602,KLIMA1,PV-Anlage Bauhof,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,90
+010602,MASCH001,Neuanschaffung von Maschinen für den Bauhof,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,14863,91
+010602,MASCH001,Neuanschaffung von Maschinen für den Bauhof,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,11050,91
+010602,MASCH001,Neuanschaffung von Maschinen für den Bauhof,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,31500,91
+010602,MASCH001,Neuanschaffung von Maschinen für den Bauhof,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,91
+010602,MASCH001,Neuanschaffung von Maschinen für den Bauhof,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,12000,91
+010602,MASCH001,Neuanschaffung von Maschinen für den Bauhof,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,12000,91
+010602,MASCH001,Neuanschaffung von Maschinen für den Bauhof,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,12000,91
+010603,010603,Zentrale Dienste für Beteiligungen u. verbundene Unternehmen,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2024,ergebnis,0,93
+010603,010603,Zentrale Dienste für Beteiligungen u. verbundene Unternehmen,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2025,ansatz,500000,93
+010603,010603,Zentrale Dienste für Beteiligungen u. verbundene Unternehmen,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2026,ansatz,0,93
+010603,010603,Zentrale Dienste für Beteiligungen u. verbundene Unternehmen,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2026,ve,0,93
+010603,010603,Zentrale Dienste für Beteiligungen u. verbundene Unternehmen,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2027,planung,0,93
+010603,010603,Zentrale Dienste für Beteiligungen u. verbundene Unternehmen,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2028,planung,0,93
+010603,010603,Zentrale Dienste für Beteiligungen u. verbundene Unternehmen,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2029,planung,0,93
+010901,FINANL001,Versorgungsfonds Westf.-Lipp. Versorgungskasse,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2024,ergebnis,50000,101
+010901,FINANL001,Versorgungsfonds Westf.-Lipp. Versorgungskasse,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2025,ansatz,50000,101
+010901,FINANL001,Versorgungsfonds Westf.-Lipp. Versorgungskasse,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2026,ansatz,50000,101
+010901,FINANL001,Versorgungsfonds Westf.-Lipp. Versorgungskasse,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2026,ve,0,101
+010901,FINANL001,Versorgungsfonds Westf.-Lipp. Versorgungskasse,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2027,planung,50000,101
+010901,FINANL001,Versorgungsfonds Westf.-Lipp. Versorgungskasse,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2028,planung,50000,101
+010901,FINANL001,Versorgungsfonds Westf.-Lipp. Versorgungskasse,784011,Kauf v. Finanzanlagen,auszahlung,finanzanlagen,2029,planung,50000,101
+011101,011101,Dienstleistung im IT Bereich,782111,Auszahlung f. Erwerb v. immat. Vermögensgegenständen,auszahlung,immaterielles,2024,ergebnis,5071,111
+011101,011101,Dienstleistung im IT Bereich,782111,Auszahlung f. Erwerb v. immat. Vermögensgegenständen,auszahlung,immaterielles,2025,ansatz,0,111
+011101,011101,Dienstleistung im IT Bereich,782111,Auszahlung f. Erwerb v. immat. Vermögensgegenständen,auszahlung,immaterielles,2026,ansatz,0,111
+011101,011101,Dienstleistung im IT Bereich,782111,Auszahlung f. Erwerb v. immat. Vermögensgegenständen,auszahlung,immaterielles,2026,ve,0,111
+011101,011101,Dienstleistung im IT Bereich,782111,Auszahlung f. Erwerb v. immat. Vermögensgegenständen,auszahlung,immaterielles,2027,planung,0,111
+011101,011101,Dienstleistung im IT Bereich,782111,Auszahlung f. Erwerb v. immat. Vermögensgegenständen,auszahlung,immaterielles,2028,planung,0,111
+011101,011101,Dienstleistung im IT Bereich,782111,Auszahlung f. Erwerb v. immat. Vermögensgegenständen,auszahlung,immaterielles,2029,planung,0,111
+011101,011101,Dienstleistung im IT Bereich,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,0,111
+011101,011101,Dienstleistung im IT Bereich,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,12000,111
+011101,011101,Dienstleistung im IT Bereich,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,0,111
+011101,011101,Dienstleistung im IT Bereich,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,111
+011101,011101,Dienstleistung im IT Bereich,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,0,111
+011101,011101,Dienstleistung im IT Bereich,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,111
+011101,011101,Dienstleistung im IT Bereich,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,111
+011101,EDVH001,Anschaffung von Hardware über 800 €,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,35836,111
+011101,EDVH001,Anschaffung von Hardware über 800 €,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,0,111
+011101,EDVH001,Anschaffung von Hardware über 800 €,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,25000,111
+011101,EDVH001,Anschaffung von Hardware über 800 €,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,111
+011101,EDVH001,Anschaffung von Hardware über 800 €,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,30000,111
+011101,EDVH001,Anschaffung von Hardware über 800 €,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,111
+011101,EDVH001,Anschaffung von Hardware über 800 €,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,111
+011201,011201,Bauunterhaltung von kommunal genutzten Gebäuden,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2024,ergebnis,0,115
+011201,011201,Bauunterhaltung von kommunal genutzten Gebäuden,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2025,ansatz,150000,115
+011201,011201,Bauunterhaltung von kommunal genutzten Gebäuden,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ansatz,150000,115
+011201,011201,Bauunterhaltung von kommunal genutzten Gebäuden,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ve,0,115
+011201,011201,Bauunterhaltung von kommunal genutzten Gebäuden,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2027,planung,0,115
+011201,011201,Bauunterhaltung von kommunal genutzten Gebäuden,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2028,planung,0,115
+011201,011201,Bauunterhaltung von kommunal genutzten Gebäuden,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2029,planung,0,115
+011201,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,0,115
+011201,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,5000,115
+011201,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,2500,115
+011201,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,115
+011201,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,2500,115
+011201,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,3000,115
+011201,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,3000,115
+011201,KLIMA1,PV-Anlagen Rathaus und ehem. Schule Brock,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,0,115
+011201,KLIMA1,PV-Anlagen Rathaus und ehem. Schule Brock,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,160000,115
+011201,KLIMA1,PV-Anlagen Rathaus und ehem. Schule Brock,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,160000,115
+011201,KLIMA1,PV-Anlagen Rathaus und ehem. Schule Brock,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,115
+011201,KLIMA1,PV-Anlagen Rathaus und ehem. Schule Brock,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,55000,115
+011201,KLIMA1,PV-Anlagen Rathaus und ehem. Schule Brock,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,115
+011201,KLIMA1,PV-Anlagen Rathaus und ehem. Schule Brock,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,115
+011203,KITA002,Erweiterung des Kindergartens im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2024,ergebnis,101143,119
+011203,KITA002,Erweiterung des Kindergartens im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2025,ansatz,0,119
+011203,KITA002,Erweiterung des Kindergartens im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ansatz,25000,119
+011203,KITA002,Erweiterung des Kindergartens im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ve,0,119
+011203,KITA002,Erweiterung des Kindergartens im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2027,planung,0,119
+011203,KITA002,Erweiterung des Kindergartens im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2028,planung,0,119
+011203,KITA002,Erweiterung des Kindergartens im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2029,planung,0,119
+011204,011204,Bereitstellung und Bewirtschaftung von Grundstücken,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,-213001,122
+011204,011204,Bereitstellung und Bewirtschaftung von Grundstücken,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,2300000,122
+011204,011204,Bereitstellung und Bewirtschaftung von Grundstücken,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,650000,122
+011204,011204,Bereitstellung und Bewirtschaftung von Grundstücken,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,122
+011204,011204,Bereitstellung und Bewirtschaftung von Grundstücken,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,122
+011204,011204,Bereitstellung und Bewirtschaftung von Grundstücken,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,122
+011204,011204,Bereitstellung und Bewirtschaftung von Grundstücken,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,122
+011204,AIBH012,Baumaßnahmen Feuerwehr Brock,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2024,ergebnis,0,122
+011204,AIBH012,Baumaßnahmen Feuerwehr Brock,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2025,ansatz,100000,122
+011204,AIBH012,Baumaßnahmen Feuerwehr Brock,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2026,ansatz,0,122
+011204,AIBH012,Baumaßnahmen Feuerwehr Brock,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2026,ve,0,122
+011204,AIBH012,Baumaßnahmen Feuerwehr Brock,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2027,planung,0,122
+011204,AIBH012,Baumaßnahmen Feuerwehr Brock,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2028,planung,0,122
+011204,AIBH012,Baumaßnahmen Feuerwehr Brock,782113,Kauf v. bebauten Grdst. u. Gebäuden,auszahlung,grundstuecke,2029,planung,0,122
+011204,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,0,122
+011204,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,0,122
+011204,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,1000000,122
+011204,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,122
+011204,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,122
+011204,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,122
+011204,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,122
+011204,GRDST002,Grundstücksverkauf im GE Nord,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2024,ergebnis,0,122
+011204,GRDST002,Grundstücksverkauf im GE Nord,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2025,ansatz,122220,122
+011204,GRDST002,Grundstücksverkauf im GE Nord,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2026,ansatz,0,122
+011204,GRDST002,Grundstücksverkauf im GE Nord,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2026,ve,0,122
+011204,GRDST002,Grundstücksverkauf im GE Nord,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2027,planung,0,122
+011204,GRDST002,Grundstücksverkauf im GE Nord,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2028,planung,0,122
+011204,GRDST002,Grundstücksverkauf im GE Nord,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2029,planung,0,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2024,ergebnis,112014,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2025,ansatz,1292770,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2026,ansatz,774000,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2026,ve,0,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2027,planung,704640,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2028,planung,936205,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2029,planung,0,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2024,ergebnis,-18590,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2025,ansatz,0,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ansatz,0,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ve,0,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2027,planung,0,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2028,planung,0,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2029,planung,0,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,188679,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,0,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,431384,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,122
+011204,GRDST006,BG Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,122
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,123427,123
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,1675000,123
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,123
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,123
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,123
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,123
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,123
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2024,ergebnis,2981,123
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2025,ansatz,0,123
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2026,ansatz,0,123
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2026,ve,0,123
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2027,planung,0,123
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2028,planung,0,123
+011204,GRDST007,Grundstückskauf und -verkauf Sonstiges,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2029,planung,0,123
+011204,GRDST012,BG Kohkamp III,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2024,ergebnis,1987185,123
+011204,GRDST012,BG Kohkamp III,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2025,ansatz,1785000,123
+011204,GRDST012,BG Kohkamp III,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2026,ansatz,1471830,123
+011204,GRDST012,BG Kohkamp III,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2026,ve,0,123
+011204,GRDST012,BG Kohkamp III,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2027,planung,1477000,123
+011204,GRDST012,BG Kohkamp III,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2028,planung,1768100,123
+011204,GRDST012,BG Kohkamp III,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2029,planung,1080000,123
+011204,GRDST012,BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,47330,123
+011204,GRDST012,BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,0,123
+011204,GRDST012,BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,123
+011204,GRDST012,BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,123
+011204,GRDST012,BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,123
+011204,GRDST012,BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,123
+011204,GRDST012,BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,123
+011204,GRDST013,GE West,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2024,ergebnis,0,123
+011204,GRDST013,GE West,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2025,ansatz,0,123
+011204,GRDST013,GE West,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2026,ansatz,0,123
+011204,GRDST013,GE West,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2026,ve,0,123
+011204,GRDST013,GE West,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2027,planung,0,123
+011204,GRDST013,GE West,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2028,planung,812623,123
+011204,GRDST013,GE West,682111,Einz. a. d. Verkauf v. Grundstücken,einzahlung,grundstuecke,2029,planung,750000,123
+011204,GRDST013,GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,5748,123
+011204,GRDST013,GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,200000,123
+011204,GRDST013,GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,123
+011204,GRDST013,GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,123
+011204,GRDST013,GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,123
+011204,GRDST013,GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,123
+011204,GRDST013,GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,123
+011204,GRDST015,GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,0,123
+011204,GRDST015,GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,0,123
+011204,GRDST015,GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,123
+011204,GRDST015,GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,123
+011204,GRDST015,GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,450000,123
+011204,GRDST015,GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,450000,123
+011204,GRDST015,GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2024,ergebnis,0,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2025,ansatz,450000,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2026,ansatz,0,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2026,ve,0,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2027,planung,0,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2028,planung,0,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2029,planung,0,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,10710,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,0,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,0,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,0,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,0,123
+011204,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,123
+020701,020701,Feuer- und Bevölkerungsschutz,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2024,ergebnis,14955,142
+020701,020701,Feuer- und Bevölkerungsschutz,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2025,ansatz,0,142
+020701,020701,Feuer- und Bevölkerungsschutz,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2026,ansatz,0,142
+020701,020701,Feuer- und Bevölkerungsschutz,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2026,ve,0,142
+020701,020701,Feuer- und Bevölkerungsschutz,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2027,planung,0,142
+020701,020701,Feuer- und Bevölkerungsschutz,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2028,planung,0,142
+020701,020701,Feuer- und Bevölkerungsschutz,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2029,planung,0,142
+020701,020701,Feuer- und Bevölkerungsschutz,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2024,ergebnis,233,142
+020701,020701,Feuer- und Bevölkerungsschutz,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2025,ansatz,0,142
+020701,020701,Feuer- und Bevölkerungsschutz,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2026,ansatz,0,142
+020701,020701,Feuer- und Bevölkerungsschutz,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2026,ve,0,142
+020701,020701,Feuer- und Bevölkerungsschutz,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2027,planung,0,142
+020701,020701,Feuer- und Bevölkerungsschutz,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2028,planung,0,142
+020701,020701,Feuer- und Bevölkerungsschutz,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2029,planung,0,142
+020701,AIBH011,Erweiterung Feuerwehrgerätehaus Röntgenstraße,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,0,142
+020701,AIBH011,Erweiterung Feuerwehrgerätehaus Röntgenstraße,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,100000,142
+020701,AIBH011,Erweiterung Feuerwehrgerätehaus Röntgenstraße,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,100000,142
+020701,AIBH011,Erweiterung Feuerwehrgerätehaus Röntgenstraße,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,142
+020701,AIBH011,Erweiterung Feuerwehrgerätehaus Röntgenstraße,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,0,142
+020701,AIBH011,Erweiterung Feuerwehrgerätehaus Röntgenstraße,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,142
+020701,AIBH011,Erweiterung Feuerwehrgerätehaus Röntgenstraße,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,142
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,0,143
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,0,143
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,0,143
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,143
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,250000,143
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,0,143
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,0,143
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2024,ergebnis,8456,143
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2025,ansatz,100000,143
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ansatz,100000,143
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ve,3200000,143
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2027,planung,2000000,143
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2028,planung,1200000,143
+020701,AIBH012,Baumaßnahmen Feuerwehr Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2029,planung,0,143
+020701,AIBH013,Baumaßn. Feuerwehr am Mehrzweckgebäude im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2024,ergebnis,201874,143
+020701,AIBH013,Baumaßn. Feuerwehr am Mehrzweckgebäude im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2025,ansatz,0,143
+020701,AIBH013,Baumaßn. Feuerwehr am Mehrzweckgebäude im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ansatz,20000,143
+020701,AIBH013,Baumaßn. Feuerwehr am Mehrzweckgebäude im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ve,0,143
+020701,AIBH013,Baumaßn. Feuerwehr am Mehrzweckgebäude im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2027,planung,0,143
+020701,AIBH013,Baumaßn. Feuerwehr am Mehrzweckgebäude im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2028,planung,0,143
+020701,AIBH013,Baumaßn. Feuerwehr am Mehrzweckgebäude im OT Brock,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2029,planung,0,143
+020701,BGA020701,Betriebs- und Geschäftsausst. Feuerwehr,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,26662,143
+020701,BGA020701,Betriebs- und Geschäftsausst. Feuerwehr,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,20000,143
+020701,BGA020701,Betriebs- und Geschäftsausst. Feuerwehr,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,20000,143
+020701,BGA020701,Betriebs- und Geschäftsausst. Feuerwehr,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,143
+020701,BGA020701,Betriebs- und Geschäftsausst. Feuerwehr,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,20000,143
+020701,BGA020701,Betriebs- und Geschäftsausst. Feuerwehr,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,20000,143
+020701,BGA020701,Betriebs- und Geschäftsausst. Feuerwehr,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,20000,143
+020701,BGA0207014,Betriebs- und Geschäftsausstattung für die Feuerwehr seitens FB IV,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,3188,143
+020701,BGA0207014,Betriebs- und Geschäftsausstattung für die Feuerwehr seitens FB IV,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,4400,143
+020701,BGA0207014,Betriebs- und Geschäftsausstattung für die Feuerwehr seitens FB IV,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,4000,143
+020701,BGA0207014,Betriebs- und Geschäftsausstattung für die Feuerwehr seitens FB IV,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,143
+020701,BGA0207014,Betriebs- und Geschäftsausstattung für die Feuerwehr seitens FB IV,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,4000,143
+020701,BGA0207014,Betriebs- und Geschäftsausstattung für die Feuerwehr seitens FB IV,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,4000,143
+020701,BGA0207014,Betriebs- und Geschäftsausstattung für die Feuerwehr seitens FB IV,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,4000,143
+020701,FAHRZ002,Erwerb von Fahrzeugen,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2024,ergebnis,100,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2025,ansatz,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2026,ansatz,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2026,ve,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2027,planung,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2028,planung,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2029,planung,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2024,ergebnis,13728,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2025,ansatz,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2026,ansatz,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2026,ve,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2027,planung,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2028,planung,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,683113,Einz. Verkauf von beweglichen Sachen d. AV,einzahlung,ausstattung,2029,planung,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2024,ergebnis,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2025,ansatz,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2026,ansatz,140000,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2026,ve,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2027,planung,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2028,planung,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2029,planung,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,6696,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,140000,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,300000,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,300000,144
+020701,FAHRZ002,Erwerb von Fahrzeugen,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,200000,144
+020701,INFRA005,Maßnahmen für die Löschwasserversorgung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2024,ergebnis,0,144
+020701,INFRA005,Maßnahmen für die Löschwasserversorgung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2025,ansatz,175000,144
+020701,INFRA005,Maßnahmen für die Löschwasserversorgung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2026,ansatz,0,144
+020701,INFRA005,Maßnahmen für die Löschwasserversorgung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2026,ve,0,144
+020701,INFRA005,Maßnahmen für die Löschwasserversorgung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2027,planung,0,144
+020701,INFRA005,Maßnahmen für die Löschwasserversorgung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2028,planung,0,144
+020701,INFRA005,Maßnahmen für die Löschwasserversorgung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2029,planung,0,144
+020701,KLIMA1,PV-Anlage Feuerwehr Ostbevern,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,0,144
+020701,KLIMA1,PV-Anlage Feuerwehr Ostbevern,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,230000,144
+020701,KLIMA1,PV-Anlage Feuerwehr Ostbevern,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,230000,144
+020701,KLIMA1,PV-Anlage Feuerwehr Ostbevern,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,144
+020701,KLIMA1,PV-Anlage Feuerwehr Ostbevern,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,0,144
+020701,KLIMA1,PV-Anlage Feuerwehr Ostbevern,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,144
+020701,KLIMA1,PV-Anlage Feuerwehr Ostbevern,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,144
+020701,SOPO010,Feuerschutzpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,77854,144
+020701,SOPO010,Feuerschutzpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,68000,144
+020701,SOPO010,Feuerschutzpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,68000,144
+020701,SOPO010,Feuerschutzpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,144
+020701,SOPO010,Feuerschutzpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,68000,144
+020701,SOPO010,Feuerschutzpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,68000,144
+020701,SOPO010,Feuerschutzpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,0,144
+030101,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2024,ergebnis,5224,153
+030101,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2025,ansatz,1885000,153
+030101,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ansatz,2000000,153
+030101,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ve,2000000,153
+030101,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2027,planung,2000000,153
+030101,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2028,planung,0,153
+030101,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2029,planung,0,153
+030101,BGA030101,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,4739,153
+030101,BGA030101,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,0,153
+030101,BGA030101,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,0,153
+030101,BGA030101,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,153
+030101,BGA030101,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,0,153
+030101,BGA030101,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,0,153
+030101,BGA030101,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,0,153
+030101,BGA0301014,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,0,153
+030101,BGA0301014,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,2000,153
+030101,BGA0301014,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,2000,153
+030101,BGA0301014,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,153
+030101,BGA0301014,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,2000,153
+030101,BGA0301014,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,2000,153
+030101,BGA0301014,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,2000,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,4818,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,0,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,0,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,0,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,0,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,0,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,5354,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,0,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,0,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,0,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,153
+030101,EDV030101,EDV-Anschaffungen Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,153
+030101,KLIMA1,PV-Anlage Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,2759,154
+030101,KLIMA1,PV-Anlage Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,0,154
+030101,KLIMA1,PV-Anlage Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,0,154
+030101,KLIMA1,PV-Anlage Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,154
+030101,KLIMA1,PV-Anlage Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,0,154
+030101,KLIMA1,PV-Anlage Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,154
+030101,KLIMA1,PV-Anlage Ambrosius-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,154
+030102,AIBH003,Baumaßnahmen an der Franz-von-Assisi-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2024,ergebnis,8593,157
+030102,AIBH003,Baumaßnahmen an der Franz-von-Assisi-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2025,ansatz,1500000,157
+030102,AIBH003,Baumaßnahmen an der Franz-von-Assisi-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ansatz,1700000,157
+030102,AIBH003,Baumaßnahmen an der Franz-von-Assisi-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ve,1700000,157
+030102,AIBH003,Baumaßnahmen an der Franz-von-Assisi-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2027,planung,1700000,157
+030102,AIBH003,Baumaßnahmen an der Franz-von-Assisi-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2028,planung,0,157
+030102,AIBH003,Baumaßnahmen an der Franz-von-Assisi-Grundschule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2029,planung,0,157
+030102,BGA0301024,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,0,157
+030102,BGA0301024,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,1000,157
+030102,BGA0301024,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,1600,157
+030102,BGA0301024,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,157
+030102,BGA0301024,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,1600,157
+030102,BGA0301024,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,1600,157
+030102,BGA0301024,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,1600,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,5504,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,0,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,0,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,0,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,0,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,0,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,6116,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,0,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,0,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,0,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,157
+030102,EDV030102,EDV-Anschaffungen Franz-von-Assisi-Grundschule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,157
+030103,030103,Josef-Annegarn-Schule,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2024,ergebnis,3000,160
+030103,030103,Josef-Annegarn-Schule,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2025,ansatz,0,160
+030103,030103,Josef-Annegarn-Schule,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2026,ansatz,0,160
+030103,030103,Josef-Annegarn-Schule,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2026,ve,0,160
+030103,030103,Josef-Annegarn-Schule,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2027,planung,0,160
+030103,030103,Josef-Annegarn-Schule,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2028,planung,0,160
+030103,030103,Josef-Annegarn-Schule,683111,Einz. Veräußerg. v. Verm. Gegenständen über 800 €,einzahlung,ausstattung,2029,planung,0,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,11700,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,123000,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,119000,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,0,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,0,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,0,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2024,ergebnis,0,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2025,ansatz,191000,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ansatz,330000,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ve,2000000,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2027,planung,1000000,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2028,planung,1000000,160
+030103,AIBH005,Baumaßnahmen an der Josef-Annegarn-Schule,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2029,planung,0,160
+030103,BGA030103,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,3593,160
+030103,BGA030103,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,0,160
+030103,BGA030103,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,0,160
+030103,BGA030103,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,160
+030103,BGA030103,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,0,160
+030103,BGA030103,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,0,160
+030103,BGA030103,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,0,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,0,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,2000,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,2000,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,2000,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,2000,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,2000,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,25020,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,0,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,0,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,0,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,160
+030103,BGA0301034,Betriebs- u. Geschäftsausst. f. die Bauunterhalt.,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,160
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,3269,161
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,0,161
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,0,161
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,161
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,0,161
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,0,161
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,0,161
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,12011,161
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,0,161
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,0,161
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,161
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,0,161
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,161
+030103,EDV030103,EDV-Anschaffungen Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,161
+030103,KLIMA1,PV-Anlage Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,0,161
+030103,KLIMA1,PV-Anlage Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,365000,161
+030103,KLIMA1,PV-Anlage Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,365000,161
+030103,KLIMA1,PV-Anlage Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,161
+030103,KLIMA1,PV-Anlage Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,0,161
+030103,KLIMA1,PV-Anlage Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,161
+030103,KLIMA1,PV-Anlage Josef-Annegarn-Schule,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,161
+030104,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,0,164
+030104,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,467000,164
+030104,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,467000,164
+030104,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,164
+030104,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,0,164
+030104,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,0,164
+030104,AIB00001,Baumaßnahmen an der Ambrosius-Grundschule,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,0,164
+030104,BGA030104,Betriebs- und Geschäftsausstattung OGS,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,5509,164
+030104,BGA030104,Betriebs- und Geschäftsausstattung OGS,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,0,164
+030104,BGA030104,Betriebs- und Geschäftsausstattung OGS,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,0,164
+030104,BGA030104,Betriebs- und Geschäftsausstattung OGS,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,164
+030104,BGA030104,Betriebs- und Geschäftsausstattung OGS,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,0,164
+030104,BGA030104,Betriebs- und Geschäftsausstattung OGS,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,0,164
+030104,BGA030104,Betriebs- und Geschäftsausstattung OGS,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,0,164
+030301,030301,Zentrale schulbezogene Leistungen,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2024,ergebnis,9832,168
+030301,030301,Zentrale schulbezogene Leistungen,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2025,ansatz,0,168
+030301,030301,Zentrale schulbezogene Leistungen,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2026,ansatz,0,168
+030301,030301,Zentrale schulbezogene Leistungen,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2026,ve,0,168
+030301,030301,Zentrale schulbezogene Leistungen,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2027,planung,0,168
+030301,030301,Zentrale schulbezogene Leistungen,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2028,planung,0,168
+030301,030301,Zentrale schulbezogene Leistungen,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2029,planung,0,168
+040101,040101,"Kulturveranstaltung und -förderung, Heimatpflege",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,0,173
+040101,040101,"Kulturveranstaltung und -förderung, Heimatpflege",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,0,173
+040101,040101,"Kulturveranstaltung und -förderung, Heimatpflege",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,0,173
+040101,040101,"Kulturveranstaltung und -förderung, Heimatpflege",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,173
+040101,040101,"Kulturveranstaltung und -förderung, Heimatpflege",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,30000,173
+040101,040101,"Kulturveranstaltung und -förderung, Heimatpflege",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,173
+040101,040101,"Kulturveranstaltung und -förderung, Heimatpflege",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,173
+060201,KLIMA1,PV-Anlage Kinder- und Jugendwerk,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,0,199
+060201,KLIMA1,PV-Anlage Kinder- und Jugendwerk,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,0,199
+060201,KLIMA1,PV-Anlage Kinder- und Jugendwerk,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,0,199
+060201,KLIMA1,PV-Anlage Kinder- und Jugendwerk,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,199
+060201,KLIMA1,PV-Anlage Kinder- und Jugendwerk,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,65000,199
+060201,KLIMA1,PV-Anlage Kinder- und Jugendwerk,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,199
+060201,KLIMA1,PV-Anlage Kinder- und Jugendwerk,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,199
+060202,KSP001,Kinderspielplätze,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2024,ergebnis,22935,202
+060202,KSP001,Kinderspielplätze,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2025,ansatz,0,202
+060202,KSP001,Kinderspielplätze,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2026,ansatz,0,202
+060202,KSP001,Kinderspielplätze,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2026,ve,0,202
+060202,KSP001,Kinderspielplätze,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2027,planung,0,202
+060202,KSP001,Kinderspielplätze,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2028,planung,0,202
+060202,KSP001,Kinderspielplätze,681411,Rueckzahlung Haushalt 2021,einzahlung,zuwendungen,2029,planung,0,202
+060202,KSP001,Kinderspielplätze,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,103135,202
+060202,KSP001,Kinderspielplätze,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,25000,202
+060202,KSP001,Kinderspielplätze,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,202
+060202,KSP001,Kinderspielplätze,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,202
+060202,KSP001,Kinderspielplätze,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,202
+060202,KSP001,Kinderspielplätze,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,202
+060202,KSP001,Kinderspielplätze,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,202
+060202,KSP001,Kinderspielplätze,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,0,202
+060202,KSP001,Kinderspielplätze,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,0,202
+060202,KSP001,Kinderspielplätze,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,175000,202
+060202,KSP001,Kinderspielplätze,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,202
+060202,KSP001,Kinderspielplätze,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,0,202
+060202,KSP001,Kinderspielplätze,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,0,202
+060202,KSP001,Kinderspielplätze,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,202
+080101,080101,"Beverhalle, Förderung des Vereins- und Breitensports",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,0,207
+080101,080101,"Beverhalle, Förderung des Vereins- und Breitensports",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,20000,207
+080101,080101,"Beverhalle, Förderung des Vereins- und Breitensports",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,0,207
+080101,080101,"Beverhalle, Förderung des Vereins- und Breitensports",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,207
+080101,080101,"Beverhalle, Förderung des Vereins- und Breitensports",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,0,207
+080101,080101,"Beverhalle, Förderung des Vereins- und Breitensports",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,207
+080101,080101,"Beverhalle, Förderung des Vereins- und Breitensports",783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,207
+080101,AIBH008,Baumaßnahmen Turnhallen (Beverhalle),785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2024,ergebnis,0,207
+080101,AIBH008,Baumaßnahmen Turnhallen (Beverhalle),785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2025,ansatz,0,207
+080101,AIBH008,Baumaßnahmen Turnhallen (Beverhalle),785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ansatz,85000,207
+080101,AIBH008,Baumaßnahmen Turnhallen (Beverhalle),785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ve,0,207
+080101,AIBH008,Baumaßnahmen Turnhallen (Beverhalle),785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2027,planung,0,207
+080101,AIBH008,Baumaßnahmen Turnhallen (Beverhalle),785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2028,planung,0,207
+080101,AIBH008,Baumaßnahmen Turnhallen (Beverhalle),785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2029,planung,0,207
+080101,KLIMA1,PV-Anlage Beverhalle,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2024,ergebnis,0,207
+080101,KLIMA1,PV-Anlage Beverhalle,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2025,ansatz,0,207
+080101,KLIMA1,PV-Anlage Beverhalle,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ansatz,200000,207
+080101,KLIMA1,PV-Anlage Beverhalle,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2026,ve,0,207
+080101,KLIMA1,PV-Anlage Beverhalle,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2027,planung,0,207
+080101,KLIMA1,PV-Anlage Beverhalle,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2028,planung,0,207
+080101,KLIMA1,PV-Anlage Beverhalle,783112,Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.,auszahlung,ausstattung,2029,planung,0,207
+090101,AIBH012,Räumliche Planung und Entwicklung - Baumaßnahmen Feuerwehr Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,0,213
+090101,AIBH012,Räumliche Planung und Entwicklung - Baumaßnahmen Feuerwehr Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,50000,213
+090101,AIBH012,Räumliche Planung und Entwicklung - Baumaßnahmen Feuerwehr Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,213
+090101,AIBH012,Räumliche Planung und Entwicklung - Baumaßnahmen Feuerwehr Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,213
+090101,AIBH012,Räumliche Planung und Entwicklung - Baumaßnahmen Feuerwehr Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,213
+090101,AIBH012,Räumliche Planung und Entwicklung - Baumaßnahmen Feuerwehr Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,213
+090101,AIBH012,Räumliche Planung und Entwicklung - Baumaßnahmen Feuerwehr Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,213
+090101,GRDST006,Baugebiet Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,50,213
+090101,GRDST006,Baugebiet Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,0,213
+090101,GRDST006,Baugebiet Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,213
+090101,GRDST006,Baugebiet Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,213
+090101,GRDST006,Baugebiet Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,213
+090101,GRDST006,Baugebiet Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,213
+090101,GRDST006,Baugebiet Wischhausstraße (1. und 2. BA),782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,213
+090101,GRDST012,Räumliche Planung und Entwicklung - BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,0,213
+090101,GRDST012,Räumliche Planung und Entwicklung - BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,10000,213
+090101,GRDST012,Räumliche Planung und Entwicklung - BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,213
+090101,GRDST012,Räumliche Planung und Entwicklung - BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,213
+090101,GRDST012,Räumliche Planung und Entwicklung - BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,213
+090101,GRDST012,Räumliche Planung und Entwicklung - BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,213
+090101,GRDST012,Räumliche Planung und Entwicklung - BG Kohkamp III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,213
+090101,GRDST013,Räumliche Planung und Entwicklung - GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,0,213
+090101,GRDST013,Räumliche Planung und Entwicklung - GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,15000,213
+090101,GRDST013,Räumliche Planung und Entwicklung - GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,213
+090101,GRDST013,Räumliche Planung und Entwicklung - GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,213
+090101,GRDST013,Räumliche Planung und Entwicklung - GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,213
+090101,GRDST013,Räumliche Planung und Entwicklung - GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,213
+090101,GRDST013,Räumliche Planung und Entwicklung - GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,213
+090101,GRDST015,Räumliche Planung und Entwicklung - GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,2225,213
+090101,GRDST015,Räumliche Planung und Entwicklung - GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,0,213
+090101,GRDST015,Räumliche Planung und Entwicklung - GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,213
+090101,GRDST015,Räumliche Planung und Entwicklung - GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,213
+090101,GRDST015,Räumliche Planung und Entwicklung - GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,213
+090101,GRDST015,Räumliche Planung und Entwicklung - GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,213
+090101,GRDST015,Räumliche Planung und Entwicklung - GE Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,213
+090101,GRDST016,BG Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,0,213
+090101,GRDST016,BG Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,0,213
+090101,GRDST016,BG Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,20000,213
+090101,GRDST016,BG Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,213
+090101,GRDST016,BG Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,50000,213
+090101,GRDST016,BG Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,213
+090101,GRDST016,BG Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,213
+090201,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,3455,216
+090201,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,0,216
+090201,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,216
+090201,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,216
+090201,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,216
+090201,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,216
+090201,BAUG001,Baugebiet Alte Kläranlage im OT Brock,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,216
+090201,GRDST015,Gewerbegebiet Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,0,216
+090201,GRDST015,Gewerbegebiet Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,0,216
+090201,GRDST015,Gewerbegebiet Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,216
+090201,GRDST015,Gewerbegebiet Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,216
+090201,GRDST015,Gewerbegebiet Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,50000,216
+090201,GRDST015,Gewerbegebiet Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,50000,216
+090201,GRDST015,Gewerbegebiet Nord III,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,216
+090201,GRDST016,Baugebiet Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,0,217
+090201,GRDST016,Baugebiet Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,0,217
+090201,GRDST016,Baugebiet Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,217
+090201,GRDST016,Baugebiet Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,217
+090201,GRDST016,Baugebiet Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,50000,217
+090201,GRDST016,Baugebiet Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,50000,217
+090201,GRDST016,Baugebiet Kohkamp I,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,50000,217
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,2975,230
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,0,230
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,0,230
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,230
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,0,230
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,0,230
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,0,230
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2024,ergebnis,568544,230
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2025,ansatz,65000,230
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ansatz,90000,230
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ve,0,230
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2027,planung,0,230
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2028,planung,0,230
+100401,AIBH014,Verkauf und Neubau der Asylbewerberunterkünfte,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2029,planung,0,230
+100401,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,6232,230
+100401,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,24000,230
+100401,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,6000,230
+100401,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,230
+100401,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,6000,230
+100401,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,6000,230
+100401,BGAFB4,Betriebs- und Geschäftsausstattung,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,6000,230
+100401,KLIMA1,PV-Anlage Asylbewerberwohnheim,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2024,ergebnis,1260,230
+100401,KLIMA1,PV-Anlage Asylbewerberwohnheim,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2025,ansatz,0,230
+100401,KLIMA1,PV-Anlage Asylbewerberwohnheim,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ansatz,0,230
+100401,KLIMA1,PV-Anlage Asylbewerberwohnheim,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2026,ve,0,230
+100401,KLIMA1,PV-Anlage Asylbewerberwohnheim,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2027,planung,0,230
+100401,KLIMA1,PV-Anlage Asylbewerberwohnheim,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2028,planung,0,230
+100401,KLIMA1,PV-Anlage Asylbewerberwohnheim,785111,Auszahl. f. d. Abwickl. Hochbaumaßnahmen,auszahlung,bau,2029,planung,0,230
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2024,ergebnis,0,243
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2025,ansatz,0,243
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ansatz,0,243
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ve,0,243
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2027,planung,0,243
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2028,planung,1018025,243
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2029,planung,1641975,243
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,15,243
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,0,243
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,0,243
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,243
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,0,243
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,0,243
+120101,120101,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,243
+120101,GRDST006,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen - BG Wischhausstraße (1. und 2. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2024,ergebnis,0,243
+120101,GRDST006,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen - BG Wischhausstraße (1. und 2. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2025,ansatz,0,243
+120101,GRDST006,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen - BG Wischhausstraße (1. und 2. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ansatz,210000,243
+120101,GRDST006,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen - BG Wischhausstraße (1. und 2. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ve,0,243
+120101,GRDST006,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen - BG Wischhausstraße (1. und 2. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2027,planung,154140,243
+120101,GRDST006,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen - BG Wischhausstraße (1. und 2. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2028,planung,1211790,243
+120101,GRDST006,"Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen - BG Wischhausstraße (1. und 2. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2029,planung,206850,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,0,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,75000,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,75000,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,75000,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,75000,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,75000,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2024,ergebnis,0,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2025,ansatz,300000,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2026,ansatz,350000,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2026,ve,0,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2027,planung,300000,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2028,planung,300000,243
+120101,INFRA002,Erweiterung Straßenbeleuchtung,782114,Kauf v. Infrastrukurvermögen,auszahlung,grundstuecke,2029,planung,300000,243
+120101,STRAß004,Am Rathaus - Straßen- / Parkplatzerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,0,243
+120101,STRAß004,Am Rathaus - Straßen- / Parkplatzerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,50000,243
+120101,STRAß004,Am Rathaus - Straßen- / Parkplatzerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,20000,243
+120101,STRAß004,Am Rathaus - Straßen- / Parkplatzerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,243
+120101,STRAß004,Am Rathaus - Straßen- / Parkplatzerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,0,243
+120101,STRAß004,Am Rathaus - Straßen- / Parkplatzerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,0,243
+120101,STRAß004,Am Rathaus - Straßen- / Parkplatzerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,243
+120101,STRAß005,Ausbau der Straßen in GE Ost (Aldi/Westeria),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2024,ergebnis,48359,243
+120101,STRAß005,Ausbau der Straßen in GE Ost (Aldi/Westeria),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2025,ansatz,0,243
+120101,STRAß005,Ausbau der Straßen in GE Ost (Aldi/Westeria),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ansatz,0,243
+120101,STRAß005,Ausbau der Straßen in GE Ost (Aldi/Westeria),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ve,0,243
+120101,STRAß005,Ausbau der Straßen in GE Ost (Aldi/Westeria),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2027,planung,0,243
+120101,STRAß005,Ausbau der Straßen in GE Ost (Aldi/Westeria),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2028,planung,0,243
+120101,STRAß005,Ausbau der Straßen in GE Ost (Aldi/Westeria),688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2029,planung,0,243
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2024,ergebnis,46200,244
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2025,ansatz,0,244
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ansatz,0,244
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ve,0,244
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2027,planung,0,244
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2028,planung,0,244
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2029,planung,0,244
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,190,244
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,0,244
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,0,244
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,244
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,300000,244
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,300000,244
+120101,STRAß008,"Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,244
+120101,STRAß009,Neubau von Brücken,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,0,244
+120101,STRAß009,Neubau von Brücken,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,0,244
+120101,STRAß009,Neubau von Brücken,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,500000,244
+120101,STRAß009,Neubau von Brücken,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,244
+120101,STRAß009,Neubau von Brücken,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,0,244
+120101,STRAß009,Neubau von Brücken,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,0,244
+120101,STRAß009,Neubau von Brücken,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,0,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,350000,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,350000,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,350000,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,350000,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,0,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,671881,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,500000,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,500000,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,500000,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,500000,244
+120101,STRAß014,Wirtschaftswege - Straßenbau (für Verband),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,472014,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,85000,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681011,Zuweisg v. Bund f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,343273,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,96000,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2024,ergebnis,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2025,ansatz,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ansatz,947000,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ve,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2027,planung,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2028,planung,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2029,planung,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,934053,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,1600000,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,0,244
+120101,STRAß019,Hauptstraße - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,244
+120101,STRAß022,Straßenausbau GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,0,245
+120101,STRAß022,Straßenausbau GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,0,245
+120101,STRAß022,Straßenausbau GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,100000,245
+120101,STRAß022,Straßenausbau GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,245
+120101,STRAß022,Straßenausbau GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,245
+120101,STRAß022,Straßenausbau GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,245
+120101,STRAß022,Straßenausbau GE West,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,245
+120101,STRAß022,Straßenausbau GE West,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,0,245
+120101,STRAß022,Straßenausbau GE West,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,100000,245
+120101,STRAß022,Straßenausbau GE West,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,100000,245
+120101,STRAß022,Straßenausbau GE West,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,245
+120101,STRAß022,Straßenausbau GE West,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,1650000,245
+120101,STRAß022,Straßenausbau GE West,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,0,245
+120101,STRAß022,Straßenausbau GE West,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,245
+120101,STRAß024,Straßenausbau BG Kohkamp III,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,44738,245
+120101,STRAß024,Straßenausbau BG Kohkamp III,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,1000000,245
+120101,STRAß024,Straßenausbau BG Kohkamp III,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,1000000,245
+120101,STRAß024,Straßenausbau BG Kohkamp III,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,1000000,245
+120101,STRAß024,Straßenausbau BG Kohkamp III,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,1000000,245
+120101,STRAß024,Straßenausbau BG Kohkamp III,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,0,245
+120101,STRAß024,Straßenausbau BG Kohkamp III,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2024,ergebnis,0,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2025,ansatz,80000,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ansatz,80000,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2026,ve,0,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2027,planung,0,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2028,planung,0,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,688101,Beiträge und ähnliche Entgelte,einzahlung,beitraege,2029,planung,0,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,223819,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,0,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,0,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,0,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,0,245
+120101,STRAß027,Hanfgarten - Straßenerneuerung,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,245
+120101,STRAß028,Ausbau Wischhausstraße (Hauptstraße bis Zur Gräfte),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,0,245
+120101,STRAß028,Ausbau Wischhausstraße (Hauptstraße bis Zur Gräfte),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,0,245
+120101,STRAß028,Ausbau Wischhausstraße (Hauptstraße bis Zur Gräfte),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,40000,245
+120101,STRAß028,Ausbau Wischhausstraße (Hauptstraße bis Zur Gräfte),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,1700000,245
+120101,STRAß028,Ausbau Wischhausstraße (Hauptstraße bis Zur Gräfte),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,1700000,245
+120101,STRAß028,Ausbau Wischhausstraße (Hauptstraße bis Zur Gräfte),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,0,245
+120101,STRAß028,Ausbau Wischhausstraße (Hauptstraße bis Zur Gräfte),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,245
+120101,STRAß029,Ausbau Schulstraße (Mühlenweg - Hanfgarten),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,0,245
+120101,STRAß029,Ausbau Schulstraße (Mühlenweg - Hanfgarten),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,0,245
+120101,STRAß029,Ausbau Schulstraße (Mühlenweg - Hanfgarten),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,0,245
+120101,STRAß029,Ausbau Schulstraße (Mühlenweg - Hanfgarten),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,245
+120101,STRAß029,Ausbau Schulstraße (Mühlenweg - Hanfgarten),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,0,245
+120101,STRAß029,Ausbau Schulstraße (Mühlenweg - Hanfgarten),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,200000,245
+120101,STRAß029,Ausbau Schulstraße (Mühlenweg - Hanfgarten),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,245
+120101,STRAß030,Ausbau Grevener Damm (Bahnhofstr. - Tennisplatz),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,0,246
+120101,STRAß030,Ausbau Grevener Damm (Bahnhofstr. - Tennisplatz),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,0,246
+120101,STRAß030,Ausbau Grevener Damm (Bahnhofstr. - Tennisplatz),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,0,246
+120101,STRAß030,Ausbau Grevener Damm (Bahnhofstr. - Tennisplatz),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,246
+120101,STRAß030,Ausbau Grevener Damm (Bahnhofstr. - Tennisplatz),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,40000,246
+120101,STRAß030,Ausbau Grevener Damm (Bahnhofstr. - Tennisplatz),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,1000000,246
+120101,STRAß030,Ausbau Grevener Damm (Bahnhofstr. - Tennisplatz),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,246
+120102,120102,"Unterhaltung von Straßen, Wegen, Plätzen und Verkehrsanlagen",682113,Einz. Verkauf von Infrastrukturvermögen,einzahlung,grundstuecke,2024,ergebnis,462634,249
+120102,120102,"Unterhaltung von Straßen, Wegen, Plätzen und Verkehrsanlagen",682113,Einz. Verkauf von Infrastrukturvermögen,einzahlung,grundstuecke,2025,ansatz,0,249
+120102,120102,"Unterhaltung von Straßen, Wegen, Plätzen und Verkehrsanlagen",682113,Einz. Verkauf von Infrastrukturvermögen,einzahlung,grundstuecke,2026,ansatz,0,249
+120102,120102,"Unterhaltung von Straßen, Wegen, Plätzen und Verkehrsanlagen",682113,Einz. Verkauf von Infrastrukturvermögen,einzahlung,grundstuecke,2026,ve,0,249
+120102,120102,"Unterhaltung von Straßen, Wegen, Plätzen und Verkehrsanlagen",682113,Einz. Verkauf von Infrastrukturvermögen,einzahlung,grundstuecke,2027,planung,0,249
+120102,120102,"Unterhaltung von Straßen, Wegen, Plätzen und Verkehrsanlagen",682113,Einz. Verkauf von Infrastrukturvermögen,einzahlung,grundstuecke,2028,planung,0,249
+120102,120102,"Unterhaltung von Straßen, Wegen, Plätzen und Verkehrsanlagen",682113,Einz. Verkauf von Infrastrukturvermögen,einzahlung,grundstuecke,2029,planung,0,249
+120102,STRAß012,Bau der Westumgehung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,734700,249
+120102,STRAß012,Bau der Westumgehung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,0,249
+120102,STRAß012,Bau der Westumgehung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,0,249
+120102,STRAß012,Bau der Westumgehung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,249
+120102,STRAß012,Bau der Westumgehung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,0,249
+120102,STRAß012,Bau der Westumgehung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,0,249
+120102,STRAß012,Bau der Westumgehung,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,0,249
+120201,ÖPNV001,Bushaltestellen,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,0,252
+120201,ÖPNV001,Bushaltestellen,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,0,252
+120201,ÖPNV001,Bushaltestellen,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,0,252
+120201,ÖPNV001,Bushaltestellen,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,252
+120201,ÖPNV001,Bushaltestellen,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,27000,252
+120201,ÖPNV001,Bushaltestellen,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,27000,252
+120201,ÖPNV001,Bushaltestellen,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,0,252
+120201,ÖPNV001,Bushaltestellen,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,169943,252
+120201,ÖPNV001,Bushaltestellen,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,0,252
+120201,ÖPNV001,Bushaltestellen,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,0,252
+120201,ÖPNV001,Bushaltestellen,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,252
+120201,ÖPNV001,Bushaltestellen,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,30000,252
+120201,ÖPNV001,Bushaltestellen,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,30000,252
+120201,ÖPNV001,Bushaltestellen,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),681311,Zuweisg v. Zweckverbänden f. Invest. massnahm.,einzahlung,zuwendungen,2024,ergebnis,0,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),681311,Zuweisg v. Zweckverbänden f. Invest. massnahm.,einzahlung,zuwendungen,2025,ansatz,72000,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),681311,Zuweisg v. Zweckverbänden f. Invest. massnahm.,einzahlung,zuwendungen,2026,ansatz,162000,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),681311,Zuweisg v. Zweckverbänden f. Invest. massnahm.,einzahlung,zuwendungen,2026,ve,0,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),681311,Zuweisg v. Zweckverbänden f. Invest. massnahm.,einzahlung,zuwendungen,2027,planung,3600000,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),681311,Zuweisg v. Zweckverbänden f. Invest. massnahm.,einzahlung,zuwendungen,2028,planung,0,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),681311,Zuweisg v. Zweckverbänden f. Invest. massnahm.,einzahlung,zuwendungen,2029,planung,0,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,446,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,80000,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,180000,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,3000000,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,1000000,252
+120201,ÖPNV002,Baumaßnahmen am Bahnhof (Barrierefreiheit),785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,252
+120201,ÖPNV006,Mobilstation am Bahnhof,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,0,252
+120201,ÖPNV006,Mobilstation am Bahnhof,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,510000,252
+120201,ÖPNV006,Mobilstation am Bahnhof,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,510000,252
+120201,ÖPNV006,Mobilstation am Bahnhof,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,252
+120201,ÖPNV006,Mobilstation am Bahnhof,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,0,252
+120201,ÖPNV006,Mobilstation am Bahnhof,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,0,252
+120201,ÖPNV006,Mobilstation am Bahnhof,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,0,252
+120201,ÖPNV006,Mobilstation am Bahnhof,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2024,ergebnis,1294,252
+120201,ÖPNV006,Mobilstation am Bahnhof,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2025,ansatz,650000,252
+120201,ÖPNV006,Mobilstation am Bahnhof,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ansatz,650000,252
+120201,ÖPNV006,Mobilstation am Bahnhof,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2026,ve,0,252
+120201,ÖPNV006,Mobilstation am Bahnhof,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2027,planung,0,252
+120201,ÖPNV006,Mobilstation am Bahnhof,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2028,planung,0,252
+120201,ÖPNV006,Mobilstation am Bahnhof,785311,Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen,auszahlung,bau,2029,planung,0,252
+130101,ÖKO001,Blanke Wasser,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,26827,259
+130101,ÖKO001,Blanke Wasser,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,0,259
+130101,ÖKO001,Blanke Wasser,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,259
+130101,ÖKO001,Blanke Wasser,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,259
+130101,ÖKO001,Blanke Wasser,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,259
+130101,ÖKO001,Blanke Wasser,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,259
+130101,ÖKO001,Blanke Wasser,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,259
+130101,ÖKO004,Retentionsfläche Breddewiesenbach,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,15213,260
+130101,ÖKO004,Retentionsfläche Breddewiesenbach,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,155000,260
+130101,ÖKO004,Retentionsfläche Breddewiesenbach,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,260
+130101,ÖKO004,Retentionsfläche Breddewiesenbach,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,260
+130101,ÖKO004,Retentionsfläche Breddewiesenbach,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,260
+130101,ÖKO004,Retentionsfläche Breddewiesenbach,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,260
+130101,ÖKO004,Retentionsfläche Breddewiesenbach,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,260
+130101,ÖKO005,Ausgleichsfläche Kattmanns Kamp,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,3380,260
+130101,ÖKO005,Ausgleichsfläche Kattmanns Kamp,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,65000,260
+130101,ÖKO005,Ausgleichsfläche Kattmanns Kamp,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,260
+130101,ÖKO005,Ausgleichsfläche Kattmanns Kamp,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,260
+130101,ÖKO005,Ausgleichsfläche Kattmanns Kamp,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,260
+130101,ÖKO005,Ausgleichsfläche Kattmanns Kamp,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,260
+130101,ÖKO005,Ausgleichsfläche Kattmanns Kamp,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,260
+130101,ÖKO008,Ökopool Brüskenheide,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,100000,260
+130101,ÖKO008,Ökopool Brüskenheide,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,0,260
+130101,ÖKO008,Ökopool Brüskenheide,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,0,260
+130101,ÖKO008,Ökopool Brüskenheide,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,260
+130101,ÖKO008,Ökopool Brüskenheide,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,260
+130101,ÖKO008,Ökopool Brüskenheide,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,260
+130101,ÖKO008,Ökopool Brüskenheide,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,260
+130201,BGA130201,Betriebs- und Geschäftsausst. für öff. Grünanlagen,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,0,263
+130201,BGA130201,Betriebs- und Geschäftsausst. für öff. Grünanlagen,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,8500,263
+130201,BGA130201,Betriebs- und Geschäftsausst. für öff. Grünanlagen,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,3000,263
+130201,BGA130201,Betriebs- und Geschäftsausst. für öff. Grünanlagen,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,263
+130201,BGA130201,Betriebs- und Geschäftsausst. für öff. Grünanlagen,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,3000,263
+130201,BGA130201,Betriebs- und Geschäftsausst. für öff. Grünanlagen,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,3000,263
+130201,BGA130201,Betriebs- und Geschäftsausst. für öff. Grünanlagen,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,3000,263
+130301,BGA130301,Betriebs- und Geschäftsausstattung Friedhöfe,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,0,266
+130301,BGA130301,Betriebs- und Geschäftsausstattung Friedhöfe,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,0,266
+130301,BGA130301,Betriebs- und Geschäftsausstattung Friedhöfe,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,11000,266
+130301,BGA130301,Betriebs- und Geschäftsausstattung Friedhöfe,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,266
+130301,BGA130301,Betriebs- und Geschäftsausstattung Friedhöfe,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,6000,266
+130301,BGA130301,Betriebs- und Geschäftsausstattung Friedhöfe,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,0,266
+130301,BGA130301,Betriebs- und Geschäftsausstattung Friedhöfe,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,0,266
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2024,ergebnis,0,267
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2025,ansatz,43000,267
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ansatz,80000,267
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2026,ve,0,267
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2027,planung,0,267
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2028,planung,0,267
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,782112,Kauf v. unbebauten Grdst.,auszahlung,grundstuecke,2029,planung,0,267
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2024,ergebnis,1226,267
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2025,ansatz,0,267
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ansatz,0,267
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2026,ve,0,267
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2027,planung,0,267
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2028,planung,0,267
+130301,FRIED003,Baumaßnahmen Friedhof Dorf,783111,Kauf v. bewegl. Sachen d. AV über 800 EUR,auszahlung,ausstattung,2029,planung,0,267
+150101,INFRA006,Breitbandnetz,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2024,ergebnis,0,275
+150101,INFRA006,Breitbandnetz,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2025,ansatz,119000,275
+150101,INFRA006,Breitbandnetz,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2026,ansatz,30000,275
+150101,INFRA006,Breitbandnetz,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2026,ve,0,275
+150101,INFRA006,Breitbandnetz,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2027,planung,30000,275
+150101,INFRA006,Breitbandnetz,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2028,planung,18000,275
+150101,INFRA006,Breitbandnetz,781011,Aktivierbare Zuweisung,auszahlung,investitionszuschuesse,2029,planung,0,275
+160101,160101,Allgemeine Finanzwirtschaft,684011,Einz. Veräußerg. v. Finanzanlagen,einzahlung,finanzanlagen,2024,ergebnis,86187,282
+160101,160101,Allgemeine Finanzwirtschaft,684011,Einz. Veräußerg. v. Finanzanlagen,einzahlung,finanzanlagen,2025,ansatz,0,282
+160101,160101,Allgemeine Finanzwirtschaft,684011,Einz. Veräußerg. v. Finanzanlagen,einzahlung,finanzanlagen,2026,ansatz,0,282
+160101,160101,Allgemeine Finanzwirtschaft,684011,Einz. Veräußerg. v. Finanzanlagen,einzahlung,finanzanlagen,2026,ve,0,282
+160101,160101,Allgemeine Finanzwirtschaft,684011,Einz. Veräußerg. v. Finanzanlagen,einzahlung,finanzanlagen,2027,planung,0,282
+160101,160101,Allgemeine Finanzwirtschaft,684011,Einz. Veräußerg. v. Finanzanlagen,einzahlung,finanzanlagen,2028,planung,0,282
+160101,160101,Allgemeine Finanzwirtschaft,684011,Einz. Veräußerg. v. Finanzanlagen,einzahlung,finanzanlagen,2029,planung,0,282
+160101,SOPO007,Allgemeine Investitionspauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,1370881,282
+160101,SOPO007,Allgemeine Investitionspauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,1415000,282
+160101,SOPO007,Allgemeine Investitionspauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,1525000,282
+160101,SOPO007,Allgemeine Investitionspauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,282
+160101,SOPO007,Allgemeine Investitionspauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,1525000,282
+160101,SOPO007,Allgemeine Investitionspauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,1525000,282
+160101,SOPO007,Allgemeine Investitionspauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,1525000,282
+160101,SOPO008,Schulpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,363263,282
+160101,SOPO008,Schulpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,371000,282
+160101,SOPO008,Schulpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,406000,282
+160101,SOPO008,Schulpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,282
+160101,SOPO008,Schulpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,406000,282
+160101,SOPO008,Schulpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,406000,282
+160101,SOPO008,Schulpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,406000,282
+160101,SOPO009,Sportpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2024,ergebnis,60000,282
+160101,SOPO009,Sportpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2025,ansatz,60000,282
+160101,SOPO009,Sportpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ansatz,60000,282
+160101,SOPO009,Sportpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2026,ve,0,282
+160101,SOPO009,Sportpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2027,planung,60000,282
+160101,SOPO009,Sportpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2028,planung,60000,282
+160101,SOPO009,Sportpauschale,681111,Zuweisg v. Land f. Invest. maßn.,einzahlung,zuwendungen,2029,planung,60000,282
