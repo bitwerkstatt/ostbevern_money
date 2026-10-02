@@ -5,7 +5,7 @@ titles: json
 findings:
   - id: CR-01
     severity: critical
-    disposition: open
+    disposition: fixed
     title: "`strict=True` in `schema.schreibe_csv` does not catch the float→int precision-loss scenario it was added to prevent — IN-03 is not actually fixed"
   - id: WR-01
     severity: warning
@@ -27,16 +27,16 @@ findings:
     severity: info
     disposition: fixed
     title: "`schreibe_csv` relies on a blind `.cast(spalten)` that can silently coerce/truncate mismatched types instead of failing loud"
-open: 1
+open: 0
 total: 6
-recorded: 2026-10-02T11:33:04.413Z
+recorded: 2026-10-02T11:46:56.489Z
 ---
 
 # Phase 03: Code Review Disposition
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| CR-01 | critical | open | - |
+| CR-01 | critical | fixed | 03-REVIEW-FIX.md |
 | WR-01 | warning | fixed | 03-REVIEW-FIX.md (not in the current review) |
 | WR-02 | warning | fixed | 03-REVIEW-FIX.md (not in the current review) |
 | IN-01 | info | fixed | 03-REVIEW-FIX.md (not in the current review) |
