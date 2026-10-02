@@ -30,7 +30,12 @@ from ostbevern.schema import (
     zerlege_spaltenkopf,
 )
 
-_ALLE_VORBERICHT_CSVS = (STEUERARTEN_CSV, ZUWENDUNGEN_CSV, TRANSFERAUFWENDUNGEN_CSV, KITA_ZUSCHUESSE_CSV)
+_ALLE_VORBERICHT_CSVS = (
+    STEUERARTEN_CSV,
+    ZUWENDUNGEN_CSV,
+    TRANSFERAUFWENDUNGEN_CSV,
+    KITA_ZUSCHUESSE_CSV,
+)
 
 
 def _kopiere_daten_baum_nach(tmp_path: Path) -> None:

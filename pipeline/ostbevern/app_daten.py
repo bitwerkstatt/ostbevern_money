@@ -18,11 +18,14 @@ from pathlib import Path
 import polars as pl
 
 from ostbevern.konfiguration import PROJEKT_WURZEL, lade_jahrgang
-from ostbevern.pruefung import REGEL5_GEP_ZEILEN, Planwerte
+from ostbevern.pruefung import REGEL5_GEP_ZEILEN, REGEL5_TOLERANZ_GEP_EURO, Planwerte
 from ostbevern.schema import (
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
+    KITA_ZUSCHUESSE_CSV,
     STEUERARTEN_CSV,
+    TRANSFERAUFWENDUNGEN_CSV,
+    ZUWENDUNGEN_CSV,
     lies_plan_csv,
     lies_vorbericht_csv,
     zerlege_spaltenkopf,
@@ -62,34 +65,48 @@ def baue_vorbericht_tabelle(
     jahre: list[int],
     planwerte: Planwerte,
     gep_zeile: str | None,
+    sonstige: bool = False,
 ) -> dict[str, object]:
     """Baut die App-JSON-Struktur einer manuellen Vorberichtstabelle (D-02, D-21).
 
     `gesamt_plan` ist die eurogenaue GEP-Zeile (D-01), `gesamt_vorbericht` die gedruckte,
     nur in T€ geführte Gesamtzeile × 1000 (als `gerundet` gekennzeichnet). Jeder Posten
     trägt seine Werte × 1000, ebenfalls `gerundet: true`, `berechnet: false` (D-02, D-10).
-    Fehlt für ein Jahr aus `jahre` eine Gesamtzeile, oder gibt es mehr als eine je Jahr,
-    bricht die Funktion mit `AppDatenFehler` ab (inkonsistente Eingabedaten).
+    Eine Tabelle ohne `gep_zeile` (z. B. kita_zuschuesse) hat `planzeile`/`gesamt_plan`
+    `null`; druckt sie nicht jedes Jahr aus `jahre` (MANU-04: nur das Haushaltsjahr), sind
+    die fehlenden Jahre in `gesamt_vorbericht.werte` ebenfalls `null` — fehlt die
+    Gesamtzeile für JEDES Jahr, bricht die Funktion mit `AppDatenFehler` ab.
+
+    `sonstige=True` (nur zuwendungen, Spez. 3.8) hängt einen letzten, rein berechneten
+    Posten "Sonstige" an: nicht-`null` genau in den Jahren, in denen die gedruckte
+    Gesamtzeile um mehr als REGEL5_TOLERANZ_GEP_EURO von der GEP-Zeile abweicht, und dort
+    so bemessen, dass Σ Posten + Sonstige exakt die GEP-Zeile ergibt (die Planzeile bleibt
+    maßgeblich, D-07b).
     """
     tabelle = df["tabelle"][0]
     gesamt_df = df.filter(pl.col("ist_gesamt"))
     gesamt_nach_jahr = {zeile["jahr"]: zeile for zeile in gesamt_df.iter_rows(named=True)}
     if len(gesamt_nach_jahr) != gesamt_df.height:
         raise AppDatenFehler(f"{tabelle}: mehrere Gesamtzeilen für dasselbe Jahr")
+    if not gesamt_nach_jahr:
+        raise AppDatenFehler(f"{tabelle}: keine Gesamtzeile vorhanden")
 
-    gesamt_werte: list[int] = []
+    gesamt_werte: list[int | None] = []
     gesamt_quelle: int | None = None
     for jahr in jahre:
         zeile = gesamt_nach_jahr.get(jahr)
         if zeile is None:
-            raise AppDatenFehler(f"{tabelle}: keine Gesamtzeile für Jahr {jahr}")
+            gesamt_werte.append(None)
+            continue
         gesamt_werte.append(zeile["betrag_teur"] * 1000)
         gesamt_quelle = zeile["quelle"]
 
     if gep_zeile is not None:
         planzeile = ZEILEN["gesamtergebnisplan"][gep_zeile].kanonisch
-        gesamt_plan: list[int] | None = [
+        gesamt_plan: list[int | None] | None = [
             planwerte.wert("GESAMT", "", gep_zeile, jahr, gesamt_nach_jahr[jahr]["wertart"])
+            if jahr in gesamt_nach_jahr
+            else None
             for jahr in jahre
         ]
     else:
@@ -133,6 +150,40 @@ def baue_vorbericht_tabelle(
             }
         )
 
+    if sonstige:
+        if gesamt_plan is None:
+            raise AppDatenFehler(f"{tabelle}: sonstige=True verlangt eine GEP-Zeile")
+        sonstige_werte: list[int | None] = []
+        for index in range(len(jahre)):
+            plan_wert = gesamt_plan[index]
+            gesamt_wert = gesamt_werte[index]
+            if plan_wert is None or gesamt_wert is None:
+                sonstige_werte.append(None)
+                continue
+            if abs(plan_wert - gesamt_wert) <= REGEL5_TOLERANZ_GEP_EURO:
+                sonstige_werte.append(None)
+                continue
+            posten_summe = sum(
+                posten["werte"][index] or 0  # type: ignore[index]
+                for posten in posten_liste
+            )
+            sonstige_werte.append(plan_wert - posten_summe)
+        posten_liste.append(
+            {
+                "posten": "sonstige",
+                "name": "Sonstige",
+                "werte": sonstige_werte,
+                "gerundet": False,
+                "berechnet": True,
+                "quelle": gesamt_quelle,
+                "anmerkung": (
+                    "Differenz zwischen der eurogenauen Planzeile des Gesamtergebnisplans "
+                    "und der Summe der gedruckten Vorbericht-Posten (Spez. 3.8); die "
+                    "Planzeile ist maßgeblich."
+                ),
+            }
+        )
+
     return {
         "tabelle": tabelle,
         "quelle_einheit": "teur",
@@ -166,10 +217,22 @@ def erzeuge_app_daten(
     jahre = [jahr_wert for _wertart, jahr_wert in spalten_zu_wertart]
     wertarten = [wertart for wertart, _jahr_wert in spalten_zu_wertart]
 
-    vorbericht_quellen = {"steuerarten": lies_vorbericht_csv(daten_wurzel / STEUERARTEN_CSV)}
+    # Reihenfolge ist Teil des App-JSON-Vertrags (D-21): steuerarten, zuwendungen,
+    # transferaufwendungen, kita_zuschuesse — dict-Einfügereihenfolge bleibt beim Schreiben
+    # erhalten (schreibe_app_json/json.dumps, keine sort_keys).
+    vorbericht_quellen = {
+        "steuerarten": lies_vorbericht_csv(daten_wurzel / STEUERARTEN_CSV),
+        "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
+        "transferaufwendungen": lies_vorbericht_csv(daten_wurzel / TRANSFERAUFWENDUNGEN_CSV),
+        "kita_zuschuesse": lies_vorbericht_csv(daten_wurzel / KITA_ZUSCHUESSE_CSV),
+    }
     vorbericht = {
         tabelle: baue_vorbericht_tabelle(
-            df, jahre=jahre, planwerte=planwerte, gep_zeile=REGEL5_GEP_ZEILEN.get(tabelle)
+            df,
+            jahre=jahre,
+            planwerte=planwerte,
+            gep_zeile=REGEL5_GEP_ZEILEN.get(tabelle),
+            sonstige=(tabelle == "zuwendungen"),
         )
         for tabelle, df in vorbericht_quellen.items()
     }

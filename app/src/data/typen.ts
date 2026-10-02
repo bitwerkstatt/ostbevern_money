@@ -37,11 +37,15 @@ export interface VorberichtTabelle {
   planzeile: string | null
   /** Eurogenaue GEP-Zeile je Eintrag von `jahre`, `null` ohne `planzeile` (D-01). */
   gesamt_plan: (number | null)[] | null
-  /** Die gedruckte, nur in T€ geführte Gesamtzeile × 1000. */
+  /**
+   * Die gedruckte, nur in T€ geführte Gesamtzeile × 1000. `werte`-Einträge sind `null` in
+   * Jahren ohne gedruckte Gesamtzeile (z. B. kita_zuschuesse außerhalb des Haushaltsjahrs,
+   * MANU-04); `quelle` ist `null`, wenn keine einzige Gesamtzeile existiert.
+   */
   gesamt_vorbericht: {
-    werte: number[]
+    werte: (number | null)[]
     gerundet: boolean
-    quelle: number
+    quelle: number | null
   }
   /** Die Einzelposten der Tabelle in gedruckter Reihenfolge. */
   posten: VorberichtPosten[]

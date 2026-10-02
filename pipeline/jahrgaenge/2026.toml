@@ -76,7 +76,9 @@ pdf_seite = 299
 # Detailseiten (Produktinformationen, Investitionen, Querschnitte, ...). Jeder Wert wird
 # gegen Textzeile.text geprüft, sofern an der jeweiligen Verwendungsstelle nicht anders
 # dokumentiert. Ein Schlüssel, der auf "_muster" endet, wird beim Laden mit re.compile
-# kompiliert (ostbevern.konfiguration.lade_jahrgang).
+# kompiliert (ostbevern.konfiguration.lade_jahrgang). Ab Phase 4 tragen die Tabellen auch
+# jahrgangsspezifische Codes des gedruckten Haushalts (z. B. Produktcodes), nicht nur
+# Texte und Muster.
 [layout.querschnitte]
 # Erfasst den zweistelligen PB-Code am Zeilenanfang vor einem Nicht-Ziffern-Zeichen;
 # erfasst sowohl "01 Innere Verwaltung - ..." als auch "12 Verkehrsflächen und
@@ -159,3 +161,12 @@ einheit = "Einheit"
 fussnote_jahr_muster = '^Ist-Werte? (?P<jahre>\d{4}(?: und \d{4})*):'
 fussnote_allgemein_muster = '(\.$|^\*)'
 eurozeichen = "C"
+
+# [layout.weitergabe_kreis_land] (Phase 4, D-01, PRUEF-05): fachliche Regel, verifiziert
+# gegen S. 281 (Teilergebnisplan Produkt 160101) und S. 46 (Transferaufwendungen) — die
+# Transferaufwendungen (TP Z. 15) dieses Produkts bestehen in jedem Jahr 2024-2029
+# ausschließlich aus Kreisumlage, Gewerbesteuerumlage und Krankenhausinvestitionsumlage
+# (z. B. 2026: 11.001.181 EUR = 10.147 + 654 + 200 T€). `produkt` ist der Produktcode, von
+# dessen Teilergebnisplan-Zeile 15 Regel 5 die Summe der drei Vorbericht-Posten abzieht.
+[layout.weitergabe_kreis_land]
+produkt = "160101"

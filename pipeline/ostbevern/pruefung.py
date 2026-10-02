@@ -15,7 +15,13 @@ from pathlib import Path
 
 import polars as pl
 
-from ostbevern.konfiguration import JAHRGAENGE_VERZEICHNIS, Jahrgang, lade_jahrgang, lade_sollwerte
+from ostbevern.konfiguration import (
+    JAHRGAENGE_VERZEICHNIS,
+    Jahrgang,
+    lade_jahrgang,
+    lade_sollwerte,
+    layout_text,
+)
 from ostbevern.schema import (
     BEFUNDE_MD,
     DATEN_WURZEL,
@@ -25,13 +31,16 @@ from ostbevern.schema import (
     HIERARCHIE_CSV,
     INVESTITIONEN_CSV,
     INVESTITIONEN_PB_CSV,
+    KITA_ZUSCHUESSE_CSV,
     KONSISTENZ_MD,
     PRODUKTE_JSON,
     QUERSCHNITTE_CSV,
     SEITEN_CSV,
     STEUERARTEN_CSV,
+    TRANSFERAUFWENDUNGEN_CSV,
     VE_FAELLIGKEITEN_CSV,
     WERTARTEN,
+    ZUWENDUNGEN_CSV,
     lies_hierarchie_csv,
     lies_investitionen_csv,
     lies_investitionen_pb_csv,
@@ -836,20 +845,146 @@ def _pruefe_regel4(
 
 # Regel 5 (PRUEF-05, D-05 bis D-07): manuelle Vorberichtstabelle (schema.py-Tabellenname,
 # z. B. "steuerarten") -> Gesamtergebnisplan-Zeile, gegen die die gedruckte Gesamtzeile der
-# Tabelle in Stufe (b) geprüft wird (fachliche Regel, nicht jede Tabelle hat eine GEP-Zeile).
-REGEL5_GEP_ZEILEN: dict[str, str] = {"steuerarten": "01"}
+# Tabelle in Stufe (b) geprüft wird (fachliche Regel, nicht jede Tabelle hat eine GEP-Zeile;
+# kita_zuschuesse hat bewusst keine — sie wird stattdessen gegen einen Transferaufwendungen-
+# Posten geprüft, siehe REGEL5_KITA_POSTEN).
+REGEL5_GEP_ZEILEN: dict[str, str] = {
+    "steuerarten": "01",
+    "zuwendungen": "02",
+    "transferaufwendungen": "15",
+}
 # Stufe (b) vergleicht die gedruckte, nur in T€ geführte Gesamtzeile (×1000) gegen die
 # eurogenaue GEP-Zeile; eine eigene, gröbere Toleranz als TOLERANZ_EURO (Stufe a bleibt
 # bei der strengen 1-€-Toleranz, da dort beide Seiten aus derselben Tabelle stammen).
 REGEL5_TOLERANZ_GEP_EURO = 1000
+# Weitergabe an Kreis und Land (D-01, Spez. 3.4): TP <produkt> Z. 15 besteht ausschließlich
+# aus diesen drei Transferaufwendungen-Posten (Posten-Schlüssel unserer eigenen CSV, keine
+# GEP-/TP-Zeile — fachliche Regel, Produktcode kommt aus [layout.weitergabe_kreis_land]).
+WEITERGABE_POSTEN: tuple[str, ...] = (
+    "kreisumlage",
+    "gewerbesteuerumlage",
+    "krankenhausinvestitionsumlage",
+)
+# kita_zuschuesse (D-07): Posten in transferaufwendungen.csv, gegen den die Kita-Gesamtzeile
+# desselben Jahres geprüft wird.
+REGEL5_KITA_POSTEN = "zuschuesse_kindertageseinrichtungen"
+
+
+def _pruefe_regel5_kita_gegen_transfer(
+    *, kita_df: pl.DataFrame, transfer_df: pl.DataFrame
+) -> tuple[int, list[Pruefpunkt]]:
+    """Kita-Gesamtzeile je Jahr == Transferaufwendungen-Posten REGEL5_KITA_POSTEN desselben
+    Jahres (D-07). Ein fehlender Posten oder ein fehlendes Jahr auf der Transfer-Seite ist
+    strukturell (kein Rundungsfehler) und bricht mit PruefungsFehler ab."""
+    transfer_posten_df = transfer_df.filter(pl.col("posten") == REGEL5_KITA_POSTEN)
+    if transfer_posten_df.height == 0:
+        raise PruefungsFehler(
+            f"Regel 5: Posten {REGEL5_KITA_POSTEN!r} fehlt in transferaufwendungen.csv"
+        )
+    transfer_nach_jahr = {
+        zeile["jahr"]: zeile for zeile in transfer_posten_df.iter_rows(named=True)
+    }
+
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for jahr in sorted(kita_df.filter(pl.col("ist_gesamt"))["jahr"].unique().to_list()):
+        kita_gesamt = kita_df.filter(pl.col("ist_gesamt") & (pl.col("jahr") == jahr)).row(
+            0, named=True
+        )
+        transfer_zeile = transfer_nach_jahr.get(jahr)
+        if transfer_zeile is None:
+            raise PruefungsFehler(
+                f"Regel 5: transferaufwendungen.csv hat keinen Posten "
+                f"{REGEL5_KITA_POSTEN!r} für Jahr {jahr}"
+            )
+        geprueft += 1
+        punkt = Pruefpunkt(
+            regel=5,
+            plan="vorbericht_kita_zuschuesse",
+            ebene="GESAMT",
+            code="",
+            zeile="transfer_kita",
+            jahr=jahr,
+            wertart=kita_gesamt["wertart"],
+            soll=transfer_zeile["betrag_teur"] * 1000,
+            ist=kita_gesamt["betrag_teur"] * 1000,
+            pdf_seite=kita_gesamt["quelle"],
+        )
+        if abs(punkt.abweichung) > TOLERANZ_EURO:
+            abweichungen.append(punkt)
+    return geprueft, abweichungen
+
+
+def _pruefe_regel5_weitergabe(
+    *,
+    transfer_df: pl.DataFrame,
+    planwerte_ergebnisplan: Planwerte,
+    ergebnisplan: pl.DataFrame,
+    produkt: str,
+) -> tuple[int, list[Pruefpunkt]]:
+    """Weitergabe an Kreis und Land (D-01): Σ WEITERGABE_POSTEN × 1000 == TP <produkt> Z. 15
+    je Jahr, Toleranz ±(Anzahl Posten × REGEL5_TOLERANZ_GEP_EURO). Ein fehlender Posten
+    bricht mit PruefungsFehler ab (D-01 ist eine vollständige Identität, kein Teilabgleich)."""
+    fehlend = [
+        posten
+        for posten in WEITERGABE_POSTEN
+        if transfer_df.filter(pl.col("posten") == posten).height == 0
+    ]
+    if fehlend:
+        raise PruefungsFehler(
+            f"Regel 5: Weitergabe-Posten {fehlend} fehlen in transferaufwendungen.csv"
+        )
+
+    weitergabe_df = transfer_df.filter(pl.col("posten").is_in(WEITERGABE_POSTEN))
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    toleranz = len(WEITERGABE_POSTEN) * REGEL5_TOLERANZ_GEP_EURO
+    for jahr in sorted(weitergabe_df["jahr"].unique().to_list()):
+        jahr_df = weitergabe_df.filter(pl.col("jahr") == jahr)
+        if jahr_df.height != len(WEITERGABE_POSTEN):
+            raise PruefungsFehler(f"Regel 5: Weitergabe-Posten unvollständig für Jahr {jahr}")
+        wertart = jahr_df["wertart"][0]
+        summe = jahr_df["betrag_teur"].sum()
+        tp_zeile = ergebnisplan.filter(
+            (pl.col("ebene") == "P")
+            & (pl.col("code") == produkt)
+            & (pl.col("zeile") == "15")
+            & (pl.col("jahr") == jahr)
+            & (pl.col("wertart") == wertart)
+        )
+        if tp_zeile.height != 1:
+            raise PruefungsFehler(
+                f"Regel 5: Teilergebnisplan von Produkt {produkt!r} hat keine eindeutige "
+                f"Zeile 15 für Jahr {jahr}"
+            )
+        pdf_seite = tp_zeile["pdf_seite"][0]
+
+        geprueft += 1
+        punkt = Pruefpunkt(
+            regel=5,
+            plan="weitergabe_kreis_land",
+            ebene="P",
+            code=produkt,
+            zeile="tp_15",
+            jahr=jahr,
+            wertart=wertart,
+            soll=planwerte_ergebnisplan.wert("P", produkt, "15", jahr, wertart),
+            ist=summe * 1000,
+            pdf_seite=pdf_seite,
+        )
+        if abs(punkt.abweichung) > toleranz:
+            abweichungen.append(punkt)
+    return geprueft, abweichungen
 
 
 def _pruefe_regel5(
     *,
     vorbericht: Mapping[str, pl.DataFrame],
     planwerte_ergebnisplan: Planwerte,
+    ergebnisplan: pl.DataFrame,
+    jahrgang: Jahrgang,
 ) -> Regelergebnis:
-    """Regel 5 – manuelle Vorberichtstabellen → Planzeilen (PRUEF-05, D-07).
+    """Regel 5 – manuelle Vorberichtstabellen → Planzeilen (PRUEF-05, D-01, D-07).
 
     Zweistufig je (Tabelle, Jahr): Stufe (a) vergleicht die Summe der Nicht-Gesamt-Posten
     mit der mit abgeschriebenen, gedruckten Gesamtzeile (beide × 1000, damit eine 1-T€-
@@ -858,7 +993,9 @@ def _pruefe_regel5(
     GEP-Zeile, mit der gröberen REGEL5_TOLERANZ_GEP_EURO-Toleranz (D-07b). `ebene`/`code`
     bleiben "GESAMT"/"" (Research Pattern 3 — Vorbericht-Tabellen sind kein PB/PG/P-Knoten),
     der fachliche Kontext steht in `plan` (`vorbericht_{tabelle}`), der Posten-/Vergleichs-
-    schlüssel in `zeile` ("summe_posten" bzw. "gep_{nr}").
+    schlüssel in `zeile` ("summe_posten" bzw. "gep_{nr}"). Zusätzlich, nur wenn vorhanden:
+    der Kita/Transfer-Kreuzvergleich (`_pruefe_regel5_kita_gegen_transfer`) und die
+    Weitergabe an Kreis und Land (`_pruefe_regel5_weitergabe`, D-01).
     """
     geprueft = 0
     abweichungen: list[Pruefpunkt] = []
@@ -909,6 +1046,25 @@ def _pruefe_regel5(
                 )
                 if abs(punkt_b.abweichung) > REGEL5_TOLERANZ_GEP_EURO:
                     abweichungen.append(punkt_b)
+
+    if "kita_zuschuesse" in vorbericht and "transferaufwendungen" in vorbericht:
+        geprueft_kita, abweichungen_kita = _pruefe_regel5_kita_gegen_transfer(
+            kita_df=vorbericht["kita_zuschuesse"],
+            transfer_df=vorbericht["transferaufwendungen"],
+        )
+        geprueft += geprueft_kita
+        abweichungen += abweichungen_kita
+
+    if "transferaufwendungen" in vorbericht:
+        produkt = layout_text(jahrgang, "weitergabe_kreis_land", "produkt")
+        geprueft_weitergabe, abweichungen_weitergabe = _pruefe_regel5_weitergabe(
+            transfer_df=vorbericht["transferaufwendungen"],
+            planwerte_ergebnisplan=planwerte_ergebnisplan,
+            ergebnisplan=ergebnisplan,
+            produkt=produkt,
+        )
+        geprueft += geprueft_weitergabe
+        abweichungen += abweichungen_weitergabe
 
     return Regelergebnis(
         regel=5,
@@ -1445,7 +1601,12 @@ def pruefe_alles(
     investitionen_pb = lies_investitionen_pb_csv(daten_wurzel / INVESTITIONEN_PB_CSV)
     ve_faelligkeiten = lies_ve_faelligkeiten_csv(daten_wurzel / VE_FAELLIGKEITEN_CSV)
     produkte = lies_produkte_json(daten_wurzel / PRODUKTE_JSON)
-    vorbericht = {"steuerarten": lies_vorbericht_csv(daten_wurzel / STEUERARTEN_CSV)}
+    vorbericht = {
+        "steuerarten": lies_vorbericht_csv(daten_wurzel / STEUERARTEN_CSV),
+        "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
+        "transferaufwendungen": lies_vorbericht_csv(daten_wurzel / TRANSFERAUFWENDUNGEN_CSV),
+        "kita_zuschuesse": lies_vorbericht_csv(daten_wurzel / KITA_ZUSCHUESSE_CSV),
+    }
     pfad_befunde = befunde_pfad if befunde_pfad is not None else daten_wurzel / BEFUNDE_MD
     befunde = lies_befunde(pfad_befunde)
 
@@ -1472,6 +1633,8 @@ def pruefe_alles(
     regel5 = _pruefe_regel5(
         vorbericht=vorbericht,
         planwerte_ergebnisplan=Planwerte(ergebnisplan, datei="ergebnisplan"),
+        ergebnisplan=ergebnisplan,
+        jahrgang=jahrgang,
     )
     regel6 = _pruefe_regel6(
         investitionen=investitionen,
