@@ -1,10 +1,13 @@
-"""Zahlen- und Operator-Parser für Planzeilen (EXTR-01).
+"""Zahlen- und Operator-Parser für Planzeilen (EXTR-01) und Grundzahlen (EXTR-07).
 
 Reines String-Parsing ohne PDF-Abhängigkeit. Deckt alle EXTR-01-Formen: deutsches
 Tausenderformat ("1.234.567"), ASCII- und U+2212-Minus, "–" (U+2013) als kein Wert,
 C/€ als angeklebtes oder durch Leerzeichen getrenntes Eurozeichen, sowie angeklebte
-Beträge am Label-Ende (Spez. 3.8, 5.4). Plan-Beträge sind int-Euro; Dezimalzahlen
-(z. B. Stellenplan) sind nicht Teil dieses Moduls und lösen ZahlenFehler aus.
+Beträge am Label-Ende (Spez. 3.8, 5.4). Plan-Beträge sind int-Euro, ausschließlich über
+`lies_betrag`; Dezimalzahlen (Grundzahlen-Kennzahlen wie Gebühren, Quoten, Phase 3
+EXTR-07) werden ausschließlich über `lies_kennzahl` gelesen, das als Float64 plus
+printed-Nachkommastellen zurückgibt. `lies_betrag` bleibt int-only und lehnt jeden
+Dezimalwert mit Komma weiterhin als ZahlenFehler ab.
 """
 
 from __future__ import annotations
@@ -12,6 +15,9 @@ from __future__ import annotations
 import re
 
 _BETRAG_MUSTER = re.compile(r"^-?\d{1,3}(\.\d{3})*$")
+# Wie _BETRAG_MUSTER, zusätzlich ein optionaler Dezimalteil (Komma + mind. eine Ziffer,
+# EXTR-07 Grundzahlen-Kennzahlen: Gebühren, Quoten; nie Teil von lies_betrag).
+_KENNZAHL_MUSTER = re.compile(r"^-?\d{1,3}(\.\d{3})*(,\d+)?$")
 _OPERATOR_MUSTER = re.compile(r"^(\+/-|\+|-|=)")
 _EUROZEICHEN_MUSTER = re.compile(r"[ \t]*[C€]$")
 _UNICODE_MINUS = "−"
@@ -44,6 +50,35 @@ def lies_betrag(text: str) -> int | None:
     if not _BETRAG_MUSTER.match(normalisiert):
         raise ZahlenFehler(f"Kein gültiger Betrag: {text!r}")
     return int(normalisiert.replace(".", ""))
+
+
+def lies_kennzahl(text: str) -> tuple[float, int] | None:
+    """Parst eine gedruckte Grundzahlen-Kennzahl zu (Wert, Nachkommastellen) (EXTR-07).
+
+    Deckt deutsches Tausenderformat mit optionalem Dezimalteil (Komma, mind. eine
+    Ziffer) ab, z. B. "4.771.497" -> (4771497.0, 0), "2,82" -> (2.82, 2). "–"
+    (U+2013, kein Wert) ergibt None, wie bei `lies_betrag`. ASCII- und U+2212-Minus
+    werden wie in `lies_betrag` interpretiert. Jeder andere Text (z. B. ein
+    Datumsformat wie "30.06." oder mehr als ein Komma) löst ZahlenFehler aus.
+    """
+    bereinigt = text.strip()
+    if bereinigt == _KEIN_WERT:
+        return None
+    normalisiert = bereinigt.replace(_UNICODE_MINUS, "-")
+    if not _KENNZAHL_MUSTER.match(normalisiert):
+        raise ZahlenFehler(f"Keine gültige Kennzahl: {text!r}")
+    if "," in normalisiert:
+        ganzzahl_teil, dezimal_teil = normalisiert.split(",")
+    else:
+        ganzzahl_teil, dezimal_teil = normalisiert, ""
+    ganzzahl_ohne_punkte = ganzzahl_teil.replace(".", "")
+    nachkommastellen = len(dezimal_teil)
+    wert = (
+        float(f"{ganzzahl_ohne_punkte}.{dezimal_teil}")
+        if dezimal_teil
+        else float(ganzzahl_ohne_punkte)
+    )
+    return wert, nachkommastellen
 
 
 def ist_betrag(text: str) -> bool:

@@ -24,11 +24,12 @@ import polars as pl
 
 from ostbevern.freitext import ersetze_eurozeichen, verbinde_zeilen
 from ostbevern.konfiguration import Jahrgang, layout_text
-from ostbevern.pdf import PdfDokument, Textzeile
+from ostbevern.pdf import PdfDokument, Textzeile, Wort
 from ostbevern.schema import (
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
     ERLAEUTERUNGEN_CSV,
+    GRUNDZAHLEN_CSV,
     HIERARCHIE_CSV,
     PRODUKTE_JSON,
     SEITEN_CSV,
@@ -36,9 +37,11 @@ from ostbevern.schema import (
     lies_plan_csv,
     lies_seiten_csv,
     schreibe_erlaeuterungen_csv,
+    schreibe_grundzahlen_csv,
     schreibe_produkte_json,
 )
-from ostbevern.zahlen import lies_betrag
+from ostbevern.spalten import SpaltenFehler, ordne_spalten
+from ostbevern.zahlen import ZahlenFehler, lies_betrag, lies_kennzahl
 
 # Toleranz für die Körpertext-Schriftgröße (die Größe der ersten Feld-Kopfzeile; Lauf-
 # köpfe, Titel und Seitenzahlen haben andere Größen, Phase 3 zerlege_felder) und für die
@@ -52,6 +55,11 @@ _POSTEN_X_TOLERANZ = 2.0
 # Satzende-Satzzeichen (D-01): nach einer dieser Zeichen beginnt eine neue Freitextzeile
 # einen neuen Eintrag statt den vorherigen fortzusetzen.
 _SATZENDE_ZEICHEN = (".", ":", "!", "?")
+# Grundzahlen-Spaltenzonen (03-05, EXTR-07, D-12/D-13): die Label-Zone endet und die
+# Einheit-Zone beginnt diese Toleranz links der x0 des Worts "Einheit" (verifiziert gegen
+# das echte PDF: "Einheit" x0 ~297, erstes Jahreswort x0 ~347 — kein gedrucktes Wort
+# liegt je zwischen x0("Einheit")-6 und x0("Einheit")).
+_GRUNDZAHLEN_EINHEIT_TOLERANZ = 6.0
 
 
 class ProdukteFehler(ValueError):
@@ -274,6 +282,308 @@ def _baue_leistungen(
 
     schliesse()
     return tuple(eintraege_text)
+
+
+@dataclass(frozen=True)
+class Grundzahl:
+    """Eine gelesene Grundzahlen-Zeile für ein Jahr (EXTR-07, D-12, D-13).
+
+    `wert` ist Float64 plus `nachkommastellen` (Claude's Ermessen, CONTEXT.md):
+    Grundzahlen enthalten Dezimalwerte (Gebühren, Quoten) neben Ganzzahlen (Euro-
+    Beträge), die Float64 mit `nachkommastellen=0` exakt darstellt. `gruppe` ist
+    `None` ohne Gruppenüberschrift; `hinweis` ist `None` ohne Stichtag-/Fußnotentext.
+    `position` ist 1-basiert in gedruckter Zeilenreihenfolge je Produkt (eine Position
+    je gedruckter Tabellenzeile, unabhängig davon, wie viele Jahre einen Wert tragen).
+    """
+
+    produkt: str
+    position: int
+    gruppe: str | None
+    bezeichnung: str
+    einheit: str
+    jahr: int
+    wert: float
+    nachkommastellen: int
+    hinweis: str | None
+    pdf_seite: int
+
+
+@dataclass
+class _RohGrundzahlenZeile:
+    """Veränderlicher Baustein für eine Grundzahlen-Zeile, während Bezeichnung/Einheit
+    noch durch Fortsetzungszeilen wachsen können (D-13)."""
+
+    position: int
+    gruppe: str | None
+    bezeichnung_teile: list[str]
+    einheit: str
+    werte: dict[int, tuple[float, int]]
+    pdf_seite: int
+
+
+def _grundzahlen_zonen(
+    zeile: Textzeile, *, x0_einheit: float, erste_jahr_x0: float, pdf_seite: int, produkt: str
+) -> tuple[list[Wort], list[Wort], list[Wort]]:
+    """Teilt die Wörter einer Grundzahlen-Zeile in (Label, Einheit, Werte) (D-12/D-13).
+
+    Label = Wörter mit x1 < x0(Einheit) - Toleranz; Einheit = x0 >= x0(Einheit) -
+    Toleranz und x1 <= erste_jahr_x0; Werte = x1 > erste_jahr_x0. Ein Wort außerhalb
+    aller drei Zonen bricht ab (Behavior: "value outside every column zone").
+    """
+    label_grenze = x0_einheit - _GRUNDZAHLEN_EINHEIT_TOLERANZ
+    label_woerter: list[Wort] = []
+    einheit_woerter: list[Wort] = []
+    werte_woerter: list[Wort] = []
+    for wort in zeile.woerter:
+        if wort.x1 < label_grenze:
+            label_woerter.append(wort)
+        elif wort.x0 >= label_grenze and wort.x1 <= erste_jahr_x0:
+            einheit_woerter.append(wort)
+        elif wort.x1 > erste_jahr_x0:
+            werte_woerter.append(wort)
+        else:
+            raise ProdukteFehler(
+                f"S. {pdf_seite}: Wort {wort.text!r} liegt in keiner Grundzahlen-Spalte "
+                f"(Produkt {produkt})"
+            )
+    return label_woerter, einheit_woerter, werte_woerter
+
+
+def _normalisiere_grundzahlen_einheit(einheit: str, eurozeichen: str) -> str:
+    """Normalisiert das Euro-Glyph "C" zu "EUR"/"EUR/..." (D-13, Spez. 2.2)."""
+    if einheit == eurozeichen:
+        return "EUR"
+    praefix = f"{eurozeichen}/"
+    if einheit.startswith(praefix):
+        return f"EUR/{einheit[len(praefix) :]}"
+    return einheit
+
+
+def _lies_grundzahlen_produkt(
+    dokument: PdfDokument,
+    produkt: str,
+    pdf_seiten: Sequence[int],
+    *,
+    kopf: str,
+    einheit_label: str,
+    fussnote_jahr_muster: re.Pattern[str],
+    fussnote_allgemein_muster: re.Pattern[str],
+    eurozeichen: str,
+    fortsetzung_normalisiert: str,
+) -> list[Grundzahl]:
+    position = 0
+    gruppe: str | None = None
+    allgemeine_fussnoten: list[str] = []
+    jahr_fussnoten: dict[int, list[str]] = {}
+    stempel_jahre: set[int] = set()
+    stempel_text: str | None = None
+    rohzeilen: list[_RohGrundzahlenZeile] = []
+
+    for pdf_seite in pdf_seiten:
+        zeilen = dokument.zeilen_fein(pdf_seite)
+        aktiv = False
+        anker_x1: tuple[float, ...] = ()
+        jahr_woerter: tuple[Wort, ...] = ()
+        x0_einheit: float = 0.0
+        erste_jahr_x0: float = 0.0
+        index = 0
+
+        while index < len(zeilen):
+            zeile = zeilen[index]
+            text_ns = zeile.text_ohne_leerzeichen
+            erstes_wort = zeile.woerter[0] if zeile.woerter else None
+
+            if not aktiv:
+                if erstes_wort is not None and erstes_wort.fett and erstes_wort.text == kopf:
+                    einheit_wort = next((w for w in zeile.woerter if w.text == einheit_label), None)
+                    if einheit_wort is None:
+                        raise ProdukteFehler(
+                            f"S. {pdf_seite}: Grundzahlen-Kopf ohne {einheit_label!r} "
+                            f"(Produkt {produkt})"
+                        )
+                    x0_einheit = einheit_wort.x0
+                    jahr_zeile = zeilen[index + 1]
+                    jahr_woerter = jahr_zeile.woerter
+                    anker_x1 = tuple(w.x1 for w in jahr_woerter)
+                    erste_jahr_x0 = jahr_woerter[0].x0
+                    aktiv = True
+                    index += 2
+                    continue
+                index += 1
+                continue
+
+            if text_ns == str(pdf_seite) or text_ns.startswith(fortsetzung_normalisiert):
+                break
+
+            ist_fett = erstes_wort is not None and erstes_wort.fett
+
+            # Bold-Zeilen (Stempel, Fußnoten, Gruppenüberschriften) sind nie eine
+            # Datenzeile (Rows sind stets unfett, verifiziert gegen das echte PDF) und
+            # werden VOR jeder Zonen-Klassifikation behandelt: ihr Text kann Wörter
+            # enthalten, die über die Label-/Einheit-Grenze hinweg reichen (z. B. das
+            # letzte Wort einer Zwei-Jahre-Fußnote wie "Ist-Werte ... und Prognose ...",
+            # S. 103) und würden die strikte Drei-Zonen-Prüfung einer echten Datenzeile
+            # fälschlich als "in keiner Spalte" ablehnen.
+            if ist_fett:
+                if all(w.x0 >= erste_jahr_x0 for w in zeile.woerter):
+                    letztes_wort = zeile.woerter[-1]
+                    try:
+                        zugeordnet = ordne_spalten([letztes_wort], anker_x1)
+                    except SpaltenFehler as fehler:
+                        raise ProdukteFehler(f"S. {pdf_seite}: {fehler}") from fehler
+                    (spalten_index,) = zugeordnet
+                    stempel_jahre.add(int(jahr_woerter[spalten_index].text))
+                    stempel_text = zeile.text
+                    index += 1
+                    continue
+                jahr_treffer = fussnote_jahr_muster.match(zeile.text)
+                if jahr_treffer:
+                    for jahr in (int(j) for j in re.findall(r"\d{4}", jahr_treffer.group("jahre"))):
+                        jahr_fussnoten.setdefault(jahr, []).append(zeile.text)
+                    index += 1
+                    continue
+                if fussnote_allgemein_muster.search(zeile.text):
+                    allgemeine_fussnoten.append(zeile.text)
+                    index += 1
+                    continue
+                gruppe = zeile.text
+                index += 1
+                continue
+
+            label_woerter, einheit_woerter, werte_woerter = _grundzahlen_zonen(
+                zeile,
+                x0_einheit=x0_einheit,
+                erste_jahr_x0=erste_jahr_x0,
+                pdf_seite=pdf_seite,
+                produkt=produkt,
+            )
+
+            if werte_woerter:
+                if not einheit_woerter:
+                    raise ProdukteFehler(
+                        f"S. {pdf_seite}: Grundzahlen-Zeile ohne Einheit (Produkt {produkt})"
+                    )
+                try:
+                    zugeordnet = ordne_spalten(werte_woerter, anker_x1)
+                except SpaltenFehler as fehler:
+                    raise ProdukteFehler(f"S. {pdf_seite}: {fehler}") from fehler
+                werte: dict[int, tuple[float, int]] = {}
+                for spalten_index, wort in zugeordnet.items():
+                    jahr = int(jahr_woerter[spalten_index].text)
+                    try:
+                        geparst = lies_kennzahl(wort.text)
+                    except ZahlenFehler as fehler:
+                        raise ProdukteFehler(f"S. {pdf_seite}: {fehler}") from fehler
+                    if geparst is not None:
+                        werte[jahr] = geparst
+                position += 1
+                rohzeilen.append(
+                    _RohGrundzahlenZeile(
+                        position=position,
+                        gruppe=gruppe,
+                        bezeichnung_teile=(
+                            [" ".join(w.text for w in label_woerter)] if label_woerter else []
+                        ),
+                        einheit=" ".join(w.text for w in einheit_woerter),
+                        werte=werte,
+                        pdf_seite=pdf_seite,
+                    )
+                )
+                index += 1
+                continue
+
+            if not rohzeilen:
+                raise ProdukteFehler(
+                    f"S. {pdf_seite}: Grundzahlen-Fortsetzungszeile ohne vorherige Zeile "
+                    f"(Produkt {produkt})"
+                )
+            letzte = rohzeilen[-1]
+            if label_woerter:
+                letzte.bezeichnung_teile.append(" ".join(w.text for w in label_woerter))
+            if einheit_woerter:
+                letzte.einheit += "".join(w.text for w in einheit_woerter)
+            index += 1
+
+    def _hinweis(jahr: int) -> str | None:
+        teile = list(allgemeine_fussnoten)
+        if jahr in jahr_fussnoten:
+            teile.extend(jahr_fussnoten[jahr])
+        elif jahr in stempel_jahre and stempel_text is not None:
+            teile.append(stempel_text)
+        return "; ".join(teile) if teile else None
+
+    ergebnisse: list[Grundzahl] = []
+    for roh in rohzeilen:
+        bezeichnung = (
+            ersetze_eurozeichen(verbinde_zeilen(roh.bezeichnung_teile))
+            if roh.bezeichnung_teile
+            else ""
+        )
+        if not bezeichnung:
+            raise ProdukteFehler(
+                f"S. {roh.pdf_seite}: Grundzahlen-Zeile ohne Bezeichnung (Produkt {produkt})"
+            )
+        einheit = _normalisiere_grundzahlen_einheit(roh.einheit, eurozeichen)
+        for jahr, (wert, nachkommastellen) in sorted(roh.werte.items()):
+            ergebnisse.append(
+                Grundzahl(
+                    produkt=produkt,
+                    position=roh.position,
+                    gruppe=roh.gruppe,
+                    bezeichnung=bezeichnung,
+                    einheit=einheit,
+                    jahr=jahr,
+                    wert=wert,
+                    nachkommastellen=nachkommastellen,
+                    hinweis=_hinweis(jahr),
+                    pdf_seite=roh.pdf_seite,
+                )
+            )
+    return ergebnisse
+
+
+def lies_grundzahlen(
+    dokument: PdfDokument, jahrgang: Jahrgang, seiten: pl.DataFrame, hierarchie: pl.DataFrame
+) -> list[Grundzahl]:
+    """Liest die Grundzahlen-Tabellen aller Produkte (EXTR-07, D-12, D-13).
+
+    Scannt je Produkt seine Produktinformationen- UND grundzahlen-typisierten Seiten
+    (Seitenreihenfolge): die Tabelle kann auf der Produktinformationen-Seite beginnen
+    und auf einer eigenen, fortsetzenden `grundzahlen`-Seite weiterlaufen (jede Seite
+    druckt den Tabellenkopf neu, wie investitionen.lies_massnahmen). Produkte ohne
+    Grundzahlen-Tabelle (15 von 63) liefern keinen Eintrag.
+    """
+    kopf = layout_text(jahrgang, "grundzahlen", "kopf")
+    einheit_label = layout_text(jahrgang, "grundzahlen", "einheit")
+    fussnote_jahr_muster = re.compile(layout_text(jahrgang, "grundzahlen", "fussnote_jahr_muster"))
+    fussnote_allgemein_muster = re.compile(
+        layout_text(jahrgang, "grundzahlen", "fussnote_allgemein_muster")
+    )
+    eurozeichen = layout_text(jahrgang, "grundzahlen", "eurozeichen")
+    fortsetzung_normalisiert = "".join(jahrgang.kopfzeilen.fortsetzung.split())
+
+    gz_seiten = seiten.filter(
+        pl.col("produkt").is_not_null()
+        & pl.col("typ").is_in(("produktinformationen", "grundzahlen"))
+    ).sort(["produkt", "pdf_seite"])
+
+    alle: list[Grundzahl] = []
+    for produkt in sorted(gz_seiten["produkt"].unique().to_list()):
+        pdf_seiten = tuple(gz_seiten.filter(pl.col("produkt") == produkt)["pdf_seite"].to_list())
+        alle.extend(
+            _lies_grundzahlen_produkt(
+                dokument,
+                produkt,
+                pdf_seiten,
+                kopf=kopf,
+                einheit_label=einheit_label,
+                fussnote_jahr_muster=fussnote_jahr_muster,
+                fussnote_allgemein_muster=fussnote_allgemein_muster,
+                eurozeichen=eurozeichen,
+                fortsetzung_normalisiert=fortsetzung_normalisiert,
+            )
+        )
+    return alle
 
 
 def _zu_zeilen_aus_gruppe(gruppe: str) -> tuple[str, ...]:
@@ -631,15 +941,17 @@ def lies_produktinformationen(
 
 def extrahiere_produkte(
     jahrgang: Jahrgang, *, daten_wurzel: Path = DATEN_WURZEL
-) -> tuple[ExtraktionsErgebnis, ExtraktionsErgebnis]:
-    """Liest Produktinformationen und Erläuterungen aller 63 Produkte und schreibt
-    produkte.json sowie erlaeuterungen.csv (EXTR-06, EXTR-08, D-04, D-09)."""
+) -> tuple[ExtraktionsErgebnis, ExtraktionsErgebnis, ExtraktionsErgebnis]:
+    """Liest Produktinformationen, Grundzahlen und Erläuterungen aller 63 Produkte und
+    schreibt produkte.json, grundzahlen.csv sowie erlaeuterungen.csv (EXTR-06, EXTR-07,
+    EXTR-08, D-04, D-09)."""
     seiten = lies_seiten_csv(daten_wurzel / SEITEN_CSV)
     hierarchie = lies_hierarchie_csv(daten_wurzel / HIERARCHIE_CSV)
     ergebnisplan = lies_plan_csv(daten_wurzel / ERGEBNISPLAN_CSV)
 
     with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
         produktinfos = lies_produktinformationen(dokument, jahrgang, seiten, hierarchie)
+        grundzahlen = lies_grundzahlen(dokument, jahrgang, seiten, hierarchie)
         erlaeuterungen = lies_erlaeuterungen(dokument, jahrgang, seiten, hierarchie)
 
     pruefe_plausibilitaet(erlaeuterungen, ergebnisplan, jahrgang.haushaltsjahr)
@@ -712,7 +1024,40 @@ def extrahiere_produkte(
     erlaeuterungen_pfad = daten_wurzel / ERLAEUTERUNGEN_CSV
     schreibe_erlaeuterungen_csv(erlaeuterungen_df, erlaeuterungen_pfad)
 
+    grundzahlen_df = pl.DataFrame(
+        [
+            {
+                "produkt": g.produkt,
+                "position": g.position,
+                "gruppe": g.gruppe,
+                "bezeichnung": g.bezeichnung,
+                "einheit": g.einheit,
+                "jahr": g.jahr,
+                "wert": g.wert,
+                "nachkommastellen": g.nachkommastellen,
+                "hinweis": g.hinweis,
+                "pdf_seite": g.pdf_seite,
+            }
+            for g in grundzahlen
+        ],
+        schema={
+            "produkt": pl.Utf8,
+            "position": pl.Int64,
+            "gruppe": pl.Utf8,
+            "bezeichnung": pl.Utf8,
+            "einheit": pl.Utf8,
+            "jahr": pl.Int64,
+            "wert": pl.Float64,
+            "nachkommastellen": pl.Int64,
+            "hinweis": pl.Utf8,
+            "pdf_seite": pl.Int64,
+        },
+    )
+    grundzahlen_pfad = daten_wurzel / GRUNDZAHLEN_CSV
+    schreibe_grundzahlen_csv(grundzahlen_df, grundzahlen_pfad)
+
     return (
         ExtraktionsErgebnis(zeilen_geschrieben=len(datensaetze), pfad=produkte_pfad),
+        ExtraktionsErgebnis(zeilen_geschrieben=grundzahlen_df.height, pfad=grundzahlen_pfad),
         ExtraktionsErgebnis(zeilen_geschrieben=erlaeuterungen_df.height, pfad=erlaeuterungen_pfad),
     )

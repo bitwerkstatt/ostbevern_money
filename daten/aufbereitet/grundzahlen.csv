@@ -1,0 +1,828 @@
+produkt,position,gruppe,bezeichnung,einheit,jahr,wert,nachkommastellen,hinweis,pdf_seite
+010101,1,,Anzahl Ratsmitglieder,Anz.,2022,28.0,0,,72
+010101,1,,Anzahl Ratsmitglieder,Anz.,2023,28.0,0,,72
+010101,1,,Anzahl Ratsmitglieder,Anz.,2024,28.0,0,,72
+010101,1,,Anzahl Ratsmitglieder,Anz.,2025,28.0,0,Stand 30.06.,72
+010101,2,,Anzahl Fraktionen,Anz.,2022,4.0,0,,72
+010101,2,,Anzahl Fraktionen,Anz.,2023,4.0,0,,72
+010101,2,,Anzahl Fraktionen,Anz.,2024,4.0,0,,72
+010101,2,,Anzahl Fraktionen,Anz.,2025,4.0,0,Stand 30.06.,72
+010101,3,Sitzungen,Rat,Anz.,2022,10.0,0,,72
+010101,3,Sitzungen,Rat,Anz.,2023,9.0,0,,72
+010101,3,Sitzungen,Rat,Anz.,2024,7.0,0,,72
+010101,3,Sitzungen,Rat,Anz.,2025,2.0,0,Stand 30.06.,72
+010101,4,Sitzungen,Betriebsausschuss,Anz.,2022,3.0,0,,72
+010101,4,Sitzungen,Betriebsausschuss,Anz.,2023,2.0,0,,72
+010101,4,Sitzungen,Betriebsausschuss,Anz.,2024,4.0,0,,72
+010101,4,Sitzungen,Betriebsausschuss,Anz.,2025,1.0,0,Stand 30.06.,72
+010101,5,Sitzungen,"Bildungs-, Generationen- und Sozialausschuss",Anz.,2022,5.0,0,,72
+010101,5,Sitzungen,"Bildungs-, Generationen- und Sozialausschuss",Anz.,2023,7.0,0,,72
+010101,5,Sitzungen,"Bildungs-, Generationen- und Sozialausschuss",Anz.,2024,5.0,0,,72
+010101,5,Sitzungen,"Bildungs-, Generationen- und Sozialausschuss",Anz.,2025,2.0,0,Stand 30.06.,72
+010101,6,Sitzungen,Haupt- und Finanzausschuss,Anz.,2022,6.0,0,,72
+010101,6,Sitzungen,Haupt- und Finanzausschuss,Anz.,2023,5.0,0,,72
+010101,6,Sitzungen,Haupt- und Finanzausschuss,Anz.,2024,4.0,0,,72
+010101,6,Sitzungen,Haupt- und Finanzausschuss,Anz.,2025,3.0,0,Stand 30.06.,72
+010101,7,Sitzungen,Rechnungsprüfungsausschuss,Anz.,2022,1.0,0,,72
+010101,7,Sitzungen,Rechnungsprüfungsausschuss,Anz.,2023,2.0,0,,72
+010101,7,Sitzungen,Rechnungsprüfungsausschuss,Anz.,2024,2.0,0,,72
+010101,7,Sitzungen,Rechnungsprüfungsausschuss,Anz.,2025,1.0,0,Stand 30.06.,72
+010101,8,Sitzungen,Umwelt- und Planungsausschuss,Anz.,2022,16.0,0,,72
+010101,8,Sitzungen,Umwelt- und Planungsausschuss,Anz.,2023,12.0,0,,72
+010101,8,Sitzungen,Umwelt- und Planungsausschuss,Anz.,2024,10.0,0,,72
+010101,8,Sitzungen,Umwelt- und Planungsausschuss,Anz.,2025,3.0,0,Stand 30.06.,72
+010101,9,Sitzungen,Wahlausschuss,Anz.,2022,0.0,0,,72
+010101,9,Sitzungen,Wahlausschuss,Anz.,2023,0.0,0,,72
+010101,9,Sitzungen,Wahlausschuss,Anz.,2024,1.0,0,,72
+010101,9,Sitzungen,Wahlausschuss,Anz.,2025,0.0,0,Stand 30.06.,72
+010101,10,Sitzungen,Wahlprüfungsausschuss,Anz.,2022,0.0,0,,72
+010101,10,Sitzungen,Wahlprüfungsausschuss,Anz.,2023,0.0,0,,72
+010101,10,Sitzungen,Wahlprüfungsausschuss,Anz.,2024,0.0,0,,72
+010101,10,Sitzungen,Wahlprüfungsausschuss,Anz.,2025,0.0,0,Stand 30.06.,72
+010201,1,Gratulationen,Ehrenpatenschaften,Anz.,2022,0.0,0,,74
+010201,1,Gratulationen,Ehrenpatenschaften,Anz.,2023,0.0,0,,74
+010201,1,Gratulationen,Ehrenpatenschaften,Anz.,2024,0.0,0,,74
+010201,1,Gratulationen,Ehrenpatenschaften,Anz.,2025,2.0,0,Stand 30.06.,74
+010201,2,Gratulationen,Goldhochzeiten,Anz.,2022,4.0,0,,74
+010201,2,Gratulationen,Goldhochzeiten,Anz.,2023,17.0,0,,74
+010201,2,Gratulationen,Goldhochzeiten,Anz.,2024,31.0,0,,74
+010201,2,Gratulationen,Goldhochzeiten,Anz.,2025,11.0,0,Stand 30.06.,74
+010201,3,Gratulationen,Runde Geburtstage (ab 85 Jahren),Anz.,2022,13.0,0,,74
+010201,3,Gratulationen,Runde Geburtstage (ab 85 Jahren),Anz.,2023,36.0,0,,74
+010201,3,Gratulationen,Runde Geburtstage (ab 85 Jahren),Anz.,2024,41.0,0,,74
+010201,3,Gratulationen,Runde Geburtstage (ab 85 Jahren),Anz.,2025,26.0,0,Stand 30.06.,74
+010201,4,Gratulationen,Geburtstage ab 100 Jahre,Anz.,2022,0.0,0,,74
+010201,4,Gratulationen,Geburtstage ab 100 Jahre,Anz.,2023,0.0,0,,74
+010201,4,Gratulationen,Geburtstage ab 100 Jahre,Anz.,2024,0.0,0,,74
+010201,4,Gratulationen,Geburtstage ab 100 Jahre,Anz.,2025,1.0,0,Stand 30.06.,74
+010201,5,Aufwand für die Gratulationen,Ehrenpatenschaften,EUR,2022,0.0,0,,74
+010201,5,Aufwand für die Gratulationen,Ehrenpatenschaften,EUR,2023,0.0,0,,74
+010201,5,Aufwand für die Gratulationen,Ehrenpatenschaften,EUR,2024,0.0,0,,74
+010201,5,Aufwand für die Gratulationen,Ehrenpatenschaften,EUR,2025,360.0,0,Stand 30.06.,74
+010201,6,Aufwand für die Gratulationen,Goldhochzeiten,EUR,2022,80.0,0,,74
+010201,6,Aufwand für die Gratulationen,Goldhochzeiten,EUR,2023,340.0,0,,74
+010201,6,Aufwand für die Gratulationen,Goldhochzeiten,EUR,2024,620.0,0,,74
+010201,6,Aufwand für die Gratulationen,Goldhochzeiten,EUR,2025,220.0,0,Stand 30.06.,74
+010201,7,Aufwand für die Gratulationen,Runde Geburtstage,EUR,2022,260.0,0,,74
+010201,7,Aufwand für die Gratulationen,Runde Geburtstage,EUR,2023,720.0,0,,74
+010201,7,Aufwand für die Gratulationen,Runde Geburtstage,EUR,2024,820.0,0,,74
+010201,7,Aufwand für die Gratulationen,Runde Geburtstage,EUR,2025,520.0,0,Stand 30.06.,74
+010201,8,Aufwand für die Gratulationen,Geburtstage ab 100 Jahre,EUR,2022,0.0,0,,74
+010201,8,Aufwand für die Gratulationen,Geburtstage ab 100 Jahre,EUR,2023,0.0,0,,74
+010201,8,Aufwand für die Gratulationen,Geburtstage ab 100 Jahre,EUR,2024,0.0,0,,74
+010201,8,Aufwand für die Gratulationen,Geburtstage ab 100 Jahre,EUR,2025,20.0,0,Stand 30.06.,74
+010301,1,,weibliche Beschäftigte,Anz.,2022,42.0,0,,76
+010301,1,,weibliche Beschäftigte,Anz.,2023,42.0,0,,76
+010301,1,,weibliche Beschäftigte,Anz.,2024,36.0,0,,76
+010301,1,,weibliche Beschäftigte,Anz.,2025,42.0,0,Stand 30.06.,76
+010301,2,,männliche Beschäftigte,Anz.,2022,41.0,0,,76
+010301,2,,männliche Beschäftigte,Anz.,2023,41.0,0,,76
+010301,2,,männliche Beschäftigte,Anz.,2024,41.0,0,,76
+010301,2,,männliche Beschäftigte,Anz.,2025,36.0,0,Stand 30.06.,76
+010301,3,,Beschäftigte insgesamt,Anz.,2022,83.0,0,,76
+010301,3,,Beschäftigte insgesamt,Anz.,2023,83.0,0,,76
+010301,3,,Beschäftigte insgesamt,Anz.,2024,77.0,0,,76
+010301,3,,Beschäftigte insgesamt,Anz.,2025,78.0,0,Stand 30.06.,76
+010301,4,,gleichstellungsrelev. Maßnahmen und Projekte,Anz.,2022,2.0,0,,76
+010301,4,,gleichstellungsrelev. Maßnahmen und Projekte,Anz.,2023,2.0,0,,76
+010301,4,,gleichstellungsrelev. Maßnahmen und Projekte,Anz.,2024,2.0,0,,76
+010301,4,,gleichstellungsrelev. Maßnahmen und Projekte,Anz.,2025,2.0,0,Stand 30.06.,76
+010301,5,,Beratungsgespräche und Begleitungen von Frauen und Mädchen in schwierigen Lebenssituationen,Anz.,2022,12.0,0,,77
+010301,5,,Beratungsgespräche und Begleitungen von Frauen und Mädchen in schwierigen Lebenssituationen,Anz.,2023,19.0,0,,77
+010301,5,,Beratungsgespräche und Begleitungen von Frauen und Mädchen in schwierigen Lebenssituationen,Anz.,2024,22.0,0,,77
+010301,5,,Beratungsgespräche und Begleitungen von Frauen und Mädchen in schwierigen Lebenssituationen,Anz.,2025,14.0,0,Stand 30.06.,77
+010301,6,,Teilnehmerinnen an Veranstaltungen und Qualifizierungsmaßnahmen,Anz.,2022,38.0,0,,77
+010301,6,,Teilnehmerinnen an Veranstaltungen und Qualifizierungsmaßnahmen,Anz.,2023,115.0,0,,77
+010301,6,,Teilnehmerinnen an Veranstaltungen und Qualifizierungsmaßnahmen,Anz.,2024,120.0,0,,77
+010301,6,,Teilnehmerinnen an Veranstaltungen und Qualifizierungsmaßnahmen,Anz.,2025,105.0,0,Stand 30.06.,77
+010401,1,,Sitzungen (grundsätzlich eine Sitzung pro Monat bzw. bei Bedarf),Anz.,2022,15.0,0,,79
+010401,1,,Sitzungen (grundsätzlich eine Sitzung pro Monat bzw. bei Bedarf),Anz.,2023,10.0,0,,79
+010401,1,,Sitzungen (grundsätzlich eine Sitzung pro Monat bzw. bei Bedarf),Anz.,2024,7.0,0,,79
+010401,2,,Gespräche mit dem Bürgermeister,Anz.,2022,3.0,0,,79
+010401,2,,Gespräche mit dem Bürgermeister,Anz.,2023,3.0,0,,79
+010401,2,,Gespräche mit dem Bürgermeister,Anz.,2024,2.0,0,,79
+010601,1,Mitgliedschaften,Bund Deutscher Schiedsmänner u. Schiedsfrauen,EUR,2022,169.0,0,,84
+010601,1,Mitgliedschaften,Bund Deutscher Schiedsmänner u. Schiedsfrauen,EUR,2023,169.0,0,,84
+010601,1,Mitgliedschaften,Bund Deutscher Schiedsmänner u. Schiedsfrauen,EUR,2024,200.0,0,,84
+010601,1,Mitgliedschaften,Bund Deutscher Schiedsmänner u. Schiedsfrauen,EUR,2025,200.0,0,Stand 30.06.,84
+010601,2,Mitgliedschaften,Creditreform Münster,EUR,2022,685.0,0,,84
+010601,2,Mitgliedschaften,Creditreform Münster,EUR,2023,685.0,0,,84
+010601,2,Mitgliedschaften,Creditreform Münster,EUR,2024,714.0,0,,84
+010601,2,Mitgliedschaften,Creditreform Münster,EUR,2025,714.0,0,Stand 30.06.,84
+010601,3,Mitgliedschaften,Deutsche Verkehrswacht im Kreis WAF,EUR,2022,50.0,0,,84
+010601,3,Mitgliedschaften,Deutsche Verkehrswacht im Kreis WAF,EUR,2023,50.0,0,,84
+010601,3,Mitgliedschaften,Deutsche Verkehrswacht im Kreis WAF,EUR,2024,50.0,0,,84
+010601,3,Mitgliedschaften,Deutsche Verkehrswacht im Kreis WAF,EUR,2025,50.0,0,Stand 30.06.,84
+010601,4,Mitgliedschaften,Fachverband der Kommunalkassenverwalter,EUR,2022,80.0,0,,84
+010601,4,Mitgliedschaften,Fachverband der Kommunalkassenverwalter,EUR,2023,80.0,0,,84
+010601,4,Mitgliedschaften,Fachverband der Kommunalkassenverwalter,EUR,2024,80.0,0,,84
+010601,4,Mitgliedschaften,Fachverband der Kommunalkassenverwalter,EUR,2025,80.0,0,Stand 30.06.,84
+010601,5,Mitgliedschaften,Fachverband der Standesbeamten,EUR,2022,120.0,0,,84
+010601,5,Mitgliedschaften,Fachverband der Standesbeamten,EUR,2023,120.0,0,,84
+010601,5,Mitgliedschaften,Fachverband der Standesbeamten,EUR,2024,120.0,0,,84
+010601,5,Mitgliedschaften,Fachverband der Standesbeamten,EUR,2025,120.0,0,Stand 30.06.,84
+010601,6,Mitgliedschaften,Förderverein Storchenhof Loburg,EUR,2022,100.0,0,,84
+010601,6,Mitgliedschaften,Förderverein Storchenhof Loburg,EUR,2023,100.0,0,,84
+010601,6,Mitgliedschaften,Förderverein Storchenhof Loburg,EUR,2024,100.0,0,,84
+010601,6,Mitgliedschaften,Förderverein Storchenhof Loburg,EUR,2025,100.0,0,Stand 30.06.,84
+010601,7,Mitgliedschaften,Forstbetriebsgemeinschaft Warendorf - Nord,EUR,2022,349.0,0,,84
+010601,7,Mitgliedschaften,Forstbetriebsgemeinschaft Warendorf - Nord,EUR,2023,248.0,0,,84
+010601,7,Mitgliedschaften,Forstbetriebsgemeinschaft Warendorf - Nord,EUR,2024,339.0,0,,84
+010601,7,Mitgliedschaften,Forstbetriebsgemeinschaft Warendorf - Nord,EUR,2025,0.0,0,Stand 30.06.,84
+010601,8,Mitgliedschaften,KGST (Kommunale Gemeinschaftsstelle für Verwaltungsmanagement),EUR,2022,950.0,0,,85
+010601,8,Mitgliedschaften,KGST (Kommunale Gemeinschaftsstelle für Verwaltungsmanagement),EUR,2023,950.0,0,,85
+010601,8,Mitgliedschaften,KGST (Kommunale Gemeinschaftsstelle für Verwaltungsmanagement),EUR,2024,950.0,0,,85
+010601,8,Mitgliedschaften,KGST (Kommunale Gemeinschaftsstelle für Verwaltungsmanagement),EUR,2025,950.0,0,Stand 30.06.,85
+010601,9,Mitgliedschaften,Klima Bündnis / Alianza del Clima,EUR,2022,231.0,0,,85
+010601,9,Mitgliedschaften,Klima Bündnis / Alianza del Clima,EUR,2023,231.0,0,,85
+010601,9,Mitgliedschaften,Klima Bündnis / Alianza del Clima,EUR,2024,250.0,0,,85
+010601,9,Mitgliedschaften,Klima Bündnis / Alianza del Clima,EUR,2025,250.0,0,Stand 30.06.,85
+010601,10,Mitgliedschaften,Kommunaler Arbeitgeberverband,EUR,2022,610.0,0,,85
+010601,10,Mitgliedschaften,Kommunaler Arbeitgeberverband,EUR,2023,610.0,0,,85
+010601,10,Mitgliedschaften,Kommunaler Arbeitgeberverband,EUR,2024,610.0,0,,85
+010601,10,Mitgliedschaften,Kommunaler Arbeitgeberverband,EUR,2025,610.0,0,Stand 30.06.,85
+010601,11,Mitgliedschaften,Kreisfeuerwehrverband,EUR,2022,931.0,0,,85
+010601,11,Mitgliedschaften,Kreisfeuerwehrverband,EUR,2023,943.0,0,,85
+010601,11,Mitgliedschaften,Kreisfeuerwehrverband,EUR,2024,920.0,0,,85
+010601,11,Mitgliedschaften,Kreisfeuerwehrverband,EUR,2025,1130.0,0,Stand 30.06.,85
+010601,12,Mitgliedschaften,Kreisheimat- und Geschichtsverein Beckum WAF,EUR,2022,40.0,0,,85
+010601,12,Mitgliedschaften,Kreisheimat- und Geschichtsverein Beckum WAF,EUR,2023,50.0,0,,85
+010601,12,Mitgliedschaften,Kreisheimat- und Geschichtsverein Beckum WAF,EUR,2024,60.0,0,,85
+010601,12,Mitgliedschaften,Kreisheimat- und Geschichtsverein Beckum WAF,EUR,2025,0.0,0,Stand 30.06.,85
+010601,13,Mitgliedschaften,Kreiskunstverein Beckum-WAF,EUR,2022,75.0,0,,85
+010601,13,Mitgliedschaften,Kreiskunstverein Beckum-WAF,EUR,2023,75.0,0,,85
+010601,13,Mitgliedschaften,Kreiskunstverein Beckum-WAF,EUR,2024,100.0,0,,85
+010601,13,Mitgliedschaften,Kreiskunstverein Beckum-WAF,EUR,2025,0.0,0,Stand 30.06.,85
+010601,14,Mitgliedschaften,Netzwerk Innenstadt,EUR,2022,445.0,0,,85
+010601,14,Mitgliedschaften,Netzwerk Innenstadt,EUR,2023,1340.0,0,,85
+010601,14,Mitgliedschaften,Netzwerk Innenstadt,EUR,2024,0.0,0,,85
+010601,14,Mitgliedschaften,Netzwerk Innenstadt,EUR,2025,0.0,0,Stand 30.06.,85
+010601,15,Mitgliedschaften,Parklandschaft Kreis Warendorf,EUR,2022,2557.0,0,,85
+010601,15,Mitgliedschaften,Parklandschaft Kreis Warendorf,EUR,2023,2520.0,0,,85
+010601,15,Mitgliedschaften,Parklandschaft Kreis Warendorf,EUR,2024,2783.0,0,,85
+010601,15,Mitgliedschaften,Parklandschaft Kreis Warendorf,EUR,2025,0.0,0,Stand 30.06.,85
+010601,16,Mitgliedschaften,Partnerschaft Ndaba-Ostbevern,EUR,2022,50.0,0,,85
+010601,16,Mitgliedschaften,Partnerschaft Ndaba-Ostbevern,EUR,2023,50.0,0,,85
+010601,16,Mitgliedschaften,Partnerschaft Ndaba-Ostbevern,EUR,2024,50.0,0,,85
+010601,16,Mitgliedschaften,Partnerschaft Ndaba-Ostbevern,EUR,2025,50.0,0,Stand 30.06.,85
+010601,17,Mitgliedschaften,Städte- und Gemeindebund NRW,EUR,2022,8440.0,0,,85
+010601,17,Mitgliedschaften,Städte- und Gemeindebund NRW,EUR,2023,8652.0,0,,85
+010601,17,Mitgliedschaften,Städte- und Gemeindebund NRW,EUR,2024,9095.0,0,,85
+010601,17,Mitgliedschaften,Städte- und Gemeindebund NRW,EUR,2025,4770.0,0,Stand 30.06.,85
+010601,18,Mitgliedschaften,Startbahn Ostbevern,EUR,2022,25.0,0,,85
+010601,18,Mitgliedschaften,Startbahn Ostbevern,EUR,2023,25.0,0,,85
+010601,18,Mitgliedschaften,Startbahn Ostbevern,EUR,2024,25.0,0,,85
+010601,18,Mitgliedschaften,Startbahn Ostbevern,EUR,2025,0.0,0,Stand 30.06.,85
+010601,19,Mitgliedschaften,Ostbevern Touristik,EUR,2022,511.0,0,,85
+010601,19,Mitgliedschaften,Ostbevern Touristik,EUR,2023,511.0,0,,85
+010601,19,Mitgliedschaften,Ostbevern Touristik,EUR,2024,500.0,0,,85
+010601,19,Mitgliedschaften,Ostbevern Touristik,EUR,2025,500.0,0,Stand 30.06.,85
+010601,20,Mitgliedschaften,Westfalen-Initiative,EUR,2022,25.0,0,,85
+010601,20,Mitgliedschaften,Westfalen-Initiative,EUR,2023,25.0,0,,85
+010601,20,Mitgliedschaften,Westfalen-Initiative,EUR,2024,25.0,0,,85
+010601,20,Mitgliedschaften,Westfalen-Initiative,EUR,2025,0.0,0,Stand 30.06.,85
+010603,1,Bäder- und Beteiligungsgesellschaft,Jahresergebnis,EUR,2022,187427.0,0,,92
+010603,1,Bäder- und Beteiligungsgesellschaft,Jahresergebnis,EUR,2023,0.0,0,,92
+010603,1,Bäder- und Beteiligungsgesellschaft,Jahresergebnis,EUR,2024,33170.0,0,,92
+010603,1,Bäder- und Beteiligungsgesellschaft,Jahresergebnis,EUR,2025,184800.0,0,Stand 30.06.,92
+010603,2,Bäder- und Beteiligungsgesellschaft,darin enthalten: Verlustausgeich durch die Gemeinde,EUR,2022,538400.0,0,,92
+010603,2,Bäder- und Beteiligungsgesellschaft,darin enthalten: Verlustausgeich durch die Gemeinde,EUR,2023,450000.0,0,,92
+010603,2,Bäder- und Beteiligungsgesellschaft,darin enthalten: Verlustausgeich durch die Gemeinde,EUR,2024,400000.0,0,,92
+010603,2,Bäder- und Beteiligungsgesellschaft,darin enthalten: Verlustausgeich durch die Gemeinde,EUR,2025,415000.0,0,Stand 30.06.,92
+010603,3,Bäder- und Beteiligungsgesellschaft,und enthalten: Dividende Stadtwerke Ostmünsterland,EUR,2022,278837.0,0,,92
+010603,3,Bäder- und Beteiligungsgesellschaft,und enthalten: Dividende Stadtwerke Ostmünsterland,EUR,2023,321702.0,0,,92
+010603,3,Bäder- und Beteiligungsgesellschaft,und enthalten: Dividende Stadtwerke Ostmünsterland,EUR,2024,340320.0,0,,92
+010603,3,Bäder- und Beteiligungsgesellschaft,und enthalten: Dividende Stadtwerke Ostmünsterland,EUR,2025,296000.0,0,Stand 30.06.,92
+010603,4,Abwasserbetrieb TEO AöR,Schmutzwassergebühr,EUR/m³,2022,2.82,2,,92
+010603,4,Abwasserbetrieb TEO AöR,Schmutzwassergebühr,EUR/m³,2023,3.22,2,,92
+010603,4,Abwasserbetrieb TEO AöR,Schmutzwassergebühr,EUR/m³,2024,3.33,2,,92
+010603,4,Abwasserbetrieb TEO AöR,Schmutzwassergebühr,EUR/m³,2025,3.47,2,Stand 30.06.,92
+010603,5,Abwasserbetrieb TEO AöR,Niederschlagswassergebühr,EUR/qm,2022,0.65,2,,92
+010603,5,Abwasserbetrieb TEO AöR,Niederschlagswassergebühr,EUR/qm,2023,0.72,2,,92
+010603,5,Abwasserbetrieb TEO AöR,Niederschlagswassergebühr,EUR/qm,2024,0.73,2,,92
+010603,5,Abwasserbetrieb TEO AöR,Niederschlagswassergebühr,EUR/qm,2025,0.81,2,Stand 30.06.,92
+010901,1,,Beamte,Anz.,2022,7.0,0,,99
+010901,1,,Beamte,Anz.,2023,7.0,0,,99
+010901,1,,Beamte,Anz.,2024,8.0,0,,99
+010901,2,,tariflich Beschäftige,Anz.,2022,61.0,0,,99
+010901,2,,tariflich Beschäftige,Anz.,2023,58.0,0,,99
+010901,2,,tariflich Beschäftige,Anz.,2024,59.0,0,,99
+010901,3,,Auszubildende,Anz.,2022,5.0,0,,99
+010901,3,,Auszubildende,Anz.,2023,4.0,0,,99
+010901,3,,Auszubildende,Anz.,2024,2.0,0,,99
+010901,4,,Fortbildungen,Anz.,2022,34.0,0,,99
+010901,4,,Fortbildungen,Anz.,2023,52.0,0,,99
+010901,4,,Fortbildungen,Anz.,2024,25.0,0,,99
+010901,5,,Aufwand für Fortbildungen und Seminare,EUR,2022,8721.0,0,,99
+010901,5,,Aufwand für Fortbildungen und Seminare,EUR,2023,15201.0,0,,99
+010901,5,,Aufwand für Fortbildungen und Seminare,EUR,2024,6425.0,0,,99
+010901,6,,Arbeitsunfälle,Anz.,2022,4.0,0,,99
+010901,6,,Arbeitsunfälle,Anz.,2023,8.0,0,,99
+010901,6,,Arbeitsunfälle,Anz.,2024,6.0,0,,99
+010901,7,,Schwerbehinderte (Schwerbehindertenquote ist erfüllt),Anz.,2022,4.0,0,,99
+010901,7,,Schwerbehinderte (Schwerbehindertenquote ist erfüllt),Anz.,2023,5.0,0,,99
+010901,7,,Schwerbehinderte (Schwerbehindertenquote ist erfüllt),Anz.,2024,6.0,0,,99
+011001,1,,Jahresergebnis,EUR,2022,1245871.0,0,,103
+011001,1,,Jahresergebnis,EUR,2023,63027.0,0,,103
+011001,1,,Jahresergebnis,EUR,2024,191990.0,0,Ist-Werte 2024 und 2025: Entwurf Jahresabschluss 2024 und Prognose 2025,103
+011001,1,,Jahresergebnis,EUR,2025,0.0,0,Ist-Werte 2024 und 2025: Entwurf Jahresabschluss 2024 und Prognose 2025,103
+011002,1,,Vollstreckungsfälle,Anz.,2022,301.0,0,,105
+011002,1,,Vollstreckungsfälle,Anz.,2023,268.0,0,,105
+011002,1,,Vollstreckungsfälle,Anz.,2024,268.0,0,,105
+011002,1,,Vollstreckungsfälle,Anz.,2025,111.0,0,Stand 30.06.,105
+011002,2,,Mahnungen,Anz.,2022,925.0,0,,105
+011002,2,,Mahnungen,Anz.,2023,916.0,0,,105
+011002,2,,Mahnungen,Anz.,2024,958.0,0,,105
+011002,2,,Mahnungen,Anz.,2025,608.0,0,Stand 30.06.,105
+011003,1,,Gewerbebetriebe,Anz.,2022,853.0,0,,107
+011003,1,,Gewerbebetriebe,Anz.,2023,877.0,0,,107
+011003,1,,Gewerbebetriebe,Anz.,2024,918.0,0,,107
+011003,1,,Gewerbebetriebe,Anz.,2025,931.0,0,Stand 30.06.,107
+011003,2,,veranlagte Gewerbebetriebe,Anz.,2022,599.0,0,,107
+011003,2,,veranlagte Gewerbebetriebe,Anz.,2023,631.0,0,,107
+011003,2,,veranlagte Gewerbebetriebe,Anz.,2024,635.0,0,,107
+011003,2,,veranlagte Gewerbebetriebe,Anz.,2025,629.0,0,Stand 30.06.,107
+011003,3,,Hunde,Anz.,2022,1052.0,0,,107
+011003,3,,Hunde,Anz.,2023,1052.0,0,,107
+011003,3,,Hunde,Anz.,2024,1065.0,0,,107
+011003,3,,Hunde,Anz.,2025,1059.0,0,Stand 30.06.,107
+011101,1,IT-ausgestattete Arbeitsplätze,Gemeindeverwaltung,Anz.,2022,70.0,0,,109
+011101,1,IT-ausgestattete Arbeitsplätze,Gemeindeverwaltung,Anz.,2023,70.0,0,,109
+011101,1,IT-ausgestattete Arbeitsplätze,Gemeindeverwaltung,Anz.,2024,75.0,0,,109
+011101,1,IT-ausgestattete Arbeitsplätze,Gemeindeverwaltung,Anz.,2025,75.0,0,Stand 30.06.,109
+011101,2,IT-ausgestattete Arbeitsplätze,Bauhof,Anz.,2022,2.0,0,,109
+011101,2,IT-ausgestattete Arbeitsplätze,Bauhof,Anz.,2023,2.0,0,,109
+011101,2,IT-ausgestattete Arbeitsplätze,Bauhof,Anz.,2024,2.0,0,,109
+011101,2,IT-ausgestattete Arbeitsplätze,Bauhof,Anz.,2025,4.0,0,Stand 30.06.,109
+011101,3,IT-ausgestattete Arbeitsplätze,Beverbad,Anz.,2022,3.0,0,,109
+011101,3,IT-ausgestattete Arbeitsplätze,Beverbad,Anz.,2023,3.0,0,,109
+011101,3,IT-ausgestattete Arbeitsplätze,Beverbad,Anz.,2024,3.0,0,,109
+011101,3,IT-ausgestattete Arbeitsplätze,Beverbad,Anz.,2025,3.0,0,Stand 30.06.,109
+011101,4,IT-ausgestattete Arbeitsplätze,Schulen,Anz.,2022,8.0,0,,109
+011101,4,IT-ausgestattete Arbeitsplätze,Schulen,Anz.,2023,8.0,0,,109
+011101,4,IT-ausgestattete Arbeitsplätze,Schulen,Anz.,2024,9.0,0,,109
+011101,4,IT-ausgestattete Arbeitsplätze,Schulen,Anz.,2025,97.0,0,Stand 30.06.,109
+011101,5,IT-ausgestattete Arbeitsplätze,Feuerwehr,Anz.,2022,15.0,0,,109
+011101,5,IT-ausgestattete Arbeitsplätze,Feuerwehr,Anz.,2023,15.0,0,,109
+011101,5,IT-ausgestattete Arbeitsplätze,Feuerwehr,Anz.,2024,17.0,0,,109
+011101,5,IT-ausgestattete Arbeitsplätze,Feuerwehr,Anz.,2025,17.0,0,Stand 30.06.,109
+011101,6,IT-ausgestattete Arbeitsplätze,Kinder- und Jugendwerk,Anz.,2022,8.0,0,,109
+011101,6,IT-ausgestattete Arbeitsplätze,Kinder- und Jugendwerk,Anz.,2023,8.0,0,,109
+011101,6,IT-ausgestattete Arbeitsplätze,Kinder- und Jugendwerk,Anz.,2024,8.0,0,,109
+011101,6,IT-ausgestattete Arbeitsplätze,Kinder- und Jugendwerk,Anz.,2025,8.0,0,Stand 30.06.,109
+011101,7,IT-ausgestattete Arbeitsplätze,Ostbevern Touristik,Anz.,2022,3.0,0,,109
+011101,7,IT-ausgestattete Arbeitsplätze,Ostbevern Touristik,Anz.,2023,3.0,0,,109
+011101,7,IT-ausgestattete Arbeitsplätze,Ostbevern Touristik,Anz.,2024,3.0,0,,109
+011101,7,IT-ausgestattete Arbeitsplätze,Ostbevern Touristik,Anz.,2025,3.0,0,Stand 30.06.,109
+011204,1,,Veräußerte Wohn- und Gewerbeflächen,Anz.,2022,36999.0,0,,120
+011204,1,,Veräußerte Wohn- und Gewerbeflächen,Anz.,2023,5940.0,0,,120
+011204,1,,Veräußerte Wohn- und Gewerbeflächen,Anz.,2024,12362.0,0,,120
+011204,1,,Veräußerte Wohn- und Gewerbeflächen,Anz.,2025,3401.0,0,Stand 30.06.,120
+011204,2,,abgeschlossene Kaufverträge,Anz.,2022,73.0,0,,120
+011204,2,,abgeschlossene Kaufverträge,Anz.,2023,6.0,0,,120
+011204,2,,abgeschlossene Kaufverträge,Anz.,2024,22.0,0,,120
+011204,2,,abgeschlossene Kaufverträge,Anz.,2025,4.0,0,Stand 30.06.,120
+011204,3,,verpachtete Grundstücke,Anz.,2022,35.0,0,,120
+011204,3,,verpachtete Grundstücke,Anz.,2025,3.0,0,Stand 30.06.,120
+011204,4,,Erbbaugrundstücke,Anz.,2022,7.0,0,,120
+011204,4,,Erbbaugrundstücke,Anz.,2023,7.0,0,,120
+011204,4,,Erbbaugrundstücke,Anz.,2024,7.0,0,,120
+011204,4,,Erbbaugrundstücke,Anz.,2025,7.0,0,Stand 30.06.,120
+020101,1,,ausgegebene Fischereischeine,Anz.,2022,63.0,0,,128
+020101,1,,ausgegebene Fischereischeine,Anz.,2023,93.0,0,,128
+020101,1,,ausgegebene Fischereischeine,Anz.,2024,78.0,0,,128
+020101,1,,ausgegebene Fischereischeine,Anz.,2025,43.0,0,Stand 30.06.,128
+020101,2,,Kfz-Abmeldungen,Anz.,2022,477.0,0,,128
+020101,2,,Kfz-Abmeldungen,Anz.,2023,461.0,0,,128
+020101,2,,Kfz-Abmeldungen,Anz.,2024,386.0,0,,128
+020101,2,,Kfz-Abmeldungen,Anz.,2025,172.0,0,Stand 30.06.,128
+020101,3,,Änderung KFZ-Schein,Anz.,2022,215.0,0,,128
+020101,3,,Änderung KFZ-Schein,Anz.,2023,247.0,0,,128
+020101,3,,Änderung KFZ-Schein,Anz.,2024,183.0,0,,128
+020101,3,,Änderung KFZ-Schein,Anz.,2025,71.0,0,Stand 30.06.,128
+020201,1,,Gewerbebetriebe,Anz.,2022,858.0,0,,130
+020201,1,,Gewerbebetriebe,Anz.,2023,878.0,0,,130
+020201,1,,Gewerbebetriebe,Anz.,2024,921.0,0,,130
+020201,1,,Gewerbebetriebe,Anz.,2025,937.0,0,Stand 30.06.,130
+020201,2,,Gewerbeanmeldungen,Anz.,2022,99.0,0,,130
+020201,2,,Gewerbeanmeldungen,Anz.,2023,106.0,0,,130
+020201,2,,Gewerbeanmeldungen,Anz.,2024,103.0,0,,130
+020201,2,,Gewerbeanmeldungen,Anz.,2025,49.0,0,Stand 30.06.,130
+020201,3,,Gewerbeabmeldungen,Anz.,2022,147.0,0,,130
+020201,3,,Gewerbeabmeldungen,Anz.,2023,80.0,0,,130
+020201,3,,Gewerbeabmeldungen,Anz.,2024,64.0,0,,130
+020201,3,,Gewerbeabmeldungen,Anz.,2025,33.0,0,Stand 30.06.,130
+020201,4,,Gewerbeummeldungen,Anz.,2022,24.0,0,,130
+020201,4,,Gewerbeummeldungen,Anz.,2023,27.0,0,,130
+020201,4,,Gewerbeummeldungen,Anz.,2024,14.0,0,,130
+020201,4,,Gewerbeummeldungen,Anz.,2025,16.0,0,Stand 30.06.,130
+020301,1,,Verwarnungen für Falschparker,Anz.,2022,378.0,0,,132
+020301,1,,Verwarnungen für Falschparker,Anz.,2023,390.0,0,,132
+020301,1,,Verwarnungen für Falschparker,Anz.,2024,149.0,0,,132
+020301,1,,Verwarnungen für Falschparker,Anz.,2025,81.0,0,Stand 30.06.,132
+020301,2,,Bußgeldbescheide,Anz.,2022,28.0,0,,132
+020301,2,,Bußgeldbescheide,Anz.,2023,31.0,0,,132
+020301,2,,Bußgeldbescheide,Anz.,2024,10.0,0,,132
+020301,2,,Bußgeldbescheide,Anz.,2025,6.0,0,Stand 30.06.,132
+020401,1,,Einwohner/innen (IT. NRW),Anz.,2022,11500.0,0,,134
+020401,1,,Einwohner/innen (IT. NRW),Anz.,2023,11690.0,0,,134
+020401,1,,Einwohner/innen (IT. NRW),Anz.,2024,11469.0,0,,134
+020401,1,,Einwohner/innen (IT. NRW),Anz.,2025,11409.0,0,Stand 30.06.,134
+020401,2,,Reisepässe,Anz.,2022,572.0,0,,134
+020401,2,,Reisepässe,Anz.,2023,365.0,0,,134
+020401,2,,Reisepässe,Anz.,2024,408.0,0,,134
+020401,2,,Reisepässe,Anz.,2025,246.0,0,Stand 30.06.,134
+020401,3,,Kinderreisepässe,Anz.,2022,236.0,0,,134
+020401,3,,Kinderreisepässe,Anz.,2023,164.0,0,,134
+020401,4,,Personalausweise,Anz.,2022,1280.0,0,,134
+020401,4,,Personalausweise,Anz.,2023,717.0,0,,134
+020401,4,,Personalausweise,Anz.,2024,837.0,0,,134
+020401,4,,Personalausweise,Anz.,2025,468.0,0,Stand 30.06.,134
+020501,1,,Einwohner/innen (IT. NRW),Anz.,2022,11500.0,0,,136
+020501,1,,Einwohner/innen (IT. NRW),Anz.,2023,11690.0,0,,136
+020501,1,,Einwohner/innen (IT. NRW),Anz.,2024,11469.0,0,,136
+020501,1,,Einwohner/innen (IT. NRW),Anz.,2025,11409.0,0,Stand 30.06.,136
+020501,2,,Geburten,Anz.,2023,4.0,0,,136
+020501,2,,Geburten,Anz.,2024,2.0,0,,136
+020501,2,,Geburten,Anz.,2025,2.0,0,Stand 30.06.,136
+020501,3,,Eheschließungen,Anz.,2022,75.0,0,,136
+020501,3,,Eheschließungen,Anz.,2023,75.0,0,,136
+020501,3,,Eheschließungen,Anz.,2024,56.0,0,,136
+020501,3,,Eheschließungen,Anz.,2025,26.0,0,Stand 30.06.,136
+020501,4,,Sterbefälle,Anz.,2022,60.0,0,,136
+020501,4,,Sterbefälle,Anz.,2023,55.0,0,,136
+020501,4,,Sterbefälle,Anz.,2024,43.0,0,,136
+020501,4,,Sterbefälle,Anz.,2025,21.0,0,Stand 30.06.,136
+020601,1,Wahl- bzw. Stimmberechtigte,Landtagswahl 15.05.2022,Anz.,2022,8413.0,0,Wahl- bzw. Stimmberechtigte sind aufgrund der Voraussetzung des aktiven Wahlrechts unterschiedlich.,138
+020601,2,Wahl- bzw. Stimmberechtigte,Bundestagswahl 23.02.2025,Anz.,2025,8680.0,0,Wahl- bzw. Stimmberechtigte sind aufgrund der Voraussetzung des aktiven Wahlrechts unterschiedlich.; Stand 30.06.,138
+020601,3,Wahl- bzw. Stimmberechtigte,Europawahl 09.06.2024,Anz.,2024,8837.0,0,Wahl- bzw. Stimmberechtigte sind aufgrund der Voraussetzung des aktiven Wahlrechts unterschiedlich.,138
+020601,4,Wahl- bzw. Stimmberechtigte,Kommunalwahlen 14.09.2025,Anz.,2025,9168.0,0,Wahl- bzw. Stimmberechtigte sind aufgrund der Voraussetzung des aktiven Wahlrechts unterschiedlich.; Stand 30.06.,138
+020701,1,Feuerwehreinsätze,Brände und Explosionen,Anz.,2022,43.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,1,Feuerwehreinsätze,Brände und Explosionen,Anz.,2023,49.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,1,Feuerwehreinsätze,Brände und Explosionen,Anz.,2024,30.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,1,Feuerwehreinsätze,Brände und Explosionen,Anz.,2025,19.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF; Stand 30.06.,140
+020701,2,Feuerwehreinsätze,Technische Hilfeleistungen,Anz.,2022,89.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,2,Feuerwehreinsätze,Technische Hilfeleistungen,Anz.,2023,69.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,2,Feuerwehreinsätze,Technische Hilfeleistungen,Anz.,2024,46.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,2,Feuerwehreinsätze,Technische Hilfeleistungen,Anz.,2025,22.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF; Stand 30.06.,140
+020701,4,Feuerwehreinsätze,Durchgeführte Brandschauen *,Anz.,2022,15.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,4,Feuerwehreinsätze,Durchgeführte Brandschauen *,Anz.,2023,12.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,4,Feuerwehreinsätze,Durchgeführte Brandschauen *,Anz.,2024,13.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,4,Feuerwehreinsätze,Durchgeführte Brandschauen *,Anz.,2025,8.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF; Stand 30.06.,140
+020701,5,Mitgliederzahlen Feuerwehr,aktive Wehr,Anz.,2022,110.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,5,Mitgliederzahlen Feuerwehr,aktive Wehr,Anz.,2023,105.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,5,Mitgliederzahlen Feuerwehr,aktive Wehr,Anz.,2024,111.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,5,Mitgliederzahlen Feuerwehr,aktive Wehr,Anz.,2025,111.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF; Stand 30.06.,140
+020701,6,Mitgliederzahlen Feuerwehr,"aktive Wehr, davon weiblich",Anz.,2022,12.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,6,Mitgliederzahlen Feuerwehr,"aktive Wehr, davon weiblich",Anz.,2023,11.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,6,Mitgliederzahlen Feuerwehr,"aktive Wehr, davon weiblich",Anz.,2024,13.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,6,Mitgliederzahlen Feuerwehr,"aktive Wehr, davon weiblich",Anz.,2025,13.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF; Stand 30.06.,140
+020701,7,Mitgliederzahlen Feuerwehr,Jugendfeuerwehr,Anz.,2022,30.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,7,Mitgliederzahlen Feuerwehr,Jugendfeuerwehr,Anz.,2023,29.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,7,Mitgliederzahlen Feuerwehr,Jugendfeuerwehr,Anz.,2024,30.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,7,Mitgliederzahlen Feuerwehr,Jugendfeuerwehr,Anz.,2025,26.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF; Stand 30.06.,140
+020701,8,Mitgliederzahlen Feuerwehr,"Jugendfeuerwehr, davon weiblich",Anz.,2022,3.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,8,Mitgliederzahlen Feuerwehr,"Jugendfeuerwehr, davon weiblich",Anz.,2023,3.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,8,Mitgliederzahlen Feuerwehr,"Jugendfeuerwehr, davon weiblich",Anz.,2024,3.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,8,Mitgliederzahlen Feuerwehr,"Jugendfeuerwehr, davon weiblich",Anz.,2025,1.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF; Stand 30.06.,140
+020701,9,Mitgliederzahlen Feuerwehr,Ehrenabteilung,Anz.,2022,16.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,9,Mitgliederzahlen Feuerwehr,Ehrenabteilung,Anz.,2023,17.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,9,Mitgliederzahlen Feuerwehr,Ehrenabteilung,Anz.,2024,17.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF,140
+020701,9,Mitgliederzahlen Feuerwehr,Ehrenabteilung,Anz.,2025,17.0,0,* inkl. Stellungnahme des Brandschutzingenieurs Kreis WAF; Stand 30.06.,140
+030101,1,,Schüler/innen,Anz.,2022,294.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,151
+030101,1,,Schüler/innen,Anz.,2023,317.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,151
+030101,1,,Schüler/innen,Anz.,2024,342.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,151
+030101,1,,Schüler/innen,Anz.,2025,337.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,151
+030101,2,,Klassen,Anz.,2022,13.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,151
+030101,2,,Klassen,Anz.,2023,14.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,151
+030101,2,,Klassen,Anz.,2024,15.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,151
+030101,2,,Klassen,Anz.,2025,15.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,151
+030102,1,,Schüler/innen,Anz.,2022,187.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,155
+030102,1,,Schüler/innen,Anz.,2023,193.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,155
+030102,1,,Schüler/innen,Anz.,2024,200.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,155
+030102,1,,Schüler/innen,Anz.,2025,202.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,155
+030102,2,,Klassen,Anz.,2022,8.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,155
+030102,2,,Klassen,Anz.,2023,8.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,155
+030102,2,,Klassen,Anz.,2024,8.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,155
+030102,2,,Klassen,Anz.,2025,8.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,155
+030103,1,Schüler/innen,Sekundarschule,Anz.,2022,518.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,158
+030103,1,Schüler/innen,Sekundarschule,Anz.,2023,506.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,158
+030103,1,Schüler/innen,Sekundarschule,Anz.,2024,508.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,158
+030103,1,Schüler/innen,Sekundarschule,Anz.,2025,516.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,158
+030103,2,Klassen,Sekundarschule,Anz.,2022,23.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,158
+030103,2,Klassen,Sekundarschule,Anz.,2023,22.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,158
+030103,2,Klassen,Sekundarschule,Anz.,2024,22.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,158
+030103,2,Klassen,Sekundarschule,Anz.,2025,22.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,158
+030104,1,,8-13-Betreuung Ambrosius-Grundschule,Anz.,2022,49.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,1,,8-13-Betreuung Ambrosius-Grundschule,Anz.,2023,53.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,1,,8-13-Betreuung Ambrosius-Grundschule,Anz.,2024,80.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,1,,8-13-Betreuung Ambrosius-Grundschule,Anz.,2025,79.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,162
+030104,2,,8-13-Betreuung Franz-von-Assisi-Grundschule,Anz.,2022,31.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,2,,8-13-Betreuung Franz-von-Assisi-Grundschule,Anz.,2023,37.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,2,,8-13-Betreuung Franz-von-Assisi-Grundschule,Anz.,2024,43.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,2,,8-13-Betreuung Franz-von-Assisi-Grundschule,Anz.,2025,48.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,162
+030104,3,,Offene Ganztagsschule Ambrosius-Grundschule,Anz.,2022,74.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,3,,Offene Ganztagsschule Ambrosius-Grundschule,Anz.,2023,80.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,3,,Offene Ganztagsschule Ambrosius-Grundschule,Anz.,2024,80.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,3,,Offene Ganztagsschule Ambrosius-Grundschule,Anz.,2025,81.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,162
+030104,4,,Offene Ganztagsgrundschule Franz-von-Assisi-Grundschule,Anz.,2022,57.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,4,,Offene Ganztagsgrundschule Franz-von-Assisi-Grundschule,Anz.,2023,60.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,4,,Offene Ganztagsgrundschule Franz-von-Assisi-Grundschule,Anz.,2024,70.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,4,,Offene Ganztagsgrundschule Franz-von-Assisi-Grundschule,Anz.,2025,67.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,162
+030104,5,Nachmittagsbetreuung an der Josef-Annegarn-Schule,SekundarschülerInnen,Anz.,2022,11.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,5,Nachmittagsbetreuung an der Josef-Annegarn-Schule,SekundarschülerInnen,Anz.,2023,10.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,5,Nachmittagsbetreuung an der Josef-Annegarn-Schule,SekundarschülerInnen,Anz.,2024,12.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,162
+030104,5,Nachmittagsbetreuung an der Josef-Annegarn-Schule,SekundarschülerInnen,Anz.,2025,11.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,162
+030201,1,,Fahrschüler/innen,Ant.,2022,350.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,165
+030201,1,,Fahrschüler/innen,Ant.,2023,350.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,165
+030201,1,,Fahrschüler/innen,Ant.,2024,350.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,165
+030201,1,,Fahrschüler/innen,Ant.,2025,346.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,165
+030201,2,,Schulbuslinien,Anz.,2022,8.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,165
+030201,2,,Schulbuslinien,Anz.,2023,8.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,165
+030201,2,,Schulbuslinien,Anz.,2024,8.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,165
+030201,2,,Schulbuslinien,Anz.,2025,8.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,165
+030201,3,,Haltestellen im Bereich Ostbevern,Anz.,2022,95.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,165
+030201,3,,Haltestellen im Bereich Ostbevern,Anz.,2023,95.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,165
+030201,3,,Haltestellen im Bereich Ostbevern,Anz.,2024,95.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,165
+030201,3,,Haltestellen im Bereich Ostbevern,Anz.,2025,95.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.; Stand 30.06.,165
+030301,1,,Schülerzahlen in der Sekundarstufe I,Anz.,2022,111.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,1,,Schülerzahlen in der Sekundarstufe I,Anz.,2023,111.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,1,,Schülerzahlen in der Sekundarstufe I,Anz.,2024,112.0,0,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,2,Übergangsquote von der Grundschule zur/zum,Hauptschule,%,2022,0.0,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,2,Übergangsquote von der Grundschule zur/zum,Hauptschule,%,2023,0.0,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,2,Übergangsquote von der Grundschule zur/zum,Hauptschule,%,2024,0.0,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,3,Übergangsquote von der Grundschule zur/zum,Realschule,%,2022,0.9,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,3,Übergangsquote von der Grundschule zur/zum,Realschule,%,2023,2.7,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,3,Übergangsquote von der Grundschule zur/zum,Realschule,%,2024,0.9,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,4,Übergangsquote von der Grundschule zur/zum,Gymnasium,%,2022,46.9,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,4,Übergangsquote von der Grundschule zur/zum,Gymnasium,%,2023,49.1,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,4,Übergangsquote von der Grundschule zur/zum,Gymnasium,%,2024,42.9,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,5,Übergangsquote von der Grundschule zur/zum,Gesamtschule,%,2022,1.8,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,5,Übergangsquote von der Grundschule zur/zum,Gesamtschule,%,2023,3.6,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,5,Übergangsquote von der Grundschule zur/zum,Gesamtschule,%,2024,4.4,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,6,Übergangsquote von der Grundschule zur/zum,Sekundarschule,%,2022,48.6,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,6,Übergangsquote von der Grundschule zur/zum,Sekundarschule,%,2023,44.6,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,6,Übergangsquote von der Grundschule zur/zum,Sekundarschule,%,2024,50.9,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,7,Übergangsquote von der Grundschule zur/zum,Förderschule,%,2022,0.9,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,7,Übergangsquote von der Grundschule zur/zum,Förderschule,%,2023,0.0,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,7,Übergangsquote von der Grundschule zur/zum,Förderschule,%,2024,0.9,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,8,Übergangsquote von der Grundschule zur/zum,Waldorfschule,%,2022,0.9,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,8,Übergangsquote von der Grundschule zur/zum,Waldorfschule,%,2023,0.0,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+030301,8,Übergangsquote von der Grundschule zur/zum,Waldorfschule,%,2024,0.0,1,Das Schuljahr 2022/2023 wurde in Spalte 2022 eingetragen usw.,167
+040101,1,,Ausstellungen pro Jahr,Anz.,2022,7.0,0,,171
+040101,1,,Ausstellungen pro Jahr,Anz.,2023,5.0,0,,171
+040101,1,,Ausstellungen pro Jahr,Anz.,2024,6.0,0,,171
+040101,1,,Ausstellungen pro Jahr,Anz.,2025,10.0,0,Stand 30.06.,171
+040101,2,,Teilnehmer an Kursen in der KulturWerkstatt,Anz.,2022,600.0,0,,171
+040101,2,,Teilnehmer an Kursen in der KulturWerkstatt,Anz.,2023,400.0,0,,171
+040101,2,,Teilnehmer an Kursen in der KulturWerkstatt,Anz.,2024,450.0,0,,171
+040101,2,,Teilnehmer an Kursen in der KulturWerkstatt,Anz.,2025,480.0,0,Stand 30.06.,171
+040201,1,,VHS-Kurse in Ostbevern,Anz.,2022,13.0,0,,174
+040201,1,,VHS-Kurse in Ostbevern,Anz.,2023,12.0,0,,174
+040201,1,,VHS-Kurse in Ostbevern,Anz.,2024,10.0,0,,174
+040201,1,,VHS-Kurse in Ostbevern,Anz.,2025,3.0,0,Stand 30.06.,174
+040201,2,,Teilnehmer/innen an VHS-Kursen in Ostbevern,Anz.,2022,179.0,0,,174
+040201,2,,Teilnehmer/innen an VHS-Kursen in Ostbevern,Anz.,2023,180.0,0,,174
+040201,2,,Teilnehmer/innen an VHS-Kursen in Ostbevern,Anz.,2024,141.0,0,,174
+040201,2,,Teilnehmer/innen an VHS-Kursen in Ostbevern,Anz.,2025,12.0,0,Stand 30.06.,174
+040201,3,,Teilnehmer an Einzelveranstaltungen in Ostbevern,Anz.,2022,55.0,0,,174
+040201,3,,Teilnehmer an Einzelveranstaltungen in Ostbevern,Anz.,2023,35.0,0,,174
+040201,3,,Teilnehmer an Einzelveranstaltungen in Ostbevern,Anz.,2024,28.0,0,,174
+040201,3,,Teilnehmer an Einzelveranstaltungen in Ostbevern,Anz.,2025,0.0,0,Stand 30.06.,174
+040201,4,,Gesamtteilnehmer an Kursen der VHS aus Ostbevern,Anz.,2022,387.0,0,,174
+040201,4,,Gesamtteilnehmer an Kursen der VHS aus Ostbevern,Anz.,2023,446.0,0,,174
+040201,4,,Gesamtteilnehmer an Kursen der VHS aus Ostbevern,Anz.,2024,473.0,0,,174
+040201,4,,Gesamtteilnehmer an Kursen der VHS aus Ostbevern,Anz.,2025,158.0,0,Stand 30.06.,174
+040301,1,,Musikschüler/innen,Schüler,2022,378.0,0,,176
+040301,1,,Musikschüler/innen,Schüler,2023,432.0,0,,176
+040301,1,,Musikschüler/innen,Schüler,2024,487.0,0,,176
+040301,1,,Musikschüler/innen,Schüler,2025,458.0,0,Stand 30.06.,176
+040301,2,,Davon Jekits-Schüler/innen,Std.,2022,194.0,0,,176
+040301,2,,Davon Jekits-Schüler/innen,Std.,2023,265.0,0,,176
+040301,2,,Davon Jekits-Schüler/innen,Std.,2024,268.0,0,,176
+040301,2,,Davon Jekits-Schüler/innen,Std.,2025,268.0,0,Stand 30.06.,176
+040301,3,,Jahreswochenstunden,Std.,2022,93.0,0,,176
+040301,3,,Jahreswochenstunden,Std.,2023,92.0,0,,176
+040301,3,,Jahreswochenstunden,Std.,2024,111.0,0,,176
+040301,3,,Jahreswochenstunden,Std.,2025,108.0,0,Stand 30.06.,176
+050102,1,,Hilfeempfänger/innen Asylbewerberleistungsgesetz,Anz.,2022,102.0,0,,181
+050102,1,,Hilfeempfänger/innen Asylbewerberleistungsgesetz,Anz.,2023,60.0,0,,181
+050102,1,,Hilfeempfänger/innen Asylbewerberleistungsgesetz,Anz.,2024,40.0,0,,181
+050102,1,,Hilfeempfänger/innen Asylbewerberleistungsgesetz,Anz.,2025,43.0,0,Stand 30.06.,181
+050103,1,,Hilfeempfänger/innen nach Kapitel 3 SGB XII - Hilfe zum Lebensunterhalt -,Anz.,2022,4.0,0,,183
+050103,1,,Hilfeempfänger/innen nach Kapitel 3 SGB XII - Hilfe zum Lebensunterhalt -,Anz.,2023,7.0,0,,183
+050103,1,,Hilfeempfänger/innen nach Kapitel 3 SGB XII - Hilfe zum Lebensunterhalt -,Anz.,2024,8.0,0,,183
+050103,1,,Hilfeempfänger/innen nach Kapitel 3 SGB XII - Hilfe zum Lebensunterhalt -,Anz.,2025,15.0,0,Stand 30.06.,183
+050103,2,,Hilfeempfänger/innen mit Leistungen der Grundsicherung nach Kapitel 4 SGB XII,Anz.,2022,102.0,0,,183
+050103,2,,Hilfeempfänger/innen mit Leistungen der Grundsicherung nach Kapitel 4 SGB XII,Anz.,2023,101.0,0,,183
+050103,2,,Hilfeempfänger/innen mit Leistungen der Grundsicherung nach Kapitel 4 SGB XII,Anz.,2024,104.0,0,,183
+050103,2,,Hilfeempfänger/innen mit Leistungen der Grundsicherung nach Kapitel 4 SGB XII,Anz.,2025,107.0,0,Stand 30.06.,183
+050201,1,,Zuschusszahlungen insgesamt,EUR,2022,12560.0,0,,185
+050201,1,,Zuschusszahlungen insgesamt,EUR,2023,15910.0,0,,185
+050201,1,,Zuschusszahlungen insgesamt,EUR,2024,13020.0,0,,185
+050201,1,,Zuschusszahlungen insgesamt,EUR,2025,16540.0,0,Stand 30.06.,185
+050201,2,,geförderte Vereine und Gruppen,Anz.,2022,15.0,0,,185
+050201,2,,geförderte Vereine und Gruppen,Anz.,2023,17.0,0,,185
+050201,2,,geförderte Vereine und Gruppen,Anz.,2024,17.0,0,,185
+050201,2,,geförderte Vereine und Gruppen,Anz.,2025,17.0,0,Stand 30.06.,185
+050301,1,,Anträge Rentenversicherung,Anz.,2022,93.0,0,,188
+050301,1,,Anträge Rentenversicherung,Anz.,2023,94.0,0,,188
+050301,1,,Anträge Rentenversicherung,Anz.,2024,87.0,0,,188
+050301,1,,Anträge Rentenversicherung,Anz.,2025,55.0,0,Stand 30.06.,188
+060101,1,Kindergartenjahr,Einrichtungen,Anz.,2022,8.0,0,,194
+060101,1,Kindergartenjahr,Einrichtungen,Anz.,2023,8.0,0,,194
+060101,1,Kindergartenjahr,Einrichtungen,Anz.,2024,8.0,0,,194
+060101,1,Kindergartenjahr,Einrichtungen,Anz.,2025,8.0,0,Stand 30.06.,194
+060101,2,Kindergartenjahr,Gruppen,Anz.,2022,30.0,0,,194
+060101,2,Kindergartenjahr,Gruppen,Anz.,2023,32.0,0,,194
+060101,2,Kindergartenjahr,Gruppen,Anz.,2024,32.0,0,,194
+060101,2,Kindergartenjahr,Gruppen,Anz.,2025,32.0,0,Stand 30.06.,194
+060101,3,Kindergartenjahr,Betreute Kinder unter 3 Jahre,Anz.,2022,148.0,0,,194
+060101,3,Kindergartenjahr,Betreute Kinder unter 3 Jahre,Anz.,2023,157.0,0,,194
+060101,3,Kindergartenjahr,Betreute Kinder unter 3 Jahre,Anz.,2024,140.0,0,,194
+060101,3,Kindergartenjahr,Betreute Kinder unter 3 Jahre,Anz.,2025,150.0,0,Stand 30.06.,194
+060101,4,Kindergartenjahr,Betreute Kinder von 3 - 6 Jahre,Anz.,2022,420.0,0,,194
+060101,4,Kindergartenjahr,Betreute Kinder von 3 - 6 Jahre,Anz.,2023,462.0,0,,194
+060101,4,Kindergartenjahr,Betreute Kinder von 3 - 6 Jahre,Anz.,2024,495.0,0,,194
+060101,4,Kindergartenjahr,Betreute Kinder von 3 - 6 Jahre,Anz.,2025,451.0,0,Stand 30.06.,194
+060201,1,,Besucher/innen Jugendcafé,Anz.,2022,10420.0,0,,197
+060201,1,,Besucher/innen Jugendcafé,Anz.,2023,8333.0,0,,197
+060201,1,,Besucher/innen Jugendcafé,Anz.,2024,9787.0,0,,197
+060201,1,,Besucher/innen Jugendcafé,Anz.,2025,5527.0,0,Stand 30.06.,197
+060201,2,,Öffnungstage Jugendcafé,Tg.,2022,205.0,0,,197
+060201,2,,Öffnungstage Jugendcafé,Tg.,2023,189.0,0,,197
+060201,2,,Öffnungstage Jugendcafé,Tg.,2024,171.0,0,,197
+060201,2,,Öffnungstage Jugendcafé,Tg.,2025,103.0,0,Stand 30.06.,197
+060201,3,,Teilnehmer/innen Spielstadt und Notbetreuung,Anz.,2022,153.0,0,,197
+060201,3,,Teilnehmer/innen Spielstadt und Notbetreuung,Anz.,2023,162.0,0,,197
+060201,3,,Teilnehmer/innen Spielstadt und Notbetreuung,Anz.,2024,158.0,0,,197
+060201,3,,Teilnehmer/innen Spielstadt und Notbetreuung,Anz.,2025,0.0,0,Stand 30.06.,197
+060201,4,,Teilnehmer/innen Ferienerholungsmaßnahmen,Anz.,2022,117.0,0,,197
+060201,4,,Teilnehmer/innen Ferienerholungsmaßnahmen,Anz.,2023,84.0,0,,197
+060201,4,,Teilnehmer/innen Ferienerholungsmaßnahmen,Anz.,2024,166.0,0,,197
+060201,4,,Teilnehmer/innen Ferienerholungsmaßnahmen,Anz.,2025,53.0,0,Stand 30.06.,197
+060202,1,,Kinderspielplätze und Bolzplätze,Anz.,2022,31.0,0,,200
+060202,1,,Kinderspielplätze und Bolzplätze,Anz.,2023,32.0,0,,200
+060202,1,,Kinderspielplätze und Bolzplätze,Anz.,2024,34.0,0,,200
+060202,1,,Kinderspielplätze und Bolzplätze,Anz.,2025,34.0,0,Stand 30.06.,200
+060202,2,,Fläche der Kinderspielplätze und Bolzplätze,qm,2022,28750.0,0,,200
+060202,2,,Fläche der Kinderspielplätze und Bolzplätze,qm,2023,30244.0,0,,200
+060202,2,,Fläche der Kinderspielplätze und Bolzplätze,qm,2024,32064.0,0,,200
+060202,2,,Fläche der Kinderspielplätze und Bolzplätze,qm,2025,32064.0,0,Stand 30.06.,200
+080101,1,,Vereinsmitglieder insgesamt,Anz.,2022,3077.0,0,,205
+080101,1,,Vereinsmitglieder insgesamt,Anz.,2023,2128.0,0,,205
+080101,1,,Vereinsmitglieder insgesamt,Anz.,2024,2264.0,0,,205
+080101,1,,Vereinsmitglieder insgesamt,Anz.,2025,2768.0,0,Stand 30.06.,205
+080101,2,,Jugendliche Vereinsmitglieder,Anz.,2022,965.0,0,,205
+080101,2,,Jugendliche Vereinsmitglieder,Anz.,2023,1082.0,0,,205
+080101,2,,Jugendliche Vereinsmitglieder,Anz.,2024,1199.0,0,,205
+080101,2,,Jugendliche Vereinsmitglieder,Anz.,2025,1217.0,0,Stand 30.06.,205
+080101,3,,Übungsleiter,Anz.,2022,43.0,0,,205
+080101,3,,Übungsleiter,Anz.,2023,45.0,0,,205
+080101,3,,Übungsleiter,Anz.,2024,41.0,0,,205
+080101,3,,Übungsleiter,Anz.,2025,44.0,0,Stand 30.06.,205
+080101,4,,abgelegte Sportabzeichen,Anz.,2022,609.0,0,,205
+080101,4,,abgelegte Sportabzeichen,Anz.,2023,1025.0,0,,205
+080101,4,,abgelegte Sportabzeichen,Anz.,2025,869.0,0,Stand 30.06.,205
+090101,1,,Änderungsverfahren Flächennutzungsplan,Anz.,2022,0.0,0,,211
+090101,1,,Änderungsverfahren Flächennutzungsplan,Anz.,2023,1.0,0,,211
+090101,1,,Änderungsverfahren Flächennutzungsplan,Anz.,2024,4.0,0,,211
+090101,1,,Änderungsverfahren Flächennutzungsplan,Anz.,2025,2.0,0,Stand 30.06.,211
+090101,2,,Verfahren zur Neuaufstellung/ Änderung von Bebauungsplänen,Anz.,2022,2.0,0,,211
+090101,2,,Verfahren zur Neuaufstellung/ Änderung von Bebauungsplänen,Anz.,2023,2.0,0,,211
+090101,2,,Verfahren zur Neuaufstellung/ Änderung von Bebauungsplänen,Anz.,2024,8.0,0,,211
+090101,2,,Verfahren zur Neuaufstellung/ Änderung von Bebauungsplänen,Anz.,2025,2.0,0,Stand 30.06.,211
+090101,3,,abgeschlossene städtebauliche Verträge,Anz.,2022,0.0,0,,211
+090101,3,,abgeschlossene städtebauliche Verträge,Anz.,2023,1.0,0,,211
+090101,3,,abgeschlossene städtebauliche Verträge,Anz.,2024,0.0,0,,211
+090101,3,,abgeschlossene städtebauliche Verträge,Anz.,2025,0.0,0,Stand 30.06.,211
+100101,1,,Bauanträge,Anz.,2022,118.0,0,,222
+100101,1,,Bauanträge,Anz.,2023,70.0,0,,222
+100101,1,,Bauanträge,Anz.,2024,55.0,0,,222
+100101,1,,Bauanträge,Anz.,2025,44.0,0,Stand 30.06.,222
+100101,2,,Bauvoranfragen,Anz.,2022,2.0,0,,222
+100101,2,,Bauvoranfragen,Anz.,2023,2.0,0,,222
+100101,2,,Bauvoranfragen,Anz.,2024,1.0,0,,222
+100101,2,,Bauvoranfragen,Anz.,2025,3.0,0,Stand 30.06.,222
+100101,3,,Freistellungen,Anz.,2022,0.0,0,,222
+100101,3,,Freistellungen,Anz.,2023,0.0,0,,222
+100101,3,,Freistellungen,Anz.,2024,0.0,0,,222
+100101,3,,Freistellungen,Anz.,2025,0.0,0,Stand 30.06.,222
+100101,4,,BImSchG-Anträge,Anz.,2022,0.0,0,,222
+100101,4,,BImSchG-Anträge,Anz.,2023,3.0,0,,222
+100101,4,,BImSchG-Anträge,Anz.,2024,5.0,0,,222
+100101,4,,BImSchG-Anträge,Anz.,2025,2.0,0,Stand 30.06.,222
+100101,5,,Abbruchanträge,Anz.,2022,3.0,0,,222
+100101,5,,Abbruchanträge,Anz.,2023,0.0,0,,222
+100101,5,,Abbruchanträge,Anz.,2024,0.0,0,,222
+100101,5,,Abbruchanträge,Anz.,2025,0.0,0,Stand 30.06.,222
+100101,6,,Stellplatzablösungsanträge für private Bauvorhaben,Anz.,2022,0.0,0,,222
+100101,6,,Stellplatzablösungsanträge für private Bauvorhaben,Anz.,2023,0.0,0,,222
+100101,6,,Stellplatzablösungsanträge für private Bauvorhaben,Anz.,2024,2.0,0,,222
+100101,6,,Stellplatzablösungsanträge für private Bauvorhaben,Anz.,2025,0.0,0,Stand 30.06.,222
+100201,1,,Unter Schutz gestellte Denkmäler,Anz.,2022,56.0,0,,224
+100201,1,,Unter Schutz gestellte Denkmäler,Anz.,2023,56.0,0,,224
+100201,1,,Unter Schutz gestellte Denkmäler,Anz.,2024,56.0,0,,224
+100201,1,,Unter Schutz gestellte Denkmäler,Anz.,2025,56.0,0,Stand 30.06.,224
+100201,2,,Unter Schutz gestellte Bodendenkmäler,Anz.,2022,5.0,0,,224
+100201,2,,Unter Schutz gestellte Bodendenkmäler,Anz.,2023,5.0,0,,224
+100201,2,,Unter Schutz gestellte Bodendenkmäler,Anz.,2024,5.0,0,,224
+100201,2,,Unter Schutz gestellte Bodendenkmäler,Anz.,2025,5.0,0,Stand 30.06.,224
+100301,1,Wohngeldfälle,Mietzuschuss,Anz.,2022,181.0,0,,226
+100301,1,Wohngeldfälle,Mietzuschuss,Anz.,2023,264.0,0,,226
+100301,1,Wohngeldfälle,Mietzuschuss,Anz.,2024,318.0,0,,226
+100301,1,Wohngeldfälle,Mietzuschuss,Anz.,2025,205.0,0,Stand 30.06.,226
+100301,2,Wohngeldfälle,Lastenzuschuss,Anz.,2022,25.0,0,,226
+100301,2,Wohngeldfälle,Lastenzuschuss,Anz.,2023,33.0,0,,226
+100301,2,Wohngeldfälle,Lastenzuschuss,Anz.,2024,26.0,0,,226
+100301,2,Wohngeldfälle,Lastenzuschuss,Anz.,2025,21.0,0,Stand 30.06.,226
+100301,3,Wohngeldfälle,Gesamtleistung,EUR,2022,315548.0,0,,226
+100301,3,Wohngeldfälle,Gesamtleistung,EUR,2023,794177.0,0,,226
+100301,3,Wohngeldfälle,Gesamtleistung,EUR,2024,792087.0,0,,226
+100301,3,Wohngeldfälle,Gesamtleistung,EUR,2025,432139.0,0,Stand 30.06.,226
+110101,1,Gebühren,120 l Restmüll eigener Behälter,EUR,2022,189.0,0,,232
+110101,1,Gebühren,120 l Restmüll eigener Behälter,EUR,2023,190.0,0,,232
+110101,1,Gebühren,120 l Restmüll eigener Behälter,EUR,2024,180.0,0,,232
+110101,1,Gebühren,120 l Restmüll eigener Behälter,EUR,2025,176.0,0,Stand 30.06.,232
+110101,2,Gebühren,240 l Restmüll eigener Behälter,EUR,2022,377.0,0,,232
+110101,2,Gebühren,240 l Restmüll eigener Behälter,EUR,2023,379.0,0,,232
+110101,2,Gebühren,240 l Restmüll eigener Behälter,EUR,2024,361.0,0,,232
+110101,2,Gebühren,240 l Restmüll eigener Behälter,EUR,2025,355.0,0,Stand 30.06.,232
+110101,3,Gebühren,120 l Restmüll gemieteter Behälter,EUR,2022,189.0,0,,232
+110101,3,Gebühren,120 l Restmüll gemieteter Behälter,EUR,2023,190.0,0,,232
+110101,3,Gebühren,120 l Restmüll gemieteter Behälter,EUR,2024,180.0,0,,232
+110101,3,Gebühren,120 l Restmüll gemieteter Behälter,EUR,2025,176.0,0,Stand 30.06.,232
+110101,4,Gebühren,240 l Restmüll gemieteter Behälter,EUR,2022,377.0,0,,232
+110101,4,Gebühren,240 l Restmüll gemieteter Behälter,EUR,2023,379.0,0,,232
+110101,4,Gebühren,240 l Restmüll gemieteter Behälter,EUR,2024,361.0,0,,232
+110101,4,Gebühren,240 l Restmüll gemieteter Behälter,EUR,2025,355.0,0,Stand 30.06.,232
+110101,5,Gebühren,120 l Biotonne,EUR,2022,165.0,0,,232
+110101,5,Gebühren,120 l Biotonne,EUR,2023,181.0,0,,232
+110101,5,Gebühren,120 l Biotonne,EUR,2024,162.0,0,,232
+110101,5,Gebühren,120 l Biotonne,EUR,2025,158.0,0,Stand 30.06.,232
+110101,6,Gebühren,240 l Biotonne,EUR,2022,330.0,0,,232
+110101,6,Gebühren,240 l Biotonne,EUR,2023,361.0,0,,232
+110101,6,Gebühren,240 l Biotonne,EUR,2024,325.0,0,,232
+110101,6,Gebühren,240 l Biotonne,EUR,2025,316.0,0,Stand 30.06.,232
+110101,8,Abfallmengen,Restmüll,t.,2022,1205.0,0,,232
+110101,8,Abfallmengen,Restmüll,t.,2023,1517.0,0,,232
+110101,8,Abfallmengen,Restmüll,t.,2024,805.0,0,,232
+110101,8,Abfallmengen,Restmüll,t.,2025,640.0,0,Stand 30.06.,232
+110101,9,Abfallmengen,Biomüll,t.,2022,1356.0,0,,232
+110101,9,Abfallmengen,Biomüll,t.,2023,1442.0,0,,232
+110101,9,Abfallmengen,Biomüll,t.,2024,753.0,0,,232
+110101,9,Abfallmengen,Biomüll,t.,2025,697.0,0,Stand 30.06.,232
+120102,1,,Straßenleuchten,Anz.,2022,1254.0,0,,247
+120102,1,,Straßenleuchten,Anz.,2023,1259.0,0,,247
+120102,1,,Straßenleuchten,Anz.,2024,1298.0,0,,247
+120102,1,,Straßenleuchten,Anz.,2025,1298.0,0,Stand 30.06.,247
+120102,2,Betriebskosten Straßenbeleuchtung,Strom,EUR,2022,25464.0,0,,247
+120102,2,Betriebskosten Straßenbeleuchtung,Strom,EUR,2023,58751.0,0,,247
+120102,2,Betriebskosten Straßenbeleuchtung,Strom,EUR,2024,82220.0,0,,247
+120102,2,Betriebskosten Straßenbeleuchtung,Strom,EUR,2025,41358.0,0,Stand 30.06.,247
+120102,3,Betriebskosten Straßenbeleuchtung,Reparaturen,EUR,2022,11479.0,0,,247
+120102,3,Betriebskosten Straßenbeleuchtung,Reparaturen,EUR,2023,8754.0,0,,247
+120102,3,Betriebskosten Straßenbeleuchtung,Reparaturen,EUR,2024,9930.0,0,,247
+120102,4,Betriebskosten Straßenbeleuchtung,Wartung,EUR,2022,32639.0,0,,247
+120102,4,Betriebskosten Straßenbeleuchtung,Wartung,EUR,2023,63525.0,0,,247
+120102,4,Betriebskosten Straßenbeleuchtung,Wartung,EUR,2024,63525.0,0,,247
+120102,5,Betriebskosten Straßenbeleuchtung,Schadensfälle,EUR,2022,271.0,0,,247
+120102,5,Betriebskosten Straßenbeleuchtung,Schadensfälle,EUR,2023,1131.0,0,,247
+120102,5,Betriebskosten Straßenbeleuchtung,Schadensfälle,EUR,2024,8158.0,0,,247
+120102,6,Betriebskosten Straßenbeleuchtung,Gesamtkosten,EUR,2022,69854.0,0,,247
+120102,6,Betriebskosten Straßenbeleuchtung,Gesamtkosten,EUR,2023,132161.0,0,,247
+120102,6,Betriebskosten Straßenbeleuchtung,Gesamtkosten,EUR,2024,163833.0,0,,247
+120102,6,Betriebskosten Straßenbeleuchtung,Gesamtkosten,EUR,2025,41358.0,0,Stand 30.06.,247
+120201,1,,Nachtbus Ostbevern - Telgte - Münster,EUR,2023,17000.0,0,Abrechnungen ab 2022 liegen nicht vor.,250
+120201,1,,Nachtbus Ostbevern - Telgte - Münster,EUR,2024,19000.0,0,Abrechnungen ab 2022 liegen nicht vor.,250
+120201,1,,Nachtbus Ostbevern - Telgte - Münster,EUR,2025,19000.0,0,Abrechnungen ab 2022 liegen nicht vor.; Stand 30.06.,250
+120301,1,,Straßenreinigungslängen,Kehrmeter,2022,22958.0,0,,253
+120301,1,,Straßenreinigungslängen,Kehrmeter,2023,23706.0,0,,253
+120301,1,,Straßenreinigungslängen,Kehrmeter,2024,23706.0,0,,253
+120301,1,,Straßenreinigungslängen,Kehrmeter,2025,23706.0,0,Stand 30.06.,253
+120301,2,,Unternehmerkosten Straßenreinigung,EUR/km,2022,963.0,0,,253
+120301,2,,Unternehmerkosten Straßenreinigung,EUR/km,2023,1173.0,0,,253
+120301,2,,Unternehmerkosten Straßenreinigung,EUR/km,2024,1173.0,0,,253
+120301,3,Gebühren,Anliegerstraßen,EUR/lfd. m.,2022,2.46,2,,253
+120301,3,Gebühren,Anliegerstraßen,EUR/lfd. m.,2023,2.74,2,,253
+120301,3,Gebühren,Anliegerstraßen,EUR/lfd. m.,2024,2.72,2,,253
+120301,3,Gebühren,Anliegerstraßen,EUR/lfd. m.,2025,3.14,2,Stand 30.06.,253
+120301,4,Gebühren,Haupterschließungsstraßen,EUR/lfd. m.,2022,2.21,2,,253
+120301,4,Gebühren,Haupterschließungsstraßen,EUR/lfd. m.,2023,2.47,2,,253
+120301,4,Gebühren,Haupterschließungsstraßen,EUR/lfd. m.,2024,2.47,2,,253
+120301,4,Gebühren,Haupterschließungsstraßen,EUR/lfd. m.,2025,2.82,2,Stand 30.06.,253
+120301,5,Gebühren,Hauptverkehrsstraßen,EUR/lfd. m.,2022,1.96,2,,253
+120301,5,Gebühren,Hauptverkehrsstraßen,EUR/lfd. m.,2023,2.19,2,,253
+120301,5,Gebühren,Hauptverkehrsstraßen,EUR/lfd. m.,2024,2.18,2,,253
+120301,5,Gebühren,Hauptverkehrsstraßen,EUR/lfd. m.,2025,2.51,2,Stand 30.06.,253
+130301,1,Bestattungen/Beisetzungen,Sargbestattungen Friedhof Ostbevern,Anz.,2022,31.0,0,,264
+130301,1,Bestattungen/Beisetzungen,Sargbestattungen Friedhof Ostbevern,Anz.,2023,30.0,0,,264
+130301,1,Bestattungen/Beisetzungen,Sargbestattungen Friedhof Ostbevern,Anz.,2024,40.0,0,,264
+130301,1,Bestattungen/Beisetzungen,Sargbestattungen Friedhof Ostbevern,Anz.,2025,10.0,0,Stand 30.06.,264
+130301,2,Bestattungen/Beisetzungen,Urnenbeisetzungen Friedhof Ostbevern,Anz.,2022,41.0,0,,264
+130301,2,Bestattungen/Beisetzungen,Urnenbeisetzungen Friedhof Ostbevern,Anz.,2023,42.0,0,,264
+130301,2,Bestattungen/Beisetzungen,Urnenbeisetzungen Friedhof Ostbevern,Anz.,2024,38.0,0,,264
+130301,2,Bestattungen/Beisetzungen,Urnenbeisetzungen Friedhof Ostbevern,Anz.,2025,20.0,0,Stand 30.06.,264
+130301,3,Bestattungen/Beisetzungen,Sargbestattungen Ortsteil Brock,Anz.,2022,3.0,0,,264
+130301,3,Bestattungen/Beisetzungen,Sargbestattungen Ortsteil Brock,Anz.,2023,6.0,0,,264
+130301,3,Bestattungen/Beisetzungen,Sargbestattungen Ortsteil Brock,Anz.,2024,3.0,0,,264
+130301,3,Bestattungen/Beisetzungen,Sargbestattungen Ortsteil Brock,Anz.,2025,0.0,0,Stand 30.06.,264
+130301,4,Bestattungen/Beisetzungen,Urnenbeisetzungen Ortsteil Brock,Anz.,2022,6.0,0,,264
+130301,4,Bestattungen/Beisetzungen,Urnenbeisetzungen Ortsteil Brock,Anz.,2023,11.0,0,,264
+130301,4,Bestattungen/Beisetzungen,Urnenbeisetzungen Ortsteil Brock,Anz.,2024,7.0,0,,264
+130301,4,Bestattungen/Beisetzungen,Urnenbeisetzungen Ortsteil Brock,Anz.,2025,1.0,0,Stand 30.06.,264
+130301,5,Nutzung Friedhofshalle,Nutzung Trauerhalle der Friedhofshalle,Anz.,2022,69.0,0,,265
+130301,5,Nutzung Friedhofshalle,Nutzung Trauerhalle der Friedhofshalle,Anz.,2023,67.0,0,,265
+130301,5,Nutzung Friedhofshalle,Nutzung Trauerhalle der Friedhofshalle,Anz.,2024,70.0,0,,265
+130301,5,Nutzung Friedhofshalle,Nutzung Trauerhalle der Friedhofshalle,Anz.,2025,26.0,0,Stand 30.06.,265
+130301,6,Nutzung Friedhofshalle,Nutzung Aufbahrungsräume der Friedhofshalle,Anz.,2022,30.0,0,,265
+130301,6,Nutzung Friedhofshalle,Nutzung Aufbahrungsräume der Friedhofshalle,Anz.,2023,30.0,0,,265
+130301,6,Nutzung Friedhofshalle,Nutzung Aufbahrungsräume der Friedhofshalle,Anz.,2024,38.0,0,,265
+130301,6,Nutzung Friedhofshalle,Nutzung Aufbahrungsräume der Friedhofshalle,Anz.,2025,9.0,0,Stand 30.06.,265
+150101,1,,Sozialversicherungspflichtige Beschäftigte,Anz.,2022,3625.0,0,,273
+150101,1,,Sozialversicherungspflichtige Beschäftigte,Anz.,2023,3685.0,0,,273
+150101,2,,Gewerbeanmeldungen,Anz.,2022,99.0,0,,273
+150101,2,,Gewerbeanmeldungen,Anz.,2023,106.0,0,,273
+150102,1,,betreute Gästegruppen,Anz.,2022,60.0,0,,276
+150102,1,,betreute Gästegruppen,Anz.,2023,67.0,0,,276
+150102,2,,betreute Gäste,Anz.,2022,2297.0,0,,276
+150102,2,,betreute Gäste,Anz.,2023,1882.0,0,,276
+150102,3,,Übernachtungen,Anz.,2022,22055.0,0,,276
+150102,3,,Übernachtungen,Anz.,2023,30195.0,0,,276
+160101,1,,Gewerbesteuer (Im Teilplan Zeile 01),EUR,2022,9737018.0,0,,280
+160101,1,,Gewerbesteuer (Im Teilplan Zeile 01),EUR,2023,4771497.0,0,,280
+160101,1,,Gewerbesteuer (Im Teilplan Zeile 01),EUR,2024,8418043.0,0,,280
+160101,1,,Gewerbesteuer (Im Teilplan Zeile 01),EUR,2025,7853736.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,2,,Grundsteuer A (Zeile 01),EUR,2022,141120.0,0,,280
+160101,2,,Grundsteuer A (Zeile 01),EUR,2023,159233.0,0,,280
+160101,2,,Grundsteuer A (Zeile 01),EUR,2024,159625.0,0,,280
+160101,2,,Grundsteuer A (Zeile 01),EUR,2025,88602.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,3,,Grundsteuer B (Zeile 01),EUR,2022,1585479.0,0,,280
+160101,3,,Grundsteuer B (Zeile 01),EUR,2023,1789117.0,0,,280
+160101,3,,Grundsteuer B (Zeile 01),EUR,2024,1848425.0,0,,280
+160101,3,,Grundsteuer B (Zeile 01),EUR,2025,2032412.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,4,,Anteil an der Einkommenssteuer (Zeile 01),EUR,2022,5373754.0,0,,280
+160101,4,,Anteil an der Einkommenssteuer (Zeile 01),EUR,2023,6134589.0,0,,280
+160101,4,,Anteil an der Einkommenssteuer (Zeile 01),EUR,2024,6536000.0,0,,280
+160101,4,,Anteil an der Einkommenssteuer (Zeile 01),EUR,2025,6850000.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,5,,Anteil an der Umsatzsteuer (Zeile 01),EUR,2022,788827.0,0,,280
+160101,5,,Anteil an der Umsatzsteuer (Zeile 01),EUR,2023,801110.0,0,,280
+160101,5,,Anteil an der Umsatzsteuer (Zeile 01),EUR,2024,926000.0,0,,280
+160101,5,,Anteil an der Umsatzsteuer (Zeile 01),EUR,2025,880000.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,6,,Vergnügungssteuer (Zeile 01),EUR,2022,57673.0,0,,280
+160101,6,,Vergnügungssteuer (Zeile 01),EUR,2023,59266.0,0,,280
+160101,6,,Vergnügungssteuer (Zeile 01),EUR,2024,50000.0,0,,280
+160101,6,,Vergnügungssteuer (Zeile 01),EUR,2025,53000.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,7,,Hundesteuer (Zeile 01),EUR,2022,68248.0,0,,280
+160101,7,,Hundesteuer (Zeile 01),EUR,2023,64896.0,0,,280
+160101,7,,Hundesteuer (Zeile 01),EUR,2024,64000.0,0,,280
+160101,7,,Hundesteuer (Zeile 01),EUR,2025,67325.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,8,,Kompensationsleistung (Zeile 01),EUR,2022,559819.0,0,,280
+160101,8,,Kompensationsleistung (Zeile 01),EUR,2023,671927.0,0,,280
+160101,8,,Kompensationsleistung (Zeile 01),EUR,2024,647692.0,0,,280
+160101,8,,Kompensationsleistung (Zeile 01),EUR,2025,661673.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,9,,Schlüsselzuweisung (Zeile 02),EUR,2022,1722242.0,0,,280
+160101,9,,Schlüsselzuweisung (Zeile 02),EUR,2023,1943672.0,0,,280
+160101,9,,Schlüsselzuweisung (Zeile 02),EUR,2024,2103716.0,0,,280
+160101,9,,Schlüsselzuweisung (Zeile 02),EUR,2025,2806624.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,10,,Konzessionsabgaben Strom (Zeile 07),EUR,2022,301367.0,0,,280
+160101,10,,Konzessionsabgaben Strom (Zeile 07),EUR,2023,292696.0,0,,280
+160101,10,,Konzessionsabgaben Strom (Zeile 07),EUR,2024,319159.0,0,,280
+160101,10,,Konzessionsabgaben Strom (Zeile 07),EUR,2025,320031.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,11,,Konzessionsabgaben Gas (Zeile 07),EUR,2022,37354.0,0,,280
+160101,11,,Konzessionsabgaben Gas (Zeile 07),EUR,2023,34562.0,0,,280
+160101,11,,Konzessionsabgaben Gas (Zeile 07),EUR,2024,40530.0,0,,280
+160101,11,,Konzessionsabgaben Gas (Zeile 07),EUR,2025,40616.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,12,,Konzessionsabgaben Wasser (Zeile 07),EUR,2022,116496.0,0,,280
+160101,12,,Konzessionsabgaben Wasser (Zeile 07),EUR,2023,116250.0,0,,280
+160101,12,,Konzessionsabgaben Wasser (Zeile 07),EUR,2024,90000.0,0,,280
+160101,12,,Konzessionsabgaben Wasser (Zeile 07),EUR,2025,115000.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,13,,Kreisumlage (Allg. Kreisumlage plus Jugendamt) (Zeile 15),EUR,2022,8382087.0,0,,280
+160101,13,,Kreisumlage (Allg. Kreisumlage plus Jugendamt) (Zeile 15),EUR,2023,8960533.0,0,,280
+160101,13,,Kreisumlage (Allg. Kreisumlage plus Jugendamt) (Zeile 15),EUR,2024,9886612.0,0,,280
+160101,13,,Kreisumlage (Allg. Kreisumlage plus Jugendamt) (Zeile 15),EUR,2025,10160066.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,14,,Gewerbesteuerumlage (Zeile 15),EUR,2022,1025266.0,0,,280
+160101,14,,Gewerbesteuerumlage (Zeile 15),EUR,2023,160151.0,0,,280
+160101,14,,Gewerbesteuerumlage (Zeile 15),EUR,2024,321602.0,0,,280
+160101,14,,Gewerbesteuerumlage (Zeile 15),EUR,2025,490285.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,15,,Gewerbesteuerumlage für Fond deutscher Einheit (Zeile 15),EUR,2022,0.0,0,,280
+160101,16,,Krankenhausinvestitionsumlage (Zeile 15),EUR,2022,167928.0,0,,280
+160101,16,,Krankenhausinvestitionsumlage (Zeile 15),EUR,2023,193450.0,0,,280
+160101,16,,Krankenhausinvestitionsumlage (Zeile 15),EUR,2024,195776.0,0,,280
+160101,16,,Krankenhausinvestitionsumlage (Zeile 15),EUR,2025,194441.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,17,,Eigenkapitalverzinsungen Abwasserwerk TEO AöR (Zeile 19),EUR,2022,391730.0,0,,280
+160101,17,,Eigenkapitalverzinsungen Abwasserwerk TEO AöR (Zeile 19),EUR,2023,300000.0,0,,280
+160101,17,,Eigenkapitalverzinsungen Abwasserwerk TEO AöR (Zeile 19),EUR,2024,300000.0,0,,280
+160101,17,,Eigenkapitalverzinsungen Abwasserwerk TEO AöR (Zeile 19),EUR,2025,320000.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,18,,Gewinnausschüttung Sparkasse Münsterland Ost (Zeile 19),EUR,2022,38406.0,0,,280
+160101,18,,Gewinnausschüttung Sparkasse Münsterland Ost (Zeile 19),EUR,2023,40000.0,0,,280
+160101,18,,Gewinnausschüttung Sparkasse Münsterland Ost (Zeile 19),EUR,2024,40000.0,0,,280
+160101,18,,Gewinnausschüttung Sparkasse Münsterland Ost (Zeile 19),EUR,2025,40000.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,19,,Zinsen für investive Kredite (Zeile 20),EUR,2022,167038.0,0,,280
+160101,19,,Zinsen für investive Kredite (Zeile 20),EUR,2023,159285.0,0,,280
+160101,19,,Zinsen für investive Kredite (Zeile 20),EUR,2024,151950.0,0,,280
+160101,19,,Zinsen für investive Kredite (Zeile 20),EUR,2025,145127.0,0,Ist-Wert 2025: Stand Ende 2025.,280
+160101,20,,Zinsen für Kassenkredite (Zeile 20),EUR,2022,0.0,0,,280
+160101,20,,Zinsen für Kassenkredite (Zeile 20),EUR,2023,0.0,0,,280
+160101,20,,Zinsen für Kassenkredite (Zeile 20),EUR,2024,0.0,0,,280
+160101,20,,Zinsen für Kassenkredite (Zeile 20),EUR,2025,0.0,0,Ist-Wert 2025: Stand Ende 2025.,280

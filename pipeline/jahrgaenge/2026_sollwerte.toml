@@ -236,3 +236,43 @@ zweiter_block_zu_zeilen = ["16"]
 # Quell-PDF. Ein Block ohne Eintrag wird nicht geschrieben (keine erfundenen Daten), daher
 # trägt 120101 nicht zu dieser Zahl bei.
 produkte_mit_erlaeuterungen = 50
+# Verifiziert gegen das echte PDF (03-05, scratchpad-Koordinatendump über alle
+# Produktinformationen-/grundzahlen-Seiten): 48 Produkte drucken eine Grundzahlen-
+# Tabelle, 15 drucken keine.
+produkte_mit_grundzahlen = 48
+
+# [stichproben.grundzahl_*] (Phase 3, 03-05, EXTR-07): PDF-geprüfte Testreferenzen für die
+# Grundzahlen-Tabelle, keine Extraktions-Steuerung (wie [stichproben.produktinfo] oben).
+[stichproben.grundzahl_steuer]
+produkt = "160101"
+bezeichnung = "Gewerbesteuer (Im Teilplan Zeile 01)"
+einheit = "EUR"
+jahr = 2023
+wert = 4771497
+pdf_seite = 280
+
+[stichproben.grundzahl_stichtag]
+produkt = "020101"
+bezeichnung = "Kfz-Abmeldungen"
+einheit = "Anz."
+jahr = 2025
+wert = 172
+hinweis_enthaelt = "Stand 30.06."
+pdf_seite = 128
+
+[stichproben.grundzahl_ueberschreibung]
+produkt = "160101"
+jahr = 2025
+hinweis_enthaelt = "Stand Ende 2025"
+hinweis_ohne = "Stand 30.06."
+
+[stichproben.grundzahl_gruppe]
+produkt = "130301"
+gruppe = "Nutzung Friedhofshalle"
+pdf_seite = 265
+
+[stichproben.grundzahl_kein_wert]
+produkt = "160101"
+bezeichnung = "Gewerbesteuerumlage für Fond deutscher Einheit (Zeile 15)"
+jahre = [2022]
+wert = 0

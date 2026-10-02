@@ -23,6 +23,8 @@ from ostbevern.konfiguration import (
 from ostbevern.pruefung import (
     REGEL3_ZEILEN,
     REGEL7_KENNZAHLEN,
+    REGEL8_MERKMALE,
+    REGEL8_PFLICHTFELDER,
     SATZUNG_FORMELN,
     TOLERANZ_EURO,
     Abgleich,
@@ -51,6 +53,8 @@ from ostbevern.schema import (
     INVESTITIONEN_PB_CSV,
     KONSISTENZ_MD,
     PLAN_SPALTEN,
+    PRODUKT_SCHLUESSEL,
+    PRODUKTE_JSON,
     QUERSCHNITTE_CSV,
     SEITEN_CSV,
     VE_FAELLIGKEITEN_CSV,
@@ -58,12 +62,14 @@ from ostbevern.schema import (
     lies_investitionen_csv,
     lies_investitionen_pb_csv,
     lies_plan_csv,
+    lies_produkte_json,
     lies_querschnitte_csv,
     lies_seiten_csv,
     lies_ve_faelligkeiten_csv,
     schreibe_investitionen_csv,
     schreibe_investitionen_pb_csv,
     schreibe_plan_csv,
+    schreibe_produkte_json,
     schreibe_querschnitte_csv,
     schreibe_seiten_csv,
     schreibe_ve_faelligkeiten_csv,
@@ -194,11 +200,24 @@ def _kopiere_finanzplan_nach(tmp_path: Path) -> None:
     _kopiere_investitionen_pb_nach(tmp_path)
 
 
+def _kopiere_produkte_nach(tmp_path: Path) -> None:
+    """Kopiert die eingecheckte produkte.json unverändert in den tmp-Datenbaum (D-06,
+    03-05): `pruefe_alles` liest sie seit Regel 8 bei jedem Aufruf."""
+    pfad_ziel = tmp_path / PRODUKTE_JSON
+    pfad_ziel.parent.mkdir(parents=True, exist_ok=True)
+    pfad_ziel.write_bytes((DATEN_WURZEL / PRODUKTE_JSON).read_bytes())
+
+
 def _kopiere_hierarchie_nach(tmp_path: Path) -> None:
-    """Kopiert die eingecheckte hierarchie.csv unverändert in den tmp-Datenbaum (D-06)."""
+    """Kopiert die eingecheckte hierarchie.csv unverändert in den tmp-Datenbaum (D-06).
+
+    Kopiert außerdem produkte.json mit (03-05, Regel 8 liest beide bei jedem
+    `pruefe_alles()`-Aufruf; praktisch jeder Aufrufer dieser Funktion braucht sie,
+    wie `_kopiere_finanzplan_nach` es für investitionen*.csv bereits tut)."""
     pfad_ziel = tmp_path / HIERARCHIE_CSV
     pfad_ziel.parent.mkdir(parents=True, exist_ok=True)
     pfad_ziel.write_bytes((DATEN_WURZEL / HIERARCHIE_CSV).read_bytes())
+    _kopiere_produkte_nach(tmp_path)
 
 
 def _kopiere_befunde_nach(tmp_path: Path) -> None:
@@ -1738,3 +1757,210 @@ def test_konsistenzbericht_toleriert_einen_euro(tmp_path: Path) -> None:
 
     assert regel4.status == "grün"
     assert regel4.abweichungen == ()
+
+
+# --- Regel 8: Vollständigkeit der Produkte (PRUEF-08, Spez. 5.5) --------------------
+
+
+def _kopiere_regel8_abhaengigkeiten(tmp_path: Path) -> None:
+    """Kopiert alle von Regel 8 (und dem restlichen Bericht) benötigten Dateien (D-06).
+
+    Tests überschreiben anschließend gezielt ergebnisplan.csv, finanzplan.csv oder
+    produkte.json mit ihrer eigenen Manipulation."""
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_hierarchie_nach(tmp_path)  # kopiert auch produkte.json mit (D-06, 03-05)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_querschnitte_nach(tmp_path)
+    _kopiere_befunde_nach(tmp_path)
+
+
+def _erster_produktcode() -> str:
+    """Der (sortiert) erste P-Code der echten Hierarchie, ohne Jahrgangsliteral."""
+    hierarchie = lies_hierarchie_csv(DATEN_WURZEL / HIERARCHIE_CSV)
+    return sorted(hierarchie.filter(pl.col("ebene") == "P")["code"].to_list())[0]
+
+
+def _erwartete_regel8_geprueft() -> int:
+    """geprueft = (Produkte × Merkmale je Produkt) + die eine Mengen-/Anzahl-Prüfung
+    (Behavior: "geprueft equals the number of (product, Merkmal) checks plus the
+    product-set check")."""
+    hierarchie = lies_hierarchie_csv(DATEN_WURZEL / HIERARCHIE_CSV)
+    anzahl_produkte = hierarchie.filter(pl.col("ebene") == "P").height
+    return anzahl_produkte * len(REGEL8_MERKMALE) + 1
+
+
+def test_regel8_gruen_auf_eingecheckten_daten() -> None:
+    bericht = pruefe_alles(STANDARD_JAHR)
+    regel8 = next((regel for regel in bericht.regeln if regel.regel == 8), None)
+    assert regel8 is not None, "Regel 8 fehlt im Bericht"
+    assert regel8.geprueft == _erwartete_regel8_geprueft()
+    assert regel8.status == "grün"
+    assert regel8.abweichungen == ()
+    assert regel8.luecken == ()
+    assert bericht.ist_gruen is True
+
+
+def test_regel8_fehlendes_produkt_erzeugt_luecke(tmp_path: Path) -> None:
+    code = _erster_produktcode()
+    produkte = lies_produkte_json(DATEN_WURZEL / PRODUKTE_JSON)
+    manipuliert = [p for p in produkte if p["code"] != code]
+    assert len(manipuliert) == len(produkte) - 1
+
+    _kopiere_regel8_abhaengigkeiten(tmp_path)
+    schreibe_produkte_json(manipuliert, tmp_path / PRODUKTE_JSON)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel8 = next((regel for regel in bericht.regeln if regel.regel == 8), None)
+    assert regel8 is not None, "Regel 8 fehlt im Bericht"
+    assert regel8.status == "rot"
+    merkmale = {(luecke.code, luecke.merkmal) for luecke in regel8.luecken}
+    assert (code, "produktinformationen") in merkmale
+    treffer = next(luecke for luecke in regel8.luecken if luecke.merkmal == "produktinformationen")
+    assert treffer.ebene == "P"
+    assert treffer.code == code
+    assert bericht.ist_gruen is False
+
+
+def test_regel8_unbekanntes_produkt_erzeugt_luecke(tmp_path: Path) -> None:
+    produkte = lies_produkte_json(DATEN_WURZEL / PRODUKTE_JSON)
+    fremdes_produkt = {**produkte[0], "code": "999999"}
+    manipuliert = [*produkte, fremdes_produkt]
+
+    _kopiere_regel8_abhaengigkeiten(tmp_path)
+    schreibe_produkte_json(manipuliert, tmp_path / PRODUKTE_JSON)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel8 = next((regel for regel in bericht.regeln if regel.regel == 8), None)
+    assert regel8 is not None, "Regel 8 fehlt im Bericht"
+    assert regel8.status == "rot"
+    treffer = next(luecke for luecke in regel8.luecken if luecke.merkmal == "unbekanntes Produkt")
+    assert treffer.code == "999999"
+    assert treffer.ebene == "P"
+
+
+def _schreibe_manipuliertes_produkt(
+    tmp_path: Path, *, code: str, **ueberschreibungen: object
+) -> None:
+    """Überschreibt die Felder `ueberschreibungen` genau eines Produkts in der
+    (bereits per `_kopiere_regel8_abhaengigkeiten` kopierten) tmp-produkte.json."""
+    produkte = lies_produkte_json(DATEN_WURZEL / PRODUKTE_JSON)
+    manipuliert = [{**p, **ueberschreibungen} if p["code"] == code else p for p in produkte]
+    schreibe_produkte_json(manipuliert, tmp_path / PRODUKTE_JSON)
+
+
+def test_regel8_ungueltiger_bindungsgrad_erzeugt_luecke(tmp_path: Path) -> None:
+    code = _erster_produktcode()
+    _kopiere_regel8_abhaengigkeiten(tmp_path)
+    _schreibe_manipuliertes_produkt(tmp_path, code=code, bindungsgrad="unbekannt")
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel8 = next((regel for regel in bericht.regeln if regel.regel == 8), None)
+    assert regel8 is not None, "Regel 8 fehlt im Bericht"
+    treffer = next(luecke for luecke in regel8.luecken if luecke.merkmal == "bindungsgrad")
+    assert treffer.code == code
+
+
+def test_regel8_bindungsgrad_original_null_erzeugt_luecke(tmp_path: Path) -> None:
+    # Die writer-seitige Schlüssel-Prüfung bleibt aktiv (schreibe_produkte_json prüft nur
+    # die Schlüsselmenge, keine Werttypen) — ein null-Wert simuliert ein "fehlendes" Feld.
+    code = _erster_produktcode()
+    _kopiere_regel8_abhaengigkeiten(tmp_path)
+    _schreibe_manipuliertes_produkt(tmp_path, code=code, bindungsgrad_original=None)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel8 = next((regel for regel in bericht.regeln if regel.regel == 8), None)
+    assert regel8 is not None, "Regel 8 fehlt im Bericht"
+    treffer = next(luecke for luecke in regel8.luecken if luecke.merkmal == "bindungsgrad_original")
+    assert treffer.code == code
+
+
+def test_regel8_leeres_gremium_erzeugt_luecke(tmp_path: Path) -> None:
+    code = _erster_produktcode()
+    _kopiere_regel8_abhaengigkeiten(tmp_path)
+    _schreibe_manipuliertes_produkt(tmp_path, code=code, gremium="")
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel8 = next((regel for regel in bericht.regeln if regel.regel == 8), None)
+    assert regel8 is not None, "Regel 8 fehlt im Bericht"
+    treffer = next(luecke for luecke in regel8.luecken if luecke.merkmal == "gremium")
+    assert treffer.code == code
+
+
+def test_regel8_fehlende_teilergebnisplan_zeilen_erzeugt_luecke(tmp_path: Path) -> None:
+    code = _erster_produktcode()
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    manipuliert = ergebnisplan.filter(~((pl.col("ebene") == "P") & (pl.col("code") == code)))
+
+    _kopiere_regel8_abhaengigkeiten(tmp_path)
+    schreibe_plan_csv(manipuliert, tmp_path / ERGEBNISPLAN_CSV)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel8 = next((regel for regel in bericht.regeln if regel.regel == 8), None)
+    assert regel8 is not None, "Regel 8 fehlt im Bericht"
+    treffer = next(luecke for luecke in regel8.luecken if luecke.merkmal == "teilergebnisplan")
+    assert treffer.code == code
+
+
+def test_regel8_fehlende_teilfinanzplan_zeilen_erzeugt_luecke(tmp_path: Path) -> None:
+    code = _erster_produktcode()
+    finanzplan = lies_plan_csv(DATEN_WURZEL / FINANZPLAN_CSV)
+    manipuliert = finanzplan.filter(~((pl.col("ebene") == "P") & (pl.col("code") == code)))
+
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(manipuliert, tmp_path / FINANZPLAN_CSV)
+    _kopiere_investitionen_nach(tmp_path)
+    _kopiere_ve_faelligkeiten_nach(tmp_path)
+    _kopiere_investitionen_pb_nach(tmp_path)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_querschnitte_nach(tmp_path)
+    _kopiere_befunde_nach(tmp_path)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel8 = next((regel for regel in bericht.regeln if regel.regel == 8), None)
+    assert regel8 is not None, "Regel 8 fehlt im Bericht"
+    treffer = next(luecke for luecke in regel8.luecken if luecke.merkmal == "teilfinanzplan")
+    assert treffer.code == code
+
+
+def test_regel8_falsche_gesamtanzahl_erzeugt_luecke(tmp_path: Path) -> None:
+    # Ein dupliziertes Produkt ändert die Anzahl, nicht die Codemenge (beide Mengen
+    # bleiben identisch — set() entduplziert), isoliert damit die "anzahl_produkte"-
+    # Lücke von den "produktinformationen"/"unbekanntes Produkt"-Lücken oben.
+    produkte = lies_produkte_json(DATEN_WURZEL / PRODUKTE_JSON)
+    manipuliert = [*produkte, produkte[0]]
+
+    _kopiere_regel8_abhaengigkeiten(tmp_path)
+    schreibe_produkte_json(manipuliert, tmp_path / PRODUKTE_JSON)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel8 = next((regel for regel in bericht.regeln if regel.regel == 8), None)
+    assert regel8 is not None, "Regel 8 fehlt im Bericht"
+    treffer = next(luecke for luecke in regel8.luecken if luecke.merkmal == "anzahl_produkte")
+    assert treffer.ebene == "GESAMT"
+    assert treffer.code == ""
+    assert not any(
+        luecke.merkmal in ("produktinformationen", "unbekanntes Produkt")
+        for luecke in regel8.luecken
+    )
+
+
+def test_regel8_pflichtfelder_deckt_produkte_json_schluessel_ab() -> None:
+    """REGEL8_PFLICHTFELDER sind allesamt echte produkte.json-Schlüssel (PRODUKT_SCHLUESSEL)."""
+    for feld in REGEL8_PFLICHTFELDER:
+        assert feld in PRODUKT_SCHLUESSEL, feld
+
+
+def test_regel8_luecke_macht_bericht_rot(tmp_path: Path) -> None:
+    code = _erster_produktcode()
+    produkte = lies_produkte_json(DATEN_WURZEL / PRODUKTE_JSON)
+    manipuliert = [p for p in produkte if p["code"] != code]
+
+    _kopiere_regel8_abhaengigkeiten(tmp_path)
+    schreibe_produkte_json(manipuliert, tmp_path / PRODUKTE_JSON)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    assert bericht.ist_gruen is False

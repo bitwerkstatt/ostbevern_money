@@ -28,9 +28,11 @@ from ostbevern.produkte import (
     KLASSIFIZIERUNGEN,
     PERSONENFELDER,
     Erlaeuterung,
+    Grundzahl,
     ProdukteFehler,
     extrahiere_produkte,
     lies_erlaeuterungen,
+    lies_grundzahlen,
     lies_personennamen,
     lies_produktinformationen,
     pruefe_plausibilitaet,
@@ -39,11 +41,13 @@ from ostbevern.produkte import (
 from ostbevern.schema import (
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
+    GRUNDZAHLEN_CSV,
     HIERARCHIE_CSV,
     PRODUKT_SCHLUESSEL,
     PRODUKTE_JSON,
     SEITEN_CSV,
     SchemaFehler,
+    lies_grundzahlen_csv,
     lies_hierarchie_csv,
     lies_plan_csv,
     lies_produkte_json,
@@ -81,6 +85,15 @@ def erlaeuterungen(
     seiten, hierarchie = kontext
     with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
         return tuple(lies_erlaeuterungen(dokument, jahrgang, seiten, hierarchie))
+
+
+@pytest.fixture(scope="module")
+def grundzahlen(
+    jahrgang: Jahrgang, kontext: tuple[pl.DataFrame, pl.DataFrame]
+) -> tuple[Grundzahl, ...]:
+    seiten, hierarchie = kontext
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        return tuple(lies_grundzahlen(dokument, jahrgang, seiten, hierarchie))
 
 
 def test_verbinde_zeilen_entfernt_leerzeichen_vor_komma_leistungen_label() -> None:
@@ -335,6 +348,178 @@ def test_unbekannte_klassifizierung_bricht_ab(
         )
         with pytest.raises(ProdukteFehler, match="Klassifizierung unbekannt"):
             lies_produktinformationen(fehlerhaft, jahrgang, seiten, hierarchie)
+
+
+# --- Task 1: Grundzahlen (EXTR-07, D-12, D-13) --------------------------------------
+
+
+def _manipuliere_grundzahlen_wort(
+    dokument: PdfDokument, pdf_seite: int, *, such_text: str, **ersatz_felder: object
+) -> _FehlerhaftesDokument:
+    """Ersetzt das ERSTE Wort mit Text `such_text` auf `pdf_seite` durch dieselben Felder,
+    mit `ersatz_felder` überschrieben (wie `_manipuliere_feldwert`, aber textsuchend statt
+    feldlabel-suchend — für Grundzahlen-Werte, die kein eigenes Feld-Label tragen)."""
+    zeilen = dokument.zeilen_fein(pdf_seite)
+    for zeilen_index, zeile in enumerate(zeilen):
+        for wort_index, wort in enumerate(zeile.woerter):
+            if wort.text == such_text:
+                neues_wort = dataclasses.replace(wort, **ersatz_felder)
+                neue_woerter = list(zeile.woerter)
+                neue_woerter[wort_index] = neues_wort
+                neue_zeile = dataclasses.replace(zeile, woerter=tuple(neue_woerter))
+                ersatz = list(zeilen)
+                ersatz[zeilen_index] = neue_zeile
+                return _FehlerhaftesDokument(echt=dokument, seite=pdf_seite, ersatz=tuple(ersatz))
+    pytest.fail(f"Wort {such_text!r} nicht gefunden auf S. {pdf_seite}")
+
+
+def test_stichprobe_grundzahl_steuer(grundzahlen: tuple[Grundzahl, ...]) -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    stichprobe = sollwerte["stichproben"]["grundzahl_steuer"]
+    treffer = [
+        g
+        for g in grundzahlen
+        if g.produkt == stichprobe["produkt"]
+        and g.bezeichnung == stichprobe["bezeichnung"]
+        and g.jahr == stichprobe["jahr"]
+    ]
+    assert len(treffer) == 1, treffer
+    zeile = treffer[0]
+    assert zeile.einheit == stichprobe["einheit"]
+    assert zeile.wert == stichprobe["wert"]
+    assert zeile.nachkommastellen == 0
+    assert zeile.pdf_seite == stichprobe["pdf_seite"]
+
+
+def test_stichprobe_grundzahl_stichtag(grundzahlen: tuple[Grundzahl, ...]) -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    stichprobe = sollwerte["stichproben"]["grundzahl_stichtag"]
+    eigene_zeilen = [
+        g
+        for g in grundzahlen
+        if g.produkt == stichprobe["produkt"] and g.bezeichnung == stichprobe["bezeichnung"]
+    ]
+    ziel = next(g for g in eigene_zeilen if g.jahr == stichprobe["jahr"])
+    assert ziel.einheit == stichprobe["einheit"]
+    assert ziel.wert == stichprobe["wert"]
+    assert ziel.hinweis is not None and stichprobe["hinweis_enthaelt"] in ziel.hinweis
+    assert ziel.pdf_seite == stichprobe["pdf_seite"]
+    for andere in eigene_zeilen:
+        if andere.jahr != stichprobe["jahr"]:
+            assert andere.hinweis is None or stichprobe["hinweis_enthaelt"] not in andere.hinweis
+
+
+def test_stichprobe_grundzahl_ueberschreibung(grundzahlen: tuple[Grundzahl, ...]) -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    stichprobe = sollwerte["stichproben"]["grundzahl_ueberschreibung"]
+    zeilen_des_jahres = [
+        g
+        for g in grundzahlen
+        if g.produkt == stichprobe["produkt"] and g.jahr == stichprobe["jahr"]
+    ]
+    assert zeilen_des_jahres
+    for zeile in zeilen_des_jahres:
+        assert zeile.hinweis is not None
+        assert stichprobe["hinweis_enthaelt"] in zeile.hinweis
+        assert stichprobe["hinweis_ohne"] not in zeile.hinweis
+
+
+def test_stichprobe_grundzahl_gruppe(grundzahlen: tuple[Grundzahl, ...]) -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    stichprobe = sollwerte["stichproben"]["grundzahl_gruppe"]
+    zeilen_der_seite = [
+        g
+        for g in grundzahlen
+        if g.produkt == stichprobe["produkt"] and g.pdf_seite == stichprobe["pdf_seite"]
+    ]
+    assert zeilen_der_seite
+    for zeile in zeilen_der_seite:
+        assert zeile.gruppe == stichprobe["gruppe"]
+        assert zeile.bezeichnung != stichprobe["gruppe"]
+
+
+def test_stichprobe_grundzahl_kein_wert(grundzahlen: tuple[Grundzahl, ...]) -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    stichprobe = sollwerte["stichproben"]["grundzahl_kein_wert"]
+    treffer = [
+        g
+        for g in grundzahlen
+        if g.produkt == stichprobe["produkt"] and g.bezeichnung == stichprobe["bezeichnung"]
+    ]
+    assert [g.jahr for g in treffer] == stichprobe["jahre"]
+    assert treffer[0].wert == stichprobe["wert"]
+
+
+def test_grundzahlen_anzahl_produkte_stimmt_mit_stichprobe(
+    grundzahlen: tuple[Grundzahl, ...],
+) -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    erwartet = sollwerte["stichproben"]["anzahlen"]["produkte_mit_grundzahlen"]
+    assert len({g.produkt for g in grundzahlen}) == erwartet
+
+
+def test_grundzahlen_jede_zeile_hat_nichtleere_einheit(
+    grundzahlen: tuple[Grundzahl, ...],
+) -> None:
+    for zeile in grundzahlen:
+        assert zeile.einheit, (zeile.produkt, zeile.position)
+
+
+def test_grundzahlen_eurozeichen_normalisiert(grundzahlen: tuple[Grundzahl, ...]) -> None:
+    assert not any(g.einheit == "C" for g in grundzahlen)
+    assert not any(g.einheit.startswith("C/") for g in grundzahlen)
+    assert any(g.nachkommastellen > 0 and g.einheit.startswith("EUR/") for g in grundzahlen)
+
+
+def test_grundzahlen_manipuliertes_wort_bricht_mit_seite_ab(
+    jahrgang: Jahrgang, kontext: tuple[pl.DataFrame, pl.DataFrame]
+) -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    stichprobe = sollwerte["stichproben"]["grundzahl_steuer"]
+    seiten, hierarchie = kontext
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        fehlerhaft = _manipuliere_grundzahlen_wort(
+            dokument, stichprobe["pdf_seite"], such_text="4.771.497", text="x,y"
+        )
+        with pytest.raises(ProdukteFehler, match=f"S. {stichprobe['pdf_seite']}: "):
+            lies_grundzahlen(fehlerhaft, jahrgang, seiten, hierarchie)
+
+
+def test_grundzahlen_wert_ausserhalb_der_spalten_bricht_ab(
+    jahrgang: Jahrgang, kontext: tuple[pl.DataFrame, pl.DataFrame]
+) -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    stichprobe = sollwerte["stichproben"]["grundzahl_steuer"]
+    seiten, hierarchie = kontext
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        # x0/x1 verschoben in die Lücke zwischen Label- und Einheit-Zone (keine der drei
+        # Spalten-Zonen trifft zu, siehe _grundzahlen_zonen).
+        fehlerhaft = _manipuliere_grundzahlen_wort(
+            dokument, stichprobe["pdf_seite"], such_text="4.771.497", x0=0.0, x1=295.0
+        )
+        with pytest.raises(ProdukteFehler, match="liegt in keiner Grundzahlen-Spalte"):
+            lies_grundzahlen(fehlerhaft, jahrgang, seiten, hierarchie)
+
+
+def test_grundzahlen_csv_wird_von_extrahiere_produkte_geschrieben(
+    produkte_json: list[dict], grundzahlen: tuple[Grundzahl, ...]
+) -> None:
+    # produkte_json regeneriert auch grundzahlen.csv (extrahiere_produkte, 03-05).
+    del produkte_json  # nur für die Fixture-Reihenfolge (Regeneration) benötigt
+    df = lies_grundzahlen_csv(DATEN_WURZEL / GRUNDZAHLEN_CSV)
+    assert df.height == sum(1 for _ in grundzahlen)
+    assert list(df.columns) == [
+        "produkt",
+        "position",
+        "gruppe",
+        "bezeichnung",
+        "einheit",
+        "jahr",
+        "wert",
+        "nachkommastellen",
+        "hinweis",
+        "pdf_seite",
+    ]
 
 
 # --- Task 2: Erläuterungsposten (EXTR-08, D-01 bis D-04) ---------------------------

@@ -27,6 +27,9 @@ VE_FAELLIGKEITEN_CSV = Path("aufbereitet/ve_faelligkeiten.csv")
 # da `leistungen` und `erlaeuterungen` verschachtelte Listen sind (Spez. 4.2).
 PRODUKTE_JSON = Path("aufbereitet/produkte.json")
 ERLAEUTERUNGEN_CSV = Path("aufbereitet/erlaeuterungen.csv")
+# Grundzahlen je Produkt (Phase 3, 03-05, EXTR-07): Kennzahlen mit Einheit, Jahr und
+# per-Jahr-Hinweis (D-12/D-13), inkl. der Steuer-Istwerte 2022-2025 von 160101.
+GRUNDZAHLEN_CSV = Path("aufbereitet/grundzahlen.csv")
 # Kontrollquelle (nie Datenquelle der App), daher unter zwischen/ statt aufbereitet/ (D-14).
 QUERSCHNITTE_CSV = Path("zwischen/querschnitte.csv")
 # PB-Investitionslisten (Phase 3, 03-03, D-06): ebenfalls reine Kontrollquelle, nie
@@ -365,3 +368,34 @@ def schreibe_erlaeuterungen_csv(df: pl.DataFrame, pfad: Path) -> None:
 def lies_erlaeuterungen_csv(pfad: Path) -> pl.DataFrame:
     """Liest erlaeuterungen.csv über `lies_csv` mit ERLAEUTERUNGEN_SPALTEN."""
     return lies_csv(pfad, ERLAEUTERUNGEN_SPALTEN)
+
+
+# Grundzahlen (Phase 3, 03-05, EXTR-07, D-12/D-13): ein Wert je Produkt, Kennzahl (Zeile
+# im gedruckten Sinn, `position`) und bespieltem Jahr. `wert` ist Float64, weil Grund-
+# zahlen Dezimalwerte (Gebühren, Quoten) neben Ganzzahlen (Euro-Beträge) enthalten;
+# `nachkommastellen` hält die gedruckte Anzahl Dezimalstellen (0 für Ganzzahlen wie
+# Euro-Beträge, die Float64 exakt darstellt, CONTEXT Claude's Discretion). `gruppe` ist
+# null ohne Gruppenüberschrift (D-13); `hinweis` ist null ohne Stichtag-/Fußnotentext
+# (D-12).
+GRUNDZAHLEN_SPALTEN: dict[str, pl.PolarsDataType] = {
+    "produkt": pl.Utf8,
+    "position": pl.Int64,
+    "gruppe": pl.Utf8,
+    "bezeichnung": pl.Utf8,
+    "einheit": pl.Utf8,
+    "jahr": pl.Int64,
+    "wert": pl.Float64,
+    "nachkommastellen": pl.Int64,
+    "hinweis": pl.Utf8,
+    "pdf_seite": pl.Int64,
+}
+
+
+def schreibe_grundzahlen_csv(df: pl.DataFrame, pfad: Path) -> None:
+    """Schreibt grundzahlen.csv sortiert nach produkt, position, jahr (D-21)."""
+    schreibe_csv(df, pfad, GRUNDZAHLEN_SPALTEN, ["produkt", "position", "jahr"])
+
+
+def lies_grundzahlen_csv(pfad: Path) -> pl.DataFrame:
+    """Liest grundzahlen.csv über `lies_csv` mit GRUNDZAHLEN_SPALTEN."""
+    return lies_csv(pfad, GRUNDZAHLEN_SPALTEN)
