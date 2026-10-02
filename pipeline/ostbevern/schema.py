@@ -95,7 +95,9 @@ def schreibe_csv(
     """Schreibt `df` nach `pfad` in fester Spaltenreihenfolge, UTF-8 ohne BOM, LF (D-21)."""
     _pruefe_keine_leeren_strings(df, spalten, pfad)
     sortiert = df.sort(sortierung, nulls_last=False)
-    geordnet = sortiert.select(list(spalten.keys())).cast(spalten)
+    # strict=True (D-08): fail loud on precision loss/overflow instead of polars'
+    # default silent coercion/truncation.
+    geordnet = sortiert.select(list(spalten.keys())).cast(spalten, strict=True)
     pfad.parent.mkdir(parents=True, exist_ok=True)
     geordnet.write_csv(pfad)
 
