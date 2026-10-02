@@ -16,7 +16,10 @@ bei `plan` `investitionen_produkt`/`investitionen_gesamt` ist `soll` die Teilfin
 Gesamtfinanzplan-Zeile 23 (Einzahlungen, `zeile` "23") oder 30 (Auszahlungen, `zeile` "30") und
 `ist` die Summe der Maßnahmen in `investitionen.csv` dieser Richtung; bei `plan`
 `ve_faelligkeiten` ist `soll` die VE einer Kontozeile und `ist` die Summe ihrer Fälligkeiten in
-`ve_faelligkeiten.csv`, `zeile` = `Maßnahme/Konto`.
+`ve_faelligkeiten.csv`, `zeile` = `Maßnahme/Konto`. Regel 6 (`plan` `investitionen_pb_liste`):
+Summe der Produktseiten (`ist`) minus Summe der PB-Investitionsliste (`soll`) je Maßnahme/Konto
+(`zeile` = `Maßnahme/Konto`). Lücken (Maßnahme nur in einer Quelle) sind keine Abweichungen und
+können hier nicht dokumentiert werden (D-06, 03-03).
 
 Ein Befund deckt eine Abweichung nur ab, wenn Regel, Plan, Ebene, Code, Zeile, Jahr und
 Wertart übereinstimmen **und** die tatsächliche Abweichung um höchstens 1 € von der hier

@@ -30,9 +30,12 @@ from ostbevern.schema import (
     FINANZPLAN_CSV,
     HIERARCHIE_CSV,
     INVESTITIONEN_CSV,
+    INVESTITIONEN_PB_CSV,
     SEITEN_CSV,
     VE_FAELLIGKEITEN_CSV,
+    lies_hierarchie_csv,
     lies_investitionen_csv,
+    lies_investitionen_pb_csv,
     lies_seiten_csv,
     lies_ve_faelligkeiten_csv,
     zerlege_spaltenkopf,
@@ -40,6 +43,18 @@ from ostbevern.schema import (
 from ostbevern.zahlen import ist_betrag
 
 _PRODUKTSEITEN_TYPEN = ("teilergebnisplan", "teilfinanzplan", "investitionen_produkt")
+_PBSEITEN_TYPEN = ("investitionen_pb", "teilergebnisplan", "teilfinanzplan")
+
+
+def _seiten_fuer_pb(pb: str) -> tuple[int, ...]:
+    seiten = lies_seiten_csv(DATEN_WURZEL / SEITEN_CSV)
+    treffer = seiten.filter(
+        (pl.col("pb") == pb)
+        & pl.col("pg").is_null()
+        & pl.col("produkt").is_null()
+        & pl.col("typ").is_in(_PBSEITEN_TYPEN)
+    ).sort("pdf_seite")
+    return tuple(treffer["pdf_seite"].to_list())
 
 
 def _seiten_fuer_produkt(produkt: str) -> tuple[int, ...]:
@@ -380,6 +395,133 @@ def test_kassenwirksamkeit_ohne_vorherige_kontozeile_bricht_ab(jahrgang: Jahrgan
         fehlerhaft = _FehlerhaftesDokument(echt=dokument, seite=pdf_seite, ersatz=ersatz)
         with pytest.raises(InvestitionenFehler, match=rf"S\. {pdf_seite}"):
             lies_massnahmen(fehlerhaft, jahrgang, seiten_nummern, ebene="P", code=produkt)
+
+
+# --- Task 1 (03-03): investitionen_pb.csv (D-06) -------------------------------------
+
+
+def test_jede_pb_mit_investitionskonten_hat_pb_liste_und_umgekehrt() -> None:
+    """D-06: jede PB, die auf ihren Produktseiten Investitions-Konten hat, hat auch eine
+    PB-Investitionsliste, und umgekehrt (Flagged assumption EXTR-09/PRUEF-06)."""
+    investitionen = lies_investitionen_csv(DATEN_WURZEL / INVESTITIONEN_CSV)
+    investitionen_pb = lies_investitionen_pb_csv(DATEN_WURZEL / INVESTITIONEN_PB_CSV)
+    hierarchie = lies_hierarchie_csv(DATEN_WURZEL / HIERARCHIE_CSV)
+
+    pg_zu_pb = {
+        zeile["code"]: zeile["eltern_code"]
+        for zeile in hierarchie.filter(pl.col("ebene") == "PG").iter_rows(named=True)
+    }
+    produkt_zu_pb = {
+        zeile["code"]: pg_zu_pb[zeile["eltern_code"]]
+        for zeile in hierarchie.filter(pl.col("ebene") == "P").iter_rows(named=True)
+    }
+    pb_mit_produktkonten = {
+        produkt_zu_pb[produkt] for produkt in investitionen["produkt"].unique().to_list()
+    }
+    pb_mit_liste = set(investitionen_pb["pb"].unique().to_list())
+    assert pb_mit_produktkonten == pb_mit_liste
+
+
+def test_pb_liste_behaelt_mehrere_bloecke_derselben_massnahme_id(
+    tmp_path: Path, jahrgang: Jahrgang
+) -> None:
+    """D-06, Research Pitfall 8: eine Maßnahmen-ID kann auf einer PB-Liste mehrfach als
+    eigener Block erscheinen (S. 146, PB 03: AIB00001 einmal mit Konto 785111, einmal mit
+    681011) — beide Kontozeilen bleiben erhalten, keine Zusammenführung nach ID."""
+    _kopiere_kontext_nach(tmp_path)
+    extrahiere_investitionen(jahrgang, daten_wurzel=tmp_path)
+    investitionen_pb = lies_investitionen_pb_csv(tmp_path / INVESTITIONEN_PB_CSV)
+
+    mehrfach_blocke = (
+        investitionen_pb.group_by(["pb", "massnahme_id"])
+        .agg(pl.col("konto").n_unique().alias("anzahl_konten"))
+        .filter(pl.col("anzahl_konten") > 1)
+    )
+    assert mehrfach_blocke.height > 0, "Keine Maßnahme mit mehreren Konten in PB-Liste gefunden"
+    aib_zeilen = investitionen_pb.filter(pl.col("massnahme_id") == "AIB00001")
+    assert {"681011", "785111"} <= set(aib_zeilen["konto"].unique().to_list())
+
+
+def test_pb_liste_summe_trifft_sollwerte_und_keine_finanzierungskonten(
+    tmp_path: Path, jahrgang: Jahrgang
+) -> None:
+    """D-06: Summiert über alle PB-Listen trifft Ansatz-Haushaltsjahr exakt die
+    Gesamtfinanzplan-Sollwerte (wie auf den Produktseiten), und kein Finanzierungs-Konto
+    (692/792) wird in investitionen_pb.csv geschrieben."""
+    _kopiere_kontext_nach(tmp_path)
+    extrahiere_investitionen(jahrgang, daten_wurzel=tmp_path)
+    investitionen_pb = lies_investitionen_pb_csv(tmp_path / INVESTITIONEN_PB_CSV)
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    gesamtfinanzplan_ansatz = sollwerte["gesamtfinanzplan"]["ansatz"]
+
+    ansatz = investitionen_pb.filter(
+        (pl.col("jahr") == jahrgang.haushaltsjahr) & (pl.col("wertart") == "ansatz")
+    )
+    assert (
+        ansatz.filter(pl.col("richtung") == "einzahlung")["betrag"].sum()
+        == gesamtfinanzplan_ansatz["23"]
+    )
+    assert (
+        ansatz.filter(pl.col("richtung") == "auszahlung")["betrag"].sum()
+        == gesamtfinanzplan_ansatz["30"]
+    )
+    assert not investitionen_pb["konto"].str.slice(0, 3).is_in(["692", "792"]).any()
+
+
+def test_pb_liste_laesst_investitionen_csv_byte_identisch(
+    tmp_path: Path, jahrgang: Jahrgang
+) -> None:
+    """D-06: das Lesen der PB-Listen ändert investitionen.csv und ve_faelligkeiten.csv
+    nicht — Quelle bleiben ausschließlich die Produktseiten (Spez. 3.8)."""
+    _kopiere_kontext_nach(tmp_path)
+    extrahiere_investitionen(jahrgang, daten_wurzel=tmp_path)
+    for pfad in (INVESTITIONEN_CSV, VE_FAELLIGKEITEN_CSV):
+        assert (tmp_path / pfad).read_bytes() == (DATEN_WURZEL / pfad).read_bytes()
+
+
+def _finanzierungs_konto_zeilen_index(
+    jahrgang: Jahrgang, dokument: PdfDokument, seiten_nummern: tuple[int, ...]
+) -> tuple[int, int, Textzeile]:
+    """Findet eine echte Finanzierungs-Kontozeile (692/792) einer PB-Liste — verifiziert
+    gegen S. 279 (PB 16), der einzigen PB-Liste mit einer zweiten, eigenständigen
+    Finanzierungs-Tabelle im 2026er Jahrgang (CONTEXT.md Planning-time facts)."""
+    anzahl_spalten = len(jahrgang.spalten["investitionen"])
+    for pdf_seite in seiten_nummern:
+        zeilen = dokument.zeilen_fein(pdf_seite)
+        for index, zeile in enumerate(zeilen):
+            if not (
+                zeile.woerter
+                and zeile.woerter[0].text[:6].isdigit()
+                and len(zeile.woerter[0].text) == 6
+                and zeile.woerter[0].text[:3] in ("692", "792")
+            ):
+                continue
+            betraege = [w for w in zeile.woerter[1:] if ist_betrag(w.text)]
+            if len(betraege) == anzahl_spalten:
+                return pdf_seite, index, zeile
+    pytest.fail("Keine Finanzierungs-Kontozeile gefunden")
+    raise AssertionError  # unreachable, für mypy/Typchecker
+
+
+def test_pb16_finanzierungskonto_manipuliert_bricht_ab(jahrgang: Jahrgang) -> None:
+    """D-06: PB 16 (S. 279) hat eine zweite, eigenständige Investitionsmaßnahmen-Tabelle
+    mit den Finanzierungs-Konten 692/792; ein manipulierter Betrag dort bricht den
+    Saldo-Check in lies_massnahmen mit der PDF-Seite ab (D-08)."""
+    seiten_nummern = _seiten_fuer_pb("16")
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        pdf_seite, index, zeile = _finanzierungs_konto_zeilen_index(
+            jahrgang, dokument, seiten_nummern
+        )
+        letztes_wort = zeile.woerter[-1]
+        geaendert = dataclasses.replace(
+            letztes_wort, text=str(int(letztes_wort.text.replace(".", "") or "0") + 1_000_000)
+        )
+        manipuliert = dataclasses.replace(zeile, woerter=(*zeile.woerter[:-1], geaendert))
+        zeilen = dokument.zeilen_fein(pdf_seite)
+        ersatz = _ersetze_zeile(zeilen, index, manipuliert)
+        fehlerhaft = _FehlerhaftesDokument(echt=dokument, seite=pdf_seite, ersatz=ersatz)
+        with pytest.raises(InvestitionenFehler, match=rf"S\. {pdf_seite}"):
+            lies_massnahmen(fehlerhaft, jahrgang, seiten_nummern, ebene="PB", code="16")
 
 
 def test_verbinde_zeilen_und_ersetze_eurozeichen_wiederverwendet() -> None:

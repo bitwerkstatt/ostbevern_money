@@ -23,6 +23,7 @@ from ostbevern.schema import (
     FINANZPLAN_CSV,
     HIERARCHIE_CSV,
     INVESTITIONEN_CSV,
+    INVESTITIONEN_PB_CSV,
     KONSISTENZ_MD,
     QUERSCHNITTE_CSV,
     SEITEN_CSV,
@@ -30,6 +31,7 @@ from ostbevern.schema import (
     WERTARTEN,
     lies_hierarchie_csv,
     lies_investitionen_csv,
+    lies_investitionen_pb_csv,
     lies_plan_csv,
     lies_querschnitte_csv,
     lies_seiten_csv,
@@ -172,18 +174,37 @@ class Abgleich:
 
 
 @dataclass(frozen=True)
+class Luecke:
+    """Struktureller Befund (fehlender oder überzähliger Eintrag), nicht über befunde.md
+    abdeckbar (03-03, D-06). Anders als eine Abweichung (Betrag falsch) ist eine Lücke ein
+    Eintrag, der nur in einer von zwei Quellen vorkommt — das kann keine Rundungsdifferenz
+    sein und darf deshalb nie durch eine Begründung "entschärft" werden."""
+
+    regel: int
+    ebene: str
+    code: str
+    merkmal: str
+    pdf_seite: int | None
+
+
+@dataclass(frozen=True)
 class Regelergebnis:
-    """Ergebnis einer einzelnen Prüfregel. `abweichungen` sind die offenen (D-04/D-05)."""
+    """Ergebnis einer einzelnen Prüfregel. `abweichungen` sind die offenen (D-04/D-05);
+    `luecken` sind strukturelle Befunde (D-06, 03-03), nicht über befunde.md abdeckbar."""
 
     regel: int
     titel: str
     geprueft: int
     abweichungen: tuple[Pruefpunkt, ...]
     bekannte: tuple[tuple[Pruefpunkt, Befund], ...] = ()
+    luecken: tuple[Luecke, ...] = ()
 
     @property
     def status(self) -> str:
-        if any(abs(punkt.abweichung) > TOLERANZ_EURO for punkt in self.abweichungen):
+        if (
+            any(abs(punkt.abweichung) > TOLERANZ_EURO for punkt in self.abweichungen)
+            or self.luecken
+        ):
             return "rot"
         return "grün"
 
@@ -812,24 +833,155 @@ def _pruefe_regel4(
 REGEL6_ZEILEN: tuple[tuple[str, str], ...] = (("23", "einzahlung"), ("30", "auszahlung"))
 
 
+def _produkt_zu_pb(hierarchie: pl.DataFrame) -> dict[str, str]:
+    """Löst jedes Produkt über die Hierarchie (P -> PG -> PB) zu seinem PB-Code auf."""
+    pg_zu_pb = {
+        zeile["code"]: zeile["eltern_code"]
+        for zeile in hierarchie.filter(pl.col("ebene") == "PG").iter_rows(named=True)
+    }
+    return {
+        zeile["code"]: pg_zu_pb[zeile["eltern_code"]]
+        for zeile in hierarchie.filter(pl.col("ebene") == "P").iter_rows(named=True)
+        if zeile["eltern_code"] in pg_zu_pb
+    }
+
+
+def _pruefe_regel6_pb_gegenprobe(
+    *,
+    investitionen: pl.DataFrame,
+    investitionen_pb: pl.DataFrame,
+    hierarchie: pl.DataFrame,
+) -> tuple[int, list[Pruefpunkt], list[Luecke]]:
+    """Regel 6 (c) – PB-Gegenprobe (PRUEF-06, D-06, 03-03).
+
+    Jedes Produkt wird über die Hierarchie auf seinen PB abgebildet; beide Quellen werden
+    je (pb, massnahme_id, konto, jahr, wertart) summiert. Für die Vereinigung der Schlüssel
+    beider Quellen ist `soll` die PB-Listen-Summe (0, falls dort nicht vorhanden) und `ist`
+    die Produktseiten-Summe (0, falls dort nicht vorhanden) — die PB-Liste ist die
+    Kontrollquelle (Spez. 3.8), die Produktseiten sind die zu prüfenden Pipeline-Daten.
+
+    Zusätzlich, feiner als jede Abweichung: die Menge der (pb, massnahme_id)-Paare beider
+    Quellen muss übereinstimmen. Eine Maßnahme, die nur in einer Quelle vorkommt, ist eine
+    `Luecke` — eine strukturelle Lücke ist keine Betragsabweichung und kann daher nicht
+    über befunde.md entschärft werden (D-06).
+    """
+    produkt_zu_pb = _produkt_zu_pb(hierarchie)
+    unbekannt = set(investitionen["produkt"].unique().to_list()) - set(produkt_zu_pb)
+    if unbekannt:
+        raise PruefungsFehler(
+            f"Regel 6: Produkt(e) {sorted(unbekannt)} haben keinen PB über die Hierarchie"
+        )
+    investitionen_mit_pb = investitionen.with_columns(
+        pl.col("produkt").replace_strict(produkt_zu_pb, return_dtype=pl.Utf8).alias("pb")
+    )
+
+    schluessel_spalten = ["pb", "massnahme_id", "konto", "jahr", "wertart"]
+    ist_gruppiert = investitionen_mit_pb.group_by(schluessel_spalten).agg(
+        pl.col("betrag").sum().alias("betrag"), pl.col("pdf_seite").min().alias("pdf_seite")
+    )
+    soll_gruppiert = investitionen_pb.group_by(schluessel_spalten).agg(
+        pl.col("betrag").sum().alias("betrag"), pl.col("pdf_seite").min().alias("pdf_seite")
+    )
+    ist_dict = {
+        (z["pb"], z["massnahme_id"], z["konto"], z["jahr"], z["wertart"]): (
+            z["betrag"],
+            z["pdf_seite"],
+        )
+        for z in ist_gruppiert.iter_rows(named=True)
+    }
+    soll_dict = {
+        (z["pb"], z["massnahme_id"], z["konto"], z["jahr"], z["wertart"]): (
+            z["betrag"],
+            z["pdf_seite"],
+        )
+        for z in soll_gruppiert.iter_rows(named=True)
+    }
+
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for schluessel in sorted(set(ist_dict) | set(soll_dict)):
+        pb, massnahme_id, konto, jahr, wertart = schluessel
+        soll, soll_seite = soll_dict.get(schluessel, (0, None))
+        ist, ist_seite = ist_dict.get(schluessel, (0, None))
+        geprueft += 1
+        punkt = Pruefpunkt(
+            regel=6,
+            plan="investitionen_pb_liste",
+            ebene="PB",
+            code=pb,
+            zeile=f"{massnahme_id}/{konto}",
+            jahr=jahr,
+            wertart=wertart,
+            soll=soll,
+            ist=ist,
+            pdf_seite=soll_seite if soll_seite is not None else ist_seite,
+        )
+        if abs(punkt.abweichung) > TOLERANZ_EURO:
+            abweichungen.append(punkt)
+
+    def _seite_je_massnahme(df: pl.DataFrame) -> dict[tuple[str, str], int | None]:
+        gruppiert = df.group_by(["pb", "massnahme_id"]).agg(
+            pl.col("pdf_seite").min().alias("pdf_seite")
+        )
+        return {
+            (z["pb"], z["massnahme_id"]): z["pdf_seite"] for z in gruppiert.iter_rows(named=True)
+        }
+
+    massnahmen_pb_liste = set(investitionen_pb.select(["pb", "massnahme_id"]).unique().iter_rows())
+    massnahmen_produktseiten = set(
+        investitionen_mit_pb.select(["pb", "massnahme_id"]).unique().iter_rows()
+    )
+    seite_pb_liste = _seite_je_massnahme(investitionen_pb)
+    seite_produktseiten = _seite_je_massnahme(investitionen_mit_pb)
+
+    luecken: list[Luecke] = []
+    for pb, massnahme_id in sorted(massnahmen_pb_liste - massnahmen_produktseiten):
+        luecken.append(
+            Luecke(
+                regel=6,
+                ebene="PB",
+                code=pb,
+                merkmal=f"Maßnahme {massnahme_id}: nur in der PB-Liste",
+                pdf_seite=seite_pb_liste.get((pb, massnahme_id)),
+            )
+        )
+    for pb, massnahme_id in sorted(massnahmen_produktseiten - massnahmen_pb_liste):
+        luecken.append(
+            Luecke(
+                regel=6,
+                ebene="PB",
+                code=pb,
+                merkmal=f"Maßnahme {massnahme_id}: nur auf Produktseiten",
+                pdf_seite=seite_produktseiten.get((pb, massnahme_id)),
+            )
+        )
+
+    return geprueft, abweichungen, luecken
+
+
 def _pruefe_regel6(
     *,
     investitionen: pl.DataFrame,
+    investitionen_pb: pl.DataFrame,
     ve_faelligkeiten: pl.DataFrame,
     planwerte_finanzplan: Planwerte,
     hierarchie: pl.DataFrame,
     jahrgang: Jahrgang,
 ) -> Regelergebnis:
-    """Regel 6 – Investitionsmaßnahmen → Teil-/Gesamtfinanzplan (PRUEF-06, D-05).
+    """Regel 6 – Investitionsmaßnahmen → Teil-/Gesamtfinanzplan (PRUEF-06, D-05, D-06).
 
     (a) Je Produkt und Richtung (Z. 23 Einzahlungen / Z. 30 Auszahlungen): Σ der in
     investitionen.csv gedruckten Beträge dieser Richtung gegen den Teilfinanzplan-Wert,
     in allen sieben Spalten von jahrgang.spalten["investitionen"] (Ergebnis, zwei Ansatz-,
     eine VE- und drei Planung-Spalten).
-    (b) Dieselbe Prüfung gegen den Gesamtfinanzplan (Σ aller Produkte). (d) Für jeden
-    (produkt, massnahme_id, konto)-Schlüssel mit einem VE-Wert in investitionen.csv oder
-    Zeilen in ve_faelligkeiten.csv: Σ der Fälligkeiten gegen den VE-Wert (0, falls keiner
-    gedruckt ist). PB-Investitionslisten (D-06) sind nicht Teil dieser Regel.
+    (b) Dieselbe Prüfung gegen den Gesamtfinanzplan (Σ aller Produkte).
+    (c) PB-Gegenprobe (03-03, D-06): investitionen.csv (über die Hierarchie auf PB
+    abgebildet) gegen investitionen_pb.csv je (pb, massnahme_id, konto, jahr, wertart);
+    eine Maßnahme, die nur in einer der beiden Quellen vorkommt, ist eine Lücke (siehe
+    `_pruefe_regel6_pb_gegenprobe`).
+    (d) Für jeden (produkt, massnahme_id, konto)-Schlüssel mit einem VE-Wert in
+    investitionen.csv oder Zeilen in ve_faelligkeiten.csv: Σ der Fälligkeiten gegen den
+    VE-Wert (0, falls keiner gedruckt ist).
     """
     spalten = jahrgang.spalten["investitionen"]
     spalten_zu_wertart = _spalten_zu_wertart(spalten)
@@ -913,6 +1065,13 @@ def _pruefe_regel6(
             if abs(punkt.abweichung) > TOLERANZ_EURO:
                 abweichungen.append(punkt)
 
+    # (c) PB-Gegenprobe (03-03, D-06)
+    geprueft_pb, abweichungen_pb, luecken = _pruefe_regel6_pb_gegenprobe(
+        investitionen=investitionen, investitionen_pb=investitionen_pb, hierarchie=hierarchie
+    )
+    geprueft += geprueft_pb
+    abweichungen += abweichungen_pb
+
     # (d) VE-Fälligkeiten
     ve_investitionen = investitionen.filter(pl.col("wertart") == "ve")
     ve_schluessel = set(
@@ -960,6 +1119,7 @@ def _pruefe_regel6(
         titel="Regel 6 – Investitionsmaßnahmen → Teil-/Gesamtfinanzplan",
         geprueft=geprueft,
         abweichungen=tuple(abweichungen),
+        luecken=tuple(luecken),
     )
 
 
@@ -1042,6 +1202,7 @@ def pruefe_alles(
     seiten = lies_seiten_csv(daten_wurzel / SEITEN_CSV)
     querschnitte = lies_querschnitte_csv(daten_wurzel / QUERSCHNITTE_CSV)
     investitionen = lies_investitionen_csv(daten_wurzel / INVESTITIONEN_CSV)
+    investitionen_pb = lies_investitionen_pb_csv(daten_wurzel / INVESTITIONEN_PB_CSV)
     ve_faelligkeiten = lies_ve_faelligkeiten_csv(daten_wurzel / VE_FAELLIGKEITEN_CSV)
     pfad_befunde = befunde_pfad if befunde_pfad is not None else daten_wurzel / BEFUNDE_MD
     befunde = lies_befunde(pfad_befunde)
@@ -1068,6 +1229,7 @@ def pruefe_alles(
     )
     regel6 = _pruefe_regel6(
         investitionen=investitionen,
+        investitionen_pb=investitionen_pb,
         ve_faelligkeiten=ve_faelligkeiten,
         planwerte_finanzplan=Planwerte(finanzplan, datei="finanzplan"),
         hierarchie=hierarchie,
@@ -1111,13 +1273,13 @@ def rendere_konsistenzbericht(bericht: Bericht) -> str:
         "",
         "## Übersicht",
         "",
-        "| Regel | Status | Geprüfte Werte | Abweichungen | Bekannte Befunde |",
-        "| --- | --- | --- | --- | --- |",
+        "| Regel | Status | Geprüfte Werte | Abweichungen | Lücken | Bekannte Befunde |",
+        "| --- | --- | --- | --- | --- | --- |",
     ]
     for regel in bericht.regeln:
         zeilen.append(
             f"| {regel.titel} | {regel.status} | {regel.geprueft} | "
-            f"{len(regel.abweichungen)} | {len(regel.bekannte)} |"
+            f"{len(regel.abweichungen)} | {len(regel.luecken)} | {len(regel.bekannte)} |"
         )
 
     zeilen += ["", "## Abweichungen", ""]
@@ -1137,6 +1299,22 @@ def rendere_konsistenzbericht(bericht: Bericht) -> str:
                 f"| {punkt.regel} | {punkt.plan} | {punkt.ebene} | {punkt.code} | "
                 f"{punkt.zeile} | {punkt.jahr} | {punkt.wertart} | {punkt.soll} | "
                 f"{punkt.ist} | {punkt.abweichung} | {punkt.pdf_seite} |"
+            )
+
+    zeilen += ["", "## Lücken", ""]
+    alle_luecken = [luecke for regel in bericht.regeln for luecke in regel.luecken]
+    if not alle_luecken:
+        zeilen.append("Keine.")
+    else:
+        zeilen.append("| Regel | Ebene | Code | Merkmal | PDF-Seite |")
+        zeilen.append("| --- | --- | --- | --- | --- |")
+        for luecke in sorted(
+            alle_luecken,
+            key=lambda luecke: (luecke.regel, luecke.ebene, luecke.code, luecke.merkmal),
+        ):
+            zeilen.append(
+                f"| {luecke.regel} | {luecke.ebene} | {luecke.code} | {luecke.merkmal} | "
+                f"{luecke.pdf_seite} |"
             )
 
     zeilen += ["", "## Bekannte Befunde", ""]

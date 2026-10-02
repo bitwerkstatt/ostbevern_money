@@ -22,6 +22,9 @@ INVESTITIONEN_CSV = Path("aufbereitet/investitionen.csv")
 VE_FAELLIGKEITEN_CSV = Path("aufbereitet/ve_faelligkeiten.csv")
 # Kontrollquelle (nie Datenquelle der App), daher unter zwischen/ statt aufbereitet/ (D-14).
 QUERSCHNITTE_CSV = Path("zwischen/querschnitte.csv")
+# PB-Investitionslisten (Phase 3, 03-03, D-06): ebenfalls reine Kontrollquelle, nie
+# Datenquelle der App (Spez. 3.8), daher unter zwischen/ wie querschnitte.csv.
+INVESTITIONEN_PB_CSV = Path("zwischen/investitionen_pb.csv")
 KONSISTENZ_MD = Path("pruefberichte/konsistenz.md")
 BEFUNDE_MD = Path("pruefberichte/befunde.md")
 
@@ -232,3 +235,36 @@ def schreibe_ve_faelligkeiten_csv(df: pl.DataFrame, pfad: Path) -> None:
 def lies_ve_faelligkeiten_csv(pfad: Path) -> pl.DataFrame:
     """Liest ve_faelligkeiten.csv über `lies_csv` mit VE_FAELLIGKEITEN_SPALTEN."""
     return lies_csv(pfad, VE_FAELLIGKEITEN_SPALTEN)
+
+
+# PB-Investitionslisten (Phase 3, 03-03, D-06): Kontrollquelle für die Regel-6-Gegenprobe
+# zwischen PB-Listen und Produktseiten. Nie Datenquelle der App, deshalb unter zwischen/
+# statt aufbereitet/ (wie querschnitte.csv). Granularität ist ein Wert je Konto-Zeile,
+# bespieltem Jahr und PB-Listen-Block (ein (pb, massnahme_id) kann mehrere Blöcke haben,
+# D-06, Research Pitfall 8 — nicht nach ID zusammengeführt).
+INVESTITIONEN_PB_SPALTEN: dict[str, pl.PolarsDataType] = {
+    "pb": pl.Utf8,
+    "massnahme_id": pl.Utf8,
+    "konto": pl.Utf8,
+    "richtung": pl.Utf8,
+    "jahr": pl.Int64,
+    "wertart": pl.Utf8,
+    "betrag": pl.Int64,
+    "pdf_seite": pl.Int64,
+}
+
+
+def schreibe_investitionen_pb_csv(df: pl.DataFrame, pfad: Path) -> None:
+    """Schreibt investitionen_pb.csv sortiert nach pb, massnahme_id, konto, jahr, wertart,
+    pdf_seite, betrag (D-21)."""
+    schreibe_csv(
+        df,
+        pfad,
+        INVESTITIONEN_PB_SPALTEN,
+        ["pb", "massnahme_id", "konto", "jahr", "wertart", "pdf_seite", "betrag"],
+    )
+
+
+def lies_investitionen_pb_csv(pfad: Path) -> pl.DataFrame:
+    """Liest investitionen_pb.csv über `lies_csv` mit INVESTITIONEN_PB_SPALTEN."""
+    return lies_csv(pfad, INVESTITIONEN_PB_SPALTEN)

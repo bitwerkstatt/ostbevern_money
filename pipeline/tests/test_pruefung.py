@@ -27,10 +27,14 @@ from ostbevern.pruefung import (
     TOLERANZ_EURO,
     Abgleich,
     Befund,
+    Bericht,
+    Luecke,
     Planwerte,
     Pruefpunkt,
     PruefungsFehler,
+    Regelergebnis,
     _pruefe_regel1,
+    _wende_befunde_an,
     gleiche_befunde_ab,
     lies_befunde,
     pruefe_alles,
@@ -44,6 +48,7 @@ from ostbevern.schema import (
     FINANZPLAN_CSV,
     HIERARCHIE_CSV,
     INVESTITIONEN_CSV,
+    INVESTITIONEN_PB_CSV,
     KONSISTENZ_MD,
     PLAN_SPALTEN,
     QUERSCHNITTE_CSV,
@@ -51,11 +56,13 @@ from ostbevern.schema import (
     VE_FAELLIGKEITEN_CSV,
     lies_hierarchie_csv,
     lies_investitionen_csv,
+    lies_investitionen_pb_csv,
     lies_plan_csv,
     lies_querschnitte_csv,
     lies_seiten_csv,
     lies_ve_faelligkeiten_csv,
     schreibe_investitionen_csv,
+    schreibe_investitionen_pb_csv,
     schreibe_plan_csv,
     schreibe_querschnitte_csv,
     schreibe_seiten_csv,
@@ -176,13 +183,15 @@ def _synthetischer_teilergebnisplan(z29_betrag: int) -> pl.DataFrame:
 def _kopiere_finanzplan_nach(tmp_path: Path) -> None:
     """Kopiert die eingecheckte finanzplan.csv unverändert in den tmp-Datenbaum (D-06).
 
-    Kopiert außerdem investitionen.csv und ve_faelligkeiten.csv mit (Regel 6 liest beide
-    bei jedem pruefe_alles()-Aufruf; praktisch jeder Aufrufer dieser Funktion braucht sie).
+    Kopiert außerdem investitionen.csv, ve_faelligkeiten.csv und investitionen_pb.csv mit
+    (Regel 6 liest alle drei bei jedem pruefe_alles()-Aufruf; praktisch jeder Aufrufer
+    dieser Funktion braucht sie).
     """
     finanzplan = lies_plan_csv(DATEN_WURZEL / FINANZPLAN_CSV)
     schreibe_plan_csv(finanzplan, tmp_path / FINANZPLAN_CSV)
     _kopiere_investitionen_nach(tmp_path)
     _kopiere_ve_faelligkeiten_nach(tmp_path)
+    _kopiere_investitionen_pb_nach(tmp_path)
 
 
 def _kopiere_hierarchie_nach(tmp_path: Path) -> None:
@@ -1215,6 +1224,13 @@ def _kopiere_ve_faelligkeiten_nach(tmp_path: Path) -> None:
     schreibe_ve_faelligkeiten_csv(ve_faelligkeiten, tmp_path / VE_FAELLIGKEITEN_CSV)
 
 
+def _kopiere_investitionen_pb_nach(tmp_path: Path) -> None:
+    """Kopiert die eingecheckte investitionen_pb.csv unverändert in den tmp-Datenbaum (D-06,
+    03-03)."""
+    investitionen_pb = lies_investitionen_pb_csv(DATEN_WURZEL / INVESTITIONEN_PB_CSV)
+    schreibe_investitionen_pb_csv(investitionen_pb, tmp_path / INVESTITIONEN_PB_CSV)
+
+
 def _kopiere_regel6_abhaengigkeiten(tmp_path: Path, *, mit_befunde: bool = True) -> None:
     """Kopiert alle von Regel 6 (und dem restlichen Bericht) benötigten Dateien (D-06)."""
     ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
@@ -1225,8 +1241,45 @@ def _kopiere_regel6_abhaengigkeiten(tmp_path: Path, *, mit_befunde: bool = True)
     _kopiere_querschnitte_nach(tmp_path)
     _kopiere_investitionen_nach(tmp_path)
     _kopiere_ve_faelligkeiten_nach(tmp_path)
+    _kopiere_investitionen_pb_nach(tmp_path)
     if mit_befunde:
         _kopiere_befunde_nach(tmp_path)
+
+
+def _produkt_zu_pb_fuer_tests() -> dict[str, str]:
+    """Produkt -> PB über die Hierarchie, identisch zur Logik in pruefung._produkt_zu_pb
+    (eigenständig hier gehalten, damit Test und Implementierung unabhängig bleiben)."""
+    hierarchie = lies_hierarchie_csv(DATEN_WURZEL / HIERARCHIE_CSV)
+    pg_zu_pb = {
+        zeile["code"]: zeile["eltern_code"]
+        for zeile in hierarchie.filter(pl.col("ebene") == "PG").iter_rows(named=True)
+    }
+    return {
+        zeile["code"]: pg_zu_pb[zeile["eltern_code"]]
+        for zeile in hierarchie.filter(pl.col("ebene") == "P").iter_rows(named=True)
+    }
+
+
+def _erwartete_regel6_pb_gegenprobe_anzahl() -> int:
+    """Anzahl der Regel-6 (c)-Pruefpunkte: die Vereinigung der (pb, massnahme_id, konto,
+    jahr, wertart)-Schlüssel beider Quellen (03-03, D-06)."""
+    produkt_zu_pb = _produkt_zu_pb_fuer_tests()
+    investitionen = lies_investitionen_csv(DATEN_WURZEL / INVESTITIONEN_CSV)
+    investitionen_pb = lies_investitionen_pb_csv(DATEN_WURZEL / INVESTITIONEN_PB_CSV)
+
+    schluessel_produktseiten = {
+        (produkt_zu_pb[z["produkt"]], z["massnahme_id"], z["konto"], z["jahr"], z["wertart"])
+        for z in investitionen.select(
+            ["produkt", "massnahme_id", "konto", "jahr", "wertart"]
+        ).iter_rows(named=True)
+    }
+    schluessel_pb_liste = {
+        (z["pb"], z["massnahme_id"], z["konto"], z["jahr"], z["wertart"])
+        for z in investitionen_pb.select(
+            ["pb", "massnahme_id", "konto", "jahr", "wertart"]
+        ).iter_rows(named=True)
+    }
+    return len(schluessel_produktseiten | schluessel_pb_liste)
 
 
 def _erwartete_regel6_anzahl() -> int:
@@ -1241,7 +1294,12 @@ def _erwartete_regel6_anzahl() -> int:
         .select(["produkt", "massnahme_id", "konto"])
         .iter_rows()
     ) | set(ve_faelligkeiten.select(["produkt", "massnahme_id", "konto"]).iter_rows())
-    return anzahl_produkte * 2 * anzahl_spalten + 2 * anzahl_spalten + len(ve_schluessel)
+    return (
+        anzahl_produkte * 2 * anzahl_spalten
+        + 2 * anzahl_spalten
+        + _erwartete_regel6_pb_gegenprobe_anzahl()
+        + len(ve_schluessel)
+    )
 
 
 def test_regel6_gruen_auf_eingecheckten_daten() -> None:
@@ -1251,6 +1309,7 @@ def test_regel6_gruen_auf_eingecheckten_daten() -> None:
     assert regel6.geprueft == _erwartete_regel6_anzahl()
     assert regel6.status == "grün"
     assert regel6.abweichungen == ()
+    assert regel6.luecken == ()
     assert bericht.ist_gruen is True
 
 
@@ -1393,6 +1452,7 @@ def test_regel6_produkt_ohne_massnahmen_mit_tfp_wert_bricht_rot(tmp_path: Path) 
     schreibe_plan_csv(manipuliert, tmp_path / FINANZPLAN_CSV)
     _kopiere_investitionen_nach(tmp_path)
     _kopiere_ve_faelligkeiten_nach(tmp_path)
+    _kopiere_investitionen_pb_nach(tmp_path)
     _kopiere_hierarchie_nach(tmp_path)
     _kopiere_seiten_nach(tmp_path)
     _kopiere_querschnitte_nach(tmp_path)
@@ -1405,6 +1465,242 @@ def test_regel6_produkt_ohne_massnahmen_mit_tfp_wert_bricht_rot(tmp_path: Path) 
     assert regel6 is not None, "Regel 6 fehlt im Bericht"
     assert regel6.status == "rot"
     assert any(punkt.code == ziel_produkt and punkt.zeile == "30" for punkt in regel6.abweichungen)
+
+
+# --- Regel 6 (c): PB-Gegenprobe und Lücken (PRUEF-06, D-06, 03-03) --------------------
+
+
+def _eindeutige_pb_liste_zeile() -> dict:
+    """Eine investitionen_pb.csv-Zeile, deren (pb, massnahme_id, konto, jahr, wertart)-
+    Schlüssel nur einmal in der Datei vorkommt (Research Pitfall 8: manche Schlüssel
+    wiederholen sich über mehrere Blöcke derselben PB-Liste, z. B. KLIMA1 auf S. 149) —
+    eine Manipulation auf einem solchen eindeutigen Schlüssel verschiebt die gruppierte
+    Summe exakt um den Testbetrag, nicht um ein Vielfaches."""
+    investitionen_pb = lies_investitionen_pb_csv(DATEN_WURZEL / INVESTITIONEN_PB_CSV)
+    schluessel_spalten = ["pb", "massnahme_id", "konto", "jahr", "wertart"]
+    eindeutig = (
+        investitionen_pb.group_by(schluessel_spalten)
+        .agg(pl.len().alias("n"))
+        .filter(pl.col("n") == 1)
+    )
+    erste = eindeutig.row(0, named=True)
+    treffer = investitionen_pb.filter(
+        (pl.col("pb") == erste["pb"])
+        & (pl.col("massnahme_id") == erste["massnahme_id"])
+        & (pl.col("konto") == erste["konto"])
+        & (pl.col("jahr") == erste["jahr"])
+        & (pl.col("wertart") == erste["wertart"])
+    )
+    return treffer.row(0, named=True)
+
+
+def _manipuliere_pb_liste_betrag(
+    investitionen_pb: pl.DataFrame, *, ziel_zeile: dict, delta: int
+) -> pl.DataFrame:
+    bedingung = (
+        (pl.col("pb") == ziel_zeile["pb"])
+        & (pl.col("massnahme_id") == ziel_zeile["massnahme_id"])
+        & (pl.col("konto") == ziel_zeile["konto"])
+        & (pl.col("jahr") == ziel_zeile["jahr"])
+        & (pl.col("wertart") == ziel_zeile["wertart"])
+    )
+    return investitionen_pb.with_columns(
+        pl.when(bedingung)
+        .then(pl.col("betrag") + delta)
+        .otherwise(pl.col("betrag"))
+        .alias("betrag")
+    )
+
+
+def test_regel6_pb_liste_erkennt_manipulierten_wert(tmp_path: Path) -> None:
+    """D-06, 03-03: +2 € auf einen investitionen_pb.csv-Wert macht Regel 6 rot mit einem
+    Pruefpunkt plan="investitionen_pb_liste", ebene PB, zeile "<massnahme_id>/<konto>";
+    +1 € bleibt innerhalb von TOLERANZ_EURO grün."""
+    investitionen_pb = lies_investitionen_pb_csv(DATEN_WURZEL / INVESTITIONEN_PB_CSV)
+    ziel_zeile = _eindeutige_pb_liste_zeile()
+
+    _kopiere_finanzplan_nach(tmp_path)
+    schreibe_investitionen_pb_csv(
+        _manipuliere_pb_liste_betrag(investitionen_pb, ziel_zeile=ziel_zeile, delta=2),
+        tmp_path / INVESTITIONEN_PB_CSV,
+    )
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_querschnitte_nach(tmp_path)
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_befunde_nach(tmp_path)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel6 = next((regel for regel in bericht.regeln if regel.regel == 6), None)
+    assert regel6 is not None, "Regel 6 fehlt im Bericht"
+    treffer = [
+        punkt
+        for punkt in regel6.abweichungen
+        if punkt.plan == "investitionen_pb_liste"
+        and punkt.ebene == "PB"
+        and punkt.code == ziel_zeile["pb"]
+        and punkt.zeile == f"{ziel_zeile['massnahme_id']}/{ziel_zeile['konto']}"
+    ]
+    assert treffer, "Keine passende investitionen_pb_liste-Abweichung gefunden"
+    assert regel6.status == "rot"
+
+    schreibe_investitionen_pb_csv(
+        _manipuliere_pb_liste_betrag(investitionen_pb, ziel_zeile=ziel_zeile, delta=TOLERANZ_EURO),
+        tmp_path / INVESTITIONEN_PB_CSV,
+    )
+    bericht_ein_euro = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel6_ein_euro = next((regel for regel in bericht_ein_euro.regeln if regel.regel == 6), None)
+    assert regel6_ein_euro is not None, "Regel 6 fehlt im Bericht"
+    assert regel6_ein_euro.status == "grün"
+
+
+def test_regel6_pb_liste_befund_deckt_ab(tmp_path: Path) -> None:
+    """D-06, 03-03: ein Befund mit demselben Schlüssel und Betrag hält Regel 6 grün."""
+    investitionen_pb = lies_investitionen_pb_csv(DATEN_WURZEL / INVESTITIONEN_PB_CSV)
+    ziel_zeile = _eindeutige_pb_liste_zeile()
+
+    _kopiere_finanzplan_nach(tmp_path)
+    schreibe_investitionen_pb_csv(
+        _manipuliere_pb_liste_betrag(investitionen_pb, ziel_zeile=ziel_zeile, delta=5),
+        tmp_path / INVESTITIONEN_PB_CSV,
+    )
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_querschnitte_nach(tmp_path)
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
+
+    # Die PB-Liste ist "soll", die Produktseiten sind "ist": ein um 5 höherer soll-Wert
+    # (PB-Liste) macht ist - soll = -5.
+    befund_zeile = _befunde_zeile(
+        regel=6,
+        plan="investitionen_pb_liste",
+        ebene="PB",
+        code=ziel_zeile["pb"],
+        zeile=f"{ziel_zeile['massnahme_id']}/{ziel_zeile['konto']}",
+        jahr=ziel_zeile["jahr"],
+        wertart=ziel_zeile["wertart"],
+        abweichung=-5,
+        pdf_seite=ziel_zeile["pdf_seite"],
+        begruendung="Testabweichung Regel 6 PB-Gegenprobe",
+    )
+    reale_befunde_zeilen = _lies_schluesseltabelle_markdown_zeilen(DATEN_WURZEL / BEFUNDE_MD)
+    _schreibe_befunde_md(tmp_path / BEFUNDE_MD, zeilen=[*reale_befunde_zeilen, befund_zeile])
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel6 = next((regel for regel in bericht.regeln if regel.regel == 6), None)
+    assert regel6 is not None, "Regel 6 fehlt im Bericht"
+    assert regel6.status == "grün"
+    assert bericht.ist_gruen is True
+    assert any(
+        punkt.plan == "investitionen_pb_liste" and punkt.code == ziel_zeile["pb"]
+        for punkt, _befund in regel6.bekannte
+    )
+
+
+def test_luecke_wenn_massnahme_nur_auf_produktseiten(tmp_path: Path) -> None:
+    """D-06, 03-03: entfernt man alle Zeilen einer (pb, massnahme_id) aus
+    investitionen_pb.csv, wird Regel 6 rot mit einer Lücke "nur auf Produktseiten"."""
+    investitionen_pb = lies_investitionen_pb_csv(DATEN_WURZEL / INVESTITIONEN_PB_CSV)
+    ziel = investitionen_pb.row(0, named=True)
+    ohne_massnahme = investitionen_pb.filter(
+        ~((pl.col("pb") == ziel["pb"]) & (pl.col("massnahme_id") == ziel["massnahme_id"]))
+    )
+
+    _kopiere_finanzplan_nach(tmp_path)
+    schreibe_investitionen_pb_csv(ohne_massnahme, tmp_path / INVESTITIONEN_PB_CSV)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_querschnitte_nach(tmp_path)
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_befunde_nach(tmp_path)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel6 = next((regel for regel in bericht.regeln if regel.regel == 6), None)
+    assert regel6 is not None, "Regel 6 fehlt im Bericht"
+    assert regel6.status == "rot"
+    passende_luecken = [
+        luecke
+        for luecke in regel6.luecken
+        if luecke.ebene == "PB"
+        and luecke.code == ziel["pb"]
+        and luecke.merkmal == f"Maßnahme {ziel['massnahme_id']}: nur auf Produktseiten"
+    ]
+    assert passende_luecken, "Erwartete Lücke 'nur auf Produktseiten' nicht gefunden"
+    assert bericht.ist_gruen is False
+
+
+def test_luecke_wenn_massnahme_nur_in_pb_liste(tmp_path: Path) -> None:
+    """D-06, 03-03: entfernt man alle Zeilen einer (produkt, massnahme_id) aus
+    investitionen.csv, wird Regel 6 rot mit einer Lücke "nur in der PB-Liste"."""
+    investitionen = lies_investitionen_csv(DATEN_WURZEL / INVESTITIONEN_CSV)
+    ziel = investitionen.row(0, named=True)
+    ohne_massnahme = investitionen.filter(
+        ~((pl.col("produkt") == ziel["produkt"]) & (pl.col("massnahme_id") == ziel["massnahme_id"]))
+    )
+
+    _kopiere_finanzplan_nach(tmp_path)
+    schreibe_investitionen_csv(ohne_massnahme, tmp_path / INVESTITIONEN_CSV)
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_querschnitte_nach(tmp_path)
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
+    _kopiere_befunde_nach(tmp_path)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel6 = next((regel for regel in bericht.regeln if regel.regel == 6), None)
+    assert regel6 is not None, "Regel 6 fehlt im Bericht"
+    assert regel6.status == "rot"
+
+    pb = _produkt_zu_pb_fuer_tests()[ziel["produkt"]]
+    passende_luecken = [
+        luecke
+        for luecke in regel6.luecken
+        if luecke.ebene == "PB"
+        and luecke.code == pb
+        and luecke.merkmal == f"Maßnahme {ziel['massnahme_id']}: nur in der PB-Liste"
+    ]
+    assert passende_luecken, "Erwartete Lücke 'nur in der PB-Liste' nicht gefunden"
+    assert bericht.ist_gruen is False
+
+
+def test_luecke_macht_regelergebnis_rot_und_bericht_nicht_gruen() -> None:
+    """Eine Lücke ist kein Abweichungs-Pruefpunkt, macht aber trotzdem rot (D-06, 03-03):
+    Regelergebnis.status und Bericht.ist_gruen."""
+    luecke = Luecke(regel=6, ebene="PB", code="99", merkmal="Testlücke", pdf_seite=None)
+    regel = Regelergebnis(
+        regel=6, titel="Regel 6 – Test", geprueft=1, abweichungen=(), luecken=(luecke,)
+    )
+    assert regel.status == "rot"
+    bericht = Bericht(jahr=STANDARD_JAHR, regeln=(regel,))
+    assert bericht.ist_gruen is False
+
+
+def test_wende_befunde_an_erhaelt_luecken_unveraendert() -> None:
+    """_wende_befunde_an rührt Lücken nicht an — sie sind nicht über befunde.md
+    abdeckbar (D-06, 03-03); Regelergebnis/Bericht ohne Lücken (wie test_alle.py)
+    verhalten sich unverändert (leeres Tupel als Default)."""
+    luecke = Luecke(regel=6, ebene="PB", code="99", merkmal="Testlücke", pdf_seite=None)
+    regel_mit_luecke = Regelergebnis(
+        regel=6, titel="Regel 6 – Test", geprueft=1, abweichungen=(), luecken=(luecke,)
+    )
+    regel_ohne_luecke = Regelergebnis(regel=1, titel="Regel 1 – Test", geprueft=1, abweichungen=())
+    aktualisiert, veraltet = _wende_befunde_an((regel_mit_luecke, regel_ohne_luecke), ())
+    assert aktualisiert[0].luecken == (luecke,)
+    assert aktualisiert[1].luecken == ()
+    assert veraltet == ()
+
+
+def test_konsistenzbericht_zeigt_luecken_abschnitt_keine_auf_echten_daten() -> None:
+    bericht = pruefe_alles(STANDARD_JAHR)
+    inhalt = rendere_konsistenzbericht(bericht)
+    abschnitt = inhalt.split("## Lücken")
+    assert len(abschnitt) == 2, "Abschnitt '## Lücken' fehlt im Bericht"
+    nach_luecken = abschnitt[1].split("##")[0]
+    assert "Keine." in nach_luecken
 
 
 def test_pruefung_liest_kein_pdf() -> None:
