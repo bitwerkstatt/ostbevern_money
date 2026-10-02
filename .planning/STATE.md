@@ -20,10 +20,10 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-10-01)
+See: .planning/PROJECT.md (updated 2026-10-02)
 
 **Core value:** Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch automatische Prüfungen belegt. Die Leitfragen „Woher?“ und „Wofür?“ sind für Laien verständlich beantwortet.
-**Current focus:** Phase 03 — Details
+**Current focus:** Phase 4 — Manuelle Daten und App-Daten
 
 ## Current Position
 
@@ -72,6 +72,8 @@ Recent decisions affecting current work:
 - [Phase 2]: `alle.py` verkettet Schritt 01 → 02 → 06; Prüfregeln 1–4 grün (6550/7920/114/194 Werte), Regeneration von `daten/` ist deterministisch.
 - [Quick 261001-oim]: Synthetische PG haben genau ein Produkt (D-14, sonst Fehler). PG 1502 „Tourismus“ (nur 150102) ist als Ausnahme in `jahrgaenge/2026.toml` deklariert, Werte gegen Querschnitt S. 299 geprüft.
 - [Phase 2]: Anhang-B.3-Sollwerte PB 09/15 Z. 29 nach PDF-Prüfung (S. 296/299 GESAMTSUMME) korrigiert; 10 gedruckte Rundungsdifferenzen in `befunde.md` belegt.
+- [Phase 3]: Schritte 03/04 und die Querschnitte laufen in `alle.py`; Regeln 1–4 und 6–8 grün (Regel 6: 1964, Regel 7: 1152, Regel 8: 820 Werte), 0 Lücken; 26 neue PDF-belegte Befunde (Regel 6: 8, Regel 7: 18).
+- [Phase 3]: `produkte.json` (63 Produkte) ohne Personennamen, dreifach abgesichert; `grundzahlen.csv` 827 Zeilen/48 Produkte, `erlaeuterungen.csv` 229 Zeilen/50 Produkte (Sollwert von 51 auf 50 korrigiert, S. 120101 druckt leere Kopfzeile).
 
 ### Pending Todos
 
@@ -84,6 +86,8 @@ None yet.
 - [Phase 1]: `app/node_modules` im gemounteten Repo enthält macOS-Binaries; im Linux-Sandbox App-Checks in einer Scratch-Kopie ausführen.
 - [Phase 2]: Code-Review 02-REVIEW.md: 3 Warnungen offen (u. a. Vorzeichen-Beschreibung in `befunde.md`, Kommentar zu PB 09/15 sollte S. 296/299 zitieren).
 - [Phase 2/4]: Die Anhang-B-Eckwerte (B.6), die von `meta.json` oder vom Stellenplan abhängen, lassen sich erst in Phase 4 prüfen. Phase 2 deckt B.1–B.3 und Satzung § 1 ab.
+- [Phase 3]: Code-Review 03-REVIEW.md: 2 Warnungen offen — WR-01 globale Toleranz in `spalten.ordne_spalten` (latent, betrifft Querschnitte/Investitionen/Grundzahlen), WR-02 Mock-Arität in `test_alle.py`; 3 Info.
+- [Phase 3]: `03-SECURITY.md` fehlt noch (security_enforcement aktiv) — `/gsd-secure-phase 03` vor dem Weitergehen.
 
 ### Quick Tasks Completed
 
@@ -101,6 +105,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-01T17:37:42.160Z
+Last session: 2026-10-02T08:00:00Z
 Stopped at: Phase 03 complete, ready to plan Phase 4
-Resume file: .planning/phases/03-details/03-CONTEXT.md
+Resume file: None

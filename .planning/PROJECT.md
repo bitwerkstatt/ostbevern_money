@@ -16,15 +16,15 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 
 - ✓ Seitenklassifikation aller PDF-Seiten (Typ, PB, PG, Produkt); Startseiten aller 63 Produkte stimmen mit Anhang A überein — Phase 2
 - ✓ Extraktion von Gesamtergebnisplan, Gesamtfinanzplan, Teilergebnis- und Teilfinanzplänen (PB, PG und Produkt) im Langformat, Spalten über x-Koordinaten — Phase 2
+- ✓ Produktinformationen (inkl. Bindungsgrad, Grundzahlen, Erläuterungsposten) für alle 63 Produkte — `produkte.json` ohne Personennamen, `grundzahlen.csv`, `erlaeuterungen.csv` — Phase 3
+- ✓ Investitionsmaßnahmen (nur aus Produktseiten) und VE-Fälligkeiten — `investitionen.csv`, `ve_faelligkeiten.csv`, PB-Listen als Kontrollquelle — Phase 3
 
 ### Active
 
 **Pipeline (Python, uv):**
-- [ ] Produktinformationen (inkl. Bindungsgrad, Grundzahlen, Erläuterungsposten) für alle 63 Produkte
-- [ ] Investitionsmaßnahmen (nur aus Produktseiten) und VE-Fälligkeiten
 - [ ] Stellenplan (Teil A Beamte, Teil B Tarif, Stellenübersicht nach PB)
 - [ ] Manuell gepflegte Vorberichtstabellen (Steuerarten, Zuwendungen, Transferaufwendungen, Kita-Zuschüsse, weitere) und `meta.json`, automatisch gegen Planzeilen geprüft
-- [ ] Konsistenzprüfung (Prüfregeln 1–8 aus Spez. 5.5) in pytest und als Markdown-Bericht; bekannte Abweichungen in `befunde.md` (Regeln 1–4 grün seit Phase 2; 5–8 folgen)
+- [ ] Konsistenzprüfung (Prüfregeln 1–8 aus Spez. 5.5) in pytest und als Markdown-Bericht; bekannte Abweichungen in `befunde.md` (Regeln 1–4 grün seit Phase 2, 6–8 seit Phase 3; Regel 5 folgt)
 - [ ] Erzeugung der App-JSON-Dateien (ohne Personennamen)
 - [ ] Quellenbelege: Zeilenrechteck + gerenderte WebP-Seiten, `quellen.json`
 - [ ] Pipeline ist für das ProFIS-Layout generisch: Jahr, Spalten und Seitenbereiche konfigurierbar, sodass der Haushalt 2027 mit wenig Änderung verarbeitet werden kann
@@ -103,6 +103,10 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 | Anhang-B-Sollwerte sind unabhängige Referenz, aber nicht unfehlbar: Abweichungen werden erst gegen das PDF geprüft, dann korrigiert | Spez. Anhang B.3 hatte für PB 09/15 Z. 29 den Wert der ersten PG statt der GESAMTSUMME (S. 296/299) übernommen | ✓ Good — Phase 2 |
 | Gedruckte Rundungsdifferenzen (2–3 €) gehen mit Seitenbeleg in `befunde.md`, nie in eine Toleranz | Toleranz bleibt strikt 1 €; jede Ausnahme ist einzeln belegt | ✓ Good — Phase 2 (10 Befunde) |
 | Nicht gedruckte Produktgruppen werden synthetisch gebildet (`synthetisch=true`) | Teilplanbereich druckt nicht jede PG | ✓ Good — Phase 2; genau ein Produkt je synthetischer PG, PG 1502 „Tourismus“ als deklarierte Ausnahme in der Jahrgangsdatei (Quick 261001-oim) |
+| PDF-lesende Kontrollquellen (Querschnitte, PB-Investitionslisten) laufen als eigene Extraktionsschritte vor der Prüfung; `pruefung.py` bleibt CSV/JSON-only | Prüfung bleibt PDF-unabhängig und testbar | ✓ Good — Phase 3 |
+| Strukturelle Lücken (Maßnahme nur in einer Quelle) sind keine Betragsabweichung und können nicht über `befunde.md` entschuldigt werden | Fehlende Daten dürfen nie als „bekannt“ durchrutschen | ✓ Good — Phase 3 (0 Lücken) |
+| Personennamen werden beim Parsen verworfen, bevor ein Datensatz entsteht; Schutz dreifach (Parse-Zeit, exakter Schlüsselsatz, Whole-Tree-Test) | Repo ist öffentlich (D-09) | ✓ Good — Phase 3 |
+| Historische Ergebnis-Spalten-Differenzen der Investitionstabellen werden als Befund belegt, interne Gegenproben vergleichen nur Budgetspalten | Ist-Werte auf heute nicht mehr geführten Konten sind im PDF so gedruckt | ✓ Good — Phase 3 (8 Befunde Regel 6, 18 Befunde Regel 7) |
 
 ## Evolution
 
@@ -122,4 +126,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-01 after Phase 2*
+*Last updated: 2026-10-02 after Phase 3*
