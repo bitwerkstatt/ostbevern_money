@@ -98,7 +98,7 @@ Plans:
   3. `investitionen.csv` stammt nur aus den Produktseiten. Die Summe je Produkt entspricht Teilfinanzplan Z. 23/30, und die Summe aller Maßnahmen 2026 ergibt 7.224.830 € / 12.280.484 € (Regel 6). „(Kassenwirksamkeit)“-Zeilen stehen in `ve_faelligkeiten.csv` und nicht in den Summen.
   4. Die Querschnitte ab S. 291 stimmen mit den eigenen PG-Aggregaten überein (Regel 7). `konsistenz.md` meldet die Regeln 1–4 und 6–8 als grün.
 
-**Plans**: 4/5 plans executed
+**Plans**: 5/5 plans executed
 
 Plans:
 **Wave 1**
@@ -114,7 +114,7 @@ Plans:
 - [x] 03-04-PLAN.md — Produktinformationen → produkte.json ohne Personennamen (D-09), Erläuterungen → erlaeuterungen.csv mit D-04-Plausibilität, Schritt 03 in alle.py (Wave 4)
 
 **Wave 5** *(blocked on Wave 4 completion)*
-- [ ] 03-05-PLAN.md — Grundzahlen → grundzahlen.csv (Stichtag-Hinweise, Gruppen, Steuer-Istwerte 160101), Regel 8 Vollständigkeit, Phasen-Gate Regeln 1–4 und 6–8 grün (Wave 5)
+- [x] 03-05-PLAN.md — Grundzahlen → grundzahlen.csv (Stichtag-Hinweise, Gruppen, Steuer-Istwerte 160101), Regel 8 Vollständigkeit, Phasen-Gate Regeln 1–4 und 6–8 grün (Wave 5)
 
 ### Phase 4: Manuelle Daten und App-Daten
 
@@ -198,7 +198,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 |-------|----------------|--------|-----------|
 | 1. Setup | 5/5 | Complete    | 2026-10-01 |
 | 2. Kernzahlen | 5/5 | Complete    | 2026-10-01 |
-| 3. Details | 4/5 | In Progress|  |
+| 3. Details | 5/5 | In Progress|  |
 | 4. Manuelle Daten und App-Daten | 0/TBD | Not started | - |
 | 5. Leitfragen-Seiten | 0/TBD | Not started | - |
 | 6. Kontext-Seiten | 0/TBD | Not started | - |
