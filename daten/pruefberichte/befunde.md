@@ -21,6 +21,12 @@ Summe der Produktseiten (`ist`) minus Summe der PB-Investitionsliste (`soll`) je
 (`zeile` = `Maßnahme/Konto`). Lücken (Maßnahme nur in einer Quelle) sind keine Abweichungen und
 können hier nicht dokumentiert werden (D-06, 03-03).
 
+Regel 8 (Vollständigkeit der Produkte, PRUEF-08, Spez. 5.5) hat keine Abweichungen (keinen
+Soll/Ist-Betragsvergleich), sondern meldet jeden Verstoß (fehlendes/unbekanntes Produkt, falsche
+Gesamtanzahl, leeres Pflichtfeld, unbekannter Bindungsgrad, fehlende Teilergebnis-/
+Teilfinanzplan-Zeile) als Lücke. Eine Lücke ist, wie bei Regel 6, nie über diese Datei
+abdeckbar — ein fehlendes Produkt oder eine leere Produktbeschreibung ist kein Rundungsfehler.
+
 Ein Befund deckt eine Abweichung nur ab, wenn Regel, Plan, Ebene, Code, Zeile, Jahr und
 Wertart übereinstimmen **und** die tatsächliche Abweichung um höchstens 1 € von der hier
 dokumentierten abweicht (D-05). `abweichung = ist − soll`, je nach Regel in `pruefung.py`

@@ -1,14 +1,15 @@
 """Schritt 06: Konsistenzprüfung gegen Anhang B (D-01).
 
 Eine Implementierung, zwei Aufrufer: `06_pruefen.py` und pytest rufen `pruefe_alles`
-identisch auf. Dieses Modul liest ausschließlich CSVs, nie das PDF (D-06).
+identisch auf. Dieses Modul liest ausschließlich generierte Dateien unter `daten/`
+(CSVs und, für Regel 8, `produkte.json`), nie das PDF (D-06).
 """
 
 from __future__ import annotations
 
 import os
 import tempfile
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 
@@ -25,6 +26,7 @@ from ostbevern.schema import (
     INVESTITIONEN_CSV,
     INVESTITIONEN_PB_CSV,
     KONSISTENZ_MD,
+    PRODUKTE_JSON,
     QUERSCHNITTE_CSV,
     SEITEN_CSV,
     VE_FAELLIGKEITEN_CSV,
@@ -33,6 +35,7 @@ from ostbevern.schema import (
     lies_investitionen_csv,
     lies_investitionen_pb_csv,
     lies_plan_csv,
+    lies_produkte_json,
     lies_querschnitte_csv,
     lies_seiten_csv,
     lies_ve_faelligkeiten_csv,
@@ -1182,6 +1185,157 @@ def _pruefe_regel7(
     )
 
 
+# Regel 8 (PRUEF-08, Spez. 5.5): Pflichtfelder, die jedes Produkt in produkte.json nicht-
+# leer trägt. Jedes der 63 Produkte druckt auf seiner Produktinformationen-Seite alle
+# zehn Feld-Labels (EXTR-06); die beiden Personenfelder (Verantwortliche/r, Sachbear-
+# beiter/innen) sind D-09-bedingt nicht Teil von produkte.json und deshalb hier nicht
+# geprüft. `bindungsgrad` (normalisiert), `leistungen` und `pdf_seiten` sind Listen bzw.
+# ein Vokabular-Wert und werden separat geprüft (REGEL8_MERKMALE unten).
+REGEL8_PFLICHTFELDER: tuple[str, ...] = (
+    "fachbereich",
+    "gremium",
+    "beschreibung",
+    "auftragsgrundlage",
+    "klassifizierung",
+    "zielgruppe",
+    "ziele",
+    "bindungsgrad_original",
+)
+# Normalisiertes Bindungsgrad-Vokabular: dieselben drei Werte wie
+# produkte.BINDUNGSGRADE.values() (fachliche Regel hier eigenständig wiederholt, damit
+# pruefung.py unabhängig von produkte.py bleibt, D-06-Architekturprinzip).
+_REGEL8_BINDUNGSGRAD_VOKABULAR = frozenset({"pflichtig", "freiwillig", "teils"})
+# Alle Merkmale, die Regel 8 je Produkt prüft: die acht Pflichtfelder oben plus
+# Leistungen, Bindungsgrad, PDF-Seiten und je ein Teilergebnis-/Teilfinanzplan-
+# Vorhandensein (fünf weitere Merkmale, Claude's Ermessen laut CONTEXT.md).
+REGEL8_MERKMALE: tuple[str, ...] = REGEL8_PFLICHTFELDER + (
+    "leistungen",
+    "bindungsgrad",
+    "pdf_seiten",
+    "teilergebnisplan",
+    "teilfinanzplan",
+)
+
+
+def _pruefe_regel8(
+    *,
+    produkte: Sequence[Mapping[str, object]],
+    ergebnisplan: pl.DataFrame,
+    finanzplan: pl.DataFrame,
+    hierarchie: pl.DataFrame,
+    jahrgang: Jahrgang,
+) -> Regelergebnis:
+    """Regel 8 – Vollständigkeit der Produkte (PRUEF-08, Spez. 5.5).
+
+    Prüft zunächst (ein Check), dass produkte.json genau die P-Codes der Hierarchie in
+    der erwarteten Anzahl (`jahrgang.anzahlen.produkte`) trägt: ein fehlender Code wird
+    zu einer Lücke "produktinformationen", ein unbekannter Code zu "unbekanntes
+    Produkt", eine falsche Gesamtanzahl zu "anzahl_produkte" (Ebene GESAMT). Prüft dann
+    je Produkt, das in beiden Quellen vorkommt, `REGEL8_MERKMALE`: jedes
+    `REGEL8_PFLICHTFELDER`-Feld eine nicht-leere Zeichenkette, `leistungen` eine nicht-
+    leere Liste, `bindungsgrad` im normalisierten Vokabular, `pdf_seiten` nicht leer,
+    sowie mindestens eine P-Zeile des Codes in `ergebnisplan`/`finanzplan`. Jeder
+    Verstoß ist eine Lücke (03-03-Mechanismus) — ein fehlendes Pflichtfeld ist kein
+    Rundungsfehler und kann nie über befunde.md entschärft werden. Regel 8 hat keine
+    Abweichungen (kein Soll/Ist-Betragsvergleich).
+    """
+    hierarchie_p = hierarchie.filter(pl.col("ebene") == "P")
+    hierarchie_codes = set(hierarchie_p["code"].to_list())
+    pdf_seite_start_je_code = {
+        zeile["code"]: zeile["pdf_seite_start"] for zeile in hierarchie_p.iter_rows(named=True)
+    }
+    produkte_codes = {produkt["code"] for produkt in produkte}
+    produkt_je_code = {produkt["code"]: produkt for produkt in produkte}
+
+    geprueft = 1  # die Mengen-/Anzahl-Prüfung ist EIN Check, unabhängig von der Lückenzahl
+    luecken: list[Luecke] = []
+    for code in sorted(hierarchie_codes - produkte_codes):
+        luecken.append(
+            Luecke(
+                regel=8,
+                ebene="P",
+                code=code,
+                merkmal="produktinformationen",
+                pdf_seite=pdf_seite_start_je_code.get(code),
+            )
+        )
+    for code in sorted(produkte_codes - hierarchie_codes):
+        fremde_seiten = produkt_je_code[code].get("pdf_seiten") or []
+        luecken.append(
+            Luecke(
+                regel=8,
+                ebene="P",
+                code=code,
+                merkmal="unbekanntes Produkt",
+                pdf_seite=min(fremde_seiten) if fremde_seiten else None,
+            )
+        )
+    if len(produkte) != jahrgang.anzahlen.produkte:
+        luecken.append(
+            Luecke(regel=8, ebene="GESAMT", code="", merkmal="anzahl_produkte", pdf_seite=None)
+        )
+
+    for code in sorted(hierarchie_codes & produkte_codes):
+        produkt = produkt_je_code[code]
+        pdf_seiten = produkt.get("pdf_seiten") or []
+        erste_seite = min(pdf_seiten) if pdf_seiten else None
+
+        for feld in REGEL8_PFLICHTFELDER:
+            geprueft += 1
+            wert = produkt.get(feld)
+            if not isinstance(wert, str) or not wert:
+                luecken.append(
+                    Luecke(regel=8, ebene="P", code=code, merkmal=feld, pdf_seite=erste_seite)
+                )
+
+        geprueft += 1
+        leistungen = produkt.get("leistungen")
+        if not isinstance(leistungen, list) or not leistungen:
+            luecken.append(
+                Luecke(regel=8, ebene="P", code=code, merkmal="leistungen", pdf_seite=erste_seite)
+            )
+
+        geprueft += 1
+        if produkt.get("bindungsgrad") not in _REGEL8_BINDUNGSGRAD_VOKABULAR:
+            luecken.append(
+                Luecke(regel=8, ebene="P", code=code, merkmal="bindungsgrad", pdf_seite=erste_seite)
+            )
+
+        geprueft += 1
+        if not pdf_seiten:
+            luecken.append(
+                Luecke(regel=8, ebene="P", code=code, merkmal="pdf_seiten", pdf_seite=None)
+            )
+
+        geprueft += 1
+        if ergebnisplan.filter((pl.col("ebene") == "P") & (pl.col("code") == code)).height == 0:
+            luecken.append(
+                Luecke(
+                    regel=8,
+                    ebene="P",
+                    code=code,
+                    merkmal="teilergebnisplan",
+                    pdf_seite=erste_seite,
+                )
+            )
+
+        geprueft += 1
+        if finanzplan.filter((pl.col("ebene") == "P") & (pl.col("code") == code)).height == 0:
+            luecken.append(
+                Luecke(
+                    regel=8, ebene="P", code=code, merkmal="teilfinanzplan", pdf_seite=erste_seite
+                )
+            )
+
+    return Regelergebnis(
+        regel=8,
+        titel="Regel 8 – Vollständigkeit der Produkte",
+        geprueft=geprueft,
+        abweichungen=(),
+        luecken=tuple(luecken),
+    )
+
+
 def pruefe_alles(
     jahr: int,
     *,
@@ -1204,6 +1358,7 @@ def pruefe_alles(
     investitionen = lies_investitionen_csv(daten_wurzel / INVESTITIONEN_CSV)
     investitionen_pb = lies_investitionen_pb_csv(daten_wurzel / INVESTITIONEN_PB_CSV)
     ve_faelligkeiten = lies_ve_faelligkeiten_csv(daten_wurzel / VE_FAELLIGKEITEN_CSV)
+    produkte = lies_produkte_json(daten_wurzel / PRODUKTE_JSON)
     pfad_befunde = befunde_pfad if befunde_pfad is not None else daten_wurzel / BEFUNDE_MD
     befunde = lies_befunde(pfad_befunde)
 
@@ -1241,9 +1396,16 @@ def pruefe_alles(
         planwerte_finanzplan=Planwerte(finanzplan, datei="finanzplan"),
         haushaltsjahr=jahrgang.haushaltsjahr,
     )
+    regel8 = _pruefe_regel8(
+        produkte=produkte,
+        ergebnisplan=ergebnisplan,
+        finanzplan=finanzplan,
+        hierarchie=hierarchie,
+        jahrgang=jahrgang,
+    )
 
     regeln, veraltete_befunde = _wende_befunde_an(
-        (regel1, regel2, regel3, regel4, regel6, regel7), befunde
+        (regel1, regel2, regel3, regel4, regel6, regel7, regel8), befunde
     )
     unbekannte_seiten = tuple(
         sorted(seiten.filter(pl.col("typ") == "unbekannt")["pdf_seite"].to_list())
