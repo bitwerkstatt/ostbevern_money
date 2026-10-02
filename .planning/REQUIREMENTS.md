@@ -22,9 +22,9 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [x] **EXTR-03**: `hierarchie.csv` enthält 15 PB, alle PG (synthetische mit `synthetisch=true`) und 63 Produkte mit Namen aus der Produktseite
 - [x] **EXTR-04**: Gesamtergebnisplan und alle Teilergebnispläne (PB, Produkt) stehen im Langformat in `ergebnisplan.csv` mit `zeile`, `zeile_kanonisch`, `ist_summe` und `pdf_seite`; Spalten werden über x-Koordinaten zugeordnet; fehlende Zeilen gelten als 0
 - [x] **EXTR-05**: Gesamtfinanzplan und alle Teilfinanzpläne inklusive VE-Spalte stehen in `finanzplan.csv`
-- [ ] **EXTR-06**: Produktinformationen aller 63 Produkte stehen in `produkte.json` (Fachbereich, Gremium, Beschreibung, Leistungen, Auftragsgrundlage, Bindungsgrad normalisiert und original, Klassifizierung, Zielgruppe, Ziele, PDF-Seiten)
+- [x] **EXTR-06**: Produktinformationen aller 63 Produkte stehen in `produkte.json` (Fachbereich, Gremium, Beschreibung, Leistungen, Auftragsgrundlage, Bindungsgrad normalisiert und original, Klassifizierung, Zielgruppe, Ziele, PDF-Seiten)
 - [ ] **EXTR-07**: Grundzahlen je Produkt stehen in `grundzahlen.csv` mit Einheit, Jahr und Stichtagshinweis; die Steuer-Istwerte 2022–2025 aus 160101 sind enthalten
-- [ ] **EXTR-08**: Erläuterungsposten („Erläuterung zu Nr. …“) sind je Produkt mit Betrag, Text und Zeilenbezug extrahiert
+- [x] **EXTR-08**: Erläuterungsposten („Erläuterung zu Nr. …“) sind je Produkt mit Betrag, Text und Zeilenbezug extrahiert
 - [x] **EXTR-09**: Investitionsmaßnahmen werden nur aus den Produktseiten in `investitionen.csv` extrahiert (Konto, Richtung, Jahr, Wertart); „(Kassenwirksamkeit)“-Zeilen landen in `ve_faelligkeiten.csv` und nicht in Summen
 - [ ] **EXTR-10**: Der Stellenplan (Teil A Beamte, Teil B Tarif, Stellenübersicht nach PB) steht in `stellenplan.csv` mit Stellen 2026, 2025, besetzt 30.06.2025 und Vermerken
 
@@ -188,9 +188,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXTR-03 | Phase 2 | Complete |
 | EXTR-04 | Phase 2 | Complete |
 | EXTR-05 | Phase 2 | Complete |
-| EXTR-06 | Phase 3 | Pending |
+| EXTR-06 | Phase 3 | Complete |
 | EXTR-07 | Phase 3 | Pending |
-| EXTR-08 | Phase 3 | Pending |
+| EXTR-08 | Phase 3 | Complete |
 | EXTR-09 | Phase 3 | Complete |
 | EXTR-10 | Phase 4 | Pending |
 | MANU-01 | Phase 4 | Pending |

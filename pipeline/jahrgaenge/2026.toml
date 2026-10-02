@@ -117,3 +117,30 @@ auszahlungen_summe = "AuszahlungenausInvestitionstätigkeit"
 saldo_praefix = "Saldo"
 saldo_gesamt = "SaldoInvestitionstätigkeit"
 kassenwirksamkeit = "(Kassenwirksamkeit)"
+
+# [layout.produktinformationen] (Phase 3, 03-04): gedruckte Feld-Labels der
+# Produktinformationen-Seiten (Spez. 2.1, 4.2). Jedes Label ist das fette erste Wort
+# einer Feldzeile (ostbevern.produkte.zerlege_felder); die beiden Personen-Labels werden
+# nur gebraucht, um diese Felder zu erkennen und sofort zu verwerfen (D-09).
+[layout.produktinformationen]
+fachbereich = "Fachbereich"
+verantwortlich = "Verantwortliche/r"
+sachbearbeiter = "Sachbearbeiter/innen"
+gremium = "Gremium"
+beschreibung = "Produktbeschreibung"
+auftragsgrundlage = "Auftragsgrundlage"
+bindungsgrad = "Bindungsgrad"
+klassifizierung = "Klassifizierung"
+zielgruppe = "Zielgruppe"
+ziele = "Ziele"
+leistungen_muster = '^Leistungen\b'
+aufzaehlungszeichen = "(cid:15)"
+grundzahlen_kopf = "Grundzahlen"
+
+# [layout.erlaeuterungen] (Phase 3, 03-04): Muster der Erläuterungsblöcke auf den
+# Teilergebnisplan-Seiten (Spez. 3.8, 4.2, D-01 bis D-04). Alle drei Muster werden gegen
+# Textzeile.text (mit Leerzeichen verbunden) geprüft.
+[layout.erlaeuterungen]
+kopf_muster = '^Erläuterung\b'
+zu_nr_muster = '^(?:Erläuterung )?(?:[Zz]u )?Nr\. ?(?P<zeilen>\d{1,2}(?:(?: und|,) (?:Nr\. ?)?\d{1,2})*)(?P<rest>.*)$'
+posten_muster = '^(?P<betrag>-?\d{1,3}(?:\.\d{3})*) C (?P<text>.+)$'

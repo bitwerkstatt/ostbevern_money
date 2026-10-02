@@ -592,6 +592,22 @@ def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> 
                 f"Sollwertdatei {pfad}: haushaltsquerschnitt_pg.{code} hat keine gültige pdf_seite"
             )
 
+    # [stichproben] (Phase 3, 03-04): optionale, PDF-geprüfte Testreferenzen (keine
+    # Extraktions-Steuerung). Muss eine Tabelle von Tabellen sein (jede Stichprobe ist
+    # selbst eine TOML-Tabelle, z. B. [stichproben.produktinfo]); Zahlenwerte prüft
+    # bereits _pruefe_nur_ganzzahlen unten.
+    stichproben = rohdaten.get("stichproben", {})
+    if not isinstance(stichproben, dict):
+        raise KonfigurationsFehler(
+            f"Sollwertdatei {pfad}: stichproben muss eine Tabelle sein, nicht {stichproben!r}"
+        )
+    for name, eintrag in stichproben.items():
+        if not isinstance(eintrag, dict):
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: stichproben.{name} muss eine Tabelle sein, "
+                f"nicht {eintrag!r}"
+            )
+
     _pruefe_nur_ganzzahlen(rohdaten, "sollwerte")
 
     return rohdaten

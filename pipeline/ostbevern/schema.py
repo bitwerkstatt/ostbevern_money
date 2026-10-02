@@ -6,6 +6,9 @@ wird z. B. der Code "01" nie als Zahl 1 interpretiert.
 
 from __future__ import annotations
 
+import json
+import os
+import tempfile
 from pathlib import Path
 
 import polars as pl
@@ -20,6 +23,10 @@ ERGEBNISPLAN_CSV = Path("aufbereitet/ergebnisplan.csv")
 FINANZPLAN_CSV = Path("aufbereitet/finanzplan.csv")
 INVESTITIONEN_CSV = Path("aufbereitet/investitionen.csv")
 VE_FAELLIGKEITEN_CSV = Path("aufbereitet/ve_faelligkeiten.csv")
+# Produktbeschreibungen (Phase 3, 03-04, EXTR-06/08): eine JSON-Liste statt einer CSV,
+# da `leistungen` und `erlaeuterungen` verschachtelte Listen sind (Spez. 4.2).
+PRODUKTE_JSON = Path("aufbereitet/produkte.json")
+ERLAEUTERUNGEN_CSV = Path("aufbereitet/erlaeuterungen.csv")
 # Kontrollquelle (nie Datenquelle der App), daher unter zwischen/ statt aufbereitet/ (D-14).
 QUERSCHNITTE_CSV = Path("zwischen/querschnitte.csv")
 # PB-Investitionslisten (Phase 3, 03-03, D-06): ebenfalls reine Kontrollquelle, nie
@@ -268,3 +275,93 @@ def schreibe_investitionen_pb_csv(df: pl.DataFrame, pfad: Path) -> None:
 def lies_investitionen_pb_csv(pfad: Path) -> pl.DataFrame:
     """Liest investitionen_pb.csv über `lies_csv` mit INVESTITIONEN_PB_SPALTEN."""
     return lies_csv(pfad, INVESTITIONEN_PB_SPALTEN)
+
+
+# Produktbeschreibungen (Phase 3, 03-04, EXTR-06/08): die exakte, geordnete Schlüssel-
+# menge jedes Datensatzes in produkte.json (Spez. 4.2). Kein Personenfeld (D-09) — die
+# Felder "verantwortlich"/"sachbearbeiter" werden vor dem Schreiben verworfen.
+PRODUKT_SCHLUESSEL: tuple[str, ...] = (
+    "code",
+    "name",
+    "pb",
+    "pg",
+    "fachbereich",
+    "gremium",
+    "beschreibung",
+    "leistungen",
+    "auftragsgrundlage",
+    "bindungsgrad",
+    "bindungsgrad_original",
+    "klassifizierung",
+    "zielgruppe",
+    "ziele",
+    "erlaeuterungen",
+    "pdf_seiten",
+)
+
+
+def schreibe_produkte_json(produkte: list[dict[str, object]], pfad: Path) -> None:
+    """Schreibt produkte.json: sortiert nach `code`, Schlüssel in PRODUKT_SCHLUESSEL-
+    Reihenfolge, atomar (temp-Datei + os.replace), UTF-8 ohne BOM, LF, mit abschließendem
+    Zeilenumbruch (D-21-Stil, keine Personennamen, D-09)."""
+    schluessel_menge = set(PRODUKT_SCHLUESSEL)
+    for produkt in produkte:
+        vorhandene = set(produkt)
+        fehlend = schluessel_menge - vorhandene
+        unerwartet = vorhandene - schluessel_menge
+        if fehlend or unerwartet:
+            raise SchemaFehler(
+                f"produkte.json: Produkt {produkt.get('code')!r} hat abweichende Schlüssel "
+                f"(fehlend: {sorted(fehlend)}, unerwartet: {sorted(unerwartet)})"
+            )
+    geordnet = [
+        {schluessel: produkt[schluessel] for schluessel in PRODUKT_SCHLUESSEL}
+        for produkt in sorted(produkte, key=lambda p: p["code"])
+    ]
+    inhalt = json.dumps(geordnet, ensure_ascii=False, indent=2) + "\n"
+    pfad.parent.mkdir(parents=True, exist_ok=True)
+    deskriptor, temp_pfad_str = tempfile.mkstemp(
+        dir=pfad.parent, prefix=".produkte-", suffix=".tmp"
+    )
+    temp_pfad = Path(temp_pfad_str)
+    try:
+        with os.fdopen(deskriptor, "w", encoding="utf-8", newline="\n") as datei:
+            datei.write(inhalt)
+        os.replace(temp_pfad, pfad)
+    finally:
+        temp_pfad.unlink(missing_ok=True)
+
+
+def lies_produkte_json(pfad: Path) -> list[dict[str, object]]:
+    """Liest produkte.json; lehnt einen Datensatz mit abweichenden Schlüsseln ab."""
+    produkte = json.loads(pfad.read_text(encoding="utf-8"))
+    schluessel_menge = set(PRODUKT_SCHLUESSEL)
+    for produkt in produkte:
+        if set(produkt) != schluessel_menge:
+            raise SchemaFehler(f"{pfad}: Produkt {produkt.get('code')!r} hat abweichende Schlüssel")
+    return produkte
+
+
+# Erläuterungsposten (Phase 3, 03-04, EXTR-08, D-01 bis D-04): ein Wert je Block-Eintrag
+# (Posten oder Freitext) im Langformat. `zu_zeilen` ist "|"-verbunden (zweistellige
+# Zeilennummern), null wenn der Block keine "zu Nr." trägt (D-02); `betrag` ist null für
+# eine Freitextzeile.
+ERLAEUTERUNGEN_SPALTEN: dict[str, pl.PolarsDataType] = {
+    "produkt": pl.Utf8,
+    "block": pl.Int64,
+    "position": pl.Int64,
+    "zu_zeilen": pl.Utf8,
+    "betrag": pl.Int64,
+    "text": pl.Utf8,
+    "pdf_seite": pl.Int64,
+}
+
+
+def schreibe_erlaeuterungen_csv(df: pl.DataFrame, pfad: Path) -> None:
+    """Schreibt erlaeuterungen.csv sortiert nach produkt, block, position (D-21)."""
+    schreibe_csv(df, pfad, ERLAEUTERUNGEN_SPALTEN, ["produkt", "block", "position"])
+
+
+def lies_erlaeuterungen_csv(pfad: Path) -> pl.DataFrame:
+    """Liest erlaeuterungen.csv über `lies_csv` mit ERLAEUTERUNGEN_SPALTEN."""
+    return lies_csv(pfad, ERLAEUTERUNGEN_SPALTEN)

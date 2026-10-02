@@ -14,18 +14,26 @@ from collections.abc import Sequence
 _WHITESPACE_MUSTER = re.compile(r"\s+")
 _UND_ODER_SOWIE = ("und", "oder", "sowie")
 
+# Feine Extraktion (x_tolerance=1, D-10) trennt zwei im PDF direkt angrenzende Wörter
+# (z. B. "Leistungen" und ",", 010602 S. 88) als eigene Wörter; Textzeile.text fügt beim
+# Verbinden mit " " ein künstliches Leerzeichen davor ein, das nicht gedruckt ist.
+_LEERZEICHEN_VOR_KOMMA_MUSTER = re.compile(r" ,")
+
 # Der Euro-Glyph im PDF liest als "C" (Spez. 2.2). Ersetzt wird nur ein Vorkommen, das
 # direkt (mit oder ohne Leerzeichen) auf eine gültige Zahl im Plantabellen-Zahlenformat
-# folgt ("800 C" oder angeklebt "800C"), nie ein freistehendes "C" in Fließtext (z. B.
-# "Kategorie C").
-_EUROZEICHEN_NACH_ZAHL_MUSTER = re.compile(r"(?<=\d)(\s?)C(?=\s|$|[^\wÀ-ÖØ-öø-ÿ])")
+# folgt ("800 C" oder angeklebt "800C"), optional mit der Tausend-Abkürzung "T" davor
+# ("105 TC" = "105 T€", Erläuterungen Phase 3, S. 114), nie ein freistehendes "C" in
+# Fließtext (z. B. "Kategorie C").
+_EUROZEICHEN_NACH_ZAHL_MUSTER = re.compile(r"(?<=\d)(\s?T?)C(?=\s|$|[^\wÀ-ÖØ-öø-ÿ])")
 
 
 def verbinde_zeilen(zeilen: Sequence[str]) -> str:
     """Verbindet mehrere Zeilentexte zu lesbarem Fließtext (D-10).
 
-    Jede Zeile wird zuerst getrimmt und ihre inneren Leerzeichen kollabiert. Endet eine
-    Zeile (nach dem Trimmen) mit einem Bindestrich, der auf ein mindestens zwei Zeichen
+    Jede Zeile wird zuerst getrimmt, ihre inneren Leerzeichen kollabiert und ein von der
+    feinen Extraktion künstlich eingefügtes Leerzeichen vor einem Komma entfernt (Phase 3,
+    010602 S. 88: "Leistungen" und "," sind im PDF direkt angrenzende, aber eigene Wörter).
+    Endet eine Zeile (nach dem Trimmen) mit einem Bindestrich, der auf ein mindestens zwei Zeichen
     langes Wort folgt (echte Silbentrennung, kein freistehendes "-"), entscheidet das
     erste Wort der nächsten Zeile: beginnt es mit "und"/"oder"/"sowie", bleibt der
     Bindestrich erhalten und die Zeilen werden mit einem Leerzeichen verbunden
@@ -35,7 +43,10 @@ def verbinde_zeilen(zeilen: Sequence[str]) -> str:
     Ziffer, Satzzeichen) bleibt der Bindestrich erhalten, ohne Leerzeichen verbunden
     ("EDV-"/"Hardware." -> "EDV-Hardware.").
     """
-    normalisierte = [_WHITESPACE_MUSTER.sub(" ", zeile.strip()) for zeile in zeilen]
+    normalisierte = [
+        _LEERZEICHEN_VOR_KOMMA_MUSTER.sub(",", _WHITESPACE_MUSTER.sub(" ", zeile.strip()))
+        for zeile in zeilen
+    ]
     ergebnis = normalisierte[0]
     for teil in normalisierte[1:]:
         letztes_wort = ergebnis.rsplit(" ", 1)[-1]
@@ -56,6 +67,7 @@ def ersetze_eurozeichen(text: str) -> str:
     """Ersetzt den misslesbaren Euro-Glyphen "C" nach einer Zahl durch "€" (Spez. 2.2).
 
     Ein "C", das nicht unmittelbar auf eine Ziffer folgt (mit höchstens einem
-    trennenden Leerzeichen), bleibt unverändert (z. B. "Kategorie C").
+    trennenden Leerzeichen und optional der angeklebten Tausend-Abkürzung "T", "105 TC"
+    -> "105 T€"), bleibt unverändert (z. B. "Kategorie C").
     """
     return _EUROZEICHEN_NACH_ZAHL_MUSTER.sub(r"\1€", text)

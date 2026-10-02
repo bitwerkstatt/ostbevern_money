@@ -1,0 +1,230 @@
+produkt,block,position,zu_zeilen,betrag,text,pdf_seite
+010101,1,1,06,,Erstattung Sitzungsgeld BBO sowie SO.,73
+010101,2,2,16,,In dem Ansatz sind u. a. enthalten:,73
+010101,2,3,16,,"Aufwandsentschädigung Ratsmitglieder, Sitzungsgelder für sachkundige Bürgerinnen und Bürger und Fraktionssitzungen, Fraktionszuwendungen",73
+010201,1,1,16,,"Verfügungsmittel des Bürgermeisters (1.300 €) sowie Aufwendungen für Ehrenpatenschaften, Ehrungen, Nachrufe, Repräsentationen und Veranstaltungen (z. B. Neujahrsempfang sowie Ehrung Ehrenamtliche).",75
+010501,1,1,16,,"Der Ansatz enthält zum einen Aufwendungen für die Prüfung der Jahresabschlüsse. Des Weiteren enthält der Ansatz Mittel für die überörtliche Prüfung durch die Gemeindeprüfungsanstalt NRW. Da diese Prüfung ca. alle 5 Jahre stattfindet, werden hierfür entsprechende Mittel in eine Rückstellung eingestellt.",82
+010601,1,1,06,,u. a. Erstattung Mitgliedsbeitrag Städte- und Gemeindebund NRW durch die BBO.,86
+010601,2,2,13,,Aufwendungen für Dienstwagen sowie für die Betriebs- und Geschäftsausstattung.,86
+010601,3,3,16,,"Versicherungsbeiträge, Betriebs- und Geschäftsaufwand (Porto, Bürobedarf, Bücher, Zeitschriften, Archivierungsaufwand etc.).",86
+010602,1,1,02,,Erträge aus der Auflösung von Sonderposten.,89
+010602,2,2,13|16,,In den Ansätzen sind u. a. enthalten:,89
+010602,2,3,13|16,102000,Fahrzeug- und Geräteunterhaltung,89
+010602,2,4,13|16,21500,"Grundstücks- und Gebäudeunterhaltung (zusätzlich 200.000 € aus Rückstellungen, siehe Vorbericht Ziffer 2.2.3)",89
+010602,2,5,13|16,11800,"Strom, Gas, Wasser, Abwasser, Reinigung, Reinig.-mittel",89
+010602,2,6,13|16,9000,Dienst- und Schutzkleidung,89
+010602,2,7,13|16,2000,"Versicherungsleistungen, Schadensfälle",89
+010603,1,1,06,,Erstattung von Personalaufwendungen durch Bäder- und Beteiligungsgesellschaft Ostbevern mbH (BBO).,93
+010603,2,2,15,,Zuschuss für BBO: Verlustausgleich durch die Gemeinde Ostbevern.,93
+010701,1,1,13,,IT-Aufwendungen.,95
+010701,2,2,16,,"Aufwendungen für die Rathauspost, Werbeanzeigen, Telefonbucheintrag, Homepage, Ortsplan, Werbemittel allgemein.",95
+010901,1,1,12,,Die Versorgungsaufwendungen für die pensionierten Beamten werden in diesem Produkt zentral veranschlagt.,100
+010901,2,2,13,,Aufwendungen für Aus- und Fortbildung sowie Aufwendungen für den Betriebsarzt und Sicherheitsingenieur.,100
+010901,3,3,16,,"Aufwendungen für die gesetzliche Unfallversicherung für die Beschäftigten, Reisekosten und Aufwendungen für die “Servicestelle Personal“ und die Durchführung eines Unternehmenskulturchecks.",100
+011001,1,1,02|14,,Für die im Planungszeitraum vorgesehenen Neuinvestitionen sind die kalkulierten Abschreibungen und Erträge aus der Auflösung von Sonderposten gesammelt hier dargestellt. Erst bei der Durchführung der Investition werden diese Beträge den eigentlichen Produkten und Kostenstellen zugeordnet.,104
+011001,2,2,13,,Ausschließlich Leistungsentgelte an die citeq.,104
+011002,1,1,07,,Mahngebühren und Säumniszuschläge.,106
+011002,2,2,13,,Der Ansatz umfasst die Kostenerstattung an die Stadt Warendorf für die Durchführung der Vollstreckung sowie Leistungsentgelte an die citeq.,106
+011003,1,1,04,,u. a. Gebühren für die Unterhaltung der Gewässer II. Ordnung.,108
+011003,2,2,11,,"Der hier veranschlagte Personalaufwand umfasst auch den Bearbeitungsaufwand für Grund- und Gewerbesteuern, Vergnügungs- und Hundesteuern, die zu den allgemeinen Finanzen gehören, bei denen interne Kosten nicht dargestellt werden.",108
+011003,3,3,15,,Zuweisungen an den örtlichen Wasser- und Bodenverband.,108
+011101,1,1,13,,"Aufwendungen für Hard- und Software, externe Dienstleistungen und Leistungsentgelt citeq.",110
+011201,1,1,02,,Erträge aus der Auflösung von Sonderposten.,114
+011201,2,2,13|16,,In den Ansätzen sind u. a. enthalten:,114
+011201,2,3,13|16,121950,"Unterhaltung Grundstücke und Gebäude, Betriebs- und Geschäftsausstattung, Abfuhr Abfallcontainer (zusätzlich 105 T€ aus Rückstellungen, siehe Vorbericht Ziffer 2.2.3)",114
+011201,2,4,13|16,95450,"Strom, Gas, Nahwärme, Wasser, Abwasser, Heizöl",114
+011201,2,5,13|16,17400,"Abgaben, Versicherungen, Schadensfälle",114
+011201,2,6,13|16,56800,"Unterhaltsreinigung, Reinigungsmittel",114
+011202,1,1,05,73800,Mieten (Hausmeisterwg. und Kiga Brock),117
+011202,1,2,05,10800,Nebenkosten (Hausmeisterwg. und Kiga Brock),117
+011202,2,3,16,,Anmietung Scheune als Lager,117
+011202,2,4,16,4200,Mieten,117
+011202,2,5,16,0,Nebenkosten,117
+011204,1,1,05,,"Erbpacht, Jagdgeld sowie Erträge aus der Verpachtung von landwirtschaftlichen Flächen.",121
+011204,2,2,07,,Erträge aus Grundstücksverkäufen in neuen Wohngebieten.,121
+011204,3,3,16,,Pacht- sowie Erbpachtzahlungen.,121
+020101,1,1,04,,Verwaltungsgebühren.,129
+020101,2,2,13,,Kostenerstattung an den Kreis Warendorf und das Land NRW für Führerscheine und Fischereischeine.,129
+020101,3,3,16,,"Aufwendungen für allg. Aufgaben der Gefahrenabwehr, Schiedswesen.",129
+020201,1,1,04,,Verwaltungsgebühren und Marktstandsgelder.,131
+020201,2,2,13,,In dem Ansatz sind u. a. enthalten:,131
+020201,2,3,13,200,Unterhaltung Gebäude (Stromkästen),131
+020201,2,4,13,1200,Strom,131
+020201,2,5,13,3000,citeq,131
+020301,1,1,07,,Verwarnungs- und Bußgelder.,133
+020301,2,2,13,,Unterhaltung von Verkehrssicherungsanlagen.,133
+020401,1,1,04,,Verwaltungsgebühren.,135
+020401,2,2,13,,U. a. Leistungsanteil citeq und Abführung Gebührenanteil an den Bund.,135
+020401,3,3,16,,Aufwendungen für Personalausweise und Reisepässe.,135
+020501,1,1,04,,Verwaltungsgebühren.,137
+020501,2,2,05,,Entgelte aus dem Verkauf von Familienstammbüchern.,137
+020501,3,3,13,,U. a. Leistungsanteil citeq und Kauf von Familienstammbüchern.,137
+020501,4,4,16,,U. a. Lizenz für die Standesamtssoftware.,137
+020601,1,1,06|16,,Kostenerstattung sowie Aufwendungen für die Durchführung der Wahlen.,139
+020601,2,2,13,,Leistungsentgelt citeq.,139
+020701,1,1,02,,Erträge aus der Auflösung von Sonderposten.,141
+020701,2,2,04,,Gebühren für die Leistungen der Feuerwehr.,141
+020701,3,3,13,,In dem Ansatz sind u. a. enthalten:,141
+020701,3,4,13,47700,"Unterhaltung Grundstück, Gebäude, Betriebs- und Geschäftsausstattung",141
+020701,3,5,13,34300,"Strom, Gas, Wasser, Abwasser",141
+020701,3,6,13,15600,"Reinigung, Reinigungsmittel",141
+020701,3,7,13,5600,"Abgaben, Versicherungen",141
+020701,3,8,13,28100,"Aufwendungen für Fahrzeuge (Inspektion, Reparatur, Kraftstoff, Versicherung)",141
+020701,3,9,13,48200,unspezifische Aufwendungen für Unterhaltung von Geräten und Ausrüstungsgegenständen,141
+020701,3,10,13,5000,Aufwendungen für die Optimierung der Löschwasserversorgung im Außenbereich,141
+020701,4,11,16,,In dem Ansatz sind u. a. enthalten:,141
+020701,4,12,16,56200,Aufwandsentschädigungen inkl. Zuschuss zur Kameradschaftspflege sowie Verdienstausfall,141
+020701,4,13,16,10000,Aufwendungen für Aus- und Fortbildung,141
+020701,4,14,16,30000,Aufwendungen für Dienst- und Schutzkleidung sowie Sachausgaben,141
+020701,4,15,16,4700,Versicherungsbeträge,141
+020701,4,16,16,4000,Fernmeldegebühren,141
+030101,1,1,13|16,,In den Ansätzen sind u. a. enthalten:,152
+030101,1,2,13|16,118000,"Unterhaltung Gebäude sowie Unterhaltung Außenanlagen (zusätzlich 55.000 € aus Rückstellungen, siehe Vorbericht Ziffer 2.2.3)",152
+030101,1,3,13|16,66500,"Strom, Nahwärme, Wasser, Abwasser",152
+030101,1,4,13|16,84900,"Unterhaltsreinigung, Reinigungsmittel",152
+030101,1,5,13|16,11100,"Abgaben, Versicherungen, Schadensfälle",152
+030101,1,6,13|16,10300,Unterhaltung Geräte und Ausrüstung,152
+030101,1,7,13|16,8200,Abfuhr Abfallcontainer,152
+030101,1,8,13|16,,u. a. Erstattungen an die BBO für das Schulschwimmen und Schulgirokonto,152
+030102,1,1,13|16,,In den Ansätzen sind u. a. enthalten:,156
+030102,1,2,13|16,59000,"Unterhaltung Gebäude und Aßenanlagen (zusätzlich 16.000 € aus Rückstellungen, siehe Vorbericht Ziffer 2.2.3)",156
+030102,1,3,13|16,34000,"Strom, Nahwärme, Wasser, Abwasser",156
+030102,1,4,13|16,54200,"Unterhaltsreinigung, Reinigungsmittel",156
+030102,1,5,13|16,8000,"Abgaben, Versicherungen, Schadensfälle",156
+030102,1,6,13|16,,u. a. Erstattungen an die BBO für das Schulschwimmen und Schulgirokonto.,156
+030103,1,1,13|16,,In den Ansätzen sind u. a. enthalten:,159
+030103,1,2,13|16,276000,"Unterhaltung Gebäude, Aufzüge und Außenanlagen",159
+030103,1,3,13|16,110800,"Unterhaltsreinigung, Reinigungsmittel",159
+030103,1,4,13|16,123000,"Strom, Nahwärme, Wasser, Abwasser",159
+030103,1,5,13|16,21550,"Abgaben, Versicherungen, Schadensfälle",159
+030103,1,6,13|16,29000,Miete Schulpavillons,159
+030103,1,7,13|16,,u. a. Erstattungen an die BBO für das Schulschwimmen und Schulgirokonto,159
+030104,1,1,02,,"Zuweisung des Landes für die 8-13-Uhr-Betreuung, die OGS-Gruppen, die Betreuung an der Josef-Annegarn-Schule sowie die Auflösung von Sonderposten.",163
+030104,2,2,04|05,,"Elternbeiträge für die 8-13-Uhr-Betreuung, die OGS-Gruppen sowie die Betreuung an der Josef-Annegarn-Schule.",163
+030104,3,3,06,,Essensgeld,163
+030104,4,4,13,,In dem Ansatz sind u. a. enthalten:,163
+030104,4,5,13,9000,Grundstücks- und Gebäudeunterhaltung (siehe Vorbericht Ziffer 2.2.3),163
+030104,4,6,13,18000,"Unterhaltsreinigung, Reinigungsmittel",163
+030104,4,7,13,7200,"Strom, Wasser",163
+030104,4,8,13,,u. a. Abrechnung des Essens (201.000 €) an der OGS und der JAS und Aufwendungen für das Programm Kultur und Schule,163
+030104,5,9,15,,Zuschüsse an die Träger der außerunterrichtlichen Angebote:,163
+030104,5,10,15,,InnoSozial (OGS und 8-13-Uhr-Betreuung Ambrosius-Grundschule) InnoSozial (Betreuung an der Josef-Annegarn-Schule) Caritasverband für den Kreis Warendorf (OGS und 8-13-Uhr-Betreuung Fanz-von-Assisi-Grundschule),163
+030201,1,1,06,,Erstattung von Schülerbeförderungskosten durch das Gymnasium Johanneum für die Schüler der Linie Brock/Dorfbauerschaft.,166
+030201,2,2,13,,Schülerbeförderungskosten inklusive Zuschuss Bustransfer der Loburger Schüler/-innen zum Beverbad.,166
+030301,1,1,02|13,,Zuweisung des Landes bzw. Aufwendungen für Aus- und Fortbildung der Lehrkräfte.,168
+030301,2,2,16,,U. a. Schülerunfallversicherung.,168
+040101,1,1,02,,Zuwendung zur Verleihung des Heimatpreises.,172
+040101,2,2,05,,u. a. Erstattung der Nebenkosten für den Dorfspeicher in Brock sowie Pachteinnahmen für die Antennen auf der Kulturwerkstatt.,172
+040101,3,3,13|16,,(tlw.) In den Ansätzen sind u. a. enthalten:,172
+040101,3,4,13|16,19150,Grundstücks- und Gebäudeunterhaltung (siehe Vorbericht Ziffer 2.2.3),172
+040101,3,5,13|16,10900,"Strom, Gas, Wasser, Abwasser",172
+040101,3,6,13|16,2800,"Unterhaltsreinigung, Reinigungsmittel",172
+040101,3,7,13|16,3400,"Abgaben, Versicherungen, Schadensfälle",172
+040101,4,8,15,,vorgesehene Zuschüsse an kulturtragende Vereine:,172
+040101,4,9,15,4000,Ausstellungen im La Folie,172
+040101,4,10,15,250,Heimatverein,172
+040101,4,11,15,150,Initiative Eichendorff-Siedlung,172
+040101,4,12,15,5400,Kulturforum + 1.400 € Loburger Schlosskonzerte,172
+040101,4,13,15,800,Männergesangverein,172
+040101,4,14,15,1300,Musikverein,172
+040101,4,15,15,4000,OK Ostbevern Kultur,172
+040101,4,16,15,150,Skysingers,172
+040101,4,17,15,300,Spielmannszug Brock,172
+040101,4,18,15,150,Starlights,172
+040101,4,19,15,5000,Verleihung Heimatpreis,172
+040201,1,1,13,,Kostenerstattung an den Zweckverband VHS Warendorf.,175
+040201,2,2,15,,Zuschüsse an Kath. Öffentliche Bücherei sowie Ökumenisches Bildungswerk,175
+040301,1,1,15,,Zuwendungen zu Jekits,177
+040301,2,2,16,,Mitgliedsbeitrag für die Schule für Musik im Kreis Warendorf e. V.,177
+050102,1,1,06,,Landeszuweisung nach dem Flüchtlingsaufnahmegesetz.,182
+050102,2,2,15,,"Leistungen nach dem Asylbewerberleistungsgesetz (Grundleistungen. Krankenhilfe, Unterkunftskosten).",182
+050102,3,3,28,,"Aufwendungen, die als Ertrag im Produkt 10.04.01 (Unterkünfte für Flüchtlinge und Asylbewerber) erscheinen.",182
+050103,1,1,,,Die gewährte Sozialhilfe nach SGB XII wird nicht im Haushalt der Gemeinde aufgeführt. Hier nur interne Personal- und Sachaufwendungen.,184
+050103,2,2,16,,Lizenzgebühr für die Software.,184
+050201,1,1,13,,Gebäudeunterhaltung Fairteiler Im Ansatz sind u. a. enthalten:,186
+050201,1,2,13,2550,Grundstücks- und Gebäudeunterhaltung,186
+050201,1,3,13,350,Abwasser,186
+050201,1,4,13,550,"Abgaben, Versicherung",186
+050201,2,5,15,,Zuschüsse an Vereine und Verbände im sozialen Bereich entsprechend den Richtlinien werden 2025 wie folgt gezahlt:,186
+050201,2,6,15,400,"Aids-Hilfe, Spritzenautomat",186
+050201,2,7,15,490,Christliche Gemeinde,186
+050201,2,8,15,350,DRK,186
+050201,2,9,15,757,Evangelische Kirchengemeinde,186
+050201,2,10,15,300,Fair-Kaufhaus,186
+050201,2,11,15,2000,Frauenhäuser Telgte und Warendorf (je 1000 € laut Richtlinie),186
+050201,2,12,15,520,Hospizkreis,186
+050201,2,13,15,2743,Katholische Kirchengemeinde,186
+050201,2,14,15,12000,Katholische Kirchengemeinde - Pfarrheimflächen,186
+050201,2,15,15,550,Kolpingsfamilie,186
+050201,2,16,15,300,Lebenshilfe Warendorf,186
+050201,2,17,15,350,MHD,186
+050201,2,18,15,160,Seniorencomputerclub,186
+050201,2,19,15,490,Startbahn,186
+050201,2,20,15,340,VDK,186
+050201,2,21,15,790,VIBO,186
+060101,1,1,13,,"Gebäudeunterhaltung, Außenanlagen und Abwasser.",195
+060101,2,2,15,,Hinsichtlich der Höhe der an die Kindertageseinrichtungen gewährten Zuschüsse (siehe Vorbericht Ziffer 2.2.5.).,195
+060101,3,3,16,,Mietzuschüsse für Kita,195
+060201,1,1,13,,In dem Ansatz sind u. a. enthalten:,198
+060201,1,2,13,15300,Grundstücks- und Gebäudeunterhaltung,198
+060201,1,3,13,1250,Abwasser,198
+060201,1,4,13,1800,"Abgaben, Versicherungen, Reinigung, Reinigungsmittel",198
+060201,2,5,15,,"Zuschüsse zum Betrieb des Kinder- und Jugendwerks Ostbevern e. V., zur Durchführung der Spielstadt sowie für Ferienerholungsmaßnahmen",198
+060201,2,6,15,300000,Zuschuss Kinder- und Jugendwerk,198
+060201,2,7,15,8000,Zuschuss für Jugendferienerholungsmaßnahmen,198
+060202,1,1,02,,Erträge aus der Auflösung von Sonderposten.,201
+060202,2,2,13|16,,In den Ansätzen sind u. a. enthalten:,201
+060202,2,3,13|16,150000,"Unterhaltung der Spiel-, Sport- und Bolzplätze sowie Gebäude (siehe Vorbericht Ziffer 2.2.3)",201
+060202,2,4,13|16,500,Unterhaltsreinigung,201
+060202,2,5,13|16,30900,"Strom, Gas, Wasser, Abwasser",201
+060202,2,6,13|16,5400,"Abgaben, Versicherungen, Schadensfälle",201
+080101,1,1,13|16,,In den Ansätzen sind u. a. enthalten:,206
+080101,1,2,13|16,94650,Grundstücks- und Gebäudeunterhaltung (siehe Vorbericht Ziffer 2.2.3),206
+080101,1,3,13|16,52200,"Strom, Nahwärme, Wasser, Abwasser",206
+080101,1,4,13|16,26200,"Unterhaltsreinigung, Reinigungsmittel",206
+080101,1,5,13|16,5500,"Versicherungen, Schadensfälle",206
+080101,2,6,15,,Zuschüsse an sporttreibende Vereine gemäß Sportförderrichtlinien.,206
+090101,1,1,06,,Erstattung im Rahmen der Bauleitplanung.,212
+090101,2,2,13,,Aufwendungen für die Bauleitplanung (siehe Vorbericht 2.2.3).,212
+090201,1,1,13|16,,"Aufwendungen im Rahmen der Durchführung von Umlegungsverfahren (Geschäftsführung, Vermessungen u. a.).",216
+090202,1,1,13,,Aufwendungen für das Geoinformationssystem (GIS).,219
+100301,1,1,,,In diesem Produkt werden Personal- und Sachaufwendungen veranschlagt. Die Wohngeldleistungen werden nicht im Haushalt der Gemeinde veranschlagt.,227
+100401,1,1,04,,Benutzungsgebühren und Erstattung der Nebenkosten für die Übergangwohnheime,229
+100401,2,2,05,,Erstattung von Miete und Nebenkosten für angemietete Wohnungen,229
+100401,3,3,13|16,,(tlw.) In den Ansätzen sind u. a. enthalten:,229
+100401,3,4,13|16,95600,"Unterhaltung Grundstücke und Gebäude, angemietete Objekte sowie Betriebs- und Geschäftsaufwand, Abfuhr Abfallcontainer",229
+100401,3,5,13|16,90500,"Strom, Gas, Wasser, Abwasser",229
+100401,3,6,13|16,11500,"Unterhaltsreinigung, Reinigungsmittel",229
+100401,3,7,13|16,8050,"Abgaben, Versicherungen, Schadensfälle",229
+100401,4,8,16,,Miete sowie Nebenkosten für angemietete Wohnungen,229
+120102,1,1,13,,In dem Ansatz sind u. a. enthalten:,248
+120102,1,2,13,420000,"Unterhaltung der Straßen und Wege (zusätzlich 140.000 € aus Rückstellungen, siehe Vorbericht 2.2.3)",248
+120102,1,3,13,290000,Gebühren für die Straßenoberflächenentwässerung,248
+120102,1,4,13,80000,Unterhaltung der Verkehrssicherungs- und Signalanlagen (Wartung und Reparatur Straßenbeleuchtung),248
+120102,1,5,13,100000,Strom für die Straßenbeleuchtung,248
+120102,1,6,13,25000,Grünabfallentsorgung,248
+120102,1,7,13,4000,Schadensfälle,248
+120201,1,1,13,519000,"Zuschuss der Gemeinde Ostbevern zum Linienbündel WAF 7, Betrieb des Nachtbusses sowie zusätzliche wöchentliche Fahrt nach Münster",251
+120201,1,2,13,14500,Unterhaltung sowie Reinigung Bushaltestellen und Bahnunterführung,251
+120201,1,3,13,1300,Strom,251
+130101,1,1,13,10000,"Unterhaltung Ausgleichsflächen, Gewässer, Biotope",259
+130201,1,1,13,,In dem Ansatz sind u. a. enthalten:,262
+130201,1,2,13,40000,"Unterhaltung Wald-, Park- und Gartenanlagen",262
+130201,1,3,13,700,Strom,262
+130201,1,4,13,150,Reinigungsmittel,262
+140101,1,1,02,,Förderung KfW für Personal- und Sachkosten des Sanierungsmanagers.,270
+140101,2,2,06,,Einspeisevergütung Photovoltaikanlage.,270
+140101,3,3,15,,Energiebonus Baugebiet “Kohkamp III“ als Rückstellung für künftige Verbindlichkeiten.,270
+150101,1,1,04,,Marktstandsgelder Kirmes,274
+150101,2,2,16,,In den Ansätzen sind u. a. enthalten:,274
+150101,2,3,16,12500,Kirmes,274
+150101,2,4,16,500,Faitrade,274
+150101,2,5,16,2500,"Sonstige Veranstaltungen (Wirtschaftsfrühstück, Vorträge, Informationsveranstaltungen, etc.)",274
+150101,2,6,16,10000,Smart Region / Freifunk,274
+150101,2,7,16,5000,AzubiStark u. a.,274
+150102,1,1,13,,Kostenbeteiligung Grenzgängerroute/Friedensroute,277
+150102,1,2,13,2380,Grenzgängerroute,277
+150102,1,3,13,2335,"Friedensroute (ab 2022, weil 2022 die Vital-Förderung ausläuft)",277
+150102,1,4,13,7300,LEADER Anteil Kommune 2024,277
+150102,1,5,13,520,Zuschuss Vereine Sommersandkasten,277
+150102,2,6,15,,"Mitgliedsbeiträge, Öffentlichkeitsarbeit, Versicherungen.",277

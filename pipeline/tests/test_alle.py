@@ -1,4 +1,4 @@
-"""Tests für den alle.py-Einstiegspunkt: Schrittfolge 01 -> 02 -> 04 -> 06 (D-09)."""
+"""Tests für den alle.py-Einstiegspunkt: Schrittfolge 01 -> 02 -> 03 -> 04 -> 06 (D-09)."""
 
 from __future__ import annotations
 
@@ -9,11 +9,13 @@ import pytest
 from typer.testing import CliRunner
 
 import alle
-from ostbevern import investitionen, plaene, pruefung, querschnitte, seiten
+from ostbevern import investitionen, plaene, produkte, pruefung, querschnitte, seiten
 from ostbevern.investitionen import ExtraktionsErgebnis as InvestitionenErgebnis
 from ostbevern.investitionen import InvestitionenFehler
 from ostbevern.konfiguration import PROJEKT_WURZEL, STANDARD_JAHR
 from ostbevern.plaene import ExtraktionsErgebnis
+from ostbevern.produkte import ExtraktionsErgebnis as ProdukteErgebnis
+from ostbevern.produkte import ProdukteFehler
 from ostbevern.pruefung import Bericht, Pruefpunkt, Regelergebnis
 from ostbevern.querschnitte import QuerschnitteFehler
 from ostbevern.seiten import KlassifizierungsErgebnis, SeitenFehler
@@ -49,6 +51,20 @@ def _extraktions_ergebnisse() -> tuple[ExtraktionsErgebnis, ExtraktionsErgebnis]
             zeilen_geschrieben=10128, pfad=Path("daten/aufbereitet/ergebnisplan.csv")
         ),
         ExtraktionsErgebnis(zeilen_geschrieben=4697, pfad=Path("daten/aufbereitet/finanzplan.csv")),
+    )
+
+
+def _produkte_ergebnisse() -> tuple[ProdukteErgebnis, ProdukteErgebnis]:
+    # alle.py ruft .relative_to(PROJEKT_WURZEL) auf diesen Pfaden auf (wie
+    # 03_produktinfos.py); die Fixture braucht deshalb absolute Pfade, wie
+    # _investitionen_ergebnisse() unten.
+    return (
+        ProdukteErgebnis(
+            zeilen_geschrieben=63, pfad=PROJEKT_WURZEL / "daten/aufbereitet/produkte.json"
+        ),
+        ProdukteErgebnis(
+            zeilen_geschrieben=229, pfad=PROJEKT_WURZEL / "daten/aufbereitet/erlaeuterungen.csv"
+        ),
     )
 
 
@@ -112,6 +128,11 @@ def aufrufe(monkeypatch: pytest.MonkeyPatch) -> _Aufrufe:
         aufzeichnung.jahre["plaene"] = jahrgang.haushaltsjahr
         return _extraktions_ergebnisse()
 
+    def _extrahiere_produkte(jahrgang, **kwargs):  # noqa: ANN001, ANN003, ANN202
+        aufzeichnung.reihenfolge.append("produkte")
+        aufzeichnung.jahre["produkte"] = jahrgang.haushaltsjahr
+        return _produkte_ergebnisse()
+
     def _extrahiere_investitionen(jahrgang, **kwargs):  # noqa: ANN001, ANN003, ANN202
         aufzeichnung.reihenfolge.append("investitionen")
         aufzeichnung.jahre["investitionen"] = jahrgang.haushaltsjahr
@@ -134,6 +155,7 @@ def aufrufe(monkeypatch: pytest.MonkeyPatch) -> _Aufrufe:
 
     monkeypatch.setattr(seiten, "klassifiziere_seiten", _klassifiziere_seiten)
     monkeypatch.setattr(plaene, "extrahiere_plaene", _extrahiere_plaene)
+    monkeypatch.setattr(produkte, "extrahiere_produkte", _extrahiere_produkte)
     monkeypatch.setattr(investitionen, "extrahiere_investitionen", _extrahiere_investitionen)
     monkeypatch.setattr(querschnitte, "extrahiere_querschnitte", _extrahiere_querschnitte)
     monkeypatch.setattr(pruefung, "pruefe_alles", _pruefe_alles)
@@ -148,6 +170,7 @@ def test_ohne_jahr_nutzt_standardjahr(aufrufe: _Aufrufe) -> None:
     assert aufrufe.reihenfolge == [
         "seiten",
         "plaene",
+        "produkte",
         "investitionen",
         "querschnitte",
         "pruefe",
@@ -156,6 +179,7 @@ def test_ohne_jahr_nutzt_standardjahr(aufrufe: _Aufrufe) -> None:
     assert aufrufe.jahre == {
         "seiten": STANDARD_JAHR,
         "plaene": STANDARD_JAHR,
+        "produkte": STANDARD_JAHR,
         "investitionen": STANDARD_JAHR,
         "querschnitte": STANDARD_JAHR,
         "pruefe": STANDARD_JAHR,
@@ -187,6 +211,7 @@ def test_roter_bericht_beendet_mit_fehler(
     assert aufrufe.reihenfolge == [
         "seiten",
         "plaene",
+        "produkte",
         "investitionen",
         "querschnitte",
         "pruefe",
@@ -213,6 +238,26 @@ def test_schrittfehler_beendet_mit_fehler(
     assert aufrufe.reihenfolge == []
 
 
+def test_produktfehler_beendet_mit_fehler(
+    aufrufe: _Aufrufe, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def _bricht_ab(jahrgang, **kwargs):  # noqa: ANN001, ANN003, ANN202
+        aufrufe.reihenfolge.append("produkte")
+        raise ProdukteFehler("Testfehler: Produktinformationen nicht lesbar")
+
+    monkeypatch.setattr(produkte, "extrahiere_produkte", _bricht_ab)
+
+    ergebnis = runner.invoke(alle.app, [])
+    assert ergebnis.exit_code == 1
+    ausgabe = (
+        ergebnis.output if ergebnis.stderr_bytes is None else ergebnis.output + ergebnis.stderr
+    )
+    assert "Fehler:" in ausgabe
+    # investitionen, querschnitte und pruefung wurden nicht aufgerufen
+    # (D-09: Abbruch nach dem ersten Fehler).
+    assert aufrufe.reihenfolge == ["seiten", "plaene", "produkte"]
+
+
 def test_investitionsfehler_beendet_mit_fehler(
     aufrufe: _Aufrufe, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -229,7 +274,7 @@ def test_investitionsfehler_beendet_mit_fehler(
     )
     assert "Fehler:" in ausgabe
     # querschnitte und pruefung wurden nicht aufgerufen (D-09: Abbruch nach dem ersten Fehler).
-    assert aufrufe.reihenfolge == ["seiten", "plaene", "investitionen"]
+    assert aufrufe.reihenfolge == ["seiten", "plaene", "produkte", "investitionen"]
 
 
 def test_querschnittfehler_beendet_mit_fehler(
@@ -248,4 +293,4 @@ def test_querschnittfehler_beendet_mit_fehler(
     )
     assert "Fehler:" in ausgabe
     # pruefung wurde nicht aufgerufen (D-09: Abbruch nach dem ersten Fehler).
-    assert aufrufe.reihenfolge == ["seiten", "plaene", "investitionen", "querschnitte"]
+    assert aufrufe.reihenfolge == ["seiten", "plaene", "produkte", "investitionen", "querschnitte"]
