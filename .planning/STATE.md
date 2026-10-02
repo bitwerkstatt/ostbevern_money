@@ -4,10 +4,10 @@ current_phase: 4
 current_phase_name: Manuelle Daten und App-Daten
 status: planning
 stopped_at: Phase 03 complete, ready to plan Phase 4
-last_updated: "2026-10-02T07:59:42.832Z"
+last_updated: "2026-10-02T11:53:41.999Z"
 last_activity: 2026-10-02
 last_activity_desc: Phase 03 complete, transitioned to Phase 4
-state_head: 84109eec7b29f20f933668bc7297470ec1d12475
+state_head: 87f05805f29d5ece9131ce1d76bcd025b829849c
 progress:
   total_phases: 7
   completed_phases: 3
@@ -86,8 +86,6 @@ None yet.
 - [Phase 1]: `app/node_modules` im gemounteten Repo enthält macOS-Binaries; im Linux-Sandbox App-Checks in einer Scratch-Kopie ausführen.
 - [Phase 2]: Code-Review 02-REVIEW.md: 3 Warnungen offen (u. a. Vorzeichen-Beschreibung in `befunde.md`, Kommentar zu PB 09/15 sollte S. 296/299 zitieren).
 - [Phase 2/4]: Die Anhang-B-Eckwerte (B.6), die von `meta.json` oder vom Stellenplan abhängen, lassen sich erst in Phase 4 prüfen. Phase 2 deckt B.1–B.3 und Satzung § 1 ab.
-- [Phase 3]: Code-Review 03-REVIEW.md: 2 Warnungen offen — WR-01 globale Toleranz in `spalten.ordne_spalten` (latent, betrifft Querschnitte/Investitionen/Grundzahlen), WR-02 Mock-Arität in `test_alle.py`; 3 Info.
-- [Phase 3]: `03-SECURITY.md` fehlt noch (security_enforcement aktiv) — `/gsd-secure-phase 03` vor dem Weitergehen.
 
 ### Quick Tasks Completed
 
