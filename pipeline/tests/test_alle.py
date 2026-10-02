@@ -54,13 +54,18 @@ def _extraktions_ergebnisse() -> tuple[ExtraktionsErgebnis, ExtraktionsErgebnis]
     )
 
 
-def _produkte_ergebnisse() -> tuple[ProdukteErgebnis, ProdukteErgebnis]:
+def _produkte_ergebnisse() -> tuple[ProdukteErgebnis, ProdukteErgebnis, ProdukteErgebnis]:
     # alle.py ruft .relative_to(PROJEKT_WURZEL) auf diesen Pfaden auf (wie
     # 03_produktinfos.py); die Fixture braucht deshalb absolute Pfade, wie
     # _investitionen_ergebnisse() unten.
+    # Reihenfolge entspricht dem echten Rückgabewert von produkte.extrahiere_produkte:
+    # (produkte_ergebnis, grundzahlen_ergebnis, erlaeuterungen_ergebnis).
     return (
         ProdukteErgebnis(
             zeilen_geschrieben=63, pfad=PROJEKT_WURZEL / "daten/aufbereitet/produkte.json"
+        ),
+        ProdukteErgebnis(
+            zeilen_geschrieben=1234, pfad=PROJEKT_WURZEL / "daten/aufbereitet/grundzahlen.csv"
         ),
         ProdukteErgebnis(
             zeilen_geschrieben=229, pfad=PROJEKT_WURZEL / "daten/aufbereitet/erlaeuterungen.csv"
