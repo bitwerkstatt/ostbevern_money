@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Setup** - Repo-Struktur, uv-Pipeline, Vue-Grundgerüst mit Münster-Komponenten, Jahrgangskonfiguration, CLAUDE.md und CI (Spez. P0) (completed 2026-10-01)
 - [x] **Phase 2: Kernzahlen** - Seitenklassifikation, Hierarchie, alle Ergebnis- und Finanzpläne; Prüfregeln 1–4 grün, Anhang-B-Sollwerte getroffen (Spez. P1) (completed 2026-10-01)
-- [ ] **Phase 3: Details** - Produktinformationen, Grundzahlen, Erläuterungen, Investitionen; Prüfregeln 6–8 grün, 63 Produkte vollständig (Spez. P2)
+- [x] **Phase 3: Details** - Produktinformationen, Grundzahlen, Erläuterungen, Investitionen; Prüfregeln 6–8 grün, 63 Produkte vollständig (Spez. P2) (completed 2026-10-02)
 - [ ] **Phase 4: Manuelle Daten und App-Daten** - Vorberichtstabellen, meta.json, Erklärtexte, Stellenplan, App-JSON; Prüfregel 5 grün, `alle.py` reproduzierbar (Spez. P3)
 - [ ] **Phase 5: Leitfragen-Seiten** - Start, Einnahmen, Ausgaben, Geldfluss und Glossar beantworten „Woher?“ und „Wofür?“ (Spez. P4)
 - [ ] **Phase 6: Kontext-Seiten** - Entwicklung, Investitionen und Schulden, Rat entscheidet, Stellenplan, „Was nicht im Haushalt steht“ (Spez. P5)
@@ -98,7 +98,7 @@ Plans:
   3. `investitionen.csv` stammt nur aus den Produktseiten. Die Summe je Produkt entspricht Teilfinanzplan Z. 23/30, und die Summe aller Maßnahmen 2026 ergibt 7.224.830 € / 12.280.484 € (Regel 6). „(Kassenwirksamkeit)“-Zeilen stehen in `ve_faelligkeiten.csv` und nicht in den Summen.
   4. Die Querschnitte ab S. 291 stimmen mit den eigenen PG-Aggregaten überein (Regel 7). `konsistenz.md` meldet die Regeln 1–4 und 6–8 als grün.
 
-**Plans**: 5/5 plans executed
+**Plans**: 5/5 plans complete
 
 Plans:
 **Wave 1**
@@ -198,7 +198,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 |-------|----------------|--------|-----------|
 | 1. Setup | 5/5 | Complete    | 2026-10-01 |
 | 2. Kernzahlen | 5/5 | Complete    | 2026-10-01 |
-| 3. Details | 5/5 | In Progress|  |
+| 3. Details | 5/5 | Complete    | 2026-10-02 |
 | 4. Manuelle Daten und App-Daten | 0/TBD | Not started | - |
 | 5. Leitfragen-Seiten | 0/TBD | Not started | - |
 | 6. Kontext-Seiten | 0/TBD | Not started | - |
