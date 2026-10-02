@@ -23,6 +23,38 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Extern: Ratsmitglieder, Fraktionen, Sachkundige Bürger/innen, Einwohner/innen Intern: Politische Gremien, Fachbereiche und sonstige Dienststellen der Verwaltung",
     "ziele": "Sicherstellung einer effizienten Arbeit der politischen Gremien Umfassende und reibungslose Vorbereitung der Sitzungen Zeitnahe Protokollführung Sicherung des Informationsflusses zwischen Verwaltung und Mandatsträger",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "06"
+        ],
+        "betrag": null,
+        "text": "Erstattung Sitzungsgeld BBO sowie SO.",
+        "pdf_seite": 73
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "In dem Ansatz sind u. a. enthalten:",
+        "pdf_seite": 73
+      },
+      {
+        "block": 2,
+        "position": 3,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Aufwandsentschädigung Ratsmitglieder, Sitzungsgelder für sachkundige Bürgerinnen und Bürger und Fraktionssitzungen, Fraktionszuwendungen",
+        "pdf_seite": 73
+      }
+    ],
     "pdf_seiten": [
       72,
       73
@@ -51,6 +83,18 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Extern: Ratsmitglieder, Fraktionen, Einwohner/innen Intern: Mitarbeiter/innen",
     "ziele": "Erhaltung eines leistungsfähigen Verwaltungsbetriebes Optimierung der Steuerung der Verwaltung, der Verwaltungsabläufe und des Verwaltungshandelns",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Verfügungsmittel des Bürgermeisters (1.300 €) sowie Aufwendungen für Ehrenpatenschaften, Ehrungen, Nachrufe, Repräsentationen und Veranstaltungen (z. B. Neujahrsempfang sowie Ehrung Ehrenamtliche).",
+        "pdf_seite": 75
+      }
+    ],
     "pdf_seiten": [
       74,
       75
@@ -84,6 +128,7 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Extern: Einwohner/innen, Vereine, Verbände, gesellschaftliche Gruppen, Institutionen Intern: Mitarbeiter/innen",
     "ziele": "Durchsetzung der Gleichstellung von Mädchen und Frauen auf allen gesellschaftlichen Ebenen Weiterentwicklung und Etablierung von geschlechterspezifischen Angeboten Thematisierung vorhandener Benachteiligungen und Aufzeigen von Handlungsbedarfen Netzwerkaufbau und -pflege, aktive Öffentlichkeitsarbeit",
+    "erlaeuterungen": [],
     "pdf_seiten": [
       76,
       77,
@@ -114,6 +159,7 @@
     "klassifizierung": "intern",
     "zielgruppe": "Mitarbeiter/innen, Verwaltungsführung",
     "ziele": "Wahrnehmung aller Vertretungsrechte für Mitarbeiter/innen bei personellen und organisatorischen Entscheidungen",
+    "erlaeuterungen": [],
     "pdf_seiten": [
       79,
       80
@@ -142,6 +188,18 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Verwaltungsleitung, Gemeinderat, Aufsichtsbehörde",
     "ziele": "Überwachung und Kontrolle der Kassen- und Haushaltsführung sowie der zweckgebundenen Verwendung von Haushaltsmitteln, auch Dritter, unter Beachtung der Grundsätze der Rechtmäßigkeit, Zweckmäßigkeit und Wirtschaftlichkeit. Abschlüsse 2021 2022 2023 2024 Jahresabschluss uneingeschränkter uneingeschränkter uneingeschränkter Prüfung ab der Gemeinde Bestätigungsverm. erteilt. Bestätigungsverm. erteilt. Bestätigungsverm. erteilt. Nov. 2025.",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Der Ansatz enthält zum einen Aufwendungen für die Prüfung der Jahresabschlüsse. Des Weiteren enthält der Ansatz Mittel für die überörtliche Prüfung durch die Gemeindeprüfungsanstalt NRW. Da diese Prüfung ca. alle 5 Jahre stattfindet, werden hierfür entsprechende Mittel in eine Rückstellung eingestellt.",
+        "pdf_seite": 82
+      }
+    ],
     "pdf_seiten": [
       81,
       82
@@ -173,6 +231,38 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Extern: Einwohner/innen, Vereine, Verbände, sonstige Institutionen Intern: Fachbereiche und sonstige Dienststellen der Verwaltung",
     "ziele": "- Sicherstellung einer effektiven und effizienten Gestaltung des Dienstbetriebes - Optimierung von Verwaltungsabläufen - wirtschaftliche Beschaffung von Büro- und Geschäftsausstattung - Gewährleistung des Datenschutzes - Zugriffsmöglichkeit auf das aktuelle Ortsrecht",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "06"
+        ],
+        "betrag": null,
+        "text": "u. a. Erstattung Mitgliedsbeitrag Städte- und Gemeindebund NRW durch die BBO.",
+        "pdf_seite": 86
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Aufwendungen für Dienstwagen sowie für die Betriebs- und Geschäftsausstattung.",
+        "pdf_seite": 86
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Versicherungsbeiträge, Betriebs- und Geschäftsaufwand (Porto, Bürobedarf, Bücher, Zeitschriften, Archivierungsaufwand etc.).",
+        "pdf_seite": 86
+      }
+    ],
     "pdf_seiten": [
       84,
       85,
@@ -213,6 +303,84 @@
     "klassifizierung": "intern",
     "zielgruppe": "Fachbereiche in der Verwaltung",
     "ziele": "Wirtschaftliche und zeitnahe Erledigung aller übertragenen Aufgaben Gewährleistung eines sauberen und ansprechenden Erscheinungsbildes der Gemeinde",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "02"
+        ],
+        "betrag": null,
+        "text": "Erträge aus der Auflösung von Sonderposten.",
+        "pdf_seite": 89
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": null,
+        "text": "In den Ansätzen sind u. a. enthalten:",
+        "pdf_seite": 89
+      },
+      {
+        "block": 2,
+        "position": 3,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 102000,
+        "text": "Fahrzeug- und Geräteunterhaltung",
+        "pdf_seite": 89
+      },
+      {
+        "block": 2,
+        "position": 4,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 21500,
+        "text": "Grundstücks- und Gebäudeunterhaltung (zusätzlich 200.000 € aus Rückstellungen, siehe Vorbericht Ziffer 2.2.3)",
+        "pdf_seite": 89
+      },
+      {
+        "block": 2,
+        "position": 5,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 11800,
+        "text": "Strom, Gas, Wasser, Abwasser, Reinigung, Reinig.-mittel",
+        "pdf_seite": 89
+      },
+      {
+        "block": 2,
+        "position": 6,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 9000,
+        "text": "Dienst- und Schutzkleidung",
+        "pdf_seite": 89
+      },
+      {
+        "block": 2,
+        "position": 7,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 2000,
+        "text": "Versicherungsleistungen, Schadensfälle",
+        "pdf_seite": 89
+      }
+    ],
     "pdf_seiten": [
       88,
       89,
@@ -244,6 +412,28 @@
     "klassifizierung": "extern",
     "zielgruppe": "Bäder- und Beteiligungsgesellschaft Ostbevern mbH, Abwasserbetrieb TEO AöR, Stadtwerke Ostmünsterland GmbH & Co. KG",
     "ziele": "Wirtschaftliche Betriebs- und Geschäftsführung für die BBO Unterstützung und Verwaltung von verbundenen Unternehmen und Beteiligungen",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "06"
+        ],
+        "betrag": null,
+        "text": "Erstattung von Personalaufwendungen durch Bäder- und Beteiligungsgesellschaft Ostbevern mbH (BBO).",
+        "pdf_seite": 93
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "Zuschuss für BBO: Verlustausgleich durch die Gemeinde Ostbevern.",
+        "pdf_seite": 93
+      }
+    ],
     "pdf_seiten": [
       92,
       93
@@ -276,6 +466,28 @@
     "klassifizierung": "extern",
     "zielgruppe": "Einwohner/innen sowie Auswärtige",
     "ziele": "Umfassende Information der Einwohner/innen über gemeindliche Angelegenheiten und Angebote Imageförderung und Weiterentwicklung der einheitlichen Außendarstellung (Weiter-)Entwicklung der Social-Media-Strategie im Einklang mit den Kommunikationszielen der Gemeinde Ostbevern",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "IT-Aufwendungen.",
+        "pdf_seite": 95
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Aufwendungen für die Rathauspost, Werbeanzeigen, Telefonbucheintrag, Homepage, Ortsplan, Werbemittel allgemein.",
+        "pdf_seite": 95
+      }
+    ],
     "pdf_seiten": [
       94,
       95
@@ -299,6 +511,7 @@
     "klassifizierung": "extern",
     "zielgruppe": "Einwohner/innen, Vereine, politische Gremien, auch der beteiligten Partnerkommune",
     "ziele": "Austausch mit Einwohner/innen der Partnerstadt in kulturellen, sportlichen, touristischen, wirtschaftlichen und sozialen Bereichen",
+    "erlaeuterungen": [],
     "pdf_seiten": [
       96,
       97
@@ -349,6 +562,38 @@
     "klassifizierung": "intern",
     "zielgruppe": "Alle Beschäftigte und Beamte sowie Auszubildende und Praktikanten Verwaltungsführung, Personalrat und Gleichstellungsbeauftragte",
     "ziele": "Sicherstellung eines aufgaben- und bedarfsgerechten Personaleinsatzes unter Berücksichtigung von Anforderungen der Stellen und individuellen Fähigkeiten und Neigungen, Ausbildungsqualifizierungen, Berufserfahrung und auch unter Berücksichtigung von notwendigen oder wünschenswerten Teilzeit- oder Vollzeitbesetzungen Sicherstellung einer qualifizierten Nachwuchsausbildung und Weiterqualifizierung des vorhandenen Personals zur Ergänzung einer vorausschauenden Personalplanung Sicherstellung eines nachhaltigen Arbeitsschutzes",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "12"
+        ],
+        "betrag": null,
+        "text": "Die Versorgungsaufwendungen für die pensionierten Beamten werden in diesem Produkt zentral veranschlagt.",
+        "pdf_seite": 100
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Aufwendungen für Aus- und Fortbildung sowie Aufwendungen für den Betriebsarzt und Sicherheitsingenieur.",
+        "pdf_seite": 100
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Aufwendungen für die gesetzliche Unfallversicherung für die Beschäftigten, Reisekosten und Aufwendungen für die “Servicestelle Personal“ und die Durchführung eines Unternehmenskulturchecks.",
+        "pdf_seite": 100
+      }
+    ],
     "pdf_seiten": [
       98,
       99,
@@ -380,6 +625,29 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Intern: Mitarbeiter/innen Extern: Einwohner/innen, politische Gremien",
     "ziele": "Sicherstellung einer geordneten Finanzwirtschaft Termingerechte Erstellung des HH-Planes, der Finanzzwischenberichte und der Jahresabschlüsse",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "02",
+          "14"
+        ],
+        "betrag": null,
+        "text": "Für die im Planungszeitraum vorgesehenen Neuinvestitionen sind die kalkulierten Abschreibungen und Erträge aus der Auflösung von Sonderposten gesammelt hier dargestellt. Erst bei der Durchführung der Investition werden diese Beträge den eigentlichen Produkten und Kostenstellen zugeordnet.",
+        "pdf_seite": 104
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Ausschließlich Leistungsentgelte an die citeq.",
+        "pdf_seite": 104
+      }
+    ],
     "pdf_seiten": [
       103,
       104
@@ -407,6 +675,28 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Intern: Fachämter, Verwaltungsführung Extern: Zahlungspflichtige und Zahlungsempfänger, Vollstreckungsbehörden, Gerichte,",
     "ziele": "Ordnungsgemäße Abwicklung aller Zahlungsgeschäfte Gewährleistung termingerechter Zahlungen der Gemeinde Wirtschaftliche Verwaltung der Kassenmittel Liquiditätssicherung Realisierung offener Forderungen",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "07"
+        ],
+        "betrag": null,
+        "text": "Mahngebühren und Säumniszuschläge.",
+        "pdf_seite": 106
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Der Ansatz umfasst die Kostenerstattung an die Stadt Warendorf für die Durchführung der Vollstreckung sowie Leistungsentgelte an die citeq.",
+        "pdf_seite": 106
+      }
+    ],
     "pdf_seiten": [
       105,
       106
@@ -430,6 +720,38 @@
     "klassifizierung": "extern",
     "zielgruppe": "Abgabenpflichtige",
     "ziele": "Erzielung von Einnahmen zur Deckung des Gesamthaushaltes",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "04"
+        ],
+        "betrag": null,
+        "text": "u. a. Gebühren für die Unterhaltung der Gewässer II. Ordnung.",
+        "pdf_seite": 108
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "11"
+        ],
+        "betrag": null,
+        "text": "Der hier veranschlagte Personalaufwand umfasst auch den Bearbeitungsaufwand für Grund- und Gewerbesteuern, Vergnügungs- und Hundesteuern, die zu den allgemeinen Finanzen gehören, bei denen interne Kosten nicht dargestellt werden.",
+        "pdf_seite": 108
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "Zuweisungen an den örtlichen Wasser- und Bodenverband.",
+        "pdf_seite": 108
+      }
+    ],
     "pdf_seiten": [
       107,
       108
@@ -461,6 +783,18 @@
     "klassifizierung": "intern",
     "zielgruppe": "Fachbereiche sowie Mitarbeiter/innen",
     "ziele": "Sicherstellung eines ordnungsgemäßen IT-unterstützten Dienstbetriebes",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Aufwendungen für Hard- und Software, externe Dienstleistungen und Leistungsentgelt citeq.",
+        "pdf_seite": 110
+      }
+    ],
     "pdf_seiten": [
       109,
       110,
@@ -487,6 +821,73 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Gebäudenutzer",
     "ziele": "Substanzerhaltung Optimierung der Energiebilanz Gewährleistung eines gebrauchsfähhigen Gebäudezustandes",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "02"
+        ],
+        "betrag": null,
+        "text": "Erträge aus der Auflösung von Sonderposten.",
+        "pdf_seite": 114
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": null,
+        "text": "In den Ansätzen sind u. a. enthalten:",
+        "pdf_seite": 114
+      },
+      {
+        "block": 2,
+        "position": 3,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 121950,
+        "text": "Unterhaltung Grundstücke und Gebäude, Betriebs- und Geschäftsausstattung, Abfuhr Abfallcontainer (zusätzlich 105 T€ aus Rückstellungen, siehe Vorbericht Ziffer 2.2.3)",
+        "pdf_seite": 114
+      },
+      {
+        "block": 2,
+        "position": 4,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 95450,
+        "text": "Strom, Gas, Nahwärme, Wasser, Abwasser, Heizöl",
+        "pdf_seite": 114
+      },
+      {
+        "block": 2,
+        "position": 5,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 17400,
+        "text": "Abgaben, Versicherungen, Schadensfälle",
+        "pdf_seite": 114
+      },
+      {
+        "block": 2,
+        "position": 6,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 56800,
+        "text": "Unterhaltsreinigung, Reinigungsmittel",
+        "pdf_seite": 114
+      }
+    ],
     "pdf_seiten": [
       113,
       114,
@@ -511,6 +912,58 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Käufer, Verkäufer, Mieter, Vermieter, Eigentümer",
     "ziele": "Vermietung von Gebäuden",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "05"
+        ],
+        "betrag": 73800,
+        "text": "Mieten (Hausmeisterwg. und Kiga Brock)",
+        "pdf_seite": 117
+      },
+      {
+        "block": 1,
+        "position": 2,
+        "zu_zeilen": [
+          "05"
+        ],
+        "betrag": 10800,
+        "text": "Nebenkosten (Hausmeisterwg. und Kiga Brock)",
+        "pdf_seite": 117
+      },
+      {
+        "block": 2,
+        "position": 3,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Anmietung Scheune als Lager",
+        "pdf_seite": 117
+      },
+      {
+        "block": 2,
+        "position": 4,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": 4200,
+        "text": "Mieten",
+        "pdf_seite": 117
+      },
+      {
+        "block": 2,
+        "position": 5,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": 0,
+        "text": "Nebenkosten",
+        "pdf_seite": 117
+      }
+    ],
     "pdf_seiten": [
       116,
       117
@@ -533,6 +986,7 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Gebäudenutzer/innen",
     "ziele": "Umsetzung beschlossener Baumaßnahmen",
+    "erlaeuterungen": [],
     "pdf_seiten": [
       118,
       119
@@ -558,6 +1012,38 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Käufer, Verkäufer, Pächter, Verpächter, Eigentümer, Erbbauberechtigte",
     "ziele": "Vorhaltung von Baugrundstücken zur Ansiedlung junger Familien",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "05"
+        ],
+        "betrag": null,
+        "text": "Erbpacht, Jagdgeld sowie Erträge aus der Verpachtung von landwirtschaftlichen Flächen.",
+        "pdf_seite": 121
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "07"
+        ],
+        "betrag": null,
+        "text": "Erträge aus Grundstücksverkäufen in neuen Wohngebieten.",
+        "pdf_seite": 121
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Pacht- sowie Erbpachtzahlungen.",
+        "pdf_seite": 121
+      }
+    ],
     "pdf_seiten": [
       120,
       121,
@@ -599,6 +1085,38 @@
     "klassifizierung": "extern",
     "zielgruppe": "Einwohner/innen",
     "ziele": "Beseitigung von Gefahren für die öffentliche Sicherheit und Ordnung Schutz vor gefährlichen Einflüssen für Leib und Leben",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "04"
+        ],
+        "betrag": null,
+        "text": "Verwaltungsgebühren.",
+        "pdf_seite": 129
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Kostenerstattung an den Kreis Warendorf und das Land NRW für Führerscheine und Fischereischeine.",
+        "pdf_seite": 129
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Aufwendungen für allg. Aufgaben der Gefahrenabwehr, Schiedswesen.",
+        "pdf_seite": 129
+      }
+    ],
     "pdf_seiten": [
       127,
       128,
@@ -627,6 +1145,58 @@
     "klassifizierung": "extern",
     "zielgruppe": "Gewerbetreibende, Einwohner/innen",
     "ziele": "Ordnungsgemäße Gewerbe- und Gaststättenausübung",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "04"
+        ],
+        "betrag": null,
+        "text": "Verwaltungsgebühren und Marktstandsgelder.",
+        "pdf_seite": 131
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "In dem Ansatz sind u. a. enthalten:",
+        "pdf_seite": 131
+      },
+      {
+        "block": 2,
+        "position": 3,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 200,
+        "text": "Unterhaltung Gebäude (Stromkästen)",
+        "pdf_seite": 131
+      },
+      {
+        "block": 2,
+        "position": 4,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 1200,
+        "text": "Strom",
+        "pdf_seite": 131
+      },
+      {
+        "block": 2,
+        "position": 5,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 3000,
+        "text": "citeq",
+        "pdf_seite": 131
+      }
+    ],
     "pdf_seiten": [
       130,
       131
@@ -654,6 +1224,28 @@
     "klassifizierung": "extern",
     "zielgruppe": "Einwohner/innen, Verkehrsteilnehmer/innen, Sondernutzer/innen",
     "ziele": "Reibungsloser Verkehrsfluss Beseitigung von Gefahren Verringerung von Behinderungen für Anwohner, Verkehrsteilnehmer sowie Einsatzfahrzeuge",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "07"
+        ],
+        "betrag": null,
+        "text": "Verwarnungs- und Bußgelder.",
+        "pdf_seite": 133
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Unterhaltung von Verkehrssicherungsanlagen.",
+        "pdf_seite": 133
+      }
+    ],
     "pdf_seiten": [
       132,
       133
@@ -681,6 +1273,38 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Einwohner/innen, andere Behörden",
     "ziele": "Registrierung aller Einwohner/innen bedarfsgerechte Versorgung mit Dokumenten Sicherstellen eines schnellen und kompetenten Bürgerservices",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "04"
+        ],
+        "betrag": null,
+        "text": "Verwaltungsgebühren.",
+        "pdf_seite": 135
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "U. a. Leistungsanteil citeq und Abführung Gebührenanteil an den Bund.",
+        "pdf_seite": 135
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Aufwendungen für Personalausweise und Reisepässe.",
+        "pdf_seite": 135
+      }
+    ],
     "pdf_seiten": [
       134,
       135
@@ -708,6 +1332,48 @@
     "klassifizierung": "extern",
     "zielgruppe": "Einwohner/innen",
     "ziele": "Feststellung und Nachweis personenbezogener Daten Rechtmäßige Dokumentation des Personenstandes",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "04"
+        ],
+        "betrag": null,
+        "text": "Verwaltungsgebühren.",
+        "pdf_seite": 137
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "05"
+        ],
+        "betrag": null,
+        "text": "Entgelte aus dem Verkauf von Familienstammbüchern.",
+        "pdf_seite": 137
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "U. a. Leistungsanteil citeq und Kauf von Familienstammbüchern.",
+        "pdf_seite": 137
+      },
+      {
+        "block": 4,
+        "position": 4,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "U. a. Lizenz für die Standesamtssoftware.",
+        "pdf_seite": 137
+      }
+    ],
     "pdf_seiten": [
       136,
       137
@@ -736,6 +1402,29 @@
     "klassifizierung": "extern",
     "zielgruppe": "Wahlberechtigte, zuständige Wahlleiter",
     "ziele": "Ordnungsgemäße Durchführung von öffentlichen Wahlen und Abstimmungen",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "06",
+          "16"
+        ],
+        "betrag": null,
+        "text": "Kostenerstattung sowie Aufwendungen für die Durchführung der Wahlen.",
+        "pdf_seite": 139
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Leistungsentgelt citeq.",
+        "pdf_seite": 139
+      }
+    ],
     "pdf_seiten": [
       138,
       139
@@ -766,6 +1455,168 @@
     "klassifizierung": "extern",
     "zielgruppe": "Einwohner/innen, Feuerwehr, Rettungsdienste, Hilfsorganisationen",
     "ziele": "Sicherstellung gesetzlich vorgeschriebener Anforderungen und Ausrückzeiten Vermeidung oder Begrenzung von Schäden an Personen, Sachen und Gebäuden",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "02"
+        ],
+        "betrag": null,
+        "text": "Erträge aus der Auflösung von Sonderposten.",
+        "pdf_seite": 141
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "04"
+        ],
+        "betrag": null,
+        "text": "Gebühren für die Leistungen der Feuerwehr.",
+        "pdf_seite": 141
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "In dem Ansatz sind u. a. enthalten:",
+        "pdf_seite": 141
+      },
+      {
+        "block": 3,
+        "position": 4,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 47700,
+        "text": "Unterhaltung Grundstück, Gebäude, Betriebs- und Geschäftsausstattung",
+        "pdf_seite": 141
+      },
+      {
+        "block": 3,
+        "position": 5,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 34300,
+        "text": "Strom, Gas, Wasser, Abwasser",
+        "pdf_seite": 141
+      },
+      {
+        "block": 3,
+        "position": 6,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 15600,
+        "text": "Reinigung, Reinigungsmittel",
+        "pdf_seite": 141
+      },
+      {
+        "block": 3,
+        "position": 7,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 5600,
+        "text": "Abgaben, Versicherungen",
+        "pdf_seite": 141
+      },
+      {
+        "block": 3,
+        "position": 8,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 28100,
+        "text": "Aufwendungen für Fahrzeuge (Inspektion, Reparatur, Kraftstoff, Versicherung)",
+        "pdf_seite": 141
+      },
+      {
+        "block": 3,
+        "position": 9,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 48200,
+        "text": "unspezifische Aufwendungen für Unterhaltung von Geräten und Ausrüstungsgegenständen",
+        "pdf_seite": 141
+      },
+      {
+        "block": 3,
+        "position": 10,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 5000,
+        "text": "Aufwendungen für die Optimierung der Löschwasserversorgung im Außenbereich",
+        "pdf_seite": 141
+      },
+      {
+        "block": 4,
+        "position": 11,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "In dem Ansatz sind u. a. enthalten:",
+        "pdf_seite": 141
+      },
+      {
+        "block": 4,
+        "position": 12,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": 56200,
+        "text": "Aufwandsentschädigungen inkl. Zuschuss zur Kameradschaftspflege sowie Verdienstausfall",
+        "pdf_seite": 141
+      },
+      {
+        "block": 4,
+        "position": 13,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": 10000,
+        "text": "Aufwendungen für Aus- und Fortbildung",
+        "pdf_seite": 141
+      },
+      {
+        "block": 4,
+        "position": 14,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": 30000,
+        "text": "Aufwendungen für Dienst- und Schutzkleidung sowie Sachausgaben",
+        "pdf_seite": 141
+      },
+      {
+        "block": 4,
+        "position": 15,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": 4700,
+        "text": "Versicherungsbeträge",
+        "pdf_seite": 141
+      },
+      {
+        "block": 4,
+        "position": 16,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": 4000,
+        "text": "Fernmeldegebühren",
+        "pdf_seite": 141
+      }
+    ],
     "pdf_seiten": [
       140,
       141,
@@ -795,6 +1646,96 @@
     "klassifizierung": "extern",
     "zielgruppe": "Schüler/innen, Erziehungsberechtigte",
     "ziele": "Sicherstellung und Weiterentwicklung eines bedarfsgerechten wohnortnahen Grundschulangebotes",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": null,
+        "text": "In den Ansätzen sind u. a. enthalten:",
+        "pdf_seite": 152
+      },
+      {
+        "block": 1,
+        "position": 2,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 118000,
+        "text": "Unterhaltung Gebäude sowie Unterhaltung Außenanlagen (zusätzlich 55.000 € aus Rückstellungen, siehe Vorbericht Ziffer 2.2.3)",
+        "pdf_seite": 152
+      },
+      {
+        "block": 1,
+        "position": 3,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 66500,
+        "text": "Strom, Nahwärme, Wasser, Abwasser",
+        "pdf_seite": 152
+      },
+      {
+        "block": 1,
+        "position": 4,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 84900,
+        "text": "Unterhaltsreinigung, Reinigungsmittel",
+        "pdf_seite": 152
+      },
+      {
+        "block": 1,
+        "position": 5,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 11100,
+        "text": "Abgaben, Versicherungen, Schadensfälle",
+        "pdf_seite": 152
+      },
+      {
+        "block": 1,
+        "position": 6,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 10300,
+        "text": "Unterhaltung Geräte und Ausrüstung",
+        "pdf_seite": 152
+      },
+      {
+        "block": 1,
+        "position": 7,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 8200,
+        "text": "Abfuhr Abfallcontainer",
+        "pdf_seite": 152
+      },
+      {
+        "block": 1,
+        "position": 8,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": null,
+        "text": "u. a. Erstattungen an die BBO für das Schulschwimmen und Schulgirokonto",
+        "pdf_seite": 152
+      }
+    ],
     "pdf_seiten": [
       151,
       152,
@@ -822,6 +1763,74 @@
     "klassifizierung": "extern",
     "zielgruppe": "Schüler/innen, Erziehungsberechtigte Außerschulische Nutzer wie VHS, Musikschule, Musik- und Sportvereine",
     "ziele": "Sicherstellung und Weiterentwicklung eines bedarfsgerechten wohnortnahen Grundschulangebotes",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": null,
+        "text": "In den Ansätzen sind u. a. enthalten:",
+        "pdf_seite": 156
+      },
+      {
+        "block": 1,
+        "position": 2,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 59000,
+        "text": "Unterhaltung Gebäude und Aßenanlagen (zusätzlich 16.000 € aus Rückstellungen, siehe Vorbericht Ziffer 2.2.3)",
+        "pdf_seite": 156
+      },
+      {
+        "block": 1,
+        "position": 3,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 34000,
+        "text": "Strom, Nahwärme, Wasser, Abwasser",
+        "pdf_seite": 156
+      },
+      {
+        "block": 1,
+        "position": 4,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 54200,
+        "text": "Unterhaltsreinigung, Reinigungsmittel",
+        "pdf_seite": 156
+      },
+      {
+        "block": 1,
+        "position": 5,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 8000,
+        "text": "Abgaben, Versicherungen, Schadensfälle",
+        "pdf_seite": 156
+      },
+      {
+        "block": 1,
+        "position": 6,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": null,
+        "text": "u. a. Erstattungen an die BBO für das Schulschwimmen und Schulgirokonto.",
+        "pdf_seite": 156
+      }
+    ],
     "pdf_seiten": [
       155,
       156,
@@ -849,6 +1858,85 @@
     "klassifizierung": "extern",
     "zielgruppe": "Schüler/innen, Erziehungsberechtigte",
     "ziele": "Sicherstellung und Weiterentwicklung eines bedarfsgerechten wohnortnahen Schulangebotes als weiterführende Schule",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": null,
+        "text": "In den Ansätzen sind u. a. enthalten:",
+        "pdf_seite": 159
+      },
+      {
+        "block": 1,
+        "position": 2,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 276000,
+        "text": "Unterhaltung Gebäude, Aufzüge und Außenanlagen",
+        "pdf_seite": 159
+      },
+      {
+        "block": 1,
+        "position": 3,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 110800,
+        "text": "Unterhaltsreinigung, Reinigungsmittel",
+        "pdf_seite": 159
+      },
+      {
+        "block": 1,
+        "position": 4,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 123000,
+        "text": "Strom, Nahwärme, Wasser, Abwasser",
+        "pdf_seite": 159
+      },
+      {
+        "block": 1,
+        "position": 5,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 21550,
+        "text": "Abgaben, Versicherungen, Schadensfälle",
+        "pdf_seite": 159
+      },
+      {
+        "block": 1,
+        "position": 6,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 29000,
+        "text": "Miete Schulpavillons",
+        "pdf_seite": 159
+      },
+      {
+        "block": 1,
+        "position": 7,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": null,
+        "text": "u. a. Erstattungen an die BBO für das Schulschwimmen und Schulgirokonto",
+        "pdf_seite": 159
+      }
+    ],
     "pdf_seiten": [
       158,
       159,
@@ -878,6 +1966,109 @@
     "klassifizierung": "extern",
     "zielgruppe": "Schüler/innen und deren Erziehungsberechtigte Träger der außerunterrichtlichen Angebote",
     "ziele": "Sicherstellung und Weiterentwicklung einer bedarfsgerechten wohnortnahen Ganztagsbetreuung",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "02"
+        ],
+        "betrag": null,
+        "text": "Zuweisung des Landes für die 8-13-Uhr-Betreuung, die OGS-Gruppen, die Betreuung an der Josef-Annegarn-Schule sowie die Auflösung von Sonderposten.",
+        "pdf_seite": 163
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "04",
+          "05"
+        ],
+        "betrag": null,
+        "text": "Elternbeiträge für die 8-13-Uhr-Betreuung, die OGS-Gruppen sowie die Betreuung an der Josef-Annegarn-Schule.",
+        "pdf_seite": 163
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "06"
+        ],
+        "betrag": null,
+        "text": "Essensgeld",
+        "pdf_seite": 163
+      },
+      {
+        "block": 4,
+        "position": 4,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "In dem Ansatz sind u. a. enthalten:",
+        "pdf_seite": 163
+      },
+      {
+        "block": 4,
+        "position": 5,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 9000,
+        "text": "Grundstücks- und Gebäudeunterhaltung (siehe Vorbericht Ziffer 2.2.3)",
+        "pdf_seite": 163
+      },
+      {
+        "block": 4,
+        "position": 6,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 18000,
+        "text": "Unterhaltsreinigung, Reinigungsmittel",
+        "pdf_seite": 163
+      },
+      {
+        "block": 4,
+        "position": 7,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 7200,
+        "text": "Strom, Wasser",
+        "pdf_seite": 163
+      },
+      {
+        "block": 4,
+        "position": 8,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "u. a. Abrechnung des Essens (201.000 €) an der OGS und der JAS und Aufwendungen für das Programm Kultur und Schule",
+        "pdf_seite": 163
+      },
+      {
+        "block": 5,
+        "position": 9,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "Zuschüsse an die Träger der außerunterrichtlichen Angebote:",
+        "pdf_seite": 163
+      },
+      {
+        "block": 5,
+        "position": 10,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "InnoSozial (OGS und 8-13-Uhr-Betreuung Ambrosius-Grundschule) InnoSozial (Betreuung an der Josef-Annegarn-Schule) Caritasverband für den Kreis Warendorf (OGS und 8-13-Uhr-Betreuung Fanz-von-Assisi-Grundschule)",
+        "pdf_seite": 163
+      }
+    ],
     "pdf_seiten": [
       162,
       163,
@@ -903,6 +2094,28 @@
     "klassifizierung": "extern",
     "zielgruppe": "Schüler/innen und deren Erziehungsberechtigte",
     "ziele": "Sicherstellung und Weiterentwicklung einer bedarfsgerechten Schülerbeförderung sowie Optimierung von Wegen, Zeiten und Aufwendungen",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "06"
+        ],
+        "betrag": null,
+        "text": "Erstattung von Schülerbeförderungskosten durch das Gymnasium Johanneum für die Schüler der Linie Brock/Dorfbauerschaft.",
+        "pdf_seite": 166
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Schülerbeförderungskosten inklusive Zuschuss Bustransfer der Loburger Schüler/-innen zum Beverbad.",
+        "pdf_seite": 166
+      }
+    ],
     "pdf_seiten": [
       165,
       166
@@ -928,6 +2141,29 @@
     "klassifizierung": "extern",
     "zielgruppe": "Schüler/innen, Erziehungsberechtigte",
     "ziele": "Sicherstellung und Weiterentwicklung eines bedarfsgerechten wohnortnahen Schulangebotes",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "02",
+          "13"
+        ],
+        "betrag": null,
+        "text": "Zuweisung des Landes bzw. Aufwendungen für Aus- und Fortbildung der Lehrkräfte.",
+        "pdf_seite": 168
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "U. a. Schülerunfallversicherung.",
+        "pdf_seite": 168
+      }
+    ],
     "pdf_seiten": [
       167,
       168
@@ -953,6 +2189,203 @@
     "klassifizierung": "extern",
     "zielgruppe": "Kulturinteressierte Personen, Einwohner/innen, Vereine, kulturelle Einrichtungen",
     "ziele": "Vorhalten eines vielfältigen und angemessenen Kulturangebotes",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "02"
+        ],
+        "betrag": null,
+        "text": "Zuwendung zur Verleihung des Heimatpreises.",
+        "pdf_seite": 172
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "05"
+        ],
+        "betrag": null,
+        "text": "u. a. Erstattung der Nebenkosten für den Dorfspeicher in Brock sowie Pachteinnahmen für die Antennen auf der Kulturwerkstatt.",
+        "pdf_seite": 172
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": null,
+        "text": "(tlw.) In den Ansätzen sind u. a. enthalten:",
+        "pdf_seite": 172
+      },
+      {
+        "block": 3,
+        "position": 4,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 19150,
+        "text": "Grundstücks- und Gebäudeunterhaltung (siehe Vorbericht Ziffer 2.2.3)",
+        "pdf_seite": 172
+      },
+      {
+        "block": 3,
+        "position": 5,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 10900,
+        "text": "Strom, Gas, Wasser, Abwasser",
+        "pdf_seite": 172
+      },
+      {
+        "block": 3,
+        "position": 6,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 2800,
+        "text": "Unterhaltsreinigung, Reinigungsmittel",
+        "pdf_seite": 172
+      },
+      {
+        "block": 3,
+        "position": 7,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 3400,
+        "text": "Abgaben, Versicherungen, Schadensfälle",
+        "pdf_seite": 172
+      },
+      {
+        "block": 4,
+        "position": 8,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "vorgesehene Zuschüsse an kulturtragende Vereine:",
+        "pdf_seite": 172
+      },
+      {
+        "block": 4,
+        "position": 9,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 4000,
+        "text": "Ausstellungen im La Folie",
+        "pdf_seite": 172
+      },
+      {
+        "block": 4,
+        "position": 10,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 250,
+        "text": "Heimatverein",
+        "pdf_seite": 172
+      },
+      {
+        "block": 4,
+        "position": 11,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 150,
+        "text": "Initiative Eichendorff-Siedlung",
+        "pdf_seite": 172
+      },
+      {
+        "block": 4,
+        "position": 12,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 5400,
+        "text": "Kulturforum + 1.400 € Loburger Schlosskonzerte",
+        "pdf_seite": 172
+      },
+      {
+        "block": 4,
+        "position": 13,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 800,
+        "text": "Männergesangverein",
+        "pdf_seite": 172
+      },
+      {
+        "block": 4,
+        "position": 14,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 1300,
+        "text": "Musikverein",
+        "pdf_seite": 172
+      },
+      {
+        "block": 4,
+        "position": 15,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 4000,
+        "text": "OK Ostbevern Kultur",
+        "pdf_seite": 172
+      },
+      {
+        "block": 4,
+        "position": 16,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 150,
+        "text": "Skysingers",
+        "pdf_seite": 172
+      },
+      {
+        "block": 4,
+        "position": 17,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 300,
+        "text": "Spielmannszug Brock",
+        "pdf_seite": 172
+      },
+      {
+        "block": 4,
+        "position": 18,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 150,
+        "text": "Starlights",
+        "pdf_seite": 172
+      },
+      {
+        "block": 4,
+        "position": 19,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 5000,
+        "text": "Verleihung Heimatpreis",
+        "pdf_seite": 172
+      }
+    ],
     "pdf_seiten": [
       171,
       172,
@@ -979,6 +2412,28 @@
     "klassifizierung": "extern",
     "zielgruppe": "Einwohner/innen Kursbesucher/innen",
     "ziele": "Förderung der Jugend- und Erwachsenenbildung",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Kostenerstattung an den Zweckverband VHS Warendorf.",
+        "pdf_seite": 175
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "Zuschüsse an Kath. Öffentliche Bücherei sowie Ökumenisches Bildungswerk",
+        "pdf_seite": 175
+      }
+    ],
     "pdf_seiten": [
       174,
       175
@@ -1003,6 +2458,28 @@
     "klassifizierung": "extern",
     "zielgruppe": "Kinder, Jugendliche",
     "ziele": "Musikalische Früherziehung der Kinder Persönlichkeitsentwicklung durch Musikerziehung",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "Zuwendungen zu Jekits",
+        "pdf_seite": 177
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Mitgliedsbeitrag für die Schule für Musik im Kreis Warendorf e. V.",
+        "pdf_seite": 177
+      }
+    ],
     "pdf_seiten": [
       176,
       177
@@ -1027,6 +2504,38 @@
     "klassifizierung": "extern",
     "zielgruppe": "Leistungsberechtigte nach dem Asylbewerberleistungsgesetz",
     "ziele": "Sicherung der gesetzlich zu gewährenden Leistungen nach dem AsylblG Heranziehung zur gemeinnützigen Arbeit und Vermittlung in Arbeit",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "06"
+        ],
+        "betrag": null,
+        "text": "Landeszuweisung nach dem Flüchtlingsaufnahmegesetz.",
+        "pdf_seite": 182
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "Leistungen nach dem Asylbewerberleistungsgesetz (Grundleistungen. Krankenhilfe, Unterkunftskosten).",
+        "pdf_seite": 182
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "28"
+        ],
+        "betrag": null,
+        "text": "Aufwendungen, die als Ertrag im Produkt 10.04.01 (Unterkünfte für Flüchtlinge und Asylbewerber) erscheinen.",
+        "pdf_seite": 182
+      }
+    ],
     "pdf_seiten": [
       181,
       182
@@ -1055,6 +2564,26 @@
     "klassifizierung": "extern",
     "zielgruppe": "Anspruchsberechtigte",
     "ziele": "Sicherung der gesetzlich zustehenden Leistungen nach SGB XII",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [],
+        "betrag": null,
+        "text": "Die gewährte Sozialhilfe nach SGB XII wird nicht im Haushalt der Gemeinde aufgeführt. Hier nur interne Personal- und Sachaufwendungen.",
+        "pdf_seite": 184
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Lizenzgebühr für die Software.",
+        "pdf_seite": 184
+      }
+    ],
     "pdf_seiten": [
       183,
       184
@@ -1078,6 +2607,218 @@
     "klassifizierung": "extern",
     "zielgruppe": "Kirchen Vereine und Verbände",
     "ziele": "Förderung vielfältiger Leistungsangebote der Vereine",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Gebäudeunterhaltung Fairteiler Im Ansatz sind u. a. enthalten:",
+        "pdf_seite": 186
+      },
+      {
+        "block": 1,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 2550,
+        "text": "Grundstücks- und Gebäudeunterhaltung",
+        "pdf_seite": 186
+      },
+      {
+        "block": 1,
+        "position": 3,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 350,
+        "text": "Abwasser",
+        "pdf_seite": 186
+      },
+      {
+        "block": 1,
+        "position": 4,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 550,
+        "text": "Abgaben, Versicherung",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 5,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "Zuschüsse an Vereine und Verbände im sozialen Bereich entsprechend den Richtlinien werden 2025 wie folgt gezahlt:",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 6,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 400,
+        "text": "Aids-Hilfe, Spritzenautomat",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 7,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 490,
+        "text": "Christliche Gemeinde",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 8,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 350,
+        "text": "DRK",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 9,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 757,
+        "text": "Evangelische Kirchengemeinde",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 10,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 300,
+        "text": "Fair-Kaufhaus",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 11,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 2000,
+        "text": "Frauenhäuser Telgte und Warendorf (je 1000 € laut Richtlinie)",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 12,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 520,
+        "text": "Hospizkreis",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 13,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 2743,
+        "text": "Katholische Kirchengemeinde",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 14,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 12000,
+        "text": "Katholische Kirchengemeinde - Pfarrheimflächen",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 15,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 550,
+        "text": "Kolpingsfamilie",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 16,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 300,
+        "text": "Lebenshilfe Warendorf",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 17,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 350,
+        "text": "MHD",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 18,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 160,
+        "text": "Seniorencomputerclub",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 19,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 490,
+        "text": "Startbahn",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 20,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 340,
+        "text": "VDK",
+        "pdf_seite": 186
+      },
+      {
+        "block": 2,
+        "position": 21,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 790,
+        "text": "VIBO",
+        "pdf_seite": 186
+      }
+    ],
     "pdf_seiten": [
       185,
       186,
@@ -1101,6 +2842,7 @@
     "klassifizierung": "extern",
     "zielgruppe": "Einwohner/innen, Sozialversicherungspflichtige, Rentner/innen",
     "ziele": "Kompetente Beratung Weiterleitung vollständig ausgefüllter Anträge",
+    "erlaeuterungen": [],
     "pdf_seiten": [
       188,
       189
@@ -1126,6 +2868,7 @@
     "klassifizierung": "extern",
     "zielgruppe": "Jugendliche, Senioren, Familien",
     "ziele": "Verbesserung der Lebensqualität durch Schaffung familienfreundlicher Strukturen",
+    "erlaeuterungen": [],
     "pdf_seiten": [
       190,
       191
@@ -1151,6 +2894,38 @@
     "klassifizierung": "extern",
     "zielgruppe": "Kinder, Familien, Träger von Tageseinrichtungen",
     "ziele": "Sicherstellung des Rechtsanspruchs auf einen Kindergartenplatz Schaffung von Angeboten für Kinder unter drei Jahren",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Gebäudeunterhaltung, Außenanlagen und Abwasser.",
+        "pdf_seite": 195
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "Hinsichtlich der Höhe der an die Kindertageseinrichtungen gewährten Zuschüsse (siehe Vorbericht Ziffer 2.2.5.).",
+        "pdf_seite": 195
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Mietzuschüsse für Kita",
+        "pdf_seite": 195
+      }
+    ],
     "pdf_seiten": [
       194,
       195
@@ -1179,6 +2954,78 @@
     "klassifizierung": "extern",
     "zielgruppe": "Kinder, Jugendliche, Familien, Vereine und Verbände",
     "ziele": "Förderung der offenen Kinder- und Jugendarbeit Attraktive und sinnvolle Freizeit- und Feriengestaltung für Kinder und Jugendliche",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "In dem Ansatz sind u. a. enthalten:",
+        "pdf_seite": 198
+      },
+      {
+        "block": 1,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 15300,
+        "text": "Grundstücks- und Gebäudeunterhaltung",
+        "pdf_seite": 198
+      },
+      {
+        "block": 1,
+        "position": 3,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 1250,
+        "text": "Abwasser",
+        "pdf_seite": 198
+      },
+      {
+        "block": 1,
+        "position": 4,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 1800,
+        "text": "Abgaben, Versicherungen, Reinigung, Reinigungsmittel",
+        "pdf_seite": 198
+      },
+      {
+        "block": 2,
+        "position": 5,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "Zuschüsse zum Betrieb des Kinder- und Jugendwerks Ostbevern e. V., zur Durchführung der Spielstadt sowie für Ferienerholungsmaßnahmen",
+        "pdf_seite": 198
+      },
+      {
+        "block": 2,
+        "position": 6,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 300000,
+        "text": "Zuschuss Kinder- und Jugendwerk",
+        "pdf_seite": 198
+      },
+      {
+        "block": 2,
+        "position": 7,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": 8000,
+        "text": "Zuschuss für Jugendferienerholungsmaßnahmen",
+        "pdf_seite": 198
+      }
+    ],
     "pdf_seiten": [
       197,
       198,
@@ -1203,6 +3050,73 @@
     "klassifizierung": "extern",
     "zielgruppe": "Familien, Kinder, Jugendliche, Sportvereine",
     "ziele": "Schaffung eines vielfältigen, altersgerechten und wohnortnahen Angebotes an Spielmöglichkeiten Aufrechterhaltung eines verkehrssicheren Zustandes der Anlagen",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "02"
+        ],
+        "betrag": null,
+        "text": "Erträge aus der Auflösung von Sonderposten.",
+        "pdf_seite": 201
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": null,
+        "text": "In den Ansätzen sind u. a. enthalten:",
+        "pdf_seite": 201
+      },
+      {
+        "block": 2,
+        "position": 3,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 150000,
+        "text": "Unterhaltung der Spiel-, Sport- und Bolzplätze sowie Gebäude (siehe Vorbericht Ziffer 2.2.3)",
+        "pdf_seite": 201
+      },
+      {
+        "block": 2,
+        "position": 4,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 500,
+        "text": "Unterhaltsreinigung",
+        "pdf_seite": 201
+      },
+      {
+        "block": 2,
+        "position": 5,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 30900,
+        "text": "Strom, Gas, Wasser, Abwasser",
+        "pdf_seite": 201
+      },
+      {
+        "block": 2,
+        "position": 6,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 5400,
+        "text": "Abgaben, Versicherungen, Schadensfälle",
+        "pdf_seite": 201
+      }
+    ],
     "pdf_seiten": [
       200,
       201,
@@ -1232,6 +3146,73 @@
     "klassifizierung": "extern",
     "zielgruppe": "Kinder, Jugendliche, Familien, Senioren, Sporttreibende, Vereine und Verbände",
     "ziele": "Gesundheitsvorsorge, Freizeitgestaltung und Erholung Ausreichende Versorgung der Bevölkerung mit Sportstätten Förderung des Sports als gesellschaftspolitische Aufgabe zur Sicherstellung eines adäquaten Freizeitangebotes durch Vereine und Verbände",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": null,
+        "text": "In den Ansätzen sind u. a. enthalten:",
+        "pdf_seite": 206
+      },
+      {
+        "block": 1,
+        "position": 2,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 94650,
+        "text": "Grundstücks- und Gebäudeunterhaltung (siehe Vorbericht Ziffer 2.2.3)",
+        "pdf_seite": 206
+      },
+      {
+        "block": 1,
+        "position": 3,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 52200,
+        "text": "Strom, Nahwärme, Wasser, Abwasser",
+        "pdf_seite": 206
+      },
+      {
+        "block": 1,
+        "position": 4,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 26200,
+        "text": "Unterhaltsreinigung, Reinigungsmittel",
+        "pdf_seite": 206
+      },
+      {
+        "block": 1,
+        "position": 5,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 5500,
+        "text": "Versicherungen, Schadensfälle",
+        "pdf_seite": 206
+      },
+      {
+        "block": 2,
+        "position": 6,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "Zuschüsse an sporttreibende Vereine gemäß Sportförderrichtlinien.",
+        "pdf_seite": 206
+      }
+    ],
     "pdf_seiten": [
       205,
       206,
@@ -1261,6 +3242,28 @@
     "klassifizierung": "extern",
     "zielgruppe": "öffentliche und private Bauherren, Gewerbebetreibende, Investoren, Bauherren, Grundstücks- und Erschließungsgesellschaften, Grundstückseigentümer, Erbbauberechtigte, Planungsbüros",
     "ziele": "Sicherstellung einer geordneten, zukunftsorientierten städtebaulichen Planung und Entwicklung Bedarfsgerechte Ausweisung von Wohnbau- und Gewerbeflächen",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "06"
+        ],
+        "betrag": null,
+        "text": "Erstattung im Rahmen der Bauleitplanung.",
+        "pdf_seite": 212
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Aufwendungen für die Bauleitplanung (siehe Vorbericht 2.2.3).",
+        "pdf_seite": 212
+      }
+    ],
     "pdf_seiten": [
       211,
       212,
@@ -1285,6 +3288,19 @@
     "klassifizierung": "extern",
     "zielgruppe": "Grundstückseigentümer, Erbbauberechtigte, Unternehmer, Gewerbetreibende, Einwohner|innen",
     "ziele": "Bedarfsgerechte Grundstücksneuordnung Sicherung öffentlicher Flächen zur Durchführung von Bau- und Erschließungsmaßnahmen",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": null,
+        "text": "Aufwendungen im Rahmen der Durchführung von Umlegungsverfahren (Geschäftsführung, Vermessungen u. a.).",
+        "pdf_seite": 216
+      }
+    ],
     "pdf_seiten": [
       215,
       216,
@@ -1309,6 +3325,18 @@
     "klassifizierung": "intern",
     "zielgruppe": "Intern: Mitarbeiter/innen",
     "ziele": "Zeitnahe Bereitstellung aktueller Grundstücksinformationen",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Aufwendungen für das Geoinformationssystem (GIS).",
+        "pdf_seite": 219
+      }
+    ],
     "pdf_seiten": [
       218,
       219
@@ -1333,6 +3361,7 @@
     "klassifizierung": "extern",
     "zielgruppe": "Öffentliche und private Bauherren, Architekten, Ingenieurbüros",
     "ziele": "Effektive Bauberatung und zeitnahe Abwicklung der Bauantragsverfahren",
+    "erlaeuterungen": [],
     "pdf_seiten": [
       222,
       223
@@ -1359,6 +3388,7 @@
     "klassifizierung": "extern",
     "zielgruppe": "Private und öffentliche Eigentümer von Bau- und Bodendenkmälern",
     "ziele": "Erfassung und Unterschutzstellung aller Denkmäler Förderung von Sanierungs- und Restaurierungsmaßnahmen",
+    "erlaeuterungen": [],
     "pdf_seiten": [
       224,
       225
@@ -1381,6 +3411,16 @@
     "klassifizierung": "extern",
     "zielgruppe": "Wohnungssuchende, Vermieter, Mieter, Anspruchsberechtigte",
     "ziele": "Verbesserung der Wohnraumversorgung für Einkommensschwache und am Wohnungsmarkt benachteiligte Personengruppen Zeitnahe Antragsbearbeitung und Zahlbarmachung von Leistungen Wirtschaftliche Sicherung des angemessenen und familiengerechten Wohnens",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [],
+        "betrag": null,
+        "text": "In diesem Produkt werden Personal- und Sachaufwendungen veranschlagt. Die Wohngeldleistungen werden nicht im Haushalt der Gemeinde veranschlagt.",
+        "pdf_seite": 227
+      }
+    ],
     "pdf_seiten": [
       226,
       227
@@ -1407,6 +3447,93 @@
     "klassifizierung": "extern",
     "zielgruppe": "Aussiedler/innen, Flüchtlinge, Asylbewerber/innen und Obdachlose",
     "ziele": "Ordnungsgemäße, bedarfsgerechte und wirtschaftliche Unterbringung der betroffenen Personen Vermeidung und Beseitigung von Obdachlosigkeit",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "04"
+        ],
+        "betrag": null,
+        "text": "Benutzungsgebühren und Erstattung der Nebenkosten für die Übergangwohnheime",
+        "pdf_seite": 229
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "05"
+        ],
+        "betrag": null,
+        "text": "Erstattung von Miete und Nebenkosten für angemietete Wohnungen",
+        "pdf_seite": 229
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": null,
+        "text": "(tlw.) In den Ansätzen sind u. a. enthalten:",
+        "pdf_seite": 229
+      },
+      {
+        "block": 3,
+        "position": 4,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 95600,
+        "text": "Unterhaltung Grundstücke und Gebäude, angemietete Objekte sowie Betriebs- und Geschäftsaufwand, Abfuhr Abfallcontainer",
+        "pdf_seite": 229
+      },
+      {
+        "block": 3,
+        "position": 5,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 90500,
+        "text": "Strom, Gas, Wasser, Abwasser",
+        "pdf_seite": 229
+      },
+      {
+        "block": 3,
+        "position": 6,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 11500,
+        "text": "Unterhaltsreinigung, Reinigungsmittel",
+        "pdf_seite": 229
+      },
+      {
+        "block": 3,
+        "position": 7,
+        "zu_zeilen": [
+          "13",
+          "16"
+        ],
+        "betrag": 8050,
+        "text": "Abgaben, Versicherungen, Schadensfälle",
+        "pdf_seite": 229
+      },
+      {
+        "block": 4,
+        "position": 8,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "Miete sowie Nebenkosten für angemietete Wohnungen",
+        "pdf_seite": 229
+      }
+    ],
     "pdf_seiten": [
       228,
       229,
@@ -1438,6 +3565,7 @@
     "klassifizierung": "extern",
     "zielgruppe": "Abfallverursacher, Grundstückseigentümer, Entsorgungsunternehmen, Abfallwirtschaftsgesellschaft des Kreises Warendorf mbH",
     "ziele": "Reduzierung des Gesamtabfallaufkommens Kostendeckung",
+    "erlaeuterungen": [],
     "pdf_seiten": [
       232,
       233
@@ -1462,6 +3590,7 @@
     "klassifizierung": "extern",
     "zielgruppe": "Einwohner/innen, Verkehrsteilnehmer/innen",
     "ziele": "Wirtschaftliche und termingerechte Planung und Erschließung von Straßen zur Verbesserung der Infrastruktur unter Beachtung der Minimierung der Bau- und Folgekosten Erhöhung der Leistungsfähigkeit von Verkehrsanlagen und der Verkehrssicherheit",
+    "erlaeuterungen": [],
     "pdf_seiten": [
       241,
       242,
@@ -1490,6 +3619,78 @@
     "klassifizierung": "extern",
     "zielgruppe": "Einwohner/innen, Verkehrsteilnehmer/innen",
     "ziele": "Erhaltung der Verkehrsinfrastruktur unter Berücksichtigung der Verkehrssicherheit bei Minimierung der Folgekosten",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "In dem Ansatz sind u. a. enthalten:",
+        "pdf_seite": 248
+      },
+      {
+        "block": 1,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 420000,
+        "text": "Unterhaltung der Straßen und Wege (zusätzlich 140.000 € aus Rückstellungen, siehe Vorbericht 2.2.3)",
+        "pdf_seite": 248
+      },
+      {
+        "block": 1,
+        "position": 3,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 290000,
+        "text": "Gebühren für die Straßenoberflächenentwässerung",
+        "pdf_seite": 248
+      },
+      {
+        "block": 1,
+        "position": 4,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 80000,
+        "text": "Unterhaltung der Verkehrssicherungs- und Signalanlagen (Wartung und Reparatur Straßenbeleuchtung)",
+        "pdf_seite": 248
+      },
+      {
+        "block": 1,
+        "position": 5,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 100000,
+        "text": "Strom für die Straßenbeleuchtung",
+        "pdf_seite": 248
+      },
+      {
+        "block": 1,
+        "position": 6,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 25000,
+        "text": "Grünabfallentsorgung",
+        "pdf_seite": 248
+      },
+      {
+        "block": 1,
+        "position": 7,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 4000,
+        "text": "Schadensfälle",
+        "pdf_seite": 248
+      }
+    ],
     "pdf_seiten": [
       247,
       248,
@@ -1515,6 +3716,38 @@
     "klassifizierung": "extern",
     "zielgruppe": "Ein- und Auspendler/innen, Teilnehmer/innen des öffentlichen Schienen- und Personennahverkehrs",
     "ziele": "Optimierung des öffentlichen Personennahverkehrs",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 519000,
+        "text": "Zuschuss der Gemeinde Ostbevern zum Linienbündel WAF 7, Betrieb des Nachtbusses sowie zusätzliche wöchentliche Fahrt nach Münster",
+        "pdf_seite": 251
+      },
+      {
+        "block": 1,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 14500,
+        "text": "Unterhaltung sowie Reinigung Bushaltestellen und Bahnunterführung",
+        "pdf_seite": 251
+      },
+      {
+        "block": 1,
+        "position": 3,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 1300,
+        "text": "Strom",
+        "pdf_seite": 251
+      }
+    ],
     "pdf_seiten": [
       250,
       251,
@@ -1541,6 +3774,7 @@
     "klassifizierung": "extern",
     "zielgruppe": "Grundstückseigentümer, Verkehrsteilnehmer/innen, Reinigungsunternehmen, Bauhof",
     "ziele": "Gewährleistung einer ordnungsgemäßen Reinigung der Straßen, Wege und Plätze Gewährleistung der Verkehrssicherheit Kostendeckung",
+    "erlaeuterungen": [],
     "pdf_seiten": [
       253,
       254
@@ -1563,6 +3797,18 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Einwohner/innen, Fachplaner, Institutionen, Gewässeranlieger, Naturschutzvorstände",
     "ziele": "Optimierung des Natur- und Landschaftsschutzes Erhalt der Artenvielfalt durch Aufbau vernetzter Biotopsysteme Optimierung von Gewässern als Lebensraum für Pflanzen und Tiere",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 10000,
+        "text": "Unterhaltung Ausgleichsflächen, Gewässer, Biotope",
+        "pdf_seite": 259
+      }
+    ],
     "pdf_seiten": [
       258,
       259,
@@ -1589,6 +3835,48 @@
     "klassifizierung": "extern",
     "zielgruppe": "Einwohner/innen Naherholungssuchende",
     "ziele": "Erhalt, Erneuerung und Weiterentwicklung von öffentlichen Grünanlagen Förderung der Naherholung",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "In dem Ansatz sind u. a. enthalten:",
+        "pdf_seite": 262
+      },
+      {
+        "block": 1,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 40000,
+        "text": "Unterhaltung Wald-, Park- und Gartenanlagen",
+        "pdf_seite": 262
+      },
+      {
+        "block": 1,
+        "position": 3,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 700,
+        "text": "Strom",
+        "pdf_seite": 262
+      },
+      {
+        "block": 1,
+        "position": 4,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 150,
+        "text": "Reinigungsmittel",
+        "pdf_seite": 262
+      }
+    ],
     "pdf_seiten": [
       261,
       262,
@@ -1620,6 +3908,7 @@
     "klassifizierung": "extern",
     "zielgruppe": "Angehörige von Verstorbenen Einwohner Besucher",
     "ziele": "Sicherstellung des Bestattungswesens Bedarfsorientierte Friedhofsplanung im Wandel der Bestattungskultur Sicherstellung einer naturnahen Gestaltung der Friedhöfe Erhebung von kostendeckenden Gebühren",
+    "erlaeuterungen": [],
     "pdf_seiten": [
       264,
       265,
@@ -1646,6 +3935,38 @@
     "klassifizierung": "extern",
     "zielgruppe": "Fachplaner, Institutionen, Einwohner/innen, Vereine, Gewerbetreibende, Behörden, Investoren, Grundstückseigentümer",
     "ziele": "Initiierung und Umsetzung von Initiativen und Projekten im Bereich Klimaschutz, Klimafolgenanpassung, Nachhaltigkeit, Mobilität Initiierung und Umsetzung von Initiativen und Projekten im Bereich Sanierung, Energie- und Wärmeplanung",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "02"
+        ],
+        "betrag": null,
+        "text": "Förderung KfW für Personal- und Sachkosten des Sanierungsmanagers.",
+        "pdf_seite": 270
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "06"
+        ],
+        "betrag": null,
+        "text": "Einspeisevergütung Photovoltaikanlage.",
+        "pdf_seite": 270
+      },
+      {
+        "block": 3,
+        "position": 3,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "Energiebonus Baugebiet “Kohkamp III“ als Rückstellung für künftige Verbindlichkeiten.",
+        "pdf_seite": 270
+      }
+    ],
     "pdf_seiten": [
       269,
       270
@@ -1685,6 +4006,78 @@
     "klassifizierung": "extern",
     "zielgruppe": "Ansässige und ansiedlungswillige Gewerbetreibende, Unternehmen in der Aufbauphase, wirtschaftsfördernde Institutionen und Verbände, örtliche Vereine",
     "ziele": "Erhalt einer zukunftsfähigen Wirtschaftsstruktur Kontaktpflege zu Unternehmen und den örtlichen Interessenvertretungen Sicherung der bestehenden und Schaffung von neuen Arbeitsplätzen",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "04"
+        ],
+        "betrag": null,
+        "text": "Marktstandsgelder Kirmes",
+        "pdf_seite": 274
+      },
+      {
+        "block": 2,
+        "position": 2,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": null,
+        "text": "In den Ansätzen sind u. a. enthalten:",
+        "pdf_seite": 274
+      },
+      {
+        "block": 2,
+        "position": 3,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": 12500,
+        "text": "Kirmes",
+        "pdf_seite": 274
+      },
+      {
+        "block": 2,
+        "position": 4,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": 500,
+        "text": "Faitrade",
+        "pdf_seite": 274
+      },
+      {
+        "block": 2,
+        "position": 5,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": 2500,
+        "text": "Sonstige Veranstaltungen (Wirtschaftsfrühstück, Vorträge, Informationsveranstaltungen, etc.)",
+        "pdf_seite": 274
+      },
+      {
+        "block": 2,
+        "position": 6,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": 10000,
+        "text": "Smart Region / Freifunk",
+        "pdf_seite": 274
+      },
+      {
+        "block": 2,
+        "position": 7,
+        "zu_zeilen": [
+          "16"
+        ],
+        "betrag": 5000,
+        "text": "AzubiStark u. a.",
+        "pdf_seite": 274
+      }
+    ],
     "pdf_seiten": [
       273,
       274,
@@ -1710,6 +4103,68 @@
     "klassifizierung": "extern",
     "zielgruppe": "Touristen, Reiseunternehmen, Vereine, Handel, Gastronomie",
     "ziele": "- Steigerung der Gästezahlen, der Aufenthalte vor Ort - Steigerung der Übernachtungszahlen in Hotels und Gasthöfen - Überregionale Imagepflege - Stützung der Infrastruktur vor Ort",
+    "erlaeuterungen": [
+      {
+        "block": 1,
+        "position": 1,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": null,
+        "text": "Kostenbeteiligung Grenzgängerroute/Friedensroute",
+        "pdf_seite": 277
+      },
+      {
+        "block": 1,
+        "position": 2,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 2380,
+        "text": "Grenzgängerroute",
+        "pdf_seite": 277
+      },
+      {
+        "block": 1,
+        "position": 3,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 2335,
+        "text": "Friedensroute (ab 2022, weil 2022 die Vital-Förderung ausläuft)",
+        "pdf_seite": 277
+      },
+      {
+        "block": 1,
+        "position": 4,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 7300,
+        "text": "LEADER Anteil Kommune 2024",
+        "pdf_seite": 277
+      },
+      {
+        "block": 1,
+        "position": 5,
+        "zu_zeilen": [
+          "13"
+        ],
+        "betrag": 520,
+        "text": "Zuschuss Vereine Sommersandkasten",
+        "pdf_seite": 277
+      },
+      {
+        "block": 2,
+        "position": 6,
+        "zu_zeilen": [
+          "15"
+        ],
+        "betrag": null,
+        "text": "Mitgliedsbeiträge, Öffentlichkeitsarbeit, Versicherungen.",
+        "pdf_seite": 277
+      }
+    ],
     "pdf_seiten": [
       276,
       277
@@ -1736,6 +4191,7 @@
     "klassifizierung": "extern und intern",
     "zielgruppe": "Land, Kreis, Kreditinstitute, Strom-, Gas-, Wasserversorger",
     "ziele": "Haushaltsausgleich Vollständige Darstellung und Verrechnung aller produktunabhängigen Finanzleistungen",
+    "erlaeuterungen": [],
     "pdf_seiten": [
       280,
       281,

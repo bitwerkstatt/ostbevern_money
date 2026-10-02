@@ -67,6 +67,14 @@ def test_ersetze_eurozeichen_mehrfach() -> None:
     assert ersetze_eurozeichen("100 C und 200 C") == "100 € und 200 €"
 
 
+def test_ersetze_eurozeichen_tausend_abkuerzung() -> None:
+    # "105 TC" ist "105 T€" (Tausend-Euro-Abkürzung, Erläuterungen S. 114): "T" und der
+    # Euro-Glyph "C" sind ein einziges PDF-Wort "TC" nach einer Zahl mit Leerzeichen.
+    assert ersetze_eurozeichen("(zusätzlich 105 TC aus Rückstellungen)") == (
+        "(zusätzlich 105 T€ aus Rückstellungen)"
+    )
+
+
 def test_verbinde_zeilen_entfernt_leerzeichen_vor_komma() -> None:
     # Feine Extraktion (x_tolerance=1) fügt zwischen zwei direkt angrenzenden Wörtern
     # (z. B. "Leistungen" und ",") beim Join mit " " ein künstliches Leerzeichen ein,

@@ -27,20 +27,25 @@ from ostbevern.produkte import (
     BINDUNGSGRADE,
     KLASSIFIZIERUNGEN,
     PERSONENFELDER,
+    Erlaeuterung,
     ProdukteFehler,
     extrahiere_produkte,
+    lies_erlaeuterungen,
     lies_personennamen,
     lies_produktinformationen,
+    pruefe_plausibilitaet,
     zerlege_felder,
 )
 from ostbevern.schema import (
     DATEN_WURZEL,
+    ERGEBNISPLAN_CSV,
     HIERARCHIE_CSV,
     PRODUKT_SCHLUESSEL,
     PRODUKTE_JSON,
     SEITEN_CSV,
     SchemaFehler,
     lies_hierarchie_csv,
+    lies_plan_csv,
     lies_produkte_json,
     lies_seiten_csv,
     schreibe_produkte_json,
@@ -67,6 +72,15 @@ def produkte_json(jahrgang: Jahrgang) -> list[dict]:
     als Quelle, D-06-Stil); `extrahiere_produkte` schreibt nach `DATEN_WURZEL/PRODUKTE_JSON`."""
     extrahiere_produkte(jahrgang)
     return lies_produkte_json(DATEN_WURZEL / PRODUKTE_JSON)
+
+
+@pytest.fixture(scope="module")
+def erlaeuterungen(
+    jahrgang: Jahrgang, kontext: tuple[pl.DataFrame, pl.DataFrame]
+) -> tuple[Erlaeuterung, ...]:
+    seiten, hierarchie = kontext
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        return tuple(lies_erlaeuterungen(dokument, jahrgang, seiten, hierarchie))
 
 
 def test_verbinde_zeilen_entfernt_leerzeichen_vor_komma_leistungen_label() -> None:
@@ -321,3 +335,175 @@ def test_unbekannte_klassifizierung_bricht_ab(
         )
         with pytest.raises(ProdukteFehler, match="Klassifizierung unbekannt"):
             lies_produktinformationen(fehlerhaft, jahrgang, seiten, hierarchie)
+
+
+# --- Task 2: Erläuterungsposten (EXTR-08, D-01 bis D-04) ---------------------------
+
+
+def test_header_normalisierung_zu_nr_muster(jahrgang: Jahrgang) -> None:
+    """Zu_nr_muster normalisiert alle gefundenen Header-Varianten auf zweistellige
+    Zeilennummern (D-02). Reiner String-Test ohne PDF-Zugriff."""
+    zu_nr_muster = re.compile(layout_text(jahrgang, "erlaeuterungen", "zu_nr_muster"))
+
+    faelle = (
+        ("zu Nr. 6", ["06"], ""),
+        ("Zu Nr. 02", ["02"], ""),
+        ("zu Nr. 02 und 13", ["02", "13"], ""),
+        ("zu Nr. 13 und Nr. 16 (tlw.)", ["13", "16"], "(tlw.)"),
+        ("zu Nr. 16: Anmietung Scheune als Lager", ["16"], "Anmietung Scheune als Lager"),
+        ("Nr. 13 und Nr. 16", ["13", "16"], ""),
+    )
+    for text, erwartete_zeilen, erwarteter_rest in faelle:
+        treffer = zu_nr_muster.match(text)
+        assert treffer is not None, text
+        zeilen = [f"{int(z):02d}" for z in re.findall(r"\d{1,2}", treffer.group("zeilen"))]
+        assert zeilen == erwartete_zeilen, text
+        rest = treffer.group("rest").strip()
+        if rest.startswith(":"):
+            rest = rest[1:].strip()
+        assert rest == erwarteter_rest, text
+
+
+def test_stichprobe_erlaeuterung_posten(erlaeuterungen: tuple[Erlaeuterung, ...]) -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    stichprobe = sollwerte["stichproben"]["erlaeuterung_posten"]
+    treffer = next(
+        e
+        for e in erlaeuterungen
+        if e.produkt == stichprobe["produkt"] and e.betrag == stichprobe["betrag"]
+    )
+    assert list(treffer.zu_zeilen) == stichprobe["zu_zeilen"]
+    assert treffer.text == stichprobe["text"]
+    assert treffer.pdf_seite == stichprobe["pdf_seite"]
+
+
+def test_stichprobe_erlaeuterung_ohne_zu_nr(erlaeuterungen: tuple[Erlaeuterung, ...]) -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    stichprobe = sollwerte["stichproben"]["erlaeuterung_ohne_zu_nr"]
+    eintraege = sorted(
+        (e for e in erlaeuterungen if e.produkt == stichprobe["produkt"]),
+        key=lambda e: (e.block, e.position),
+    )
+    assert len({e.block for e in eintraege}) == stichprobe["bloecke"]
+    bloecke_sortiert = sorted({e.block for e in eintraege})
+    erster_block, zweiter_block = bloecke_sortiert[0], bloecke_sortiert[1]
+    assert all(not e.zu_zeilen for e in eintraege if e.block == erster_block)
+    zweite_block_zeilen = next(e.zu_zeilen for e in eintraege if e.block == zweiter_block)
+    assert list(zweite_block_zeilen) == stichprobe["zweiter_block_zu_zeilen"]
+    assert all(e.pdf_seite == stichprobe["pdf_seite"] for e in eintraege)
+
+
+def test_anzahl_produkte_mit_erlaeuterungen_stimmt_mit_stichprobe(
+    erlaeuterungen: tuple[Erlaeuterung, ...],
+) -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    erwartet = sollwerte["stichproben"]["anzahlen"]["produkte_mit_erlaeuterungen"]
+    assert len({e.produkt for e in erlaeuterungen}) == erwartet
+
+
+def test_produkte_ohne_erlaeuterung_haben_leere_liste(
+    produkte_json: list[dict], erlaeuterungen: tuple[Erlaeuterung, ...]
+) -> None:
+    produkte_mit = {e.produkt for e in erlaeuterungen}
+    for produkt in produkte_json:
+        if produkt["code"] in produkte_mit:
+            assert produkt["erlaeuterungen"], produkt["code"]
+        else:
+            assert produkt["erlaeuterungen"] == [], produkt["code"]
+
+
+def test_embedded_erlaeuterungen_entsprechen_den_eigenen_erlaeuterungen(
+    produkte_json: list[dict], erlaeuterungen: tuple[Erlaeuterung, ...]
+) -> None:
+    for produkt in produkte_json:
+        eigene = sorted(
+            (e for e in erlaeuterungen if e.produkt == produkt["code"]),
+            key=lambda e: (e.block, e.position),
+        )
+        eingebettet = produkt["erlaeuterungen"]
+        assert len(eingebettet) == len(eigene)
+        for eintrag, erwartet in zip(eingebettet, eigene, strict=True):
+            assert eintrag["block"] == erwartet.block
+            assert eintrag["position"] == erwartet.position
+            assert eintrag["zu_zeilen"] == list(erwartet.zu_zeilen)
+            assert eintrag["betrag"] == erwartet.betrag
+            assert eintrag["text"] == erwartet.text
+            assert eintrag["pdf_seite"] == erwartet.pdf_seite
+
+
+def test_erlaeuterung_blocks_und_positionen_sind_1_basiert(
+    erlaeuterungen: tuple[Erlaeuterung, ...],
+) -> None:
+    produkte_mit = {e.produkt for e in erlaeuterungen}
+    for produkt in produkte_mit:
+        eigene = sorted(
+            (e for e in erlaeuterungen if e.produkt == produkt), key=lambda e: e.position
+        )
+        assert [e.position for e in eigene] == list(range(1, len(eigene) + 1))
+        assert min(e.block for e in eigene) == 1
+
+
+def test_sub_betrag_in_posten_text_bleibt_text(erlaeuterungen: tuple[Erlaeuterung, ...]) -> None:
+    # D-01: ein Unterbetrag innerhalb eines Postentextes ("zusätzlich 55.000 C aus
+    # Rückstellungen") bleibt Teil des Textes und wird nicht als eigener Posten gezählt.
+    sub_betrag_muster = re.compile(r"zusätzlich \d")
+    treffer = [
+        e for e in erlaeuterungen if e.betrag is not None and sub_betrag_muster.search(e.text)
+    ]
+    assert treffer
+    for eintrag in treffer:
+        assert "€" in eintrag.text
+        assert "(cid:15)" not in eintrag.text
+
+
+def test_pruefe_plausibilitaet_erkennt_fehlende_zeile(
+    erlaeuterungen: tuple[Erlaeuterung, ...],
+) -> None:
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    posten = next(e for e in erlaeuterungen if e.betrag is not None)
+    zeile_zu_entfernen = posten.zu_zeilen[0]
+    manipuliert = ergebnisplan.filter(
+        ~(
+            (pl.col("ebene") == "P")
+            & (pl.col("code") == posten.produkt)
+            & (pl.col("zeile") == zeile_zu_entfernen)
+        )
+    )
+    with pytest.raises(ProdukteFehler, match="nicht gedruckt"):
+        pruefe_plausibilitaet(erlaeuterungen, manipuliert, STANDARD_JAHR)
+
+
+def test_pruefe_plausibilitaet_erkennt_zu_grossen_posten(
+    erlaeuterungen: tuple[Erlaeuterung, ...], jahrgang: Jahrgang
+) -> None:
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    posten = next(e for e in erlaeuterungen if e.betrag is not None)
+    manipuliert = ergebnisplan.with_columns(
+        pl.when(
+            (pl.col("ebene") == "P")
+            & (pl.col("code") == posten.produkt)
+            & pl.col("zeile").is_in(list(posten.zu_zeilen))
+            & (pl.col("jahr") == jahrgang.haushaltsjahr)
+            & (pl.col("wertart") == "ansatz")
+        )
+        .then(0)
+        .otherwise(pl.col("betrag"))
+        .alias("betrag")
+    )
+    with pytest.raises(ProdukteFehler, match="übersteigt"):
+        pruefe_plausibilitaet(erlaeuterungen, manipuliert, jahrgang.haushaltsjahr)
+
+
+def test_pruefe_plausibilitaet_gruen_auf_echten_daten(
+    erlaeuterungen: tuple[Erlaeuterung, ...], jahrgang: Jahrgang
+) -> None:
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    pruefe_plausibilitaet(erlaeuterungen, ergebnisplan, jahrgang.haushaltsjahr)
+
+
+def test_erlaeuterungen_csv_zu_zeilen_format(produkte_json: list[dict]) -> None:
+    # zu_zeilen ist in der JSON eine Liste, jedes Element zweistellig (D-02).
+    for produkt in produkte_json:
+        for eintrag in produkt["erlaeuterungen"]:
+            for zeile in eintrag["zu_zeilen"]:
+                assert re.fullmatch(r"\d{2}", zeile), (produkt["code"], zeile)

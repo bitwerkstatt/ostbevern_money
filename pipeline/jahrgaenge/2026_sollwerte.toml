@@ -230,4 +230,9 @@ bloecke = 2
 zweiter_block_zu_zeilen = ["16"]
 
 [stichproben.anzahlen]
-produkte_mit_erlaeuterungen = 51
+# 50, nicht 51: Produkt 120101 (S. 242) druckt eine fette "Erläuterung"-Kopfzeile ohne
+# jeden Folgeinhalt (wortweise verifiziert — zwischen ihr und dem nächsten "Teilfinanzplan"-
+# Titel steht kein einziges weiteres Wort auf der Seite), vermutlich ein Redaktionsrest im
+# Quell-PDF. Ein Block ohne Eintrag wird nicht geschrieben (keine erfundenen Daten), daher
+# trägt 120101 nicht zu dieser Zahl bei.
+produkte_mit_erlaeuterungen = 50

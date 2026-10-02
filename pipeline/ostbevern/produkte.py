@@ -6,6 +6,11 @@ Ziele) und schreibt `produkte.json` (EXTR-06). Personenfelder ("Verantwortliche/
 "Sachbearbeiter/innen") werden beim Parsen als Felder erkannt, um die Feldstruktur der
 Seite zu verstehen, aber sofort danach verworfen und erreichen nie einen Datensatz,
 ein Dict oder eine Datei (D-09, Datenschutz, da `daten/` eingecheckt wird).
+
+Liest außerdem die Erläuterungsblöcke der Teilergebnisplan-Seiten (EXTR-08, D-01 bis
+D-04) und schreibt `erlaeuterungen.csv` sowie eine Einbettung unter `erlaeuterungen` in
+`produkte.json`; eine D-04-Plausibilitätsprüfung (Zeile gedruckt, Posten nicht größer
+als die Summe der referenzierten Zeilen) bricht bei einem Verstoß ab.
 """
 
 from __future__ import annotations
@@ -22,13 +27,18 @@ from ostbevern.konfiguration import Jahrgang, layout_text
 from ostbevern.pdf import PdfDokument, Textzeile
 from ostbevern.schema import (
     DATEN_WURZEL,
+    ERGEBNISPLAN_CSV,
+    ERLAEUTERUNGEN_CSV,
     HIERARCHIE_CSV,
     PRODUKTE_JSON,
     SEITEN_CSV,
     lies_hierarchie_csv,
+    lies_plan_csv,
     lies_seiten_csv,
+    schreibe_erlaeuterungen_csv,
     schreibe_produkte_json,
 )
+from ostbevern.zahlen import lies_betrag
 
 # Toleranz für die Körpertext-Schriftgröße (die Größe der ersten Feld-Kopfzeile; Lauf-
 # köpfe, Titel und Seitenzahlen haben andere Größen, Phase 3 zerlege_felder) und für die
@@ -36,6 +46,12 @@ from ostbevern.schema import (
 # Spaltenanker-Logik in investitionen.py/querschnitte.py).
 _GROESSEN_TOLERANZ = 0.5
 _LEISTUNGEN_X_TOLERANZ = 3.0
+# Toleranz für die Posten-Fortsetzungszeile (D-01): eine Folgezeile, deren x0 mindestens
+# die Text-x0 des Postens minus dieser Toleranz erreicht, gehört noch zum selben Posten.
+_POSTEN_X_TOLERANZ = 2.0
+# Satzende-Satzzeichen (D-01): nach einer dieser Zeichen beginnt eine neue Freitextzeile
+# einen neuen Eintrag statt den vorherigen fortzusetzen.
+_SATZENDE_ZEICHEN = (".", ":", "!", "?")
 
 
 class ProdukteFehler(ValueError):
@@ -89,6 +105,24 @@ class Produktinfo:
     zielgruppe: str
     ziele: str
     pdf_seiten: tuple[int, ...]
+
+
+@dataclass(frozen=True)
+class Erlaeuterung:
+    """Ein Erläuterungs-Blockeintrag (Posten oder Freitext, EXTR-08, D-01 bis D-03).
+
+    `zu_zeilen` ist leer, wenn der Block kein "zu Nr." trägt (D-02). `betrag` ist
+    `None` für eine Freitextzeile. `block` und `position` sind 1-basiert in Lesereihen-
+    folge je Produkt.
+    """
+
+    produkt: str
+    block: int
+    position: int
+    zu_zeilen: tuple[str, ...]
+    betrag: int | None
+    text: str
+    pdf_seite: int
 
 
 def _label_zu_feld(jahrgang: Jahrgang) -> dict[str, str]:
@@ -242,6 +276,214 @@ def _baue_leistungen(
     return tuple(eintraege_text)
 
 
+def _zu_zeilen_aus_gruppe(gruppe: str) -> tuple[str, ...]:
+    """Extrahiert alle ein- bis zweistelligen Zahlen aus der `zeilen`-Gruppe des
+    `zu_nr_muster`-Treffers und normalisiert sie auf zweistellige Strings (D-02)."""
+    return tuple(f"{int(zahl):02d}" for zahl in re.findall(r"\d{1,2}", gruppe))
+
+
+def lies_erlaeuterungen(
+    dokument: PdfDokument, jahrgang: Jahrgang, seiten: pl.DataFrame, hierarchie: pl.DataFrame
+) -> list[Erlaeuterung]:
+    """Liest die Erläuterungsblöcke aller Produkte von ihren Teilergebnisplan-Seiten
+    (EXTR-08, D-01 bis D-03).
+
+    Je Produkt wird ab der ersten `kopf_muster`-Zeile ("Erläuterung") gescannt, bis eine
+    Zeile den Teilfinanzplan-Seitentyp, eine "Nr."-Kopfzeile, die Fortsetzung-Markierung
+    oder die Seitenzahl trifft. Produkte ohne Erläuterung liefern keinen Eintrag.
+    """
+    kopf_muster = re.compile(layout_text(jahrgang, "erlaeuterungen", "kopf_muster"))
+    zu_nr_muster = re.compile(layout_text(jahrgang, "erlaeuterungen", "zu_nr_muster"))
+    posten_muster = re.compile(layout_text(jahrgang, "erlaeuterungen", "posten_muster"))
+    fortsetzung_normalisiert = "".join(jahrgang.kopfzeilen.fortsetzung.split())
+    teilfinanzplan_muster = jahrgang.kopfzeilen.seitentypen["teilfinanzplan"]
+
+    teg_seiten = seiten.filter(
+        pl.col("produkt").is_not_null() & (pl.col("typ") == "teilergebnisplan")
+    ).sort(["produkt", "pdf_seite"])
+
+    alle: list[Erlaeuterung] = []
+    for produkt in sorted(teg_seiten["produkt"].unique().to_list()):
+        pdf_seiten = tuple(teg_seiten.filter(pl.col("produkt") == produkt)["pdf_seite"].to_list())
+        alle.extend(
+            _lies_erlaeuterungen_produkt(
+                dokument,
+                produkt,
+                pdf_seiten,
+                kopf_muster=kopf_muster,
+                zu_nr_muster=zu_nr_muster,
+                posten_muster=posten_muster,
+                fortsetzung_normalisiert=fortsetzung_normalisiert,
+                teilfinanzplan_muster=teilfinanzplan_muster,
+            )
+        )
+    return alle
+
+
+def _lies_erlaeuterungen_produkt(
+    dokument: PdfDokument,
+    produkt: str,
+    pdf_seiten: Sequence[int],
+    *,
+    kopf_muster: re.Pattern[str],
+    zu_nr_muster: re.Pattern[str],
+    posten_muster: re.Pattern[str],
+    fortsetzung_normalisiert: str,
+    teilfinanzplan_muster: str,
+) -> list[Erlaeuterung]:
+    ergebnisse: list[Erlaeuterung] = []
+    block_nr = 0
+    position = 0
+    block_zu_zeilen: tuple[str, ...] = ()
+    eintraege: list[dict[str, object]] = []
+    in_scan = False
+
+    def schliesse_block() -> None:
+        nonlocal eintraege, position
+        for eintrag in eintraege:
+            position += 1
+            text = ersetze_eurozeichen(verbinde_zeilen(eintrag["teile"]))
+            ergebnisse.append(
+                Erlaeuterung(
+                    produkt=produkt,
+                    block=block_nr,
+                    position=position,
+                    zu_zeilen=block_zu_zeilen,
+                    betrag=eintrag["betrag"],
+                    text=text,
+                    pdf_seite=eintrag["pdf_seite"],
+                )
+            )
+        eintraege = []
+
+    def oeffne_block(zu_zeilen: tuple[str, ...], rest_text: str, pdf_seite: int) -> None:
+        nonlocal block_zu_zeilen, block_nr
+        schliesse_block()
+        block_nr += 1
+        block_zu_zeilen = zu_zeilen
+        if rest_text:
+            eintraege.append({"betrag": None, "teile": [rest_text], "pdf_seite": pdf_seite})
+
+    for pdf_seite in pdf_seiten:
+        zeilen = dokument.zeilen_fein(pdf_seite)
+        for zeile in zeilen:
+            text_ns = zeile.text_ohne_leerzeichen
+
+            if not in_scan:
+                if zeile.woerter and zeile.woerter[0].fett and kopf_muster.match(zeile.text):
+                    in_scan = True
+                else:
+                    continue
+
+            if text_ns == str(pdf_seite) or text_ns.startswith(fortsetzung_normalisiert):
+                schliesse_block()
+                return ergebnisse
+            if re.match(teilfinanzplan_muster, text_ns) or (
+                zeile.woerter and zeile.woerter[0].text == "Nr."
+            ):
+                schliesse_block()
+                return ergebnisse
+
+            ist_label_zeile = bool(zeile.woerter) and zeile.woerter[0].fett
+            zu_nr_treffer = zu_nr_muster.match(zeile.text) if ist_label_zeile else None
+            if zu_nr_treffer:
+                zu_zeilen = _zu_zeilen_aus_gruppe(zu_nr_treffer.group("zeilen"))
+                rest = zu_nr_treffer.group("rest").strip()
+                if rest.startswith(":"):
+                    rest = rest[1:].strip()
+                oeffne_block(zu_zeilen, rest, pdf_seite)
+                continue
+            if ist_label_zeile and kopf_muster.match(zeile.text):
+                # Eine "Erläuterung"-Kopfzeile OHNE "zu Nr." (D-02, S. 184): leeres
+                # zu_zeilen, der Rest der Zeile (Label-Wort abgetrennt) wird die erste
+                # Freitextzeile.
+                rest = " ".join(wort.text for wort in zeile.woerter[1:])
+                oeffne_block((), rest, pdf_seite)
+                continue
+
+            posten_treffer = posten_muster.match(zeile.text)
+            if posten_treffer:
+                betrag = lies_betrag(posten_treffer.group("betrag"))
+                eintraege.append(
+                    {
+                        "betrag": betrag,
+                        "teile": [posten_treffer.group("text")],
+                        "pdf_seite": pdf_seite,
+                        "text_x0": zeile.woerter[2].x0 if len(zeile.woerter) > 2 else zeile.x0,
+                    }
+                )
+                continue
+
+            if (
+                eintraege
+                and eintraege[-1]["betrag"] is not None
+                and zeile.x0 >= eintraege[-1]["text_x0"] - _POSTEN_X_TOLERANZ
+            ):
+                eintraege[-1]["teile"].append(zeile.text)
+                continue
+
+            if (
+                eintraege
+                and eintraege[-1]["betrag"] is None
+                and not eintraege[-1]["teile"][-1].rstrip().endswith(_SATZENDE_ZEICHEN)
+            ):
+                eintraege[-1]["teile"].append(zeile.text)
+            else:
+                eintraege.append({"betrag": None, "teile": [zeile.text], "pdf_seite": pdf_seite})
+
+    schliesse_block()
+    return ergebnisse
+
+
+def pruefe_plausibilitaet(
+    erlaeuterungen: Sequence[Erlaeuterung], ergebnisplan: pl.DataFrame, haushaltsjahr: int
+) -> None:
+    """D-04: jede `zu_zeilen`-Nummer eines POSTENS (ein Betrag ist angegeben) muss im
+    Teilergebnisplan des Produkts gedruckt sein; kein Posten darf die Summe der
+    referenzierten Zeilen (Ansatz Haushaltsjahr) übersteigen (die Posten sind
+    ausdrücklich "u. a. enthalten", nie vollständig).
+
+    Die Zeilen-Existenzprüfung gilt NUR für Postenzeilen (D-04 schützt die Zuordnung
+    eines gedruckten BETRAGS zu einer Planzeile): verifiziert gegen das reale PDF
+    verweisen drei reine Freitextzeilen (kein Betrag, S. 212/216/270) auf eine Zeile, die
+    im Teilergebnisplan nicht gedruckt ist, weil ihr Wert 0 ist (Phase 2 D-11, "fehlende
+    Zeile bedeutet 0") — der Freitext erklärt dort gerade, warum diese Kategorie dieses
+    Jahr keinen Wert hat. Ohne Betrag gibt es keine Fehlzuordnung eines Geldbetrags zu
+    verhindern; kein einziger der 119 echten Postenzeilen referenziert eine nicht
+    gedruckte Zeile (verifiziert).
+    """
+    for erlaeuterung in erlaeuterungen:
+        if not erlaeuterung.zu_zeilen or erlaeuterung.betrag is None:
+            continue
+        for zeile in erlaeuterung.zu_zeilen:
+            treffer = ergebnisplan.filter(
+                (pl.col("ebene") == "P")
+                & (pl.col("code") == erlaeuterung.produkt)
+                & (pl.col("zeile") == zeile)
+            )
+            if treffer.height == 0:
+                raise ProdukteFehler(
+                    f"S. {erlaeuterung.pdf_seite}: Erläuterung zu Nr. {zeile}: Zeile im "
+                    f"Teilergebnisplan von {erlaeuterung.produkt} nicht gedruckt (D-04)"
+                )
+        summe = (
+            ergebnisplan.filter(
+                (pl.col("ebene") == "P")
+                & (pl.col("code") == erlaeuterung.produkt)
+                & pl.col("zeile").is_in(list(erlaeuterung.zu_zeilen))
+                & (pl.col("jahr") == haushaltsjahr)
+                & (pl.col("wertart") == "ansatz")
+            )["betrag"].sum()
+            or 0
+        )
+        if erlaeuterung.betrag > summe:
+            raise ProdukteFehler(
+                f"S. {erlaeuterung.pdf_seite}: Erläuterung (Produkt "
+                f"{erlaeuterung.produkt}) Posten {erlaeuterung.betrag} übersteigt die "
+                f"Summe der Zeilen {erlaeuterung.zu_zeilen} ({summe}) (D-04)"
+            )
+
+
 def lies_personennamen(
     dokument: PdfDokument, jahrgang: Jahrgang, seiten: pl.DataFrame, hierarchie: pl.DataFrame
 ) -> list[tuple[int, str]]:
@@ -389,14 +631,22 @@ def lies_produktinformationen(
 
 def extrahiere_produkte(
     jahrgang: Jahrgang, *, daten_wurzel: Path = DATEN_WURZEL
-) -> tuple[ExtraktionsErgebnis]:
-    """Liest Produktinformationen aller 63 Produkte und schreibt produkte.json
-    (EXTR-06, D-09)."""
+) -> tuple[ExtraktionsErgebnis, ExtraktionsErgebnis]:
+    """Liest Produktinformationen und Erläuterungen aller 63 Produkte und schreibt
+    produkte.json sowie erlaeuterungen.csv (EXTR-06, EXTR-08, D-04, D-09)."""
     seiten = lies_seiten_csv(daten_wurzel / SEITEN_CSV)
     hierarchie = lies_hierarchie_csv(daten_wurzel / HIERARCHIE_CSV)
+    ergebnisplan = lies_plan_csv(daten_wurzel / ERGEBNISPLAN_CSV)
 
     with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
         produktinfos = lies_produktinformationen(dokument, jahrgang, seiten, hierarchie)
+        erlaeuterungen = lies_erlaeuterungen(dokument, jahrgang, seiten, hierarchie)
+
+    pruefe_plausibilitaet(erlaeuterungen, ergebnisplan, jahrgang.haushaltsjahr)
+
+    erlaeuterungen_je_produkt: dict[str, list[Erlaeuterung]] = {}
+    for erlaeuterung in erlaeuterungen:
+        erlaeuterungen_je_produkt.setdefault(erlaeuterung.produkt, []).append(erlaeuterung)
 
     datensaetze = [
         {
@@ -414,6 +664,20 @@ def extrahiere_produkte(
             "klassifizierung": info.klassifizierung,
             "zielgruppe": info.zielgruppe,
             "ziele": info.ziele,
+            "erlaeuterungen": [
+                {
+                    "block": e.block,
+                    "position": e.position,
+                    "zu_zeilen": list(e.zu_zeilen),
+                    "betrag": e.betrag,
+                    "text": e.text,
+                    "pdf_seite": e.pdf_seite,
+                }
+                for e in sorted(
+                    erlaeuterungen_je_produkt.get(info.code, []),
+                    key=lambda e: (e.block, e.position),
+                )
+            ],
             "pdf_seiten": list(info.pdf_seiten),
         }
         for info in produktinfos
@@ -422,4 +686,33 @@ def extrahiere_produkte(
     produkte_pfad = daten_wurzel / PRODUKTE_JSON
     schreibe_produkte_json(datensaetze, produkte_pfad)
 
-    return (ExtraktionsErgebnis(zeilen_geschrieben=len(datensaetze), pfad=produkte_pfad),)
+    erlaeuterungen_df = pl.DataFrame(
+        [
+            {
+                "produkt": e.produkt,
+                "block": e.block,
+                "position": e.position,
+                "zu_zeilen": "|".join(e.zu_zeilen) if e.zu_zeilen else None,
+                "betrag": e.betrag,
+                "text": e.text,
+                "pdf_seite": e.pdf_seite,
+            }
+            for e in erlaeuterungen
+        ],
+        schema={
+            "produkt": pl.Utf8,
+            "block": pl.Int64,
+            "position": pl.Int64,
+            "zu_zeilen": pl.Utf8,
+            "betrag": pl.Int64,
+            "text": pl.Utf8,
+            "pdf_seite": pl.Int64,
+        },
+    )
+    erlaeuterungen_pfad = daten_wurzel / ERLAEUTERUNGEN_CSV
+    schreibe_erlaeuterungen_csv(erlaeuterungen_df, erlaeuterungen_pfad)
+
+    return (
+        ExtraktionsErgebnis(zeilen_geschrieben=len(datensaetze), pfad=produkte_pfad),
+        ExtraktionsErgebnis(zeilen_geschrieben=erlaeuterungen_df.height, pfad=erlaeuterungen_pfad),
+    )

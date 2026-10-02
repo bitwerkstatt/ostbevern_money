@@ -21,9 +21,10 @@ _LEERZEICHEN_VOR_KOMMA_MUSTER = re.compile(r" ,")
 
 # Der Euro-Glyph im PDF liest als "C" (Spez. 2.2). Ersetzt wird nur ein Vorkommen, das
 # direkt (mit oder ohne Leerzeichen) auf eine gültige Zahl im Plantabellen-Zahlenformat
-# folgt ("800 C" oder angeklebt "800C"), nie ein freistehendes "C" in Fließtext (z. B.
-# "Kategorie C").
-_EUROZEICHEN_NACH_ZAHL_MUSTER = re.compile(r"(?<=\d)(\s?)C(?=\s|$|[^\wÀ-ÖØ-öø-ÿ])")
+# folgt ("800 C" oder angeklebt "800C"), optional mit der Tausend-Abkürzung "T" davor
+# ("105 TC" = "105 T€", Erläuterungen Phase 3, S. 114), nie ein freistehendes "C" in
+# Fließtext (z. B. "Kategorie C").
+_EUROZEICHEN_NACH_ZAHL_MUSTER = re.compile(r"(?<=\d)(\s?T?)C(?=\s|$|[^\wÀ-ÖØ-öø-ÿ])")
 
 
 def verbinde_zeilen(zeilen: Sequence[str]) -> str:
@@ -66,6 +67,7 @@ def ersetze_eurozeichen(text: str) -> str:
     """Ersetzt den misslesbaren Euro-Glyphen "C" nach einer Zahl durch "€" (Spez. 2.2).
 
     Ein "C", das nicht unmittelbar auf eine Ziffer folgt (mit höchstens einem
-    trennenden Leerzeichen), bleibt unverändert (z. B. "Kategorie C").
+    trennenden Leerzeichen und optional der angeklebten Tausend-Abkürzung "T", "105 TC"
+    -> "105 T€"), bleibt unverändert (z. B. "Kategorie C").
     """
     return _EUROZEICHEN_NACH_ZAHL_MUSTER.sub(r"\1€", text)

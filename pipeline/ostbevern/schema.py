@@ -295,6 +295,7 @@ PRODUKT_SCHLUESSEL: tuple[str, ...] = (
     "klassifizierung",
     "zielgruppe",
     "ziele",
+    "erlaeuterungen",
     "pdf_seiten",
 )
 
@@ -339,3 +340,28 @@ def lies_produkte_json(pfad: Path) -> list[dict[str, object]]:
         if set(produkt) != schluessel_menge:
             raise SchemaFehler(f"{pfad}: Produkt {produkt.get('code')!r} hat abweichende Schlüssel")
     return produkte
+
+
+# Erläuterungsposten (Phase 3, 03-04, EXTR-08, D-01 bis D-04): ein Wert je Block-Eintrag
+# (Posten oder Freitext) im Langformat. `zu_zeilen` ist "|"-verbunden (zweistellige
+# Zeilennummern), null wenn der Block keine "zu Nr." trägt (D-02); `betrag` ist null für
+# eine Freitextzeile.
+ERLAEUTERUNGEN_SPALTEN: dict[str, pl.PolarsDataType] = {
+    "produkt": pl.Utf8,
+    "block": pl.Int64,
+    "position": pl.Int64,
+    "zu_zeilen": pl.Utf8,
+    "betrag": pl.Int64,
+    "text": pl.Utf8,
+    "pdf_seite": pl.Int64,
+}
+
+
+def schreibe_erlaeuterungen_csv(df: pl.DataFrame, pfad: Path) -> None:
+    """Schreibt erlaeuterungen.csv sortiert nach produkt, block, position (D-21)."""
+    schreibe_csv(df, pfad, ERLAEUTERUNGEN_SPALTEN, ["produkt", "block", "position"])
+
+
+def lies_erlaeuterungen_csv(pfad: Path) -> pl.DataFrame:
+    """Liest erlaeuterungen.csv über `lies_csv` mit ERLAEUTERUNGEN_SPALTEN."""
+    return lies_csv(pfad, ERLAEUTERUNGEN_SPALTEN)
