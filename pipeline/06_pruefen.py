@@ -60,7 +60,13 @@ def main(
 
     for regel in bericht.regeln:
         titel_kurz = regel.titel.split(" – ")[0]
-        typer.echo(f"{titel_kurz}: {regel.status} ({regel.geprueft} Werte)")
+        if regel.luecken:
+            typer.echo(
+                f"{titel_kurz}: {regel.status} "
+                f"({regel.geprueft} Werte, {len(regel.luecken)} Lücken)"
+            )
+        else:
+            typer.echo(f"{titel_kurz}: {regel.status} ({regel.geprueft} Werte)")
 
     typer.echo(f"Veraltete Befunde: {len(bericht.veraltete_befunde)}")
     typer.echo(f"Seiten mit typ=unbekannt: {len(bericht.unbekannte_seiten)}")
