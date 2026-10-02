@@ -65,3 +65,13 @@ def test_ersetze_eurozeichen_angeklebt_nach_zahl() -> None:
 
 def test_ersetze_eurozeichen_mehrfach() -> None:
     assert ersetze_eurozeichen("100 C und 200 C") == "100 € und 200 €"
+
+
+def test_verbinde_zeilen_entfernt_leerzeichen_vor_komma() -> None:
+    # Feine Extraktion (x_tolerance=1) fügt zwischen zwei direkt angrenzenden Wörtern
+    # (z. B. "Leistungen" und ",") beim Join mit " " ein künstliches Leerzeichen ein,
+    # das im PDF nicht gedruckt ist (010602, S. 88).
+    assert (
+        verbinde_zeilen(["Leistungen , die unter anderen Produkten veranschlagt werden:"])
+        == "Leistungen, die unter anderen Produkten veranschlagt werden:"
+    )

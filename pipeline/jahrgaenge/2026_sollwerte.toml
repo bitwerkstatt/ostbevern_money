@@ -203,3 +203,31 @@ ordentliche_aufwendungen = 30255569
 "150102" = { name = "Touristische Öffentlichkeitsarbeit", pdf_seite = 276 }
 "16" = { name = "Allgemeine Finanzwirtschaft", pdf_seite = 278 }
 "160101" = { name = "Allgemeine Finanzwirtschaft", pdf_seite = 280 }
+
+# [stichproben] (Phase 3, 03-04): PDF-geprüfte Testreferenzen, keine Extraktions-
+# Steuerung. Werte sind einzeln gegen das PDF verifiziert (S. 151-154, 184).
+[stichproben.produktinfo]
+produkt = "030101"
+fachbereich = "Fachbereich I/Schulen"
+gremium = "Bildungs-, Generationen- und Sozialausschuss"
+bindungsgrad = "teils"
+bindungsgrad_original = "teils pflichtig teils freiwillig"
+klassifizierung = "extern"
+erste_leistung = "Betrieb der Ambrosius-Grundschule"
+pdf_seiten = [151, 152, 153, 154]
+
+[stichproben.erlaeuterung_posten]
+produkt = "030101"
+zu_zeilen = ["13", "16"]
+betrag = 66500
+text = "Strom, Nahwärme, Wasser, Abwasser"
+pdf_seite = 152
+
+[stichproben.erlaeuterung_ohne_zu_nr]
+produkt = "050103"
+pdf_seite = 184
+bloecke = 2
+zweiter_block_zu_zeilen = ["16"]
+
+[stichproben.anzahlen]
+produkte_mit_erlaeuterungen = 51

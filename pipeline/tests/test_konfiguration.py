@@ -543,3 +543,42 @@ def test_layout_text_fehlender_schluessel_meldet_pfad() -> None:
         layout_text(jahrgang, "querschnitte", "nicht_vorhanden")
     with pytest.raises(KonfigurationsFehler, match="layout.unbekannter_bereich.nix"):
         layout_text(jahrgang, "unbekannter_bereich", "nix")
+
+
+# [stichproben] (Phase 3, 03-04): PDF-geprüfte Testreferenzen, keine Extraktions-
+# Steuerung (keine Pflichttabelle, muss aber eine Tabelle von Tabellen sein). Steht am
+# Dateiende der echten Sollwertdatei, daher reicht das Muster bis zum Dateiende.
+
+
+def test_stichproben_nicht_tabelle_wird_abgelehnt(tmp_path: Path) -> None:
+    ohne = re.sub(r"(?ms)^\[stichproben\..*", "", _sollwertdatei_text())
+    text = ohne + 'stichproben = "nicht-tabelle"\n'
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="stichproben"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_stichproben_eintrag_nicht_tabelle_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(
+        r"(?m)^\[stichproben\.anzahlen\]$",
+        "[stichproben]\nanzahlen = 1",
+        _sollwertdatei_text(),
+        count=1,
+    )
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="stichproben.anzahlen"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_sollwertdatei_ohne_stichproben_bleibt_gueltig(tmp_path: Path) -> None:
+    text = re.sub(r"(?ms)^\[stichproben\..*", "", _sollwertdatei_text())
+    _schreibe_sollwertdatei(tmp_path, text)
+    sollwerte = lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+    assert sollwerte.get("stichproben", {}) == {}
+
+
+def test_lade_sollwerte_stichproben_produktinfo_vollstaendig() -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    produktinfo = sollwerte["stichproben"]["produktinfo"]
+    assert produktinfo["produkt"]
+    assert produktinfo["pdf_seiten"]
