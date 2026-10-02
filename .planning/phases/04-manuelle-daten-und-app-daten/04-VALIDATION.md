@@ -40,16 +40,16 @@ created: "2026-10-02"
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| TBD | TBD | TBD | MANU-01..05 | — | N/A | unit | `uv run --directory pipeline pytest tests/test_manuell.py -k schema -x` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | MANU-06 | — | N/A | unit | `uv run --directory pipeline pytest tests/test_manuell.py -k meta -x` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | MANU-07 | — | N/A | unit | `uv run --directory pipeline pytest tests/test_manuell.py -k readme -x` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | MANU-08 | T-4 (placeholder injection) | Unknown placeholder key aborts step 07 | unit | `uv run --directory pipeline pytest tests/test_texte.py -x` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | PRUEF-05 | — | N/A | integration | `uv run --directory pipeline pytest tests/test_manuell.py -k regel5 -x` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | EXTR-10 | — | N/A | unit+integration | `uv run --directory pipeline pytest tests/test_stellenplan.py -x` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | DATA-01 | T-4 (name disclosure) | No person names in `app/src/data/*.json` | unit | `uv run --directory pipeline pytest tests/test_app_daten.py -x` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | DATA-02 | — | N/A | unit | `uv run --directory pipeline pytest tests/test_app_daten.py -k kl_knoten -x` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | DATA-03 | — | N/A | unit | `uv run --directory pipeline pytest tests/test_app_daten.py -k zuschussbedarf -x` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | PRUEF-10 | — | N/A | integration | `uv run --directory pipeline python alle.py --jahr 2026 && git diff --exit-code -- daten app/src/data` | ✅ alle.py (05/07 missing) | ⬜ pending |
+| 04-01 T1, T2; 04-02 T1, T3 | 04-01, 04-02 | 1, 2 | MANU-01..05 | T-04-01 | Typos caught by stage (a)/(b) and B.4/B.5 | unit | `uv run --directory pipeline pytest tests/test_manuell.py -k schema -x` | ❌ W0 (created in 04-01 T1) | ⬜ pending |
+| 04-02 T2 | 04-02 | 2 | MANU-06 | T-04-05 | meta.json allowlist rejects name fields | unit | `uv run --directory pipeline pytest tests/test_manuell.py -k meta -x` | ❌ W0 (04-01 T1) | ⬜ pending |
+| 04-01 T2; 04-02 T1-T3 | 04-01, 04-02 | 1, 2 | MANU-07 | — | N/A | unit | `uv run --directory pipeline pytest tests/test_manuell.py -k readme -x` | ❌ W0 (04-01 T1) | ⬜ pending |
+| 04-05 T1, T3 | 04-05 | 5 | MANU-08 | T-04-15 (placeholder injection) | Unknown placeholder key aborts step 07 | unit | `uv run --directory pipeline pytest tests/test_texte.py -x` | ❌ W0 (created in 04-05 T1) | ⬜ pending |
+| 04-01 T1-T3; 04-02 T1-T3 | 04-01, 04-02 | 1, 2 | PRUEF-05 | T-04-01, T-04-06 | Manual tables proven against plan lines | integration | `uv run --directory pipeline pytest tests/test_manuell.py -k regel5 -x` | ❌ W0 (04-01 T1) | ⬜ pending |
+| 04-03 T1-T3 | 04-03 | 3 | EXTR-10 | T-04-09, T-04-10 | Parse-time cross-checks, Regel 10 exact | unit+integration | `uv run --directory pipeline pytest tests/test_stellenplan.py -x` | ❌ W0 (created in 04-03 T1) | ⬜ pending |
+| 04-01 T1; 04-04 T2 | 04-01, 04-04 | 1, 4 | DATA-01 | T-04-03, T-04-12 (name disclosure) | No person names in `app/src/data/*.json` | unit | `uv run --directory pipeline pytest tests/test_app_daten.py -x` | ❌ W0 (created in 04-01 T1) | ⬜ pending |
+| 04-04 T1 | 04-04 | 4 | DATA-02 | T-04-13 | KL == TP 160101 Z. 15, conservation of sums | unit | `uv run --directory pipeline pytest tests/test_app_daten.py -k kl_knoten -x` | ❌ W0 (04-01 T1) | ⬜ pending |
+| 04-04 T1 | 04-04 | 4 | DATA-03 | T-04-13 | Zuschussbedarf formula and flags | unit | `uv run --directory pipeline pytest tests/test_app_daten.py -k zuschussbedarf -x` | ❌ W0 (04-01 T1) | ⬜ pending |
+| 04-01 T1; 04-03 T3; 04-05 T3 | 04-01, 04-03, 04-05 | 1, 3, 5 | PRUEF-10 | T-04-04 | Deterministic JSON, CI diff + untracked check | integration | `uv run --directory pipeline python alle.py --jahr 2026 && git diff --exit-code -- daten app/src/data` | ✅ alle.py (05/07 added in 04-03/04-01) | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
