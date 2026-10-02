@@ -1,135 +1,133 @@
 ---
 phase: 03-details
-reviewed: 2026-10-02T00:00:00Z
+reviewed: 2026-10-02T11:27:49Z
 depth: standard
-files_reviewed: 32
+files_reviewed: 9
 files_reviewed_list:
   - pipeline/03_produktinfos.py
   - pipeline/04_investitionen.py
-  - pipeline/06_pruefen.py
   - pipeline/alle.py
-  - pipeline/jahrgaenge/2026.toml
-  - pipeline/jahrgaenge/2026_sollwerte.toml
-  - pipeline/ostbevern/freitext.py
-  - pipeline/ostbevern/investitionen.py
-  - pipeline/ostbevern/konfiguration.py
-  - pipeline/ostbevern/pdf.py
-  - pipeline/ostbevern/produkte.py
-  - pipeline/ostbevern/pruefung.py
-  - pipeline/ostbevern/querschnitte.py
   - pipeline/ostbevern/schema.py
   - pipeline/ostbevern/spalten.py
-  - pipeline/ostbevern/zahlen.py
-  - pipeline/tests/conftest.py
   - pipeline/tests/test_alle.py
-  - pipeline/tests/test_freitext.py
   - pipeline/tests/test_investitionen.py
-  - pipeline/tests/test_konfiguration.py
   - pipeline/tests/test_produkte.py
-  - pipeline/tests/test_pruefung.py
-  - pipeline/tests/test_querschnitte.py
   - pipeline/tests/test_spalten.py
-  - pipeline/tests/test_zahlen.py
-  - daten/pruefberichte/befunde.md
-  - daten/pruefberichte/konsistenz.md
-  - daten/aufbereitet/produkte.json
-  - daten/aufbereitet/erlaeuterungen.csv
-  - daten/aufbereitet/grundzahlen.csv
-  - daten/aufbereitet/investitionen.csv
-  - daten/aufbereitet/ve_faelligkeiten.csv
-  - daten/zwischen/investitionen_pb.csv
-  - daten/zwischen/querschnitte.csv
 findings:
-  critical: 0
-  warning: 2
-  info: 3
-  total: 5
+  critical: 1
+  warning: 0
+  info: 0
+  total: 1
 status: issues_found
 ---
 
 # Phase 03: Code Review Report
 
-**Reviewed:** 2026-10-02T00:00:00Z
+**Reviewed:** 2026-10-02T11:27:49Z
 **Depth:** standard
-**Files Reviewed:** 32 (+ 9 generated data files sampled)
+**Files Reviewed:** 9
 **Status:** issues_found
 
 ## Summary
 
-Reviewed the Phase 3 pipeline (Produktinformationen/Erläuterungen/Grundzahlen, Investitionsmaßnahmen/VE-Fälligkeiten, Haushaltsquerschnitte, Konsistenzprüfung) and its full test suite, plus the year/sollwerte TOML configs and the generated CSV/JSON/markdown outputs they produce.
+**This review supersedes `03-REVIEW.md`'s prior iteration (base commit `69bcd19`, 32 files).** That
+review raised WR-01, WR-02, IN-01, IN-02, IN-03; all five were fixed in commits `e842ff3`,
+`20bab38`, `0a758a6`, `b590bdb`, `12e7b93` (see `03-REVIEW-FIX.md`). This incremental review
+re-examined `git diff 69bcd19..HEAD` for the 9 files in scope — the five fix commits plus
+`b857f29`, which added three Nyquist validation tests (two `test_finanzierungskonten_*` tests in
+`test_investitionen.py`, one Schritt-03 byte-identity test in `test_produkte.py`) — with emphasis
+on whether each fix actually delivers what it claims.
 
-This is an unusually mature, heavily cross-checked codebase: every extraction module fails loudly on unexpected input (no silent defaults), the D-09 privacy rule (no staff names in `produkte.json`) is enforced both structurally (field is dropped before a dataclass is ever built) and by a dedicated test that greps the entire `daten/` tree for leaked name strings, and `befunde.md`/`konsistenz.md` are internally consistent and both green. I traced the full call chain for `spalten.ordne_spalten` (shared by `querschnitte.py`, `investitionen.py`, `produkte.py`) and found one latent robustness defect (WR-01). I did not find any security vulnerability, data-loss risk, or incorrect-output bug that would currently cause wrong figures to reach `daten/aufbereitet/` — all findings below are robustness/maintainability issues.
+**Confirmed correct and complete, no new findings:**
+- **WR-01** (`spalten.ordne_spalten`): the per-anchor-pair local tolerance is sound. I traced the
+  tie-breaking, rank lookup and neighbour-selection logic by hand against several anchor
+  configurations (duplicate pairs, 3-way ties, single/two-anchor edge cases) and against the new
+  regression test (`test_ordne_spalten_doppelter_anker_bricht_nicht_die_ganze_zuordnung`); the fix
+  genuinely isolates a degenerate anchor pair's zero-gap from unrelated anchors elsewhere in the
+  same table, and the regression test genuinely fails against the pre-fix implementation (verified
+  by hand-evaluating the old global-`min` formula against the test's exact anchor list).
+- **WR-02** (`test_alle.py` mock arity): the 3-tuple fixture order
+  `(produkte_ergebnis, grundzahlen_ergebnis, erlaeuterungen_ergebnis)` matches
+  `produkte.extrahiere_produkte`'s actual `return` statement exactly (confirmed by reading
+  `pipeline/ostbevern/produkte.py:1063-1067`).
+- **IN-01** (`alle.py` step-label) and **IN-02** (CLI help text) are plain, accurate textual
+  changes; both match what the called functions actually write.
+- The two new `test_finanzierungskonten_*_bricht_ab` tests and the new Schritt-03 byte-identity
+  test genuinely exercise their target checks — I ran all three in isolation (`pytest -k
+  "finanzierungskonten_weichen or byte_identisch"`) against the real PDF and confirmed they pass
+  for the right reason (the `match=` regex ties each test to the specific `InvestitionenFehler`
+  message produced by `_pruefe_finanzierungskonten`, not an incidental earlier abort). I also ran
+  the full pipeline suite (298 tests) — all green.
 
-No `TODO`/`FIXME`/`console.log`/bare-`except`/hardcoded-secret patterns were found anywhere in the reviewed file set (verified via grep across all 16 Python source files).
+**New finding (not raised by the prior review):** the **IN-03** fix (`strict=True` on
+`schema.schreibe_csv`'s central `.cast()`) does not actually catch the precision-loss scenario it
+was written to prevent — see CR-01. I verified this empirically against the pinned polars version
+(`polars>=1.44.2`), not just by reading the source, since this is exactly the kind of fix
+correctness the orchestrator asked this pass to scrutinize.
 
-## Warnings
+## Critical Issues
 
-### WR-01: `ordne_spalten` tolerance is computed globally, not per-anchor-pair — a single duplicate anchor breaks column assignment for the whole table
+### CR-01: `strict=True` in `schema.schreibe_csv` does not catch the float→int precision-loss scenario it was added to prevent — IN-03 is not actually fixed
 
-**File:** `pipeline/ostbevern/spalten.py:29-50`
-**Issue:** `ordne_spalten` computes one global tolerance as `min(abstaende) / 2`, where `abstaende` is the list of gaps between *every* pair of adjacent sorted anchors. If any two anchors in `anker_x1` happen to coincide (gap 0 — e.g. a column that is empty/merged on a given PDF page, or a future jahrgang whose spalten configuration/extracted x1 values collide), `toleranz` becomes `0`, and the check `abstand >= toleranz` (line 40) then rejects **every** word for **every** column in that call — including a word whose `x1` exactly matches an unrelated, unambiguous anchor elsewhere in the row. For example, with `anker_x1 = [100.0, 100.0, 500.0]`, `toleranz = min(0, 400) / 2 = 0`, so a word at `x1=500.0` (an exact, unambiguous match to the third anchor) is also rejected with `SpaltenFehler`, even though it has nothing to do with the duplicate pair. This is shared code used by `querschnitte.py`, `investitionen.py`, and `produkte.py` (Grundzahlen), so the blast radius of a single degenerate anchor pair is large. Current `2026` data happens not to trigger this (full test suite is green), but it is a real latent defect in a widely-shared utility, not merely a theoretical one — the failure mode is an unconditional `SpaltenFehler` for an entire table/page rather than a precise error about the actual ambiguous word.
-**Fix:**
+**File:** `pipeline/ostbevern/schema.py:98-100`
+**Issue:** The IN-03 fix added `strict=True` to the single central cast every generated CSV goes
+through, with the comment "fail loud on precision loss/overflow instead of polars' default silent
+coercion/truncation." The original review's own example of the defect class to close was
+explicitly "a `Float64` column with a fractional value cast to `Int64`." I verified against the
+project's pinned polars version that **polars' `DataFrame.cast(..., strict=True)` does not raise
+on exactly this case** — it only raises on genuine overflow (value out of the target integer's
+range) or unparsable input (e.g. a non-numeric string). Fractional truncation during a `Float64 ->
+Int64` cast is silently accepted under `strict=True`, identically to the pre-fix behaviour:
+
 ```python
-def ordne_spalten(woerter: Sequence[Wort], anker_x1: Sequence[float]) -> dict[int, Wort]:
-    sortierte_indices = sorted(range(len(anker_x1)), key=lambda i: anker_x1[i])
-    ergebnis: dict[int, Wort] = {}
-    for wort in woerter:
-        index = min(range(len(anker_x1)), key=lambda i: abs(wort.x1 - anker_x1[i]))
-        abstand = abs(wort.x1 - anker_x1[index])
-        # Local tolerance: only the gap to this word's two nearest neighbouring
-        # anchors, not the smallest gap anywhere in the table.
-        rang = sortierte_indices.index(index)
-        nachbarn = [
-            abs(anker_x1[index] - anker_x1[sortierte_indices[i]])
-            for i in (rang - 1, rang + 1)
-            if 0 <= i < len(sortierte_indices)
-        ]
-        toleranz = min(nachbarn) / 2 if nachbarn else float("inf")
-        if abstand >= toleranz:
-            raise SpaltenFehler(...)
-        ...
+import polars as pl
+df = pl.DataFrame({"betrag": [1234.5]})
+df.select(["betrag"]).cast({"betrag": pl.Int64}, strict=True)
+# shape: (1, 1)  ┌────────┐ │ betrag │ │ i64    │ ╞════════╡ │ 1234   │ └────────┘
+# No exception. 1234.5 was silently truncated to 1234 — the exact defect IN-03 claimed to close.
 ```
-At minimum, add a regression test with a duplicate/zero-gap anchor pair documenting the intended behaviour (reject only the genuinely ambiguous word(s), not the whole row).
-
-### WR-02: `test_alle.py` mocks `extrahiere_produkte` with a 2-tuple, but the real function returns a 3-tuple
-
-**File:** `pipeline/tests/test_alle.py:57-68` (compare `pipeline/ostbevern/produkte.py:942-1063`, which returns `(produkte_ergebnis, grundzahlen_ergebnis, erlaeuterungen_ergebnis)`)
-**Issue:** `_produkte_ergebnisse()` in the `aufrufe` fixture returns only two `ExtraktionsErgebnis` objects (produkte.json, erlaeuterungen.csv), omitting the grundzahlen.csv result that `produkte.extrahiere_produkte` actually returns as its middle element. The test currently passes only because `alle.py`'s `main()` iterates the returned sequence generically (`for ergebnis in ergebnisse_produkte`) rather than unpacking it positionally, so the mock's arity never gets checked. If `alle.py` is ever changed to unpack `produkte_ergebnis, grundzahlen_ergebnis, erlaeuterungen_ergebnis = produkte.extrahiere_produkte(...)` (a natural refactor once grundzahlen.csv needs its own log line), this test suite would not catch an arity mismatch, and a real regression (e.g. silently dropping the grundzahlen step) could ship undetected through this integration test.
-**Fix:** Make the test double match the real contract so it stays a meaningful regression guard:
+I confirmed the contrast with genuine overflow/NaN, which *do* raise under `strict=True`
+(`InvalidOperationError`), so the change is not a complete no-op — it just doesn't cover the
+specific precision-loss example that motivated it. No new test was added for this fix (there is no
+`test_schema.py` in the suite at all), so nothing would have caught the gap. Today this is latent
+rather than active: every `pl.DataFrame(...)` construction site that feeds `schreibe_csv` (in
+`produkte.py`, `plaene.py`, `seiten.py`, `investitionen.py`, `querschnitte.py`) already passes an
+explicit `schema=` matching the target `*_SPALTEN` dtypes 1:1 (verified by grepping every
+`pl.DataFrame(` call site), and the only `Float64` column in any schema (`GRUNDZAHLEN_SPALTEN.wert`)
+is cast to `Float64`, not narrowed — so no currently-generated number is wrong. But this is the
+single, central write path used by *every* generated CSV in a pipeline whose explicitly stated core
+value is "Jede Zahl in der App ist korrekt" and whose accuracy bar is "Abweichungen über 1 €
+gegenüber den Planwerten gelten als Fehler." A future change that computes a `betrag`-like column
+via float arithmetic (an average, a rounding step, a division) would have its error silently
+swallowed by this "fail loud" gate exactly as before IN-03 was filed — while the commit history,
+the code comment, and the fix-report's verification notes all now assert the opposite. That
+combination — a safety mechanism that doesn't do what its own documentation and verification claim
+for its headline example — is a correctness risk in the project's main financial-accuracy
+guarantee, not a style nit.
+**Fix:** `strict=True` is still worth keeping (it does catch overflow/NaN/unparsable input), but it
+must be paired with an explicit lossless-round-trip check for numeric columns, e.g.:
 ```python
-def _produkte_ergebnisse() -> tuple[ProdukteErgebnis, ProdukteErgebnis, ProdukteErgebnis]:
-    return (
-        ProdukteErgebnis(zeilen_geschrieben=63, pfad=PROJEKT_WURZEL / "daten/aufbereitet/produkte.json"),
-        ProdukteErgebnis(zeilen_geschrieben=1234, pfad=PROJEKT_WURZEL / "daten/aufbereitet/grundzahlen.csv"),
-        ProdukteErgebnis(zeilen_geschrieben=229, pfad=PROJEKT_WURZEL / "daten/aufbereitet/erlaeuterungen.csv"),
-    )
+def schreibe_csv(df, pfad, spalten, sortierung):
+    _pruefe_keine_leeren_strings(df, spalten, pfad)
+    sortiert = df.sort(sortierung, nulls_last=False)
+    ausgewaehlt = sortiert.select(list(spalten.keys()))
+    geordnet = ausgewaehlt.cast(spalten, strict=True)
+    # strict=True alone does not catch Float64->Int64 fractional truncation (verified against
+    # polars>=1.44.2) — round-trip every narrowed numeric column explicitly.
+    for name, ziel_dtype in spalten.items():
+        quelle_dtype = ausgewaehlt.schema[name]
+        if quelle_dtype != ziel_dtype and quelle_dtype in (pl.Float32, pl.Float64):
+            zurueck = geordnet[name].cast(quelle_dtype)
+            if not zurueck.equals(ausgewaehlt[name], null_equal=True):
+                raise SchemaFehler(f"{pfad}: Spalte {name!r} verliert Genauigkeit bei Int-Cast")
+    ...
 ```
-
-## Info
-
-### IN-01: `alle.py` reuses the "Schritt 06" label for two unrelated operations, inconsistent with `06_pruefen.py`'s own labeling of the same step
-
-**File:** `pipeline/alle.py:107-125` (compare `pipeline/06_pruefen.py:46-51`, which prints the querschnitte-extraction line with no step prefix at all)
-**Issue:** `alle.py` prints `"Schritt 06: Querschnitte: ... Werte geschrieben."` for the querschnitte extraction (which the module docstring explicitly calls a separate "Kontrollquelle"-step that runs *before* Schritt 06), and then separately prints `"Schritt 06: {titel}: ..."` once per rule for the actual consistency check. Both outputs share the "Schritt 06:" prefix even though they are two different operations, and `06_pruefen.py` (the other entry point for the same underlying calls) doesn't prefix the querschnitte line with any step number at all — the same logical step is labeled inconsistently depending on which CLI entry point ran it. This is purely a user-facing/log clarity issue, not a functional bug.
-**Fix:** Give the querschnitte-extraction line in `alle.py` its own, unprefixed label (matching `06_pruefen.py`), e.g. `f"Querschnitte: {ergebnis_querschnitte.zeilen_geschrieben} Werte geschrieben."`.
-
-### IN-02: CLI help text for `03_produktinfos.py` / `04_investitionen.py` doesn't mention all artifacts the command actually writes
-
-**File:** `pipeline/03_produktinfos.py:22-25`, `pipeline/04_investitionen.py:22-25`
-**Issue:** `03_produktinfos.py`'s Typer help string says "Extrahiert Produktinformationen und Erläuterungen aus den Produktseiten," but `extrahiere_produkte` also writes `grundzahlen.csv` (confirmed by its own return tuple and by `pipeline/ostbevern/schema.py`'s `GRUNDZAHLEN_CSV`). Similarly `04_investitionen.py`'s help string omits that the same call also writes `investitionen_pb.csv` (the PB control-source list). A user running `--help` gets an incomplete picture of what the command produces.
-**Fix:** Extend both help strings, e.g. `"Extrahiert Produktinformationen, Grundzahlen und Erläuterungen aus den Produktseiten."` and `"Extrahiert Investitionsmaßnahmen, VE-Fälligkeiten und die PB-Investitionslisten aus den Produktseiten."`.
-
-### IN-03: `schreibe_csv` relies on a blind `.cast(spalten)` that can silently coerce/truncate mismatched types instead of failing loud
-
-**File:** `pipeline/ostbevern/schema.py:89-101`
-**Issue:** `schreibe_csv` does `geordnet = sortiert.select(list(spalten.keys())).cast(spalten)` with no validation that the cast is lossless. Polars' `.cast()` silently truncates (e.g. a `Float64` column with a fractional value cast to `Int64`, or an out-of-range value) rather than raising, which runs counter to the project's explicit "fail loud, no silent defaults" convention (D-08, documented repeatedly throughout `pruefung.py`/`investitionen.py`/`konfiguration.py`). Nothing in the currently reviewed code path exercises this (all betrag values originate from `lies_betrag`, which is already `int`), so this is not an active bug today, but it is an inconsistency between the stated project philosophy and the one central write path every generated CSV goes through.
-**Fix:** Either pass `strict=True` to `.cast()` (polars will raise on precision loss / overflow instead of silently coercing) or add an explicit round-trip equality check before writing:
-```python
-geordnet = sortiert.select(list(spalten.keys())).cast(spalten, strict=True)
-```
+At minimum, add a `test_schema.py` regression test asserting that `schreibe_csv` raises
+`SchemaFehler`/an exception for a `Float64` column with a fractional value targeting an `Int64`
+schema column — the exact scenario the IN-03 commit message claims is now covered.
 
 ---
 
-_Reviewed: 2026-10-02T00:00:00Z_
+_Reviewed: 2026-10-02T11:27:49Z_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
