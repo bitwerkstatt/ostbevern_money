@@ -524,6 +524,75 @@ def test_pb16_finanzierungskonto_manipuliert_bricht_ab(jahrgang: Jahrgang) -> No
             lies_massnahmen(fehlerhaft, jahrgang, seiten_nummern, ebene="PB", code="16")
 
 
+def test_finanzierungskonten_weichen_vom_teilfinanzplan_ab_bricht_ab(
+    tmp_path: Path, jahrgang: Jahrgang
+) -> None:
+    """G1: Finanzierungs-Konten (692/792) werden gegen Teilfinanzplan Z. 33/35 geprüft.
+    Ein Betrag, der um mehr als 1€ abweicht, löst InvestitionenFehler aus (EXTR-09, D-06).
+
+    Test mit realen Produktseiten: Produkt 160101 hat Finanzierungs-Konten; die Gegenprobe
+    in _pruefe_finanzierungskonten wird aufgerufen (hat_finanzierung==True) und muss bei
+    manipuliertem finanzplan.csv abbrechen."""
+    from ostbevern.schema import PLAN_SPALTEN
+
+    _kopiere_kontext_nach(tmp_path)
+
+    # Finanzplan lesen mit fester Typung und manipulieren
+    finanzplan_pfad = tmp_path / FINANZPLAN_CSV
+    finanzplan = pl.read_csv(finanzplan_pfad).cast(PLAN_SPALTEN)
+
+    # Zeile 33 (Einzahlung/Kreditaufnahme) für Produkt 160101, Ansatz 2026
+    manipuliert = finanzplan.with_columns(
+        pl.when(
+            (pl.col("ebene") == "P")
+            & (pl.col("code") == "160101")
+            & (pl.col("zeile") == "33")
+            & (pl.col("jahr") == 2026)
+            & (pl.col("wertart") == "ansatz")
+        )
+        .then(pl.col("betrag") + 1_000_000)
+        .otherwise(pl.col("betrag"))
+        .alias("betrag")
+    )
+    manipuliert.write_csv(finanzplan_pfad)
+
+    # Die Gegenprobe sollte beim Erzeugen der CSV fehlschlagen
+    with pytest.raises(InvestitionenFehler, match=r"Teilfinanzplan Zeile 33"):
+        extrahiere_investitionen(jahrgang, daten_wurzel=tmp_path)
+
+
+def test_finanzierungskonten_pb_weichen_vom_teilfinanzplan_ab_bricht_ab(
+    tmp_path: Path, jahrgang: Jahrgang
+) -> None:
+    """G1: Wie finanzierungskonten_weichen_vom_teilfinanzplan_ab_bricht_ab, aber für
+    die PB-Verarbeitung (ebene="PB"). PB 16 hat Finanzierungs-Konten."""
+    from ostbevern.schema import PLAN_SPALTEN
+
+    _kopiere_kontext_nach(tmp_path)
+
+    finanzplan_pfad = tmp_path / FINANZPLAN_CSV
+    finanzplan = pl.read_csv(finanzplan_pfad).cast(PLAN_SPALTEN)
+
+    # Zeile 35 (Auszahlung/Tilgung) für PB 16, Ansatz 2026
+    manipuliert = finanzplan.with_columns(
+        pl.when(
+            (pl.col("ebene") == "PB")
+            & (pl.col("code") == "16")
+            & (pl.col("zeile") == "35")
+            & (pl.col("jahr") == 2026)
+            & (pl.col("wertart") == "ansatz")
+        )
+        .then(pl.col("betrag") + 1_000_000)
+        .otherwise(pl.col("betrag"))
+        .alias("betrag")
+    )
+    manipuliert.write_csv(finanzplan_pfad)
+
+    # Die Gegenprobe sollte beim Erzeugen der CSV fehlschlagen
+    with pytest.raises(InvestitionenFehler, match=r"Teilfinanzplan Zeile 35"):
+        extrahiere_investitionen(jahrgang, daten_wurzel=tmp_path)
+
+
 def test_verbinde_zeilen_und_ersetze_eurozeichen_wiederverwendet() -> None:
     """freitext.py wird von investitionen.py importiert und genutzt (D-10)."""
     import ostbevern.investitionen as modul

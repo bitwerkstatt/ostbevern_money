@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import dataclasses
 import re
+from pathlib import Path
 
 import polars as pl
 import pytest
@@ -41,6 +42,7 @@ from ostbevern.produkte import (
 from ostbevern.schema import (
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
+    ERLAEUTERUNGEN_CSV,
     GRUNDZAHLEN_CSV,
     HIERARCHIE_CSV,
     PRODUKT_SCHLUESSEL,
@@ -692,3 +694,37 @@ def test_erlaeuterungen_csv_zu_zeilen_format(produkte_json: list[dict]) -> None:
         for eintrag in produkt["erlaeuterungen"]:
             for zeile in eintrag["zu_zeilen"]:
                 assert re.fullmatch(r"\d{2}", zeile), (produkt["code"], zeile)
+
+
+# --- Deterministische Regeneration (G2) ---------------------------------------------------
+
+
+def _kopiere_produkte_input_nach(tmp_path: Path) -> None:
+    """Kopiert die Input-CSVs, die extrahiere_produkte benötigt."""
+    for quelle in (SEITEN_CSV, HIERARCHIE_CSV, ERGEBNISPLAN_CSV):
+        ziel = tmp_path / quelle
+        ziel.parent.mkdir(parents=True, exist_ok=True)
+        ziel.write_bytes((DATEN_WURZEL / quelle).read_bytes())
+
+
+def test_produkte_json_erlaeuterungen_csv_grundzahlen_csv_byte_identisch(
+    tmp_path: Path, jahrgang: Jahrgang
+) -> None:
+    """G2: Schritt 03 erzeugt produkte.json, erlaeuterungen.csv und grundzahlen.csv
+    deterministisch — byte-identisch zu den eingecheckten Dateien (EXTR-06, EXTR-08).
+
+    Kopiert die Input-Dateien (seiten.csv, hierarchie.csv, ergebnisplan.csv) in ein
+    Temp-Verzeichnis, lässt extrahiere_produkte darin neu erzeugen und vergleicht
+    byte-für-byte mit daten/aufbereitet/."""
+    _kopiere_produkte_input_nach(tmp_path)
+    extrahiere_produkte(jahrgang, daten_wurzel=tmp_path)
+
+    # Alle drei Output-Dateien müssen byte-identisch sein
+    for pfad in (PRODUKTE_JSON, ERLAEUTERUNGEN_CSV, GRUNDZAHLEN_CSV):
+        generiert = tmp_path / pfad
+        original = DATEN_WURZEL / pfad
+        assert generiert.read_bytes() == original.read_bytes(), (
+            f"{pfad} ist nicht byte-identisch: "
+            f"temporär {generiert.stat().st_size} Bytes, "
+            f"eingecheckt {original.stat().st_size} Bytes"
+        )
