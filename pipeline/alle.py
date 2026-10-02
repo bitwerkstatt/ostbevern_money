@@ -109,9 +109,7 @@ def main(
     except (PdfFehler, QuerschnitteFehler, SchemaFehler, KonfigurationsFehler) as fehler:
         typer.echo(f"Fehler: {fehler}", err=True)
         raise typer.Exit(code=1) from fehler
-    typer.echo(
-        f"Schritt 06: Querschnitte: {ergebnis_querschnitte.zeilen_geschrieben} Werte geschrieben."
-    )
+    typer.echo(f"Querschnitte: {ergebnis_querschnitte.zeilen_geschrieben} Werte geschrieben.")
 
     try:
         bericht = pruefung.pruefe_alles(jahr)
