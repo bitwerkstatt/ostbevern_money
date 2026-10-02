@@ -22,7 +22,7 @@ status: all_fixed
 
 ## Fixed Issues
 
-### WR-01: `ordne_spalten` tolerance is computed globally, not per-anchor-pair
+### WR-01: `ordne_spalten` tolerance is computed globally, not per-anchor-pair — a single duplicate anchor breaks column assignment for the whole table
 
 **Files modified:** `pipeline/ostbevern/spalten.py`, `pipeline/tests/test_spalten.py`
 **Commit:** `e842ff3`
