@@ -11,6 +11,7 @@ from ostbevern.zahlen import (
     ZahlenFehler,
     ist_betrag,
     lies_betrag,
+    lies_kennzahl,
     trenne_angeklebten_betrag,
     trenne_operator,
 )
@@ -115,3 +116,50 @@ def test_trenne_operator_gleich_allein() -> None:
 
 def test_trenne_operator_kein_operator() -> None:
     assert trenne_operator("SteuernundähnlicheAbgaben") == (None, "SteuernundähnlicheAbgaben")
+
+
+# --- lies_kennzahl (EXTR-07, Grundzahlen: Dezimalwerte neben Ganzzahlen) -------------
+
+
+def test_lies_kennzahl_deutsches_tausenderformat() -> None:
+    assert lies_kennzahl("4.771.497") == (4771497.0, 0)
+
+
+def test_lies_kennzahl_dezimal_zwei_stellen() -> None:
+    assert lies_kennzahl("2,82") == (2.82, 2)
+
+
+def test_lies_kennzahl_dezimal_eine_stelle() -> None:
+    assert lies_kennzahl("46,9") == (46.9, 1)
+
+
+def test_lies_kennzahl_null() -> None:
+    assert lies_kennzahl("0") == (0.0, 0)
+
+
+def test_lies_kennzahl_negativ_dezimal_ascii_minus() -> None:
+    assert lies_kennzahl("-1.234,5") == (-1234.5, 1)
+
+
+def test_lies_kennzahl_negativ_unicode_minus() -> None:
+    assert lies_kennzahl("−600") == (-600.0, 0)
+
+
+def test_lies_kennzahl_kein_wert_gibt_none() -> None:
+    assert lies_kennzahl("–") is None
+
+
+def test_lies_kennzahl_kein_wert_ignoriert_leerzeichen() -> None:
+    assert lies_kennzahl(" – ") is None
+
+
+@pytest.mark.parametrize("text", ["30.06.", "1,2,3", "abc", "", "C"])
+def test_lies_kennzahl_ungueltige_formen_loesen_zahlenfehler_aus(text: str) -> None:
+    with pytest.raises(ZahlenFehler):
+        lies_kennzahl(text)
+
+
+def test_lies_betrag_bleibt_unveraendert_bei_dezimalwerten() -> None:
+    # lies_betrag ist weiterhin int-only: ein Dezimalwert ist kein gültiger Betrag.
+    with pytest.raises(ZahlenFehler):
+        lies_betrag("2,82")

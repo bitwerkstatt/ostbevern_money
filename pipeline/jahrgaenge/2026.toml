@@ -144,3 +144,18 @@ grundzahlen_kopf = "Grundzahlen"
 kopf_muster = '^Erläuterung\b'
 zu_nr_muster = '^(?:Erläuterung )?(?:[Zz]u )?Nr\. ?(?P<zeilen>\d{1,2}(?:(?: und|,) (?:Nr\. ?)?\d{1,2})*)(?P<rest>.*)$'
 posten_muster = '^(?P<betrag>-?\d{1,3}(?:\.\d{3})*) C (?P<text>.+)$'
+
+# [layout.grundzahlen] (Phase 3, 03-05): gedruckte Texte und Fußnoten-Muster der
+# Grundzahlen-Tabelle auf Produktinformationen- und (bei Fortsetzung) grundzahlen-
+# typisierten Seiten (Spez. 2.1, 3.8, 4.2, D-12, D-13). `fussnote_jahr_muster` erfasst
+# eine überschreibende Jahres-Fußnote wie "Ist-Wert 2025: Stand Ende 2025." (einzelnes
+# oder mehrere Jahre, "Ist-Werte 2024 und 2025: ..."); `fussnote_allgemein_muster`
+# erfasst jede andere Fußnote (endet mit einem Punkt oder beginnt mit "*"); jede andere
+# fette, wertfreie Zeile ist eine Gruppenüberschrift (D-13). `eurozeichen` benennt das
+# Einheiten-Zeichen "C" (Spez. 2.2), das zu "EUR"/"EUR/..." normalisiert wird.
+[layout.grundzahlen]
+kopf = "Grundzahlen"
+einheit = "Einheit"
+fussnote_jahr_muster = '^Ist-Werte? (?P<jahre>\d{4}(?: und \d{4})*):'
+fussnote_allgemein_muster = '(\.$|^\*)'
+eurozeichen = "C"
