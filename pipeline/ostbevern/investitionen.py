@@ -5,8 +5,13 @@ Teilfinanzplan- und Investitionen-Produktseiten, Research Pitfall 7: die Tabelle
 mitten auf einer als `teilfinanzplan` klassifizierten Seite beginnen) und schreibt
 `investitionen.csv` (nur Kontozeilen, D-08) sowie `ve_faelligkeiten.csv` (die
 "(Kassenwirksamkeit)"-Werte, nie in `investitionen.csv` oder einer Summe, EXTR-09).
-PB-Investitionslisten (`investitionen_pb`) werden hier bewusst NICHT gelesen (D-06,
-Spez. 3.8: `investitionen.csv` kommt ausschließlich aus Produktseiten).
+
+Zusätzlich liest derselbe Parser (`lies_massnahmen`) die PB-Investitionslisten
+(Seitentyp `investitionen_pb`, ebene="PB") und schreibt sie nach
+`daten/zwischen/investitionen_pb.csv` (D-06). Das ist eine reine Kontrollquelle für die
+Regel-6-Gegenprobe (pruefung.py) — nichts aus den PB-Listen fließt in `investitionen.csv`
+oder `ve_faelligkeiten.csv` ein; Quelle für diese beiden Dateien bleiben ausschließlich
+die Produktseiten (D-06, Spez. 3.8).
 
 Jede gedruckte Zwischen- und Saldozeile (Einzahlungen/Auszahlungen aus Investitions-
 tätigkeit, Saldo <ID>, Saldo Investitionstätigkeit) wird als Gegenprobe geprüft, aber
@@ -28,11 +33,13 @@ from ostbevern.schema import (
     DATEN_WURZEL,
     FINANZPLAN_CSV,
     INVESTITIONEN_CSV,
+    INVESTITIONEN_PB_CSV,
     SEITEN_CSV,
     VE_FAELLIGKEITEN_CSV,
     lies_plan_csv,
     lies_seiten_csv,
     schreibe_investitionen_csv,
+    schreibe_investitionen_pb_csv,
     schreibe_ve_faelligkeiten_csv,
     zerlege_spaltenkopf,
 )
@@ -47,6 +54,11 @@ _TOLERANZ_EURO = 1
 # Seitentypen, deren Zeilen nach einer Investitionsmaßnahmen-Tabelle durchsucht werden
 # (Research Pitfall 7: die Tabelle kann auf einer teilfinanzplan-Seite beginnen).
 _PRODUKTSEITEN_TYPEN = ("teilergebnisplan", "teilfinanzplan", "investitionen_produkt")
+
+# Dieselbe Pitfall-7-Vorsicht für PB-Knoten (D-06): die PB-Investitionsliste trägt den
+# Seitentyp `investitionen_pb`; `teilergebnisplan`/`teilfinanzplan` sind defensiv mit
+# aufgenommen, auch wenn sie auf PB-Ebene im 2026er Jahrgang keine Tabelle enthalten.
+_PBSEITEN_TYPEN = ("investitionen_pb", "teilergebnisplan", "teilfinanzplan")
 
 
 class InvestitionenFehler(ValueError):
@@ -318,7 +330,10 @@ def lies_massnahmen(
     ]
 
     massnahmen: list[Massnahme] = []
-    saldo_gesamt_wert: tuple[int, ...] | None = None
+    # (gedruckte Werte, pdf_seite) der "Saldo Investitionstätigkeit"-Zeile, oder None, falls
+    # sie nicht vorkommt; gegen die Summe ALLER Maßnahmen erst nach dem Lesen aller Seiten
+    # geprüft (siehe Kommentar an der Fundstelle, Research Pitfall 8/D-08).
+    saldo_gesamt_gedruckt: tuple[list[int | None], int] | None = None
     block: _OffenerBlock | None = None
 
     def _schliesse_block(ziel_id: str, saldo_werte: dict[int, int | None], pdf_seite: int) -> None:
@@ -555,7 +570,7 @@ def lies_massnahmen(
                 continue
 
             if label_text_ns.startswith(saldo_gesamt) and amount_woerter:
-                if saldo_gesamt_wert is not None:
+                if saldo_gesamt_gedruckt is not None:
                     raise InvestitionenFehler(f"S. {pdf_seite}: {saldo_gesamt} kommt zweimal vor")
                 if block is not None:
                     raise InvestitionenFehler(
@@ -569,19 +584,14 @@ def lies_massnahmen(
                         f"S. {pdf_seite}: {saldo_gesamt} hat nur {len(gesamt_dict)} von "
                         f"{anzahl_spalten} Spalten zugeordnet"
                     )
-                erwartet = [0] * anzahl_spalten
-                for massnahme in massnahmen:
-                    for spalten_index in range(anzahl_spalten):
-                        erwartet[spalten_index] += massnahme.saldo[spalten_index]
-                gedruckt = [gesamt_dict[spalten_index] for spalten_index in range(anzahl_spalten)]
-                erwartet_budget = [erwartet[i] for i in budget_indizes]
-                gedruckt_budget = [gedruckt[i] for i in budget_indizes]
-                if not _werte_stimmen_ueberein(erwartet_budget, gedruckt_budget):
-                    raise InvestitionenFehler(
-                        f"S. {pdf_seite}: {saldo_gesamt} ({gedruckt}) stimmt nicht mit der "
-                        f"Summe der Maßnahmen-Saldi ({erwartet}) überein"
-                    )
-                saldo_gesamt_wert = tuple(wert or 0 for wert in erwartet)
+                # Validierung gegen die Summe ALLER Maßnahmen-Saldi erst nach dem Lesen aller
+                # Seiten (siehe unten): auf PB-Listen druckt diese Zeile den GESAMT-Saldo des
+                # ganzen Knotens mitten in der Liste, vor noch nicht gelesenen Maßnahmen
+                # (Research Pitfall 8/D-08, verifiziert gegen S. 235 PB 12 = TFP Z. 31).
+                saldo_gesamt_gedruckt = (
+                    [gesamt_dict[spalten_index] for spalten_index in range(anzahl_spalten)],
+                    pdf_seite,
+                )
                 index += 1
                 continue
 
@@ -631,6 +641,28 @@ def lies_massnahmen(
             f"{block.header_text_ns()!r} am Ende der Seiten noch offen"
         )
 
+    saldo_gesamt_wert: tuple[int, ...] | None = None
+    if saldo_gesamt_gedruckt is not None:
+        gedruckt, saldo_pdf_seite = saldo_gesamt_gedruckt
+        erwartet = [0] * anzahl_spalten
+        for massnahme in massnahmen:
+            if any(konto.gruppe.taetigkeit != "investition" for konto in massnahme.konten):
+                # Finanzierungstätigkeit-Maßnahmen (692/792) zählen nicht zur "Saldo
+                # Investitionstätigkeit" (eigener Tätigkeitsbereich im NKF-Finanzplan);
+                # verifiziert gegen Produkt 160101/PB 16, S. 279/282, wo diese Zeile
+                # zwischen den Investitions- und den Finanzierungs-Maßnahmen gedruckt wird.
+                continue
+            for spalten_index in range(anzahl_spalten):
+                erwartet[spalten_index] += massnahme.saldo[spalten_index]
+        erwartet_budget = [erwartet[i] for i in budget_indizes]
+        gedruckt_budget = [gedruckt[i] for i in budget_indizes]
+        if not _werte_stimmen_ueberein(erwartet_budget, gedruckt_budget):
+            raise InvestitionenFehler(
+                f"S. {saldo_pdf_seite}: {saldo_gesamt} ({gedruckt}) stimmt nicht mit der "
+                f"Summe der Maßnahmen-Saldi ({erwartet}) überein"
+            )
+        saldo_gesamt_wert = tuple(wert or 0 for wert in erwartet)
+
     return massnahmen, saldo_gesamt_wert
 
 
@@ -642,11 +674,92 @@ class ExtraktionsErgebnis:
     pfad: Path
 
 
+def _trenne_investitions_und_finanzierungskonten(
+    massnahmen: Sequence[Massnahme], *, anzahl_spalten: int
+) -> tuple[list[tuple[Massnahme, Kontozeile]], list[int], list[int], bool]:
+    """Trennt die Kontozeilen aller Maßnahmen eines Knotens (Produkt oder PB) in
+    Investitions-Kontozeilen (`gruppe.taetigkeit == "investition"`, D-08) und
+    Finanzierungs-Summen (692/792, `gruppe.taetigkeit == "finanzierung"`); wiederverwendet
+    von der Produkt- und der PB-Verarbeitung in `extrahiere_investitionen` (D-06)."""
+    investitions_konten: list[tuple[Massnahme, Kontozeile]] = []
+    finanzierung_einzahlung = [0] * anzahl_spalten
+    finanzierung_auszahlung = [0] * anzahl_spalten
+    hat_finanzierung = False
+
+    for massnahme in massnahmen:
+        for konto in massnahme.konten:
+            if konto.gruppe.taetigkeit == "finanzierung":
+                hat_finanzierung = True
+                ziel = (
+                    finanzierung_einzahlung
+                    if konto.gruppe.richtung == "einzahlung"
+                    else finanzierung_auszahlung
+                )
+                for index in range(anzahl_spalten):
+                    wert = konto.werte[index]
+                    if wert is not None:
+                        ziel[index] += wert
+                continue
+            investitions_konten.append((massnahme, konto))
+
+    return investitions_konten, finanzierung_einzahlung, finanzierung_auszahlung, hat_finanzierung
+
+
+def _pruefe_finanzierungskonten(
+    *,
+    finanzplan: pl.DataFrame,
+    spalten: tuple[str, ...],
+    budget_indizes: Sequence[int],
+    ebene: str,
+    code: str,
+    finanzierung_einzahlung: Sequence[int],
+    finanzierung_auszahlung: Sequence[int],
+    letzte_seite: int,
+) -> None:
+    """Prüft die Finanzierungs-Konten (692/792) eines Knotens (Produkt `ebene="P"` oder
+    PB `ebene="PB"`) gegen die Teilfinanzplan-Zeilen 33 (Einzahlung) und 35 (Auszahlung) in
+    den Budget-Spalten (Ansatz, VE, Planung; die Spalte "Ergebnis" bleibt ausgenommen, siehe
+    `extrahiere_investitionen`-Docstring). Wiederverwendet von Produkt- und PB-Verarbeitung
+    (D-06)."""
+
+    def _finanzplan_wert(zeile: str, index: int) -> int:
+        wertart, jahr = zerlege_spaltenkopf(spalten[index])
+        treffer = finanzplan.filter(
+            (pl.col("ebene") == ebene)
+            & (pl.col("code") == code)
+            & (pl.col("zeile") == zeile)
+            & (pl.col("jahr") == jahr)
+            & (pl.col("wertart") == wertart)
+        )
+        if treffer.height == 0:
+            return 0
+        return treffer["betrag"][0]
+
+    for index in budget_indizes:
+        soll_ein = _finanzplan_wert("33", index)
+        soll_aus = _finanzplan_wert("35", index)
+        if abs(finanzierung_einzahlung[index] - soll_ein) > _TOLERANZ_EURO:
+            raise InvestitionenFehler(
+                f"S. {letzte_seite}: {ebene} {code}: Finanzierungs-Konten "
+                f"(692) Spalte {spalten[index]!r} = {finanzierung_einzahlung[index]}, "
+                f"Teilfinanzplan Zeile 33 = {soll_ein}"
+            )
+        if abs(finanzierung_auszahlung[index] - soll_aus) > _TOLERANZ_EURO:
+            raise InvestitionenFehler(
+                f"S. {letzte_seite}: {ebene} {code}: Finanzierungs-Konten "
+                f"(792) Spalte {spalten[index]!r} = {finanzierung_auszahlung[index]}, "
+                f"Teilfinanzplan Zeile 35 = {soll_aus}"
+            )
+
+
 def extrahiere_investitionen(
     jahrgang: Jahrgang, *, daten_wurzel: Path = DATEN_WURZEL
-) -> tuple[ExtraktionsErgebnis, ExtraktionsErgebnis]:
+) -> tuple[ExtraktionsErgebnis, ExtraktionsErgebnis, ExtraktionsErgebnis]:
     """Liest alle Investitionsmaßnahmen der Produktseiten und schreibt investitionen.csv
-    sowie ve_faelligkeiten.csv (EXTR-09, D-06, D-07, D-08).
+    sowie ve_faelligkeiten.csv (EXTR-09, D-06, D-07, D-08); liest zusätzlich die
+    PB-Investitionslisten mit demselben Parser und schreibt sie als Kontrollquelle nach
+    investitionen_pb.csv (D-06, Spez. 3.8) — nichts davon fließt in investitionen.csv oder
+    ve_faelligkeiten.csv ein.
 
     Je Produkt: der Saldo-Investitionstätigkeit-Gesamtwert (falls Investitions-Konten
     vorhanden sind) wird innerhalb von `lies_massnahmen` bereits gegen die Summe der
@@ -674,21 +787,21 @@ def extrahiere_investitionen(
     ).sort("pdf_seite")
     produkte = sorted(produkt_seiten["produkt"].unique().to_list())
 
+    # PB-Knoten (D-06): pb gesetzt, pg und produkt leer (die PB-Investitionsliste selbst
+    # hat beide Spalten leer, Research Planning-time facts); alle 15 PB haben mindestens
+    # eine teilergebnisplan-Seite, auch PB 11/14 ohne eigene Investitionsliste (dort liefert
+    # lies_massnahmen ([], None), EXTR-09 Flagged assumption).
+    pb_seiten = seiten.filter(
+        pl.col("pb").is_not_null()
+        & pl.col("pg").is_null()
+        & pl.col("produkt").is_null()
+        & pl.col("typ").is_in(_PBSEITEN_TYPEN)
+    ).sort("pdf_seite")
+    pb_codes = sorted(pb_seiten["pb"].unique().to_list())
+
     investitionen_zeilen: list[dict[str, object]] = []
     faelligkeiten_zeilen: list[dict[str, object]] = []
-
-    def _finanzplan_wert(produkt: str, zeile: str, index: int) -> int:
-        wertart, jahr = zerlege_spaltenkopf(spalten[index])
-        treffer = finanzplan.filter(
-            (pl.col("ebene") == "P")
-            & (pl.col("code") == produkt)
-            & (pl.col("zeile") == zeile)
-            & (pl.col("jahr") == jahr)
-            & (pl.col("wertart") == wertart)
-        )
-        if treffer.height == 0:
-            return 0
-        return treffer["betrag"][0]
+    investitionen_pb_zeilen: list[dict[str, object]] = []
 
     with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
         for produkt in produkte:
@@ -698,75 +811,101 @@ def extrahiere_investitionen(
             massnahmen, _saldo_gesamt = lies_massnahmen(
                 dokument, jahrgang, seiten_nummern, ebene="P", code=produkt
             )
+            investitions_konten, finanzierung_ein, finanzierung_aus, hat_finanzierung = (
+                _trenne_investitions_und_finanzierungskonten(
+                    massnahmen, anzahl_spalten=anzahl_spalten
+                )
+            )
 
-            finanzierung_einzahlung = [0] * anzahl_spalten
-            finanzierung_auszahlung = [0] * anzahl_spalten
-            hat_finanzierung = False
-
-            for massnahme in massnahmen:
-                for konto in massnahme.konten:
-                    if konto.gruppe.taetigkeit == "finanzierung":
-                        hat_finanzierung = True
-                        ziel = (
-                            finanzierung_einzahlung
-                            if konto.gruppe.richtung == "einzahlung"
-                            else finanzierung_auszahlung
-                        )
-                        for index in range(anzahl_spalten):
-                            wert = konto.werte[index]
-                            if wert is not None:
-                                ziel[index] += wert
+            for massnahme, konto in investitions_konten:
+                for index in range(anzahl_spalten):
+                    betrag = konto.werte[index]
+                    if betrag is None:
                         continue
-
-                    for index in range(anzahl_spalten):
-                        betrag = konto.werte[index]
-                        if betrag is None:
-                            continue
-                        wertart, jahr = zerlege_spaltenkopf(spalten[index])
-                        investitionen_zeilen.append(
-                            {
-                                "produkt": produkt,
-                                "massnahme_id": massnahme.massnahme_id,
-                                "massnahme_name": massnahme.massnahme_name,
-                                "konto": konto.konto,
-                                "konto_name": konto.konto_name,
-                                "richtung": konto.gruppe.richtung,
-                                "art": konto.gruppe.art,
-                                "jahr": jahr,
-                                "wertart": wertart,
-                                "betrag": betrag,
-                                "pdf_seite": konto.pdf_seite,
-                            }
-                        )
-                    for jahr, betrag in konto.faelligkeiten:
-                        faelligkeiten_zeilen.append(
-                            {
-                                "produkt": produkt,
-                                "massnahme_id": massnahme.massnahme_id,
-                                "konto": konto.konto,
-                                "jahr": jahr,
-                                "betrag": betrag,
-                                "pdf_seite": konto.pdf_seite,
-                            }
-                        )
+                    wertart, jahr = zerlege_spaltenkopf(spalten[index])
+                    investitionen_zeilen.append(
+                        {
+                            "produkt": produkt,
+                            "massnahme_id": massnahme.massnahme_id,
+                            "massnahme_name": massnahme.massnahme_name,
+                            "konto": konto.konto,
+                            "konto_name": konto.konto_name,
+                            "richtung": konto.gruppe.richtung,
+                            "art": konto.gruppe.art,
+                            "jahr": jahr,
+                            "wertart": wertart,
+                            "betrag": betrag,
+                            "pdf_seite": konto.pdf_seite,
+                        }
+                    )
+                for jahr, betrag in konto.faelligkeiten:
+                    faelligkeiten_zeilen.append(
+                        {
+                            "produkt": produkt,
+                            "massnahme_id": massnahme.massnahme_id,
+                            "konto": konto.konto,
+                            "jahr": jahr,
+                            "betrag": betrag,
+                            "pdf_seite": konto.pdf_seite,
+                        }
+                    )
 
             if hat_finanzierung:
-                letzte_seite = seiten_nummern[-1] if seiten_nummern else 0
-                for index in budget_indizes:
-                    soll_ein = _finanzplan_wert(produkt, "33", index)
-                    soll_aus = _finanzplan_wert(produkt, "35", index)
-                    if abs(finanzierung_einzahlung[index] - soll_ein) > _TOLERANZ_EURO:
-                        raise InvestitionenFehler(
-                            f"S. {letzte_seite}: Produkt {produkt}: Finanzierungs-Konten "
-                            f"(692) Spalte {spalten[index]!r} = {finanzierung_einzahlung[index]}, "
-                            f"Teilfinanzplan Zeile 33 = {soll_ein}"
-                        )
-                    if abs(finanzierung_auszahlung[index] - soll_aus) > _TOLERANZ_EURO:
-                        raise InvestitionenFehler(
-                            f"S. {letzte_seite}: Produkt {produkt}: Finanzierungs-Konten "
-                            f"(792) Spalte {spalten[index]!r} = {finanzierung_auszahlung[index]}, "
-                            f"Teilfinanzplan Zeile 35 = {soll_aus}"
-                        )
+                _pruefe_finanzierungskonten(
+                    finanzplan=finanzplan,
+                    spalten=spalten,
+                    budget_indizes=budget_indizes,
+                    ebene="P",
+                    code=produkt,
+                    finanzierung_einzahlung=finanzierung_ein,
+                    finanzierung_auszahlung=finanzierung_aus,
+                    letzte_seite=seiten_nummern[-1] if seiten_nummern else 0,
+                )
+
+        for pb in pb_codes:
+            seiten_nummern = tuple(pb_seiten.filter(pl.col("pb") == pb)["pdf_seite"].to_list())
+            massnahmen, _saldo_gesamt = lies_massnahmen(
+                dokument, jahrgang, seiten_nummern, ebene="PB", code=pb
+            )
+            investitions_konten, finanzierung_ein, finanzierung_aus, hat_finanzierung = (
+                _trenne_investitions_und_finanzierungskonten(
+                    massnahmen, anzahl_spalten=anzahl_spalten
+                )
+            )
+
+            # Kassenwirksamkeit-Werte der PB-Listen (konto.faelligkeiten) werden bewusst
+            # NICHT gespeichert (EXTR-09, Flagged assumption 2: nur die Produktseiten-
+            # Fälligkeiten fließen in ve_faelligkeiten.csv ein, siehe 03-02).
+            for massnahme, konto in investitions_konten:
+                for index in range(anzahl_spalten):
+                    betrag = konto.werte[index]
+                    if betrag is None:
+                        continue
+                    wertart, jahr = zerlege_spaltenkopf(spalten[index])
+                    investitionen_pb_zeilen.append(
+                        {
+                            "pb": pb,
+                            "massnahme_id": massnahme.massnahme_id,
+                            "konto": konto.konto,
+                            "richtung": konto.gruppe.richtung,
+                            "jahr": jahr,
+                            "wertart": wertart,
+                            "betrag": betrag,
+                            "pdf_seite": konto.pdf_seite,
+                        }
+                    )
+
+            if hat_finanzierung:
+                _pruefe_finanzierungskonten(
+                    finanzplan=finanzplan,
+                    spalten=spalten,
+                    budget_indizes=budget_indizes,
+                    ebene="PB",
+                    code=pb,
+                    finanzierung_einzahlung=finanzierung_ein,
+                    finanzierung_auszahlung=finanzierung_aus,
+                    letzte_seite=seiten_nummern[-1] if seiten_nummern else 0,
+                )
 
     investitionen_df = pl.DataFrame(
         investitionen_zeilen,
@@ -795,12 +934,30 @@ def extrahiere_investitionen(
             "pdf_seite": pl.Int64,
         },
     )
+    investitionen_pb_df = pl.DataFrame(
+        investitionen_pb_zeilen,
+        schema={
+            "pb": pl.Utf8,
+            "massnahme_id": pl.Utf8,
+            "konto": pl.Utf8,
+            "richtung": pl.Utf8,
+            "jahr": pl.Int64,
+            "wertart": pl.Utf8,
+            "betrag": pl.Int64,
+            "pdf_seite": pl.Int64,
+        },
+    )
 
     investitionen_pfad = daten_wurzel / INVESTITIONEN_CSV
     faelligkeiten_pfad = daten_wurzel / VE_FAELLIGKEITEN_CSV
+    investitionen_pb_pfad = daten_wurzel / INVESTITIONEN_PB_CSV
     schreibe_investitionen_csv(investitionen_df, investitionen_pfad)
     schreibe_ve_faelligkeiten_csv(faelligkeiten_df, faelligkeiten_pfad)
+    schreibe_investitionen_pb_csv(investitionen_pb_df, investitionen_pb_pfad)
     return (
         ExtraktionsErgebnis(zeilen_geschrieben=investitionen_df.height, pfad=investitionen_pfad),
         ExtraktionsErgebnis(zeilen_geschrieben=faelligkeiten_df.height, pfad=faelligkeiten_pfad),
+        ExtraktionsErgebnis(
+            zeilen_geschrieben=investitionen_pb_df.height, pfad=investitionen_pb_pfad
+        ),
     )
