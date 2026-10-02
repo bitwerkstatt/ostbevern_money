@@ -21,7 +21,10 @@ from ostbevern.schema import SchemaFehler
 
 app = typer.Typer(
     add_completion=False,
-    help="Extrahiert Investitionsmaßnahmen und VE-Fälligkeiten aus den Produktseiten.",
+    help=(
+        "Extrahiert Investitionsmaßnahmen, VE-Fälligkeiten und die PB-Investitionslisten "
+        "aus den Produktseiten."
+    ),
 )
 
 

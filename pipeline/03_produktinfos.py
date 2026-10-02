@@ -21,7 +21,7 @@ from ostbevern.schema import SchemaFehler
 
 app = typer.Typer(
     add_completion=False,
-    help="Extrahiert Produktinformationen und Erläuterungen aus den Produktseiten.",
+    help="Extrahiert Produktinformationen, Grundzahlen und Erläuterungen aus den Produktseiten.",
 )
 
 
