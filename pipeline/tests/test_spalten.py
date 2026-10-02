@@ -50,3 +50,13 @@ def test_ordne_spalten_einzelner_anker_hat_unendliche_toleranz() -> None:
     woerter = [_wort("weit_weg", 0.0)]
     ergebnis = ordne_spalten(woerter, anker)
     assert ergebnis[0].text == "weit_weg"
+
+
+def test_ordne_spalten_doppelter_anker_bricht_nicht_die_ganze_zuordnung() -> None:
+    # Zwei Anker mit demselben x1 (z. B. eine leere/zusammengeführte Spalte) duerfen die
+    # Toleranz nicht global auf 0 druecken: ein Wort an einem dritten, eindeutigen Anker
+    # muss trotzdem zugeordnet werden (Regressionstest zu WR-01).
+    anker = [100.0, 100.0, 500.0]
+    woerter = [_wort("c", 500.0)]
+    ergebnis = ordne_spalten(woerter, anker)
+    assert ergebnis[2].text == "c"
