@@ -95,9 +95,22 @@ def schreibe_csv(
     """Schreibt `df` nach `pfad` in fester Spaltenreihenfolge, UTF-8 ohne BOM, LF (D-21)."""
     _pruefe_keine_leeren_strings(df, spalten, pfad)
     sortiert = df.sort(sortierung, nulls_last=False)
-    # strict=True (D-08): fail loud on precision loss/overflow instead of polars'
-    # default silent coercion/truncation.
-    geordnet = sortiert.select(list(spalten.keys())).cast(spalten, strict=True)
+    ausgewaehlt = sortiert.select(list(spalten.keys()))
+    # strict=True (D-08): fail loud on Overflow/NaN/unparsable Input statt polars'
+    # Standardverhalten (stille Coercion/Truncation). strict=True allein erkennt aber
+    # KEINE Nachkommastellen-Truncation bei Float->Int (verifiziert gegen polars>=1.44.2:
+    # pl.DataFrame({"x": [1234.5]}).cast({"x": pl.Int64}, strict=True) wirft nicht),
+    # deshalb zusätzlich Round-Trip-Prüfung je Float-Spalte unten.
+    geordnet = ausgewaehlt.cast(spalten, strict=True)
+    for name, ziel_dtype in spalten.items():
+        quelle_dtype = ausgewaehlt.schema[name]
+        if quelle_dtype != ziel_dtype and quelle_dtype in (pl.Float32, pl.Float64):
+            zurueck = geordnet[name].cast(quelle_dtype)
+            if not zurueck.equals(ausgewaehlt[name], null_equal=True):
+                raise SchemaFehler(
+                    f"{pfad}: Spalte {name!r} verliert Genauigkeit beim Cast {quelle_dtype} -> "
+                    f"{ziel_dtype}"
+                )
     pfad.parent.mkdir(parents=True, exist_ok=True)
     geordnet.write_csv(pfad)
 
