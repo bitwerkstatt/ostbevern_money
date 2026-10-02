@@ -9,7 +9,7 @@ findings:
     title: "`ordne_spalten` tolerance is computed globally, not per-anchor-pair — a single duplicate anchor breaks column assignment for the whole table"
   - id: WR-02
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "`test_alle.py` mocks `extrahiere_produkte` with a 2-tuple, but the real function returns a 3-tuple"
   - id: IN-01
     severity: info
@@ -23,9 +23,9 @@ findings:
     severity: info
     disposition: open
     title: "`schreibe_csv` relies on a blind `.cast(spalten)` that can silently coerce/truncate mismatched types instead of failing loud"
-open: 5
+open: 4
 total: 5
-recorded: 2026-10-02T07:50:19.278Z
+recorded: 2026-10-02T08:26:49.299Z
 ---
 
 # Phase 03: Code Review Disposition
@@ -33,7 +33,7 @@ recorded: 2026-10-02T07:50:19.278Z
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
 | WR-01 | warning | open | - |
-| WR-02 | warning | open | - |
+| WR-02 | warning | fixed | 03-REVIEW-FIX.md |
 | IN-01 | info | open | - |
 | IN-02 | info | open | - |
 | IN-03 | info | open | - |
