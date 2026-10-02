@@ -38,7 +38,7 @@ that fast-forward.
 
 ## Fixed Issues
 
-### CR-01: `strict=True` in `schema.schreibe_csv` does not catch the float->int precision-loss scenario it was added to prevent — IN-03 is not actually fixed
+### CR-01: `strict=True` in `schema.schreibe_csv` does not catch the float→int precision-loss scenario it was added to prevent — IN-03 is not actually fixed
 
 **Files modified:** `pipeline/ostbevern/schema.py`, `pipeline/tests/test_schema.py` (new file)
 **Commit:** `a531fb6`
