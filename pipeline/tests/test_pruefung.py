@@ -59,6 +59,8 @@ from ostbevern.schema import (
     PRODUKTE_JSON,
     QUERSCHNITTE_CSV,
     SEITEN_CSV,
+    STEUERARTEN_CSV,
+    TRANSFERAUFWENDUNGEN_CSV,
     VE_FAELLIGKEITEN_CSV,
     lies_hierarchie_csv,
     lies_investitionen_csv,
@@ -68,6 +70,7 @@ from ostbevern.schema import (
     lies_querschnitte_csv,
     lies_seiten_csv,
     lies_ve_faelligkeiten_csv,
+    lies_vorbericht_csv,
     schreibe_investitionen_csv,
     schreibe_investitionen_pb_csv,
     schreibe_plan_csv,
@@ -75,6 +78,7 @@ from ostbevern.schema import (
     schreibe_querschnitte_csv,
     schreibe_seiten_csv,
     schreibe_ve_faelligkeiten_csv,
+    schreibe_vorbericht_csv,
 )
 from ostbevern.zeilen import FORMELN, plantyp_fuer
 
@@ -287,7 +291,12 @@ def _erwartete_anzahl_regel4(sollwerte: dict) -> int:
     teilergebnisplaene_pb = sollwerte["teilergebnisplaene_pb"]
     felder_pro_pb = len(next(iter(teilergebnisplaene_pb.values())))
     b3 = len(teilergebnisplaene_pb) * felder_pro_pb + len(sollwerte["teilergebnisplaene_pb_summe"])
-    return b1 + b2 + satzung + b3
+    # Anhang B.4 (Phase 4): je Posten die Anzahl Jahre; Anhang B.5: ein Wert je Posten.
+    anhang_b4 = sollwerte.get("anhang_b4_steuerarten") or {}
+    b4 = len(anhang_b4.get("werte_teur", {})) * len(anhang_b4.get("jahre", []))
+    anhang_b5 = sollwerte.get("anhang_b5_transferaufwendungen") or {}
+    b5 = len(anhang_b5.get("werte_teur", {}))
+    return b1 + b2 + satzung + b3 + b4 + b5
 
 
 def _kopiere_seiten_nach(tmp_path: Path) -> None:
@@ -413,6 +422,63 @@ def test_regel4_b3_unbekannte_pb_bricht_ab(tmp_path: Path) -> None:
 
     with pytest.raises(PruefungsFehler, match="99"):
         pruefe_alles(STANDARD_JAHR, sollwerte_verzeichnis=tmp_path)
+
+
+def _kopiere_regel4_b4_b5_abhaengigkeiten(tmp_path: Path) -> None:
+    """Kopiert alle von `pruefe_alles` gelesenen Dateien unverändert nach `tmp_path` (D-06),
+    damit Regel-4-B.4/B.5-Mutationstests (Phase 4) nur die manuellen CSVs selbst ändern."""
+    _kopiere_hierarchie_nach(tmp_path)
+    _kopiere_finanzplan_nach(tmp_path)
+    _kopiere_seiten_nach(tmp_path)
+    _kopiere_querschnitte_nach(tmp_path)
+    _kopiere_befunde_nach(tmp_path)
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    schreibe_plan_csv(ergebnisplan, tmp_path / ERGEBNISPLAN_CSV)
+
+
+def test_regel4_b4_b5_gruen() -> None:
+    bericht = pruefe_alles(STANDARD_JAHR)
+    regel4 = next(regel for regel in bericht.regeln if regel.regel == 4)
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    assert regel4.geprueft == _erwartete_anzahl_regel4(sollwerte)
+    assert regel4.status == "grün"
+    assert regel4.abweichungen == ()
+
+
+def test_regel4_b4_erkennt_tippfehler_in_steuerarten(tmp_path: Path) -> None:
+    _kopiere_regel4_b4_b5_abhaengigkeiten(tmp_path)
+    steuerarten = lies_vorbericht_csv(tmp_path / STEUERARTEN_CSV)
+    mutiert = steuerarten.with_columns(
+        pl.when((pl.col("posten") == "grundsteuer_a") & (pl.col("jahr") == STANDARD_JAHR))
+        .then(pl.col("betrag_teur") + 1)
+        .otherwise(pl.col("betrag_teur"))
+        .alias("betrag_teur")
+    )
+    schreibe_vorbericht_csv(mutiert, tmp_path / STEUERARTEN_CSV)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel4 = next(regel for regel in bericht.regeln if regel.regel == 4)
+    regel5 = next(regel for regel in bericht.regeln if regel.regel == 5)
+    assert regel4.status == "rot"
+    assert regel5.status == "rot"
+    treffer = [
+        punkt
+        for punkt in regel4.abweichungen
+        if punkt.plan == "anhang_b4"
+        and punkt.zeile == "grundsteuer_a"
+        and punkt.jahr == STANDARD_JAHR
+    ]
+    assert len(treffer) == 1
+
+
+def test_regel4_b5_posten_mismatch_bricht_ab(tmp_path: Path) -> None:
+    _kopiere_regel4_b4_b5_abhaengigkeiten(tmp_path)
+    transferaufwendungen = lies_vorbericht_csv(tmp_path / TRANSFERAUFWENDUNGEN_CSV)
+    ohne_kreisumlage = transferaufwendungen.filter(pl.col("posten") != "kreisumlage")
+    schreibe_vorbericht_csv(ohne_kreisumlage, tmp_path / TRANSFERAUFWENDUNGEN_CSV)
+
+    with pytest.raises(PruefungsFehler, match="Regel 4 B.5"):
+        pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
 
 
 def _formelzeilen_schluessel(

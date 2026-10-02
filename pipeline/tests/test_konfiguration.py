@@ -582,3 +582,98 @@ def test_lade_sollwerte_stichproben_produktinfo_vollstaendig() -> None:
     produktinfo = sollwerte["stichproben"]["produktinfo"]
     assert produktinfo["produkt"]
     assert produktinfo["pdf_seiten"]
+
+
+# [anhang_b4_steuerarten] / [anhang_b5_transferaufwendungen] (Phase 4, PRUEF-05, D-07):
+# optionale, unabhängige zweite Abschrift der Vorbericht-Tabellen Steuerarten und
+# Transferaufwendungen, verglichen gegen daten/manuell/*.csv (Regel 4). Mutiert die echte
+# 2026_sollwerte.toml, beide Tabellen stehen am Dateiende (nach allen [stichproben.*]).
+
+
+def test_anhang_b4_werte_teur_falsche_laenge_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(
+        r"(?m)^grundsteuer_a = \[.*\]$",
+        "grundsteuer_a = [160, 130, 90, 90, 90]",
+        _sollwertdatei_text(),
+        count=1,
+    )
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="anhang_b4_steuerarten.werte_teur"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_anhang_b4_werte_teur_float_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(
+        r"(?m)^grundsteuer_a = \[160, ",
+        "grundsteuer_a = [160.5, ",
+        _sollwertdatei_text(),
+        count=1,
+    )
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="anhang_b4_steuerarten.werte_teur"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_anhang_b4_werte_teur_nicht_tabelle_wird_abgelehnt(tmp_path: Path) -> None:
+    ohne_subtabelle = re.sub(
+        r"(?ms)^\[anhang_b4_steuerarten\.werte_teur\]\n.*?(?=^\[)",
+        "",
+        _sollwertdatei_text(),
+    )
+    text = re.sub(
+        r"(?m)^\[anhang_b4_steuerarten\]$",
+        "[anhang_b4_steuerarten]\nwerte_teur = 1",
+        ohne_subtabelle,
+        count=1,
+    )
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="anhang_b4_steuerarten.werte_teur"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_anhang_b4_fehlende_pdf_seite_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(r"(?m)^pdf_seite = 27$", "", _sollwertdatei_text(), count=1)
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="anhang_b4_steuerarten.pdf_seite"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_anhang_b5_werte_teur_nicht_ganzzahl_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(
+        r"(?m)^kreisumlage = 10147$",
+        "kreisumlage = 10147.5",
+        _sollwertdatei_text(),
+        count=1,
+    )
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="anhang_b5_transferaufwendungen.werte_teur"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_anhang_b5_fehlende_pdf_seite_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(r"(?m)^pdf_seite = 46$", "", _sollwertdatei_text(), count=1)
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="anhang_b5_transferaufwendungen.pdf_seite"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_sollwertdatei_ohne_anhang_b4_b5_bleibt_gueltig(tmp_path: Path) -> None:
+    text = re.sub(r"(?ms)^\[anhang_b4_steuerarten\]\n.*\Z", "", _sollwertdatei_text())
+    _schreibe_sollwertdatei(tmp_path, text)
+    sollwerte = lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+    assert sollwerte.get("anhang_b4_steuerarten", {}) == {}
+    assert sollwerte.get("anhang_b5_transferaufwendungen", {}) == {}
+
+
+def test_lade_sollwerte_anhang_b4_b5_vollstaendig() -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    anhang_b4 = sollwerte["anhang_b4_steuerarten"]
+    assert anhang_b4["jahre"]
+    assert anhang_b4["pdf_seite"] >= 1
+    for werte in anhang_b4["werte_teur"].values():
+        assert len(werte) == len(anhang_b4["jahre"])
+
+    anhang_b5 = sollwerte["anhang_b5_transferaufwendungen"]
+    assert isinstance(anhang_b5["jahr"], int)
+    assert anhang_b5["pdf_seite"] >= 1
+    assert anhang_b5["werte_teur"]

@@ -608,6 +608,84 @@ def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> 
                 f"nicht {eintrag!r}"
             )
 
+    # [anhang_b4_steuerarten] (Phase 4, PRUEF-05, D-07): optionale, unabhängige zweite
+    # Abschrift von Anhang B.4 (Steuerarten, alle sechs Jahre). `werte_teur` ist eine
+    # Tabelle Posten-Schlüssel -> Liste von len(jahre) Ganzzahlen (T€); Zahlenwerte prüft
+    # zusätzlich _pruefe_nur_ganzzahlen unten (keine Floats/Booleans).
+    anhang_b4_steuerarten = rohdaten.get("anhang_b4_steuerarten", {})
+    if not isinstance(anhang_b4_steuerarten, dict):
+        raise KonfigurationsFehler(
+            f"Sollwertdatei {pfad}: anhang_b4_steuerarten muss eine Tabelle sein, "
+            f"nicht {anhang_b4_steuerarten!r}"
+        )
+    if anhang_b4_steuerarten:
+        jahre_b4 = anhang_b4_steuerarten.get("jahre")
+        if (
+            not isinstance(jahre_b4, list)
+            or not jahre_b4
+            or not all(isinstance(j, int) and not isinstance(j, bool) for j in jahre_b4)
+        ):
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: anhang_b4_steuerarten.jahre muss eine nicht-leere "
+                "Liste von Ganzzahlen sein"
+            )
+        pdf_seite_b4 = anhang_b4_steuerarten.get("pdf_seite")
+        if not isinstance(pdf_seite_b4, int) or isinstance(pdf_seite_b4, bool) or pdf_seite_b4 < 1:
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: anhang_b4_steuerarten.pdf_seite muss eine Ganzzahl "
+                ">= 1 sein"
+            )
+        werte_teur_b4 = anhang_b4_steuerarten.get("werte_teur")
+        if not isinstance(werte_teur_b4, dict):
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: anhang_b4_steuerarten.werte_teur muss eine Tabelle "
+                f"sein, nicht {werte_teur_b4!r}"
+            )
+        for posten, werte in werte_teur_b4.items():
+            if (
+                not isinstance(werte, list)
+                or len(werte) != len(jahre_b4)
+                or not all(isinstance(w, int) and not isinstance(w, bool) for w in werte)
+            ):
+                raise KonfigurationsFehler(
+                    f"Sollwertdatei {pfad}: anhang_b4_steuerarten.werte_teur.{posten} muss "
+                    f"eine Liste von {len(jahre_b4)} Ganzzahlen sein"
+                )
+
+    # [anhang_b5_transferaufwendungen] (Phase 4, PRUEF-05, D-07): optionale, unabhängige
+    # zweite Abschrift von Anhang B.5 (Transferaufwendungen, nur das Haushaltsjahr).
+    # `werte_teur` ist eine Tabelle Posten-Schlüssel -> einzelne Ganzzahl (T€).
+    anhang_b5_transferaufwendungen = rohdaten.get("anhang_b5_transferaufwendungen", {})
+    if not isinstance(anhang_b5_transferaufwendungen, dict):
+        raise KonfigurationsFehler(
+            f"Sollwertdatei {pfad}: anhang_b5_transferaufwendungen muss eine Tabelle sein, "
+            f"nicht {anhang_b5_transferaufwendungen!r}"
+        )
+    if anhang_b5_transferaufwendungen:
+        jahr_b5 = anhang_b5_transferaufwendungen.get("jahr")
+        if not isinstance(jahr_b5, int) or isinstance(jahr_b5, bool):
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: anhang_b5_transferaufwendungen.jahr muss eine Ganzzahl sein"
+            )
+        pdf_seite_b5 = anhang_b5_transferaufwendungen.get("pdf_seite")
+        if not isinstance(pdf_seite_b5, int) or isinstance(pdf_seite_b5, bool) or pdf_seite_b5 < 1:
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: anhang_b5_transferaufwendungen.pdf_seite muss eine "
+                "Ganzzahl >= 1 sein"
+            )
+        werte_teur_b5 = anhang_b5_transferaufwendungen.get("werte_teur")
+        if not isinstance(werte_teur_b5, dict):
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: anhang_b5_transferaufwendungen.werte_teur muss eine "
+                f"Tabelle sein, nicht {werte_teur_b5!r}"
+            )
+        for posten, wert in werte_teur_b5.items():
+            if not isinstance(wert, int) or isinstance(wert, bool):
+                raise KonfigurationsFehler(
+                    f"Sollwertdatei {pfad}: anhang_b5_transferaufwendungen.werte_teur."
+                    f"{posten} muss eine Ganzzahl sein"
+                )
+
     _pruefe_nur_ganzzahlen(rohdaten, "sollwerte")
 
     return rohdaten

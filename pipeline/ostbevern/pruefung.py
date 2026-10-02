@@ -804,6 +804,106 @@ def _pruefe_regel4_b3(
     return geprueft, abweichungen
 
 
+def _pruefe_regel4_b4(
+    *, steuerarten: pl.DataFrame, sollwerte: dict
+) -> tuple[int, list[Pruefpunkt]]:
+    """Anhang B.4 (unabhängige zweite Abschrift, Phase 4): je Posten und Jahr gegen
+    daten/manuell/steuerarten.csv (PRUEF-05). Übersprungen, wenn die Sollwertdatei keine
+    [anhang_b4_steuerarten]-Tabelle hat (anderer Jahrgang)."""
+    anhang_b4 = sollwerte.get("anhang_b4_steuerarten")
+    if not anhang_b4:
+        return 0, []
+    jahre = anhang_b4["jahre"]
+    pdf_seite = anhang_b4["pdf_seite"]
+    werte_teur = anhang_b4["werte_teur"]
+
+    csv_posten = set(steuerarten["posten"].unique().to_list())
+    sollwert_posten = set(werte_teur)
+    if csv_posten != sollwert_posten:
+        raise PruefungsFehler(
+            f"Regel 4 B.4: Posten-Mengen weichen ab (CSV: {sorted(csv_posten)}, "
+            f"Anhang B.4: {sorted(sollwert_posten)})"
+        )
+
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for posten, soll_werte in sorted(werte_teur.items()):
+        for index, jahr in enumerate(jahre):
+            zeile = steuerarten.filter((pl.col("posten") == posten) & (pl.col("jahr") == jahr))
+            if zeile.height != 1:
+                raise PruefungsFehler(
+                    f"Regel 4 B.4: Posten {posten!r} hat {zeile.height} Zeilen für Jahr "
+                    f"{jahr}, erwartet genau 1"
+                )
+            row = zeile.row(0, named=True)
+            geprueft += 1
+            punkt = Pruefpunkt(
+                regel=4,
+                plan="anhang_b4",
+                ebene="GESAMT",
+                code="",
+                zeile=posten,
+                jahr=jahr,
+                wertart=row["wertart"],
+                soll=soll_werte[index] * 1000,
+                ist=row["betrag_teur"] * 1000,
+                pdf_seite=pdf_seite,
+            )
+            if abs(punkt.abweichung) > TOLERANZ_EURO:
+                abweichungen.append(punkt)
+    return geprueft, abweichungen
+
+
+def _pruefe_regel4_b5(
+    *, transferaufwendungen: pl.DataFrame, sollwerte: dict
+) -> tuple[int, list[Pruefpunkt]]:
+    """Anhang B.5 (unabhängige zweite Abschrift, Phase 4): je Posten des Haushaltsjahrs
+    gegen daten/manuell/transferaufwendungen.csv (PRUEF-05). Übersprungen, wenn die
+    Sollwertdatei keine [anhang_b5_transferaufwendungen]-Tabelle hat (anderer Jahrgang)."""
+    anhang_b5 = sollwerte.get("anhang_b5_transferaufwendungen")
+    if not anhang_b5:
+        return 0, []
+    jahr = anhang_b5["jahr"]
+    pdf_seite = anhang_b5["pdf_seite"]
+    werte_teur = anhang_b5["werte_teur"]
+
+    jahr_df = transferaufwendungen.filter(pl.col("jahr") == jahr)
+    csv_posten = set(jahr_df["posten"].unique().to_list())
+    sollwert_posten = set(werte_teur)
+    if csv_posten != sollwert_posten:
+        raise PruefungsFehler(
+            f"Regel 4 B.5: Posten-Mengen weichen ab (CSV: {sorted(csv_posten)}, "
+            f"Anhang B.5: {sorted(sollwert_posten)})"
+        )
+
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for posten, soll_teur in sorted(werte_teur.items()):
+        zeile = jahr_df.filter(pl.col("posten") == posten)
+        if zeile.height != 1:
+            raise PruefungsFehler(
+                f"Regel 4 B.5: Posten {posten!r} hat {zeile.height} Zeilen für Jahr "
+                f"{jahr}, erwartet genau 1"
+            )
+        row = zeile.row(0, named=True)
+        geprueft += 1
+        punkt = Pruefpunkt(
+            regel=4,
+            plan="anhang_b5",
+            ebene="GESAMT",
+            code="",
+            zeile=posten,
+            jahr=jahr,
+            wertart=row["wertart"],
+            soll=soll_teur * 1000,
+            ist=row["betrag_teur"] * 1000,
+            pdf_seite=pdf_seite,
+        )
+        if abs(punkt.abweichung) > TOLERANZ_EURO:
+            abweichungen.append(punkt)
+    return geprueft, abweichungen
+
+
 def _pruefe_regel4(
     *,
     planwerte_ergebnisplan: Planwerte,
@@ -811,6 +911,8 @@ def _pruefe_regel4(
     hierarchie: pl.DataFrame,
     sollwerte: dict,
     spalten: tuple[str, ...],
+    steuerarten: pl.DataFrame,
+    transferaufwendungen: pl.DataFrame,
 ) -> Regelergebnis:
     haushaltsjahr = sollwerte["haushaltsjahr"]
 
@@ -832,13 +934,24 @@ def _pruefe_regel4(
         sollwerte=sollwerte,
         haushaltsjahr=haushaltsjahr,
     )
+    geprueft_b4, abweichungen_b4 = _pruefe_regel4_b4(steuerarten=steuerarten, sollwerte=sollwerte)
+    geprueft_b5, abweichungen_b5 = _pruefe_regel4_b5(
+        transferaufwendungen=transferaufwendungen, sollwerte=sollwerte
+    )
 
     return Regelergebnis(
         regel=4,
         titel="Regel 4 – Sollwerte (Anhang B, Satzung § 1-3)",
-        geprueft=geprueft_b1 + geprueft_b2 + geprueft_satzung + geprueft_b3,
+        geprueft=(
+            geprueft_b1 + geprueft_b2 + geprueft_satzung + geprueft_b3 + geprueft_b4 + geprueft_b5
+        ),
         abweichungen=tuple(
-            abweichungen_b1 + abweichungen_b2 + abweichungen_satzung + abweichungen_b3
+            abweichungen_b1
+            + abweichungen_b2
+            + abweichungen_satzung
+            + abweichungen_b3
+            + abweichungen_b4
+            + abweichungen_b5
         ),
     )
 
@@ -1629,6 +1742,8 @@ def pruefe_alles(
         hierarchie=hierarchie,
         sollwerte=sollwerte,
         spalten=jahrgang.spalten["ergebnisplan"],
+        steuerarten=vorbericht["steuerarten"],
+        transferaufwendungen=vorbericht["transferaufwendungen"],
     )
     regel5 = _pruefe_regel5(
         vorbericht=vorbericht,
