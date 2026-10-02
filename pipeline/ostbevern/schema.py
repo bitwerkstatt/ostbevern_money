@@ -44,6 +44,9 @@ BEFUNDE_MD = Path("pruefberichte/befunde.md")
 # Transkription und in Tests aufgerufen, nie aus einem Pipeline-Schritt heraus.
 MANUELL_WURZEL = Path("manuell")
 STEUERARTEN_CSV = MANUELL_WURZEL / "steuerarten.csv"
+ZUWENDUNGEN_CSV = MANUELL_WURZEL / "zuwendungen.csv"
+TRANSFERAUFWENDUNGEN_CSV = MANUELL_WURZEL / "transferaufwendungen.csv"
+KITA_ZUSCHUESSE_CSV = MANUELL_WURZEL / "kita_zuschuesse.csv"
 
 
 class SchemaFehler(ValueError):

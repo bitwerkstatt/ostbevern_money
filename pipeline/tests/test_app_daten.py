@@ -118,6 +118,42 @@ def test_keine_personennamen_in_app_daten(
     assert treffer == []
 
 
+def test_haushalt_json_zuwendungen_sonstige(tmp_path: Path) -> None:
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    zuwendungen = daten["vorbericht"]["zuwendungen"]
+    jahre = daten["jahre"]
+
+    sonstige = next(posten for posten in zuwendungen["posten"] if posten["posten"] == "sonstige")
+    assert sonstige["berechnet"] is True
+    assert sonstige["gerundet"] is False
+    assert sonstige["name"] == "Sonstige"
+
+    index_2026 = jahre.index(2026)
+    assert sonstige["werte"][index_2026] is not None
+    summe_posten = sum(
+        posten["werte"][index_2026]
+        for posten in zuwendungen["posten"]
+        if posten["posten"] != "sonstige" and posten["werte"][index_2026] is not None
+    )
+    assert summe_posten + sonstige["werte"][index_2026] == zuwendungen["gesamt_plan"][index_2026]
+
+    for index, jahr in enumerate(jahre):
+        if jahr != 2026:
+            assert sonstige["werte"][index] is None
+
+
+def test_haushalt_json_vorbericht_reihenfolge(tmp_path: Path) -> None:
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    assert list(daten["vorbericht"]) == [
+        "steuerarten",
+        "zuwendungen",
+        "transferaufwendungen",
+        "kita_zuschuesse",
+    ]
+
+
 def test_app_daten_liest_kein_pdf() -> None:
     quelle = Path(app_daten.__file__).read_text(encoding="utf-8")
     baum = ast.parse(quelle)

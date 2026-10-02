@@ -1,0 +1,9 @@
+tabelle,position,posten,posten_name,ist_gesamt,jahr,wertart,betrag_teur,anmerkung,quelle
+kita_zuschuesse,1,kita_st_ambrosius_st_josef,Kita St. Ambrosius und Kita St. Josef,false,2026,ansatz,72,,46
+kita_zuschuesse,2,kita_zauberburg,Kita Zauberburg,false,2026,ansatz,104,,46
+kita_zuschuesse,3,kita_bahnhofstrasse,Kita Bahnhofstraße,false,2026,ansatz,71,,46
+kita_zuschuesse,4,kita_grevener_damm,Kita Grevener Damm,false,2026,ansatz,59,,46
+kita_zuschuesse,5,kita_and_more_brock,Kita & More Brock,false,2026,ansatz,56,,46
+kita_zuschuesse,6,kita_biberbande,Kita Biberbande,false,2026,ansatz,101,,46
+kita_zuschuesse,7,kita_bullerbue,Kita Bullerbü,false,2026,ansatz,96,,46
+kita_zuschuesse,8,gesamt,Laufende Zuschüsse an Kindertageseinrichtungen,true,2026,ansatz,559,,46
