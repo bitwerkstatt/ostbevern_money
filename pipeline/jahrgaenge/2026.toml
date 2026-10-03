@@ -170,3 +170,31 @@ eurozeichen = "C"
 # dessen Teilergebnisplan-Zeile 15 Regel 5 die Summe der drei Vorbericht-Posten abzieht.
 [layout.weitergabe_kreis_land]
 produkt = "160101"
+
+# [layout.stellenplan] (Phase 4, Plan 04-03, D-18 bis D-20): gedruckte Titel und
+# Spaltenlayout von S. 284-290 (EXTR-10). Titel werden exakt gegen Textzeile.text
+# geprüft (kompletter Zeilentext inkl. Leerzeichen zwischen Wörtern). Teil B:
+# Tariflich Beschäftigte (S. 285) und die Sozial-/Erziehungsdienst-Tabelle (S. 286)
+# teilen sich spalten_tarif, da beide dasselbe 5-Spalten-Layout drucken (verifiziert).
+[layout.stellenplan]
+titel_beamte = "Teil A: Beamte"
+titel_tarif = "Teil B: Tariflich Beschäftigte"
+titel_sozial_erziehungsdienst = "Teil B: Tariflich Beschäftigte (Sozial- und Erziehungsdienst)"
+titel_nachwuchs = "Teil B: Dienstkräfte in der Probe- oder Ausbildungszeit"
+titel_uebersicht_beamte = "1. Beamte"
+titel_uebersicht_tarif = "2. Tariflich Beschäftigte"
+# Druckfehler im Original ("Erziehungdienst" statt "Erziehungsdienst", verifiziert
+# S. 289) wird hier wortgetreu übernommen, da der Titel exakt gegen Textzeile.text
+# geprüft wird.
+titel_uebersicht_sozial_erziehungsdienst = "3. Tariflich Beschäftigte im Sozial- und Erziehungdienst"
+insgesamt = "insgesamt"
+summe = "Summe"
+kein_wert = "-"
+uebersicht_kopf_beginn = "Nr."
+datum_muster = '^\d{2}\.\d{2}\.\d{4}$'
+spalten_beamte = ["amtsbezeichnung", "gruppe", "stellen", "davon_ausgesondert", "stellen_vorjahr", "besetzt", "vermerk"]
+spalten_tarif = ["gruppe", "stellen", "stellen_vorjahr", "besetzt", "vermerk"]
+spalten_nachwuchs = ["gruppe", "verguetung", "vorgesehen", "beschaeftigt", "vermerk"]
+sozial_erziehungsdienst_kopf_praefix = "S "
+sozial_erziehungsdienst_pauschal_kopf = "P"
+sozial_erziehungsdienst_pauschal = "pauschal"

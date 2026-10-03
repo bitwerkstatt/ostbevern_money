@@ -1,0 +1,62 @@
+teil,position,gruppe,amtsbezeichnung,verguetung,produktbereich,merkmal,jahr,stichtag,stellen_hundertstel,personen,vermerk,pdf_seite
+beamte,1,B 3,Bürgermeister/in,,,besetzt,2025,2025-06-30,100,,,284
+beamte,1,B 3,Bürgermeister/in,,,davon_ausgesondert,2026,,100,,,284
+beamte,1,B 3,Bürgermeister/in,,,stellen,2025,,100,,,284
+beamte,1,B 3,Bürgermeister/in,,,stellen,2026,,100,,,284
+beamte,2,A 14,Oberverwaltungsrat/rätin,,,besetzt,2025,2025-06-30,300,,,284
+beamte,2,A 14,Oberverwaltungsrat/rätin,,,stellen,2025,,300,,,284
+beamte,2,A 14,Oberverwaltungsrat/rätin,,,stellen,2026,,200,,1 Stelle künftig wegfallend (05.2029),284
+beamte,3,A 13,Verwaltungsrat/rätin,,,stellen,2026,,100,,,284
+beamte,4,A 12,Amtsrat/rätin,,,besetzt,2025,2025-06-30,100,,,284
+beamte,4,A 12,Amtsrat/rätin,,,stellen,2025,,100,,,284
+beamte,4,A 12,Amtsrat/rätin,,,stellen,2026,,100,,,284
+beamte,5,A 10,Oberinspektor/in,,,besetzt,2025,2025-06-30,41,,,284
+beamte,5,A 10,Oberinspektor/in,,,stellen,2025,,100,,,284
+beamte,5,A 10,Oberinspektor/in,,,stellen,2026,,100,,,284
+beamte,6,A 8,Hauptsekretär/in,,,besetzt,2025,2025-06-30,149,,,284
+beamte,6,A 8,Hauptsekretär/in,,,stellen,2025,,200,,,284
+beamte,6,A 8,Hauptsekretär/in,,,stellen,2026,,200,,,284
+nachwuchs,1,Inspektoranwärterinnen/ Inspektoranwärter,,Unterhaltszuschuß,,beschaeftigt,2025,2025-10-01,,1,,290
+nachwuchs,1,Inspektoranwärterinnen/ Inspektoranwärter,,Unterhaltszuschuß,,vorgesehen,2026,,,2,,290
+nachwuchs,2,Auszubildende,,Ausbildungsvergütung,,beschaeftigt,2025,2025-10-01,,4,,290
+nachwuchs,2,Auszubildende,,Ausbildungsvergütung,,vorgesehen,2026,,,4,,290
+sozial_erziehungsdienst,1,S 12,,,,besetzt,2025,2025-06-30,196,,,286
+sozial_erziehungsdienst,1,S 12,,,,stellen,2025,,214,,,286
+sozial_erziehungsdienst,1,S 12,,,,stellen,2026,,214,,,286
+sozial_erziehungsdienst,2,S 11,,,,besetzt,2025,2025-06-30,31,,,286
+sozial_erziehungsdienst,2,S 11,,,,stellen,2025,,38,,,286
+sozial_erziehungsdienst,2,S 11,,,,stellen,2026,,51,,,286
+tarif,1,14,,,,besetzt,2025,2025-06-30,200,,,285
+tarif,1,14,,,,stellen,2025,,200,,,285
+tarif,1,14,,,,stellen,2026,,200,,,285
+tarif,2,12,,,,besetzt,2025,2025-06-30,177,,,285
+tarif,2,12,,,,stellen,2025,,200,,,285
+tarif,2,12,,,,stellen,2026,,300,,,285
+tarif,3,11,,,,besetzt,2025,2025-06-30,500,,,285
+tarif,3,11,,,,stellen,2025,,700,,,285
+tarif,3,11,,,,stellen,2026,,800,,,285
+tarif,4,9c,,,,besetzt,2025,2025-06-30,526,,,285
+tarif,4,9c,,,,stellen,2025,,426,,,285
+tarif,4,9c,,,,stellen,2026,,326,,,285
+tarif,5,9b,,,,besetzt,2025,2025-06-30,390,,,285
+tarif,5,9b,,,,stellen,2025,,390,,,285
+tarif,5,9b,,,,stellen,2026,,390,,,285
+tarif,6,9a,,,,besetzt,2025,2025-06-30,572,,,285
+tarif,6,9a,,,,stellen,2025,,655,,,285
+tarif,6,9a,,,,stellen,2026,,638,,"0,46 VZÄ mit Sperrvermerk",285
+tarif,7,8,,,,besetzt,2025,2025-06-30,326,,,285
+tarif,7,8,,,,stellen,2025,,321,,,285
+tarif,7,8,,,,stellen,2026,,326,,,285
+tarif,8,7,,,,besetzt,2025,2025-06-30,260,,,285
+tarif,8,7,,,,stellen,2025,,260,,,285
+tarif,8,7,,,,stellen,2026,,260,,,285
+tarif,9,6,,,,besetzt,2025,2025-06-30,1704,,,285
+tarif,9,6,,,,stellen,2025,,1878,,,285
+tarif,9,6,,,,stellen,2026,,1895,,,285
+tarif,10,5,,,,besetzt,2025,2025-06-30,76,,,285
+tarif,10,5,,,,stellen,2025,,90,,,285
+tarif,10,5,,,,stellen,2026,,76,,,285
+tarif,11,3,,,,stellen,2025,,26,,,285
+tarif,12,1,,,,besetzt,2025,2025-06-30,15,,,285
+tarif,12,1,,,,stellen,2025,,15,,,285
+tarif,12,1,,,,stellen,2026,,15,,,285

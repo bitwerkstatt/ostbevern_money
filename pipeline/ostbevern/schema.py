@@ -62,6 +62,9 @@ VERBINDLICHKEITEN_CSV = MANUELL_WURZEL / "verbindlichkeiten.csv"
 EIGENKAPITAL_CSV = MANUELL_WURZEL / "eigenkapital.csv"
 # VE-Übersicht (Phase 4, D-11, S. 309): VE_UEBERSICHT_SPALTEN-Format.
 VE_UEBERSICHT_CSV = MANUELL_WURZEL / "ve_uebersicht.csv"
+# Stellenplan (Phase 4, Plan 04-03, D-18 bis D-20, EXTR-10): aus dem PDF extrahiert
+# (S. 284-290), daher unter aufbereitet/ wie investitionen.csv, nicht manuell/.
+STELLENPLAN_CSV = Path("aufbereitet/stellenplan.csv")
 
 
 class SchemaFehler(ValueError):
@@ -526,3 +529,44 @@ def schreibe_ve_uebersicht_csv(df: pl.DataFrame, pfad: Path) -> None:
 def lies_ve_uebersicht_csv(pfad: Path) -> pl.DataFrame:
     """Liest ve_uebersicht.csv über `lies_csv` mit VE_UEBERSICHT_SPALTEN."""
     return lies_csv(pfad, VE_UEBERSICHT_SPALTEN)
+
+
+# Stellenplan (Phase 4, Plan 04-03, D-18 bis D-20, EXTR-10): ein Wert je Teil-A/B-,
+# Stellenübersicht- oder Nachwuchskräfte-Zeile und Merkmal (Langformat). `gruppe` ist die
+# gedruckte Teil-A/B-Form ("B 3", "A 14", "9a", "S 12", "pauschal") bzw. die über
+# Fortsetzungszeilen verbundene Nachwuchskräfte-Bezeichnung. `amtsbezeichnung` ist nur
+# für Beamte gesetzt, `verguetung` nur für Nachwuchskräfte, `produktbereich` nur für
+# Stellenübersicht-Zeilen. `stellen_hundertstel` ist null für Nachwuchskräfte (dort zählt
+# `personen`, nie als Stelle, D-19); `vermerk` steht ausschließlich auf der
+# merkmal=stellen-Zeile des Haushaltsjahres (D-19).
+STELLENPLAN_SPALTEN: dict[str, pl.PolarsDataType] = {
+    "teil": pl.Utf8,
+    "position": pl.Int64,
+    "gruppe": pl.Utf8,
+    "amtsbezeichnung": pl.Utf8,
+    "verguetung": pl.Utf8,
+    "produktbereich": pl.Utf8,
+    "merkmal": pl.Utf8,
+    "jahr": pl.Int64,
+    "stichtag": pl.Utf8,
+    "stellen_hundertstel": pl.Int64,
+    "personen": pl.Int64,
+    "vermerk": pl.Utf8,
+    "pdf_seite": pl.Int64,
+}
+
+
+def schreibe_stellenplan_csv(df: pl.DataFrame, pfad: Path) -> None:
+    """Schreibt stellenplan.csv sortiert nach teil, produktbereich (nulls first),
+    position, merkmal, jahr (D-18 bis D-20, D-21)."""
+    schreibe_csv(
+        df,
+        pfad,
+        STELLENPLAN_SPALTEN,
+        ["teil", "produktbereich", "position", "merkmal", "jahr"],
+    )
+
+
+def lies_stellenplan_csv(pfad: Path) -> pl.DataFrame:
+    """Liest stellenplan.csv über `lies_csv` mit STELLENPLAN_SPALTEN."""
+    return lies_csv(pfad, STELLENPLAN_SPALTEN)
