@@ -34,9 +34,9 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [x] **MANU-02**: `zuwendungen.csv` (Schlüsselzuweisung, laufende Zwecke, Sonderposten) aus S. 28
 - [x] **MANU-03**: `transferaufwendungen.csv` inklusive Kreisumlage netto mit Fußnote (Rückstellungsauflösung 1.325.478 €) aus S. 45–46
 - [x] **MANU-04**: `kita_zuschuesse.csv` (7 Einrichtungen, Summe 559 T€) aus S. 46
-- [ ] **MANU-05**: `weitere_vorberichtstabellen.csv` (Leistungsentgelte, Kostenerstattungen, Personal, Sachaufwand, Sonstige Aufwendungen) aus S. 29–50
-- [ ] **MANU-06**: `meta.json` mit Einwohnerzahl 11.741 (Stichtag, Quelle), Hebesätzen, Fläche, Satzungsdatum, Kreisumlage brutto/netto und Kreisumlage-Hebesätzen
-- [ ] **MANU-07**: Jede manuelle Datei hat eine Spalte `quelle` mit PDF-Seite; ein README begründet die Werte
+- [x] **MANU-05**: `weitere_vorberichtstabellen.csv` (Leistungsentgelte, Kostenerstattungen, Personal, Sachaufwand, Sonstige Aufwendungen) aus S. 29–50
+- [x] **MANU-06**: `meta.json` mit Einwohnerzahl 11.741 (Stichtag, Quelle), Hebesätzen, Fläche, Satzungsdatum, Kreisumlage brutto/netto und Kreisumlage-Hebesätzen
+- [x] **MANU-07**: Jede manuelle Datei hat eine Spalte `quelle` mit PDF-Seite; ein README begründet die Werte
 - [ ] **MANU-08**: Geprüfte Erklärtexte (`texte/erklaerungen.md`) mit Seitenverweis, z. B. zu Schlüsselzuweisung, Gewerbesteuer und Kreisumlage
 
 ### Prüfung
@@ -45,7 +45,7 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [x] **PRUEF-02**: Summe der Produkt-Teilpläne = PG = PB-Teilplan, je Zeile und Jahr
 - [x] **PRUEF-03**: Summe der 15 PB = Gesamtergebnisplan (Z. 01–17, 19, 20; ohne TP 27/28)
 - [x] **PRUEF-04**: Sollwerte aus Anhang B (Gesamtergebnisplan, Gesamtfinanzplan/Satzung § 1, PB-Summen, Eckwerte) werden getroffen
-- [ ] **PRUEF-05**: Manuelle Tabellen stimmen mit den jeweiligen Planzeilen überein (Toleranz ±1 T€ bei T€-Tabellen; bekannte Differenzen dokumentiert)
+- [x] **PRUEF-05**: Manuelle Tabellen stimmen mit den jeweiligen Planzeilen überein (Toleranz ±1 T€ bei T€-Tabellen; bekannte Differenzen dokumentiert)
 - [x] **PRUEF-06**: Investitionssummen je Produkt = Teilfinanzplan Z. 23/30; Summe aller = Gesamtfinanzplan (2026: 7.224.830 € / 12.280.484 €)
 - [x] **PRUEF-07**: Querschnitte S. 291 ff. stimmen mit den eigenen PG-Aggregaten überein
 - [x] **PRUEF-08**: Vollständigkeit: 63 Produkte mit Produktinformationen, Bindungsgrad, Teilergebnisplan und Teilfinanzplan
@@ -197,15 +197,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MANU-02 | Phase 4 | Complete |
 | MANU-03 | Phase 4 | Complete |
 | MANU-04 | Phase 4 | Complete |
-| MANU-05 | Phase 4 | Pending |
-| MANU-06 | Phase 4 | Pending |
-| MANU-07 | Phase 4 | Pending |
+| MANU-05 | Phase 4 | Complete |
+| MANU-06 | Phase 4 | Complete |
+| MANU-07 | Phase 4 | Complete |
 | MANU-08 | Phase 4 | Pending |
 | PRUEF-01 | Phase 2 | Complete |
 | PRUEF-02 | Phase 2 | Complete |
 | PRUEF-03 | Phase 2 | Complete |
 | PRUEF-04 | Phase 2 | Complete |
-| PRUEF-05 | Phase 4 | Pending |
+| PRUEF-05 | Phase 4 | Complete |
 | PRUEF-06 | Phase 3 | Complete |
 | PRUEF-07 | Phase 3 | Complete |
 | PRUEF-08 | Phase 3 | Complete |

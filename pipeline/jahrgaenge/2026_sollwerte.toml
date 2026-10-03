@@ -313,3 +313,69 @@ krankenhausinvestitionsumlage = 200
 kreisumlage = 10147
 verlustuebernahme_bbo = 270
 gesamt = 13764
+
+# Eckwerte (Anhang B.6, Phase 4, D-10, D-14, D-20): feste Vergleichswerte, die aus
+# meta.json, zuwendungen.csv oder (04-02 Task 3/04-03) verbindlichkeiten.csv hergeleitet
+# werden. Regel 9 (exakt) oder Regel 5 (kreisumlage_umlage_fussnote, ±50.000 €) konsumiert
+# jeden Namen; ein unkonsumierter Name bricht pruefe_alles ab (REGEL5_ECKWERTE/
+# REGEL9_ECKWERTE in pruefung.py). Einheit steht im Namen, wo nicht ohnehin offensichtlich.
+[eckwerte.einwohner]
+wert = 11741
+pdf_seite = 25
+
+[eckwerte.hebesatz_grundsteuer_a]
+wert = 242
+pdf_seite = 9
+
+[eckwerte.hebesatz_grundsteuer_b]
+wert = 554
+pdf_seite = 9
+
+[eckwerte.hebesatz_gewerbesteuer]
+wert = 418
+pdf_seite = 9
+
+[eckwerte.hebesatz_kreisumlage_promille]
+wert = 363
+pdf_seite = 47
+
+[eckwerte.hebesatz_kreisumlage_vorjahr_promille]
+wert = 330
+pdf_seite = 47
+
+[eckwerte.hebesatz_jugendamtsumlage_promille]
+wert = 210
+pdf_seite = 47
+
+[eckwerte.hebesatz_jugendamtsumlage_vorjahr_promille]
+wert = 203
+pdf_seite = 47
+
+[eckwerte.schluesselzuweisung_teur]
+wert = 890
+pdf_seite = 28
+
+[eckwerte.schluesselzuweisung_vorjahr_teur]
+wert = 2807
+pdf_seite = 28
+
+[eckwerte.kreisumlage_umlage_fussnote]
+wert = 11500000
+pdf_seite = 46
+
+# Satzung § 4 (Phase 4, Task 3, D-11, Research Pitfall 4): dieselben Beträge wie
+# [satzung] in der Haushaltssatzung (PDF S. 9), hier als Eckwerte für den Regel-5-
+# Vergleich gegen die Ausgleichsrücklagen-Fortschreibung in eigenkapital.csv.
+[eckwerte.verringerung_ausgleichsruecklage]
+wert = 2132213
+pdf_seite = 9
+
+[eckwerte.verringerung_allgemeine_ruecklage]
+wert = 221293
+pdf_seite = 9
+
+# Pro-Kopf-Verschuldung Ende Vorjahr (Anhang B.6, D-14): Investitionskredite +
+# NRW.Bank-Mittel Ende 2025 (7.710 T€) / 11.741 Einwohner, abgerundet (Vorbericht S. 25).
+[eckwerte.pro_kopf_verschuldung_vorjahr]
+wert = 656
+pdf_seite = 25

@@ -18,14 +18,24 @@ from pathlib import Path
 import polars as pl
 
 from ostbevern.konfiguration import PROJEKT_WURZEL, lade_jahrgang
-from ostbevern.pruefung import REGEL5_GEP_ZEILEN, REGEL5_TOLERANZ_GEP_EURO, Planwerte
+from ostbevern.manuell import lies_meta_json
+from ostbevern.pruefung import (
+    REGEL5_GEP_ZEILEN,
+    REGEL5_TOLERANZ_GEP_EURO,
+    Planwerte,
+    zerlege_weitere_vorberichtstabellen,
+)
 from ostbevern.schema import (
     DATEN_WURZEL,
+    EIGENKAPITAL_CSV,
     ERGEBNISPLAN_CSV,
     KITA_ZUSCHUESSE_CSV,
+    META_JSON,
     STEUERARTEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
+    WEITERE_VORBERICHTSTABELLEN_CSV,
     ZUWENDUNGEN_CSV,
+    lies_eigenkapital_csv,
     lies_plan_csv,
     lies_vorbericht_csv,
     zerlege_spaltenkopf,
@@ -198,6 +208,74 @@ def baue_vorbericht_tabelle(
     }
 
 
+def baue_eigenkapital_tabelle(df: pl.DataFrame, *, jahre: list[int]) -> dict[str, object]:
+    """Baut die App-JSON-Struktur von `eigenkapital.csv` (D-11, D-21): wie eine
+    manuelle Vorberichtstabelle (`baue_vorbericht_tabelle`), aber `quelle_einheit`
+    "euro" (bereits kaufmännisch gerundete Cent, kein ×1000, D-12), `planzeile`/
+    `gesamt_plan` `null` (kein GEP-Bezug — die GEP-Z.-28-Prüfung läuft über Regel 5,
+    nicht über die App-Daten)."""
+    gesamt_df = df.filter(pl.col("ist_gesamt"))
+    gesamt_nach_jahr = {zeile["jahr"]: zeile for zeile in gesamt_df.iter_rows(named=True)}
+    if not gesamt_nach_jahr:
+        raise AppDatenFehler("eigenkapital: keine Gesamtzeile vorhanden")
+
+    gesamt_werte: list[int | None] = []
+    gesamt_quelle: int | None = None
+    for jahr in jahre:
+        zeile = gesamt_nach_jahr.get(jahr)
+        if zeile is None:
+            gesamt_werte.append(None)
+            continue
+        gesamt_werte.append(zeile["betrag"])
+        gesamt_quelle = zeile["quelle"]
+
+    posten_df = df.filter(~pl.col("ist_gesamt"))
+    positionen = sorted(posten_df["position"].unique().to_list())
+    posten_liste: list[dict[str, object]] = []
+    for position in positionen:
+        teil = posten_df.filter(pl.col("position") == position)
+        name = teil["posten_name"][0]
+        posten_schluessel = teil["posten"][0]
+        zeilen_nach_jahr = {zeile["jahr"]: zeile for zeile in teil.iter_rows(named=True)}
+
+        werte: list[int | None] = []
+        quelle: int | None = None
+        anmerkung: str | None = None
+        for jahr in jahre:
+            zeile = zeilen_nach_jahr.get(jahr)
+            if zeile is None:
+                werte.append(None)
+                continue
+            werte.append(zeile["betrag"])
+            quelle = zeile["quelle"]
+            anmerkung = zeile["anmerkung"]
+
+        posten_liste.append(
+            {
+                "posten": posten_schluessel,
+                "name": name,
+                "werte": werte,
+                "gerundet": True,
+                "berechnet": False,
+                "quelle": quelle,
+                "anmerkung": anmerkung,
+            }
+        )
+
+    return {
+        "tabelle": "eigenkapital",
+        "quelle_einheit": "euro",
+        "planzeile": None,
+        "gesamt_plan": None,
+        "gesamt_vorbericht": {
+            "werte": gesamt_werte,
+            "gerundet": True,
+            "quelle": gesamt_quelle,
+        },
+        "posten": posten_liste,
+    }
+
+
 def erzeuge_app_daten(
     jahr: int,
     *,
@@ -218,13 +296,18 @@ def erzeuge_app_daten(
     wertarten = [wertart for wertart, _jahr_wert in spalten_zu_wertart]
 
     # Reihenfolge ist Teil des App-JSON-Vertrags (D-21): steuerarten, zuwendungen,
-    # transferaufwendungen, kita_zuschuesse — dict-Einfügereihenfolge bleibt beim Schreiben
-    # erhalten (schreibe_app_json/json.dumps, keine sort_keys).
+    # transferaufwendungen, kita_zuschuesse, dann die fünf D-08-Tabellen (leistungsentgelte,
+    # kostenerstattungen, personal, sachaufwand, sonstige_aufwendungen) — dict-
+    # Einfügereihenfolge bleibt beim Schreiben erhalten (schreibe_app_json/json.dumps,
+    # keine sort_keys).
     vorbericht_quellen = {
         "steuerarten": lies_vorbericht_csv(daten_wurzel / STEUERARTEN_CSV),
         "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
         "transferaufwendungen": lies_vorbericht_csv(daten_wurzel / TRANSFERAUFWENDUNGEN_CSV),
         "kita_zuschuesse": lies_vorbericht_csv(daten_wurzel / KITA_ZUSCHUESSE_CSV),
+        **zerlege_weitere_vorberichtstabellen(
+            lies_vorbericht_csv(daten_wurzel / WEITERE_VORBERICHTSTABELLEN_CSV)
+        ),
     }
     vorbericht = {
         tabelle: baue_vorbericht_tabelle(
@@ -237,11 +320,17 @@ def erzeuge_app_daten(
         for tabelle, df in vorbericht_quellen.items()
     }
 
+    meta = lies_meta_json(daten_wurzel / META_JSON)
+    eigenkapital_df = lies_eigenkapital_csv(daten_wurzel / EIGENKAPITAL_CSV)
+    eigenkapital = baue_eigenkapital_tabelle(eigenkapital_df, jahre=jahre)
+
     daten = {
         "haushaltsjahr": jahrgang.haushaltsjahr,
         "jahre": jahre,
         "wertarten": wertarten,
+        "meta": meta,
         "vorbericht": vorbericht,
+        "eigenkapital": eigenkapital,
     }
 
     pfad = app_daten_wurzel / HAUSHALT_JSON

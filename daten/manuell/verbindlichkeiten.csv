@@ -1,0 +1,25 @@
+tabelle,position,posten,posten_name,ist_gesamt,jahr,wertart,betrag_teur,anmerkung,quelle
+buergschaften,1,bbo_buergschaft,Bürgschaft Bäder- und Beteiligungsgesellschaft Ostbevern mbH,false,2024,ergebnis,307,,310
+buergschaften,1,bbo_buergschaft,Bürgschaft Bäder- und Beteiligungsgesellschaft Ostbevern mbH,false,2025,ansatz,242,,310
+buergschaften,1,bbo_buergschaft,Bürgschaft Bäder- und Beteiligungsgesellschaft Ostbevern mbH,false,2026,ansatz,177,,310
+verbindlichkeiten,2,kredite_investitionen,Verbindlichkeiten aus Krediten für Investitionen,false,2024,ergebnis,7208,,310
+verbindlichkeiten,2,kredite_investitionen,Verbindlichkeiten aus Krediten für Investitionen,false,2025,ansatz,6879,,310
+verbindlichkeiten,2,kredite_investitionen,Verbindlichkeiten aus Krediten für Investitionen,false,2026,ansatz,11629,,310
+verbindlichkeiten,3,liquiditaetskredite,Verbindlichkeiten aus Krediten zur Liquiditätssicherung,false,2024,ergebnis,447,,310
+verbindlichkeiten,3,liquiditaetskredite,Verbindlichkeiten aus Krediten zur Liquiditätssicherung,false,2025,ansatz,418,,310
+verbindlichkeiten,3,liquiditaetskredite,Verbindlichkeiten aus Krediten zur Liquiditätssicherung,false,2026,ansatz,389,,310
+verbindlichkeiten,5,lieferungen_leistungen,Verbindlichkeiten aus Lieferungen und Leistungen,false,2024,ergebnis,1919,,310
+verbindlichkeiten,5,lieferungen_leistungen,Verbindlichkeiten aus Lieferungen und Leistungen,false,2025,ansatz,1000,,310
+verbindlichkeiten,5,lieferungen_leistungen,Verbindlichkeiten aus Lieferungen und Leistungen,false,2026,ansatz,1000,,310
+verbindlichkeiten,6,transferleistungen,Verbindlichkeiten aus Transferleistungen,false,2024,ergebnis,1221,"Enthält die abgerufenen NRW.Bank-Mittel für Flüchtlingsunterkünfte, die haushaltsrechtlich als Transferverbindlichkeit (nicht als Kredit) ausgewiesen werden (S. 24).",310
+verbindlichkeiten,6,transferleistungen,Verbindlichkeiten aus Transferleistungen,false,2025,ansatz,831,"Enthält die abgerufenen NRW.Bank-Mittel für Flüchtlingsunterkünfte, die haushaltsrechtlich als Transferverbindlichkeit (nicht als Kredit) ausgewiesen werden (S. 24).",310
+verbindlichkeiten,6,transferleistungen,Verbindlichkeiten aus Transferleistungen,false,2026,ansatz,746,"Enthält die abgerufenen NRW.Bank-Mittel für Flüchtlingsunterkünfte, die haushaltsrechtlich als Transferverbindlichkeit (nicht als Kredit) ausgewiesen werden (S. 24).",310
+verbindlichkeiten,7,sonstige_verbindlichkeiten,Sonstige Verbindlichkeiten,false,2024,ergebnis,288,,310
+verbindlichkeiten,7,sonstige_verbindlichkeiten,Sonstige Verbindlichkeiten,false,2025,ansatz,500,,310
+verbindlichkeiten,7,sonstige_verbindlichkeiten,Sonstige Verbindlichkeiten,false,2026,ansatz,500,,310
+verbindlichkeiten,8,erhaltene_anzahlungen,Erhaltene Anzahlungen,false,2024,ergebnis,17548,,310
+verbindlichkeiten,8,erhaltene_anzahlungen,Erhaltene Anzahlungen,false,2025,ansatz,10000,,310
+verbindlichkeiten,8,erhaltene_anzahlungen,Erhaltene Anzahlungen,false,2026,ansatz,10000,,310
+verbindlichkeiten,9,gesamt,Summe aller Verbindlichkeiten,true,2024,ergebnis,28631,,310
+verbindlichkeiten,9,gesamt,Summe aller Verbindlichkeiten,true,2025,ansatz,19628,,310
+verbindlichkeiten,9,gesamt,Summe aller Verbindlichkeiten,true,2026,ansatz,24264,,310

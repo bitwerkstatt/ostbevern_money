@@ -151,7 +151,63 @@ def test_haushalt_json_vorbericht_reihenfolge(tmp_path: Path) -> None:
         "zuwendungen",
         "transferaufwendungen",
         "kita_zuschuesse",
+        "leistungsentgelte",
+        "kostenerstattungen",
+        "personal",
+        "sachaufwand",
+        "sonstige_aufwendungen",
     ]
+
+
+def test_haushalt_json_weitere_vorberichtstabellen(tmp_path: Path) -> None:
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    jahre = daten["jahre"]
+    wertarten = daten["wertarten"]
+    ergebnisplan = lies_plan_csv(DATEN_WURZEL / ERGEBNISPLAN_CSV)
+    planwerte = Planwerte(ergebnisplan, datei="ergebnisplan")
+
+    erwartete_gep_zeile = {
+        "leistungsentgelte": "04",
+        "kostenerstattungen": "06",
+        "personal": "11",
+        "sachaufwand": "13",
+        "sonstige_aufwendungen": "16",
+    }
+    for tabelle, gep_zeile in erwartete_gep_zeile.items():
+        eintrag = daten["vorbericht"][tabelle]
+        assert eintrag["tabelle"] == tabelle
+        assert eintrag["planzeile"] is not None
+        erwarteter_gesamt_plan = [
+            planwerte.wert("GESAMT", "", gep_zeile, jahr, wertart)
+            for jahr, wertart in zip(jahre, wertarten, strict=True)
+        ]
+        assert eintrag["gesamt_plan"] == erwarteter_gesamt_plan
+        assert eintrag["posten"], f"{tabelle}: keine Posten"
+
+
+def test_haushalt_json_meta(tmp_path: Path) -> None:
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    assert list(daten)[:4] == ["haushaltsjahr", "jahre", "wertarten", "meta"]
+    meta = daten["meta"]
+    assert meta["einwohner"]["wert"] == 11741
+    assert meta["kreisumlage"]["brutto"]["wert"] == 11472478
+    assert meta["kreisumlage"]["brutto"]["berechnet"] is True
+
+
+def test_haushalt_json_eigenkapital(tmp_path: Path) -> None:
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    assert list(daten)[-1] == "eigenkapital"
+    eigenkapital = daten["eigenkapital"]
+    assert eigenkapital["tabelle"] == "eigenkapital"
+    assert eigenkapital["quelle_einheit"] == "euro"
+    assert eigenkapital["planzeile"] is None
+    assert eigenkapital["gesamt_plan"] is None
+    jahresergebnis = next(p for p in eigenkapital["posten"] if p["posten"] == "jahresergebnis")
+    index_2026 = daten["jahre"].index(2026)
+    assert jahresergebnis["werte"][index_2026] == -2353506
 
 
 def test_app_daten_liest_kein_pdf() -> None:

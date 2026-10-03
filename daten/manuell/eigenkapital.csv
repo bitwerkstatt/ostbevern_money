@@ -1,0 +1,43 @@
+tabelle,position,posten,posten_name,ist_gesamt,jahr,wertart,betrag,anmerkung,quelle
+eigenkapital,1,allgemeine_ruecklage,Allgemeine Rücklage,false,2024,ergebnis,39522991,,311
+eigenkapital,1,allgemeine_ruecklage,Allgemeine Rücklage,false,2025,ansatz,39522991,,311
+eigenkapital,1,allgemeine_ruecklage,Allgemeine Rücklage,false,2026,ansatz,39522991,,311
+eigenkapital,1,allgemeine_ruecklage,Allgemeine Rücklage,false,2027,planung,38825371,,311
+eigenkapital,1,allgemeine_ruecklage,Allgemeine Rücklage,false,2028,planung,37182843,,311
+eigenkapital,1,allgemeine_ruecklage,Allgemeine Rücklage,false,2029,planung,35424016,,311
+eigenkapital,2,verrechnung_bilanzierungshilfe,Einmalige Verrechnung Bilanzierungshilfe,false,2024,ergebnis,0,,311
+eigenkapital,2,verrechnung_bilanzierungshilfe,Einmalige Verrechnung Bilanzierungshilfe,false,2025,ansatz,0,,311
+eigenkapital,2,verrechnung_bilanzierungshilfe,Einmalige Verrechnung Bilanzierungshilfe,false,2026,ansatz,-476327,,311
+eigenkapital,2,verrechnung_bilanzierungshilfe,Einmalige Verrechnung Bilanzierungshilfe,false,2027,planung,0,,311
+eigenkapital,2,verrechnung_bilanzierungshilfe,Einmalige Verrechnung Bilanzierungshilfe,false,2028,planung,0,,311
+eigenkapital,2,verrechnung_bilanzierungshilfe,Einmalige Verrechnung Bilanzierungshilfe,false,2029,planung,0,,311
+eigenkapital,3,sonderruecklagen,Sonderrücklagen,false,2024,ergebnis,0,,311
+eigenkapital,3,sonderruecklagen,Sonderrücklagen,false,2025,ansatz,0,,311
+eigenkapital,3,sonderruecklagen,Sonderrücklagen,false,2026,ansatz,0,,311
+eigenkapital,3,sonderruecklagen,Sonderrücklagen,false,2027,planung,0,,311
+eigenkapital,3,sonderruecklagen,Sonderrücklagen,false,2028,planung,0,,311
+eigenkapital,3,sonderruecklagen,Sonderrücklagen,false,2029,planung,0,,311
+eigenkapital,4,ausgleichsruecklage,Ausgleichsrücklage,false,2024,ergebnis,1940223,,311
+eigenkapital,4,ausgleichsruecklage,Ausgleichsrücklage,false,2025,ansatz,2132213,,311
+eigenkapital,4,ausgleichsruecklage,Ausgleichsrücklage,false,2026,ansatz,2132213,,311
+eigenkapital,4,ausgleichsruecklage,Ausgleichsrücklage,false,2027,planung,0,,311
+eigenkapital,4,ausgleichsruecklage,Ausgleichsrücklage,false,2028,planung,0,,311
+eigenkapital,4,ausgleichsruecklage,Ausgleichsrücklage,false,2029,planung,0,,311
+eigenkapital,5,bilanzieller_verlustvortrag,Bilanzieller Verlustvortrag,false,2024,ergebnis,0,,311
+eigenkapital,5,bilanzieller_verlustvortrag,Bilanzieller Verlustvortrag,false,2025,ansatz,0,,311
+eigenkapital,5,bilanzieller_verlustvortrag,Bilanzieller Verlustvortrag,false,2026,ansatz,0,,311
+eigenkapital,5,bilanzieller_verlustvortrag,Bilanzieller Verlustvortrag,false,2027,planung,0,,311
+eigenkapital,5,bilanzieller_verlustvortrag,Bilanzieller Verlustvortrag,false,2028,planung,0,,311
+eigenkapital,5,bilanzieller_verlustvortrag,Bilanzieller Verlustvortrag,false,2029,planung,0,,311
+eigenkapital,6,jahresergebnis,Jahresergebnis,false,2024,ergebnis,191990,,311
+eigenkapital,6,jahresergebnis,Jahresergebnis,false,2025,ansatz,0,,311
+eigenkapital,6,jahresergebnis,Jahresergebnis,false,2026,ansatz,-2353506,,311
+eigenkapital,6,jahresergebnis,Jahresergebnis,false,2027,planung,-1642528,,311
+eigenkapital,6,jahresergebnis,Jahresergebnis,false,2028,planung,-1758827,,311
+eigenkapital,6,jahresergebnis,Jahresergebnis,false,2029,planung,-3557700,,311
+eigenkapital,7,gesamt,Summe Eigenkapital,true,2024,ergebnis,41655204,,311
+eigenkapital,7,gesamt,Summe Eigenkapital,true,2025,ansatz,41655204,,311
+eigenkapital,7,gesamt,Summe Eigenkapital,true,2026,ansatz,38825371,,311
+eigenkapital,7,gesamt,Summe Eigenkapital,true,2027,planung,37182843,,311
+eigenkapital,7,gesamt,Summe Eigenkapital,true,2028,planung,35424016,,311
+eigenkapital,7,gesamt,Summe Eigenkapital,true,2029,planung,31866316,,311

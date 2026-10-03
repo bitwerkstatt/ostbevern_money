@@ -28,7 +28,10 @@ Teilfinanzplan-Zeile) als Lücke. Eine Lücke ist, wie bei Regel 6, nie über di
 abdeckbar — ein fehlendes Produkt oder eine leere Produktbeschreibung ist kein Rundungsfehler.
 
 Regel 5 (manuelle Vorberichtstabellen → Planzeilen, PRUEF-05, D-07) prüft vier Tabellen unter
-`daten/manuell/` zweistufig: Stufe (a) `zeile` `summe_posten` vergleicht die Summe der Posten
+`daten/manuell/` sowie die fünf weiteren Vorberichtstabellen in
+`daten/manuell/weitere_vorberichtstabellen.csv` (Leistungsentgelte, Kostenerstattungen,
+Personal, Sachaufwand, Sonstige Aufwendungen, D-08) zweistufig: Stufe (a) `zeile`
+`summe_posten` vergleicht die Summe der Posten
 mit der mit abgeschriebenen, gedruckten Gesamtzeile derselben Tabelle und desselben Jahres
 (beide in T€, × 1000 in Euro umgerechnet; jede Differenz ab 1 T€ = 1.000 € überschreitet die
 strenge TOLERANZ_EURO = 1 € und wird dokumentationspflichtig). Stufe (b) `zeile` `gep_NN`
@@ -40,16 +43,50 @@ Die Weitergabe an Kreis und Land (D-01, `plan` `weitergabe_kreis_land`, `ebene` 
 Produktcode aus `[layout.weitergabe_kreis_land]`, `zeile` `tp_15`) vergleicht die Summe der drei
 Transferaufwendungen-Posten Kreisumlage, Gewerbesteuerumlage und Krankenhausinvestitionsumlage
 (× 1000) mit Zeile 15 des Teilergebnisplans dieses Produkts, Toleranz ±3.000 € (drei Posten ×
-±1.000 €). In allen Fällen gilt `abweichung = ist − soll`, mit `ist` dem aus den Vorbericht-
-Posten hergeleiteten Wert und `soll` dem jeweils gedruckten oder im Gesamtergebnisplan
-ausgewiesenen Referenzwert.
+±1.000 €). Die D-10-Unterprüfungen (`plan` `meta_kreisumlage`, `ebene` `GESAMT`) prüfen die
+Kreisumlage aus `meta.json`: `zeile` `brutto_formel` (`soll` netto + Rückstellungsauflösung,
+`ist` brutto, exakt), `zeile` `netto_transfer` (`soll` Transferaufwendungen-Posten Kreisumlage
+des Haushaltsjahrs × 1000, `ist` meta netto, exakt) und `zeile` `brutto_fussnote` (`soll`
+Eckwert `kreisumlage_umlage_fussnote`, Anhang B.6, `ist` brutto, Toleranz ±50.000 €, da der
+Fußnotentext „rd. 11,5 Mio. €“ selbst gerundet ist). In allen Fällen gilt
+`abweichung = ist − soll`, mit `ist` dem aus den Vorbericht-Posten hergeleiteten Wert und
+`soll` dem jeweils gedruckten oder im Gesamtergebnisplan ausgewiesenen Referenzwert.
+
+Regel 9 (Eckwerte, Anhang B.6, D-10/D-14) vergleicht jeden `[eckwerte.*]`-Sollwert exakt (0 €
+bzw. 0 Einheiten Toleranz, `pruefung.TOLERANZ_JE_REGEL`) gegen den aus `meta.json` oder
+`zuwendungen.csv` hergeleiteten Ist-Wert; `plan` ist `anhang_b6`, `ebene` `GESAMT`, `zeile` der
+Eckwert-Name (z. B. `hebesatz_kreisumlage_promille`, `pro_kopf_verschuldung_vorjahr`), `jahr`
+das Haushaltsjahr, `wertart` `ansatz`. Die Einheit eines Eckwerts (Prozent, Promille, T€,
+Personen, Euro) ist dieselbe wie im Sollwert selbst — Regel 9 rechnet nichts um. Ein
+`[eckwerte.*]`-Schlüssel, den weder Regel 5 noch Regel 9 konsumiert, bricht `pruefe_alles` mit
+`PruefungsFehler` ab (kein Sollwert bleibt unbewacht).
+
+Die D-11-Erweiterungen (Schulden, Rücklagen, VE, Task 04-02/3) prüfen `verbindlichkeiten.csv`,
+`eigenkapital.csv` und `ve_uebersicht.csv` quer gegen Extrahiertes: `plan` `vorbericht_eigenkapital`
+`zeile` `summe_posten` ist dieselbe Stufe-(a)-Prüfung wie bei den Vorberichtstabellen, aber
+bereits in int-Euro (kein ×1000, D-12). `plan` `verbindlichkeiten` `zeile`
+`kredite_fortschreibung` vergleicht die gedruckte Investitionskredit-Zeile Ende Haushaltsjahr
+gegen `manuell.investitionskredite_ende(Ende Vorjahr, GFP Z. 33, GFP Z. 35)`, Toleranz ±1.000 €.
+`plan` `eigenkapital` `zeile` `jahresergebnis_gep_28` vergleicht das gedruckte Jahresergebnis
+(S. 311) je Jahr gegen Zeile 28 des Gesamtergebnisplans. `plan` `satzung_paragraf4` prüft
+Research Pitfall 4 (nicht der rohe Jahresdelta!): `zeile` `ausgleichsruecklage` vergleicht
+Ausgleichsrücklage Stand Haushaltsjahr − Stand Folgejahr gegen den Eckwert
+`verringerung_ausgleichsruecklage`, `zeile` `summe_verringerung` vergleicht die Summe beider
+Satzungs-§-4-Eckwerte gegen −GEP Z. 28 des Haushaltsjahrs. `plan` `ve_uebersicht` `zeile`
+`summe_gfp_ve` vergleicht den VE-Gesamtbetrag (S. 309) gegen die GFP-Zeile 30 (Wertart `ve`);
+`zeile` `faellig_{produkt}` vergleicht je (Produkt, Fälligkeitsjahr) die VE-Übersicht gegen
+`ve_faelligkeiten.csv` — ein Paar, das nur in einer der beiden Quellen vorkommt, ist eine
+Lücke (strukturell, nicht über diese Datei abdeckbar, wie bei Regel 6).
 
 Ein Befund deckt eine Abweichung nur ab, wenn Regel, Plan, Ebene, Code, Zeile, Jahr und
-Wertart übereinstimmen **und** die tatsächliche Abweichung um höchstens 1 € von der hier
-dokumentierten abweicht (D-05). `abweichung = ist − soll`, je nach Regel in `pruefung.py`
-berechnet (Regel 1: Formelkette minus gedruckte Summe; Regel 2: Summe der Kinder minus
-gedruckter Elternwert, je Ebene PG→P bzw. PB→PG; Regel 3: Summe der 15 PB minus gedrucktem
-Gesamtergebnisplan; Regel 4: Pipeline-Wert minus Sollwert aus Anhang B bzw. Satzung).
+Wertart übereinstimmen **und** die tatsächliche Abweichung um höchstens `toleranz_fuer(regel)`
+von der hier dokumentierten abweicht (D-05, Phase 4). Für Regel 9 (Eckwerte, Anhang B.6) ist
+diese Toleranz exakt 0 €, für jede andere Regel bleibt es bei 1 € (`pruefung.TOLERANZ_JE_REGEL`).
+`abweichung = ist − soll`, je nach Regel in `pruefung.py` berechnet (Regel 1: Formelkette minus
+gedruckte Summe; Regel 2: Summe der Kinder minus gedruckter Elternwert, je Ebene PG→P bzw.
+PB→PG; Regel 3: Summe der 15 PB minus gedrucktem Gesamtergebnisplan; Regel 4: Pipeline-Wert
+minus Sollwert aus Anhang B bzw. Satzung; Regel 9: Sollwert aus Anhang B.6 minus Ist-Wert aus
+`meta.json`/`zuwendungen.csv`).
 
 Ein Befund, der nicht mehr auftritt, gilt selbst als Fehler (D-04) — diese Datei darf keine
 Fehler still verdecken. Einträge sind nur für Abweichungen erlaubt, die so im PDF gedruckt
@@ -102,6 +139,25 @@ Parsing-Fehlern.
 | 5 | vorbericht_transferaufwendungen | GESAMT |  | summe_posten | 2027 | planung | -1000 | 46 | Transferaufwendungen, Spalte Planung 2027 (S. 45-46): Summe der zehn Posten ergibt 15.756 T€, gedruckt ist die Gesamtzeile mit 15.757 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
 | 5 | vorbericht_transferaufwendungen | GESAMT |  | summe_posten | 2028 | planung | -1000 | 46 | Transferaufwendungen, Spalte Planung 2028 (S. 45-46): Summe der zehn Posten ergibt 16.232 T€, gedruckt ist die Gesamtzeile mit 16.233 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
 | 5 | vorbericht_transferaufwendungen | GESAMT |  | summe_posten | 2029 | planung | -1000 | 46 | Transferaufwendungen, Spalte Planung 2029 (S. 45-46): Summe der zehn Posten ergibt 16.746 T€, gedruckt ist die Gesamtzeile mit 16.747 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | vorbericht_leistungsentgelte | GESAMT |  | summe_posten | 2024 | ergebnis | 1000 | 30 | Öffentlich-rechtliche Leistungsentgelte, Spalte Ergebnis 2024 (S. 29-30): Summe der elf Posten (153+191+37+45+1.027+88+69+119+10+1+587) ergibt 2.327 T€, gedruckt ist die Gesamtzeile mit 2.326 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | vorbericht_leistungsentgelte | GESAMT |  | summe_posten | 2029 | planung | 1000 | 30 | Öffentlich-rechtliche Leistungsentgelte, Spalte Planung 2029 (S. 29-30): Summe der elf Posten ergibt 2.551 T€, gedruckt ist die Gesamtzeile mit 2.550 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | vorbericht_leistungsentgelte | GESAMT |  | gep_04 | 2029 | planung | -1035 | 30 | Öffentlich-rechtliche Leistungsentgelte, Spalte Planung 2029 (S. 30): Die gedruckte Gesamtzeile von 2.550 T€ (= 2.550.000 €) weicht um 1.035 € von Zeile 04 des Gesamtergebnisplans ab (2.551.035 €, S. 62). Wortweise gegen beide PDF-Seiten verifiziert; eine echte Differenz im Vorbericht selbst, kein Extraktionsfehler. |
+| 5 | vorbericht_kostenerstattungen | GESAMT |  | summe_posten | 2025 | ansatz | 2000 | 32 | Kostenerstattungen und Kostenumlagen, Spalte Ansatz 2025 (S. 32): Summe der zehn Posten (0+8+350+48+3+102+6+14+75+82) ergibt 688 T€, gedruckt ist die Gesamtzeile mit 686 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 2 T€ im Vorbericht selbst. |
+| 5 | vorbericht_kostenerstattungen | GESAMT |  | summe_posten | 2026 | ansatz | 1000 | 32 | Kostenerstattungen und Kostenumlagen, Spalte Ansatz 2026 (S. 32): Summe der zehn Posten ergibt 763 T€, gedruckt ist die Gesamtzeile mit 762 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | vorbericht_kostenerstattungen | GESAMT |  | summe_posten | 2027 | planung | 1000 | 32 | Kostenerstattungen und Kostenumlagen, Spalte Planung 2027 (S. 32): Summe der zehn Posten ergibt 772 T€, gedruckt ist die Gesamtzeile mit 771 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | vorbericht_kostenerstattungen | GESAMT |  | summe_posten | 2029 | planung | 1000 | 32 | Kostenerstattungen und Kostenumlagen, Spalte Planung 2029 (S. 32): Summe der zehn Posten ergibt 783 T€, gedruckt ist die Gesamtzeile mit 782 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | vorbericht_sachaufwand | GESAMT |  | summe_posten | 2025 | ansatz | 1000 | 37 | Aufwendungen für Sach- und Dienstleistungen, Spalte Ansatz 2025 (S. 36-37): Summe der 35 Posten ergibt 6.963 T€, gedruckt ist die Gesamtzeile mit 6.962 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | vorbericht_sachaufwand | GESAMT |  | summe_posten | 2026 | ansatz | 1000 | 37 | Aufwendungen für Sach- und Dienstleistungen, Spalte Ansatz 2026 (S. 36-37): Summe der 35 Posten ergibt 7.024 T€, gedruckt ist die Gesamtzeile mit 7.023 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | vorbericht_sachaufwand | GESAMT |  | summe_posten | 2027 | planung | 2000 | 37 | Aufwendungen für Sach- und Dienstleistungen, Spalte Planung 2027 (S. 36-37): Summe der 35 Posten ergibt 6.577 T€, gedruckt ist die Gesamtzeile mit 6.575 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 2 T€ im Vorbericht selbst. |
+| 5 | vorbericht_sachaufwand | GESAMT |  | summe_posten | 2028 | planung | 3000 | 37 | Aufwendungen für Sach- und Dienstleistungen, Spalte Planung 2028 (S. 36-37): Summe der 35 Posten ergibt 6.658 T€, gedruckt ist die Gesamtzeile mit 6.655 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 3 T€ im Vorbericht selbst. |
+| 5 | vorbericht_sachaufwand | GESAMT |  | summe_posten | 2029 | planung | 3000 | 37 | Aufwendungen für Sach- und Dienstleistungen, Spalte Planung 2029 (S. 36-37): Summe der 35 Posten ergibt 6.713 T€, gedruckt ist die Gesamtzeile mit 6.710 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 3 T€ im Vorbericht selbst. |
+| 5 | vorbericht_sachaufwand | GESAMT |  | gep_13 | 2027 | planung | -3021 | 37 | Aufwendungen für Sach- und Dienstleistungen, Spalte Planung 2027 (S. 37): Die gedruckte Gesamtzeile von 6.575 T€ (= 6.575.000 €) weicht um 3.021 € von Zeile 13 des Gesamtergebnisplans ab (6.578.021 €, S. 62). Wortweise gegen beide PDF-Seiten verifiziert; eine echte Differenz im Vorbericht selbst, kein Extraktionsfehler. |
+| 5 | vorbericht_sachaufwand | GESAMT |  | gep_13 | 2028 | planung | -3705 | 37 | Aufwendungen für Sach- und Dienstleistungen, Spalte Planung 2028 (S. 37): Die gedruckte Gesamtzeile von 6.655 T€ (= 6.655.000 €) weicht um 3.705 € von Zeile 13 des Gesamtergebnisplans ab (6.658.705 €, S. 62). Wortweise gegen beide PDF-Seiten verifiziert; eine echte Differenz im Vorbericht selbst, kein Extraktionsfehler. |
+| 5 | vorbericht_sachaufwand | GESAMT |  | gep_13 | 2029 | planung | -3846 | 37 | Aufwendungen für Sach- und Dienstleistungen, Spalte Planung 2029 (S. 37): Die gedruckte Gesamtzeile von 6.710 T€ (= 6.710.000 €) weicht um 3.846 € von Zeile 13 des Gesamtergebnisplans ab (6.713.846 €, S. 62). Wortweise gegen beide PDF-Seiten verifiziert; eine echte Differenz im Vorbericht selbst, kein Extraktionsfehler. |
+| 5 | vorbericht_sonstige_aufwendungen | GESAMT |  | summe_posten | 2027 | planung | 2000 | 48 | Sonstige ordentliche Aufwendungen, Spalte Planung 2027 (S. 48): Summe der 16 Posten ergibt 1.244 T€, gedruckt ist die Gesamtzeile mit 1.242 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 2 T€ im Vorbericht selbst. |
+| 5 | vorbericht_sonstige_aufwendungen | GESAMT |  | summe_posten | 2028 | planung | -1000 | 48 | Sonstige ordentliche Aufwendungen, Spalte Planung 2028 (S. 48): Summe der 16 Posten ergibt 1.797 T€, gedruckt ist die Gesamtzeile mit 1.798 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | vorbericht_sonstige_aufwendungen | GESAMT |  | summe_posten | 2029 | planung | 1000 | 48 | Sonstige ordentliche Aufwendungen, Spalte Planung 2029 (S. 48): Summe der 16 Posten ergibt 2.401 T€, gedruckt ist die Gesamtzeile mit 2.400 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | eigenkapital | GESAMT |  | jahresergebnis_gep_28 | 2025 | ansatz | 1331520 | 311 | Entwicklung des Eigenkapitals, Spalte 2025/Plan (S. 311): Jahresergebnis ist mit "0,00 €" gedruckt. Zeile 28 des Gesamtergebnisplans (Anhang B.1, S. 62) weist für 2025 −1.331.520 € aus. Wortweise gegen das PDF verifiziert; die Eigenkapitalübersicht druckt für dieses eine Jahr einen von der Planzeile abweichenden, offenbar vor der letzten Planfortschreibung eingefrorenen Wert — kein Extraktionsfehler (D-11, D-12). |
 
 ## Beobachtungen ohne Prüfregel
 

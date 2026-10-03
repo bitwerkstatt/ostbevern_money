@@ -16,6 +16,84 @@
     "planung",
     "planung"
   ],
+  "meta": {
+    "einwohner": {
+      "wert": 11741,
+      "einheit": "personen",
+      "stichtag": "2024-06-30",
+      "herkunft": "IT.NRW",
+      "quelle": 25
+    },
+    "flaeche": {
+      "wert": 8960,
+      "einheit": "ha",
+      "quelle": 10,
+      "anmerkung": "Vorbericht S. 10 druckt die Gemeindefläche als 89,6 qkm."
+    },
+    "hebesaetze": {
+      "grundsteuer_a": {
+        "wert": 242,
+        "einheit": "prozent",
+        "quelle": 9
+      },
+      "grundsteuer_b": {
+        "wert": 554,
+        "einheit": "prozent",
+        "quelle": 9
+      },
+      "gewerbesteuer": {
+        "wert": 418,
+        "einheit": "prozent",
+        "quelle": 9
+      }
+    },
+    "kreisumlage": {
+      "netto": {
+        "wert": 10147000,
+        "einheit": "euro",
+        "quelle": 46,
+        "gerundet": true
+      },
+      "rueckstellungsaufloesung": {
+        "wert": 1325478,
+        "einheit": "euro",
+        "quelle": 46
+      },
+      "brutto": {
+        "wert": 11472478,
+        "einheit": "euro",
+        "quelle": 46,
+        "berechnet": true,
+        "gerundet": true,
+        "formel": "netto + rueckstellungsaufloesung"
+      },
+      "hebesatz_kreisumlage": {
+        "wert": 363,
+        "einheit": "promille",
+        "vorjahr": 330,
+        "quelle": 47
+      },
+      "hebesatz_jugendamtsumlage": {
+        "wert": 210,
+        "einheit": "promille",
+        "vorjahr": 203,
+        "quelle": 47
+      }
+    },
+    "satzung": {
+      "beschluss": {
+        "wert": "2026-03-03",
+        "einheit": "datum",
+        "quelle": 8
+      },
+      "ausfertigung": {
+        "wert": "2026-03-04",
+        "einheit": "datum",
+        "quelle": 9
+      }
+    },
+    "vorbericht_werte": {}
+  },
   "vorbericht": {
     "steuerarten": {
       "tabelle": "steuerarten",
@@ -581,6 +659,1425 @@
           "anmerkung": null
         }
       ]
+    },
+    "leistungsentgelte": {
+      "tabelle": "leistungsentgelte",
+      "quelle_einheit": "teur",
+      "planzeile": "oeffentlich_rechtliche_entgelte",
+      "gesamt_plan": [
+        2325683,
+        2429355,
+        2390607,
+        2376355,
+        2433697,
+        2551035
+      ],
+      "gesamt_vorbericht": {
+        "werte": [
+          2326000,
+          2429000,
+          2390000,
+          2376000,
+          2433000,
+          2550000
+        ],
+        "gerundet": true,
+        "quelle": 30
+      },
+      "posten": [
+        {
+          "posten": "verwaltungsgebuehren",
+          "name": "Verwaltungsgebühren",
+          "werte": [
+            153000,
+            119000,
+            133000,
+            133000,
+            133000,
+            133000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 29,
+          "anmerkung": null
+        },
+        {
+          "posten": "elternbeitraege_ogs",
+          "name": "Elternbeiträge OGS",
+          "werte": [
+            191000,
+            275000,
+            273000,
+            273000,
+            273000,
+            273000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 29,
+          "anmerkung": null
+        },
+        {
+          "posten": "gebuehren_fuer_uebergangsheime",
+          "name": "Gebühren für Übergangsheime",
+          "werte": [
+            37000,
+            46000,
+            39000,
+            39000,
+            39000,
+            39000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 29,
+          "anmerkung": null
+        },
+        {
+          "posten": "strassenreinigungsgebuehren",
+          "name": "Straßenreinigungsgebühren",
+          "werte": [
+            45000,
+            44000,
+            60000,
+            62000,
+            63000,
+            64000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 30,
+          "anmerkung": null
+        },
+        {
+          "posten": "abfallgebuehren",
+          "name": "Abfallgebühren",
+          "werte": [
+            1027000,
+            1200000,
+            1134000,
+            1153000,
+            1209000,
+            1321000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 30,
+          "anmerkung": null
+        },
+        {
+          "posten": "abfallgebuehren_recyclinghof",
+          "name": "Abfallgebühren Recyclinghof",
+          "werte": [
+            88000,
+            70000,
+            70000,
+            70000,
+            70000,
+            75000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 30,
+          "anmerkung": null
+        },
+        {
+          "posten": "benutzungsgeb_friedhoefe",
+          "name": "Benutzungsgeb. Friedhöfe",
+          "werte": [
+            69000,
+            70000,
+            63000,
+            63000,
+            63000,
+            63000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 30,
+          "anmerkung": null
+        },
+        {
+          "posten": "wasserverbandsgebuehren",
+          "name": "Wasserverbandsgebühren",
+          "werte": [
+            119000,
+            140000,
+            140000,
+            190000,
+            190000,
+            190000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 30,
+          "anmerkung": null
+        },
+        {
+          "posten": "marktstandgelder",
+          "name": "Marktstandgelder",
+          "werte": [
+            10000,
+            10000,
+            10000,
+            10000,
+            10000,
+            10000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 30,
+          "anmerkung": null
+        },
+        {
+          "posten": "erstatt_f_leist_d_feuerwehr",
+          "name": "Erstatt. f. Leist. d. Feuerwehr",
+          "werte": [
+            1000,
+            5000,
+            5000,
+            5000,
+            5000,
+            5000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 30,
+          "anmerkung": null
+        },
+        {
+          "posten": "aufloesung_von_sonderposten_aus_beitraegen_und_gebuehren",
+          "name": "Auflösung von Sonderposten aus Beiträgen und Gebühren",
+          "werte": [
+            587000,
+            450000,
+            463000,
+            378000,
+            378000,
+            378000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 30,
+          "anmerkung": null
+        }
+      ]
+    },
+    "kostenerstattungen": {
+      "tabelle": "kostenerstattungen",
+      "quelle_einheit": "teur",
+      "planzeile": "kostenerstattungen",
+      "gesamt_plan": [
+        812781,
+        686150,
+        762070,
+        770970,
+        760720,
+        781750
+      ],
+      "gesamt_vorbericht": {
+        "werte": [
+          813000,
+          686000,
+          762000,
+          771000,
+          761000,
+          782000
+        ],
+        "gerundet": true,
+        "quelle": 32
+      },
+      "posten": [
+        {
+          "posten": "erstattungen_bund",
+          "name": "Erstattungen Bund",
+          "werte": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 32,
+          "anmerkung": null
+        },
+        {
+          "posten": "erst_bund_u_land_fuer_wahlen",
+          "name": "Erst. Bund u. Land für Wahlen",
+          "werte": [
+            12000,
+            8000,
+            0,
+            10000,
+            0,
+            20000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 32,
+          "anmerkung": null
+        },
+        {
+          "posten": "erst_land_fluechtlinge",
+          "name": "Erst. Land Flüchtlinge",
+          "werte": [
+            511000,
+            350000,
+            420000,
+            420000,
+            420000,
+            420000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 32,
+          "anmerkung": null
+        },
+        {
+          "posten": "erst_land_sonstiges",
+          "name": "Erst. Land Sonstiges",
+          "werte": [
+            13000,
+            48000,
+            40000,
+            40000,
+            40000,
+            40000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 32,
+          "anmerkung": null
+        },
+        {
+          "posten": "erst_v_gemeinden_und_sonst_oeffentlicher_bereich",
+          "name": "Erst v. Gemeinden und sonst. öffentlicher Bereich",
+          "werte": [
+            39000,
+            3000,
+            3000,
+            3000,
+            3000,
+            3000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 32,
+          "anmerkung": null
+        },
+        {
+          "posten": "erst_der_eigengesellschaft",
+          "name": "Erst. der Eigengesellschaft",
+          "werte": [
+            100000,
+            102000,
+            103000,
+            103000,
+            103000,
+            103000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 32,
+          "anmerkung": null
+        },
+        {
+          "posten": "erst_v_priv_untern_vereinen",
+          "name": "Erst. v. priv. Untern. / Vereinen",
+          "werte": [
+            23000,
+            6000,
+            6000,
+            6000,
+            6000,
+            6000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 32,
+          "anmerkung": null
+        },
+        {
+          "posten": "erst_dsd_awg",
+          "name": "Erst. DSD/AWG",
+          "werte": [
+            14000,
+            14000,
+            14000,
+            14000,
+            14000,
+            15000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 32,
+          "anmerkung": null
+        },
+        {
+          "posten": "erst_uebrige_bereiche",
+          "name": "Erst. übrige Bereiche",
+          "werte": [
+            51000,
+            75000,
+            76000,
+            75000,
+            74000,
+            75000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 32,
+          "anmerkung": null
+        },
+        {
+          "posten": "erst_fuer_essen_in_der_mensa_und_den_ogs",
+          "name": "Erst. für Essen in der Mensa und den OGS",
+          "werte": [
+            50000,
+            82000,
+            101000,
+            101000,
+            101000,
+            101000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 32,
+          "anmerkung": null
+        }
+      ]
+    },
+    "personal": {
+      "tabelle": "personal",
+      "quelle_einheit": "teur",
+      "planzeile": "personalaufwendungen",
+      "gesamt_plan": [
+        4629147,
+        4977200,
+        5204054,
+        5448900,
+        5666700,
+        5893100
+      ],
+      "gesamt_vorbericht": {
+        "werte": [
+          4629000,
+          4977000,
+          5204000,
+          5449000,
+          5667000,
+          5893000
+        ],
+        "gerundet": true,
+        "quelle": 34
+      },
+      "posten": [
+        {
+          "posten": "personalaufwendungen",
+          "name": "Personalaufwendungen",
+          "werte": [
+            4629000,
+            4977000,
+            5204000,
+            5449000,
+            5667000,
+            5893000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 34,
+          "anmerkung": null
+        }
+      ]
+    },
+    "sachaufwand": {
+      "tabelle": "sachaufwand",
+      "quelle_einheit": "teur",
+      "planzeile": "sach_und_dienstleistungen",
+      "gesamt_plan": [
+        6471265,
+        6961896,
+        7023472,
+        6578021,
+        6658705,
+        6713846
+      ],
+      "gesamt_vorbericht": {
+        "werte": [
+          6471000,
+          6962000,
+          7023000,
+          6575000,
+          6655000,
+          6710000
+        ],
+        "gerundet": true,
+        "quelle": 37
+      },
+      "posten": [
+        {
+          "posten": "gebaeudeunterhaltung",
+          "name": "Gebäudeunterhaltung",
+          "werte": [
+            588000,
+            992000,
+            1090000,
+            681000,
+            681000,
+            681000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "strassenunterhaltung",
+          "name": "Straßenunterhaltung",
+          "werte": [
+            1219000,
+            406000,
+            430000,
+            525000,
+            525000,
+            525000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "gewaesser_und_biotope",
+          "name": "Gewässer und Biotope",
+          "werte": [
+            0,
+            5000,
+            5000,
+            5000,
+            5000,
+            5000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "unterh_ausgleichsflaechen",
+          "name": "Unterh. Ausgleichsflächen",
+          "werte": [
+            3000,
+            5000,
+            5000,
+            5000,
+            5000,
+            5000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "sportplatzunterhaltung",
+          "name": "Sportplatzunterhaltung",
+          "werte": [
+            54000,
+            46000,
+            46000,
+            46000,
+            46000,
+            46000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "spielplatzunterhaltung",
+          "name": "Spielplatzunterhaltung",
+          "werte": [
+            37000,
+            51000,
+            40000,
+            40000,
+            40000,
+            40000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "park_und_gruenanlagen",
+          "name": "Park- und Grünanlagen",
+          "werte": [
+            29000,
+            47000,
+            40000,
+            40000,
+            40000,
+            40000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "friedhoefe",
+          "name": "Friedhöfe",
+          "werte": [
+            67000,
+            74000,
+            66000,
+            58000,
+            58000,
+            58000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "strassenbeleuchtung_verkehrssicherungsanlagen",
+          "name": "Straßenbeleuchtung, Verkehrssicherungsanlagen",
+          "werte": [
+            88000,
+            104000,
+            104000,
+            94000,
+            94000,
+            94000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "kostenerstattung_an_dritte",
+          "name": "Kostenerstattung an Dritte",
+          "werte": [
+            278000,
+            447000,
+            496000,
+            466000,
+            466000,
+            399000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "strom",
+          "name": "Strom",
+          "werte": [
+            240000,
+            324000,
+            301000,
+            304000,
+            307000,
+            309000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "gas",
+          "name": "Gas",
+          "werte": [
+            78000,
+            107000,
+            107000,
+            108000,
+            110000,
+            111000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "nahwaerme",
+          "name": "Nahwärme",
+          "werte": [
+            143000,
+            170000,
+            165000,
+            165000,
+            167000,
+            167000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "heizoel",
+          "name": "Heizöl",
+          "werte": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "wasser",
+          "name": "Wasser",
+          "werte": [
+            24000,
+            35000,
+            35000,
+            35000,
+            36000,
+            37000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "abwassergebuehren",
+          "name": "Abwassergebühren",
+          "werte": [
+            296000,
+            348000,
+            351000,
+            352000,
+            363000,
+            363000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "unterhaltsreinigung",
+          "name": "Unterhaltsreinigung",
+          "werte": [
+            330000,
+            381000,
+            401000,
+            402000,
+            408000,
+            411000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "gebaeudeversicherung",
+          "name": "Gebäudeversicherung",
+          "werte": [
+            43000,
+            50000,
+            57000,
+            58000,
+            59000,
+            54000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "sonst_bewirtschaftung",
+          "name": "sonst. Bewirtschaftung",
+          "werte": [
+            59000,
+            53000,
+            58000,
+            54000,
+            54000,
+            54000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "reinig_d_strassen_bushaltest",
+          "name": "Reinig. d. Straßen / Bushaltest.",
+          "werte": [
+            36000,
+            41000,
+            43000,
+            43000,
+            43000,
+            43000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "bes_aufwend_f_grundstuecke",
+          "name": "Bes. Aufwend. f. Grundstücke",
+          "werte": [
+            0,
+            15000,
+            5000,
+            5000,
+            5000,
+            5000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "fahrzeughaltung",
+          "name": "Fahrzeughaltung",
+          "werte": [
+            130000,
+            102000,
+            116000,
+            118000,
+            120000,
+            122000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "geraete_und_ausruestung",
+          "name": "Geräte und Ausrüstung",
+          "werte": [
+            142000,
+            208000,
+            196000,
+            105000,
+            105000,
+            105000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "aufwendungen_f_beschaeftigte",
+          "name": "Aufwendungen f. Beschäftigte",
+          "werte": [
+            71000,
+            51000,
+            60000,
+            60000,
+            60000,
+            60000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "lernmittelfreiheit",
+          "name": "Lernmittelfreiheit",
+          "werte": [
+            29000,
+            40000,
+            42000,
+            42000,
+            42000,
+            42000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "schuelerbefoerderung",
+          "name": "Schülerbeförderung",
+          "werte": [
+            382000,
+            465000,
+            502000,
+            503000,
+            503000,
+            503000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "jugendbudget",
+          "name": "Jugendbudget",
+          "werte": [
+            0,
+            0,
+            3000,
+            0,
+            0,
+            0
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "lehr_und_unterrichtsmaterial",
+          "name": "Lehr- und Unterrichtsmaterial",
+          "werte": [
+            13000,
+            19000,
+            19000,
+            19000,
+            19000,
+            19000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "schulschwimmen_aktivitaeten",
+          "name": "Schulschwimmen /-aktivitäten",
+          "werte": [
+            45000,
+            49000,
+            53000,
+            53000,
+            53000,
+            53000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 36,
+          "anmerkung": null
+        },
+        {
+          "posten": "edv_aufwand",
+          "name": "EDV-Aufwand",
+          "werte": [
+            111000,
+            117000,
+            128000,
+            132000,
+            132000,
+            133000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 37,
+          "anmerkung": null
+        },
+        {
+          "posten": "entgelte_citeq",
+          "name": "Entgelte citeq",
+          "werte": [
+            198000,
+            198000,
+            194000,
+            204000,
+            208000,
+            229000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 37,
+          "anmerkung": null
+        },
+        {
+          "posten": "sonst_betriebsaufwendungen",
+          "name": "Sonst. Betriebsaufwendungen",
+          "werte": [
+            34000,
+            35000,
+            39000,
+            39000,
+            39000,
+            39000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 37,
+          "anmerkung": null
+        },
+        {
+          "posten": "fremde_dienstleistungen",
+          "name": "Fremde Dienstleistungen",
+          "werte": [
+            488000,
+            635000,
+            567000,
+            560000,
+            560000,
+            555000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 37,
+          "anmerkung": null
+        },
+        {
+          "posten": "abfallbeseitigung",
+          "name": "Abfallbeseitigung",
+          "werte": [
+            1172000,
+            1273000,
+            1210000,
+            1229000,
+            1285000,
+            1386000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 37,
+          "anmerkung": null
+        },
+        {
+          "posten": "bauleitplanung",
+          "name": "Bauleitplanung",
+          "werte": [
+            44000,
+            70000,
+            50000,
+            27000,
+            20000,
+            20000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 37,
+          "anmerkung": null
+        }
+      ]
+    },
+    "sonstige_aufwendungen": {
+      "tabelle": "sonstige_aufwendungen",
+      "quelle_einheit": "teur",
+      "planzeile": "sonstige_ordentliche_aufwendungen",
+      "gesamt_plan": [
+        1581389,
+        1430600,
+        1246920,
+        1242220,
+        1797908,
+        2399795
+      ],
+      "gesamt_vorbericht": {
+        "werte": [
+          1581000,
+          1431000,
+          1247000,
+          1242000,
+          1798000,
+          2400000
+        ],
+        "gerundet": true,
+        "quelle": 48
+      },
+      "posten": [
+        {
+          "posten": "sonst_personalaufwendungen",
+          "name": "Sonst. Personalaufwendungen",
+          "werte": [
+            38000,
+            44000,
+            46000,
+            46000,
+            46000,
+            46000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "aufwendungen_ratsmitglieder",
+          "name": "Aufwendungen Ratsmitglieder",
+          "werte": [
+            164000,
+            169000,
+            169000,
+            172000,
+            176000,
+            179000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "ehrenamtliche_taetigkeiten",
+          "name": "Ehrenamtliche Tätigkeiten",
+          "werte": [
+            6000,
+            3000,
+            4000,
+            4000,
+            4000,
+            4000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "aufwendungen_feuerwehr",
+          "name": "Aufwendungen Feuerwehr",
+          "werte": [
+            83000,
+            119000,
+            106000,
+            107000,
+            108000,
+            109000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "mieten_und_pachten",
+          "name": "Mieten und Pachten",
+          "werte": [
+            406000,
+            346000,
+            235000,
+            235000,
+            233000,
+            232000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "leasing_eines_fahrzeugs",
+          "name": "Leasing eines Fahrzeugs",
+          "werte": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "pruefungsaufwendungen_gerichts_und_sachverstaend",
+          "name": "Prüfungsaufwendungen/Gerichts- und Sachverständ.",
+          "werte": [
+            81000,
+            85000,
+            44000,
+            45000,
+            45000,
+            46000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "geschaeftsaufwendungen",
+          "name": "Geschäftsaufwendungen",
+          "werte": [
+            302000,
+            336000,
+            331000,
+            335000,
+            331000,
+            346000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "versicherung_ohne_gebaeude",
+          "name": "Versicherung (ohne Gebäude)",
+          "werte": [
+            252000,
+            203000,
+            207000,
+            209000,
+            212000,
+            214000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "wertbericht_zu_forderungen_und_sachanlagen",
+          "name": "Wertbericht. zu Forderungen und Sachanlagen",
+          "werte": [
+            5000,
+            0,
+            4000,
+            4000,
+            4000,
+            4000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "aufwend_a_grundstuecksverk",
+          "name": "Aufwend. a. Grundstücksverk.",
+          "werte": [
+            92000,
+            0,
+            0,
+            0,
+            559000,
+            1142000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "verfuegungsm_buergermeister",
+          "name": "Verfügungsm. Bürgermeister",
+          "werte": [
+            1000,
+            1000,
+            1000,
+            1000,
+            1000,
+            1000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "fraktionszuwendungen",
+          "name": "Fraktionszuwendungen",
+          "werte": [
+            4000,
+            4000,
+            4000,
+            4000,
+            4000,
+            4000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "staedtepartnerschaft",
+          "name": "Städtepartnerschaft",
+          "werte": [
+            0,
+            3000,
+            3000,
+            3000,
+            3000,
+            3000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "ehrenpatenschaften",
+          "name": "Ehrenpatenschaften",
+          "werte": [
+            0,
+            1000,
+            1000,
+            1000,
+            1000,
+            1000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        },
+        {
+          "posten": "sonstige_aufwendungen",
+          "name": "Sonstige Aufwendungen",
+          "werte": [
+            147000,
+            117000,
+            92000,
+            78000,
+            70000,
+            70000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 48,
+          "anmerkung": null
+        }
+      ]
     }
+  },
+  "eigenkapital": {
+    "tabelle": "eigenkapital",
+    "quelle_einheit": "euro",
+    "planzeile": null,
+    "gesamt_plan": null,
+    "gesamt_vorbericht": {
+      "werte": [
+        41655204,
+        41655204,
+        38825371,
+        37182843,
+        35424016,
+        31866316
+      ],
+      "gerundet": true,
+      "quelle": 311
+    },
+    "posten": [
+      {
+        "posten": "allgemeine_ruecklage",
+        "name": "Allgemeine Rücklage",
+        "werte": [
+          39522991,
+          39522991,
+          39522991,
+          38825371,
+          37182843,
+          35424016
+        ],
+        "gerundet": true,
+        "berechnet": false,
+        "quelle": 311,
+        "anmerkung": null
+      },
+      {
+        "posten": "verrechnung_bilanzierungshilfe",
+        "name": "Einmalige Verrechnung Bilanzierungshilfe",
+        "werte": [
+          0,
+          0,
+          -476327,
+          0,
+          0,
+          0
+        ],
+        "gerundet": true,
+        "berechnet": false,
+        "quelle": 311,
+        "anmerkung": null
+      },
+      {
+        "posten": "sonderruecklagen",
+        "name": "Sonderrücklagen",
+        "werte": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "gerundet": true,
+        "berechnet": false,
+        "quelle": 311,
+        "anmerkung": null
+      },
+      {
+        "posten": "ausgleichsruecklage",
+        "name": "Ausgleichsrücklage",
+        "werte": [
+          1940223,
+          2132213,
+          2132213,
+          0,
+          0,
+          0
+        ],
+        "gerundet": true,
+        "berechnet": false,
+        "quelle": 311,
+        "anmerkung": null
+      },
+      {
+        "posten": "bilanzieller_verlustvortrag",
+        "name": "Bilanzieller Verlustvortrag",
+        "werte": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "gerundet": true,
+        "berechnet": false,
+        "quelle": 311,
+        "anmerkung": null
+      },
+      {
+        "posten": "jahresergebnis",
+        "name": "Jahresergebnis",
+        "werte": [
+          191990,
+          0,
+          -2353506,
+          -1642528,
+          -1758827,
+          -3557700
+        ],
+        "gerundet": true,
+        "berechnet": false,
+        "quelle": 311,
+        "anmerkung": null
+      }
+    ]
   }
 }

@@ -80,3 +80,166 @@ die Tabelle druckt nur diese eine Spalte, nicht den ganzen Finanzplanungszeitrau
 (MANU-04). Die Summe der sieben Einrichtungen (559 T€) entspricht sowohl der gedruckten
 Gesamtzeile dieser Tabelle als auch dem Transferaufwendungen-Posten „Zuschüsse an
 Kindertageseinr.“ desselben Jahres — beides prüft Regel 5.
+
+### `weitere_vorberichtstabellen.csv`
+
+Die fünf weiteren Vorberichtstabellen aus Spez. 4.3 (D-08), jede mit Aufschlüsselung und
+Gesamtzeile für 2024–2029, Spalte `tabelle` unterscheidet sie:
+
+| `tabelle` | Vorbericht-Ziffer | Seiten |
+|---|---|---|
+| `leistungsentgelte` | 2.1.4 Öffentlich-rechtliche Leistungsentgelte | 29–30 |
+| `kostenerstattungen` | 2.1.6 Kostenerstattungen und Kostenumlagen | 32 |
+| `personal` | 2.2.1 Personalaufwendungen | 34 |
+| `sachaufwand` | 2.2.3 Aufwendungen für Sach- und Dienstleistungen | 36–37 |
+| `sonstige_aufwendungen` | 2.2.6 Sonstige ordentliche Aufwendungen | 48 |
+
+Posten-Schlüssel folgen derselben Ableitungsregel wie in allen anderen manuellen
+Dateien: gedruckter Name klein geschrieben, Umlaute ausgeschrieben (ä→ae, ö→oe, ü→ue,
+ß→ss), jede Folge anderer nicht-alphanumerischer Zeichen wird zu `_`, führende/
+abschließende `_` entfernt. Zwei Zeilen je Tabelle haben einen über zwei Textzeilen
+umgebrochenen Namen (S. 30 „Auflösung von Sonderposten aus Beiträgen und Gebühren“,
+S. 32 „Erst v. Gemeinden und sonst. öffentlicher Bereich“ und „Erst. für Essen in der
+Mensa und den OGS“); der Name ist mit einem Leerzeichen zusammengefügt.
+
+Bewusst **nicht** abgeschrieben (D-08, MANU-05):
+
+- 2.1.5 Privatrechtliche Leistungsentgelte, 2.1.7 Sonstige ordentliche Erträge, 2.1.9
+  Erträge aus internen Leistungsbeziehungen, 2.2.2 Versorgungsaufwendungen und 2.2.5
+  Transferaufwendungen (separat in `transferaufwendungen.csv`, MANU-03) — Spez. 4.3
+  listet nur die fünf oben genannten Tabellen für Phase 4; 2.1.7 ist explizit auf
+  Phase 5 (EINN-04) verschoben.
+- Die Objekt/Maßnahme-Detailtabelle „Gebäudeunterhaltung“ unter 2.2.3 (S. 37, unterhalb
+  der Gesamtzeile): sie schlüsselt den Posten `gebaeudeunterhaltung` weiter auf,
+  gehört aber nicht zur Haupttabelle (D-08) und wird nicht benötigt.
+
+### `meta.json`
+
+Einzelwerte aus der Haushaltssatzung (S. 8/9) und dem Vorbericht (S. 9/10/24-25/46-47),
+validiert über `ostbevern.manuell.lies_meta_json` gegen eine strikte Schlüssel-Allowlist
+(MANU-06): jeder Wert trägt `wert`, `einheit` und `quelle` (1-basierte PDF-Seite), optional
+`stichtag`, `herkunft`, `berechnet`, `gerundet`, `formel`, `vorjahr`, `anmerkung`.
+
+| Schlüssel | Wert | Quelle |
+|---|---|---|
+| `einwohner` | 11.741 (Stichtag 30.06.2024, Herkunft IT.NRW) | S. 25 |
+| `flaeche` | 8.960 ha (= 89,6 qkm, wie gedruckt umgerechnet) | S. 10 |
+| `hebesaetze.grundsteuer_a` / `_b` / `gewerbesteuer` | 242 / 554 / 418 v. H. | S. 9 (§ 6) |
+| `kreisumlage.netto` | 10.147.000 € (T€-Wert aus `transferaufwendungen.csv`, gerundet) | S. 46 |
+| `kreisumlage.rueckstellungsaufloesung` | 1.325.478 € (Fußnote 3) | S. 46 |
+| `kreisumlage.brutto` | 11.472.478 € = netto + Rückstellungsauflösung (berechnet, gerundet) | S. 46 |
+| `kreisumlage.hebesatz_kreisumlage` | 36,3 % (363 Promille, Vorjahr 33 % = 330) | S. 47 |
+| `kreisumlage.hebesatz_jugendamtsumlage` | 21 % (210 Promille, Vorjahr 20,3 % = 203) | S. 47 |
+| `satzung.beschluss` | 2026-03-03 (Ratsbeschluss) | S. 8 |
+| `satzung.ausfertigung` | 2026-03-04 (Unterschriftsdatum) | S. 9 |
+
+**Warum `kreisumlage.brutto` berechnet ist:** Der Vorbericht druckt auf S. 46 nur den
+**netto**-Betrag der Kreisumlage (10.1473 T€, mit angeklebter Fußnotenziffer 3 — siehe
+`transferaufwendungen.csv` oben). Die Fußnote erklärt, dass eine Rückstellungsauflösung
+von 1.325.478 € den Haushalt 2026 entlastet und die tatsächliche Umlage 2026 „bei rd.
+11,5 Mio. €" liegt. `kreisumlage.brutto` bildet diese Rechnung nach (Regel 5,
+`meta_kreisumlage`, D-10) und wird zusätzlich gegen die gerundete Fußnote geprüft
+(±50.000 €, da der Fußnotentext selbst nur „rd." ist).
+
+**Promille statt Prozent beim Kreis:** `hebesatz_kreisumlage`/`hebesatz_jugendamtsumlage`
+stehen als int-Promille (36,3 % → 363), damit `meta.json` durchgängig ganzzahlig bleibt
+(anders als `hebesaetze.*`, die als ganze Prozentpunkte bereits ganzzahlig sind).
+
+**Bewusst nicht gespeichert (Datenschutz):** Die Unterschriftenzeile auf S. 9 druckt die
+Namen der Kämmerin und des Bürgermeisters neben dem Ausfertigungsdatum — diese Namen
+werden nicht abgeschrieben, nur das Datum selbst (`satzung.ausfertigung`).
+
+### `verbindlichkeiten.csv`
+
+Übersicht über den voraussichtlichen Stand der Verbindlichkeiten (S. 310, TEUR wie
+gedruckt), drei Jahre (Stand Ende 2024, Ende 2025 = Beginn Haushaltsjahr, Ende 2026):
+Kredite für Investitionen, Liquiditätskredite, Lieferungen und Leistungen,
+Transferleistungen, Sonstige Verbindlichkeiten, Erhaltene Anzahlungen, Summe aller
+Verbindlichkeiten (`tabelle` `verbindlichkeiten`, `position` = gedruckte Zeilennummer
+2/3/5/6/7/8/9) sowie nachrichtlich die Bürgschaft für die Bäder- und
+Beteiligungsgesellschaft Ostbevern mbH (`tabelle` `buergschaften`, keine Gesamtzeile,
+`pruefung.REGEL5_TABELLEN_OHNE_GESAMT`). Gedruckte „--“-Zeilen (1. Anleihen; 4.
+Verbindlichkeiten aus Vorgängen, die Kreditaufnahmen wirtschaftlich gleichkommen;
+2.1–2.6, 3.1/3.2 Unterzeilen) werden nicht transkribiert.
+
+**Transferleistungen enthalten die NRW.Bank-Mittel (D-14):** Zeile 6 „Verbindlichkeiten
+aus Transferleistungen“ (1.221 / 831 / 746 T€) enthält die bislang abgerufenen Mittel
+aus dem Kreditprogramm der NRW.Bank für Flüchtlingsunterkünfte, die haushaltsrechtlich
+nicht als Kredit, sondern als Transferverbindlichkeit ausgewiesen werden (S. 24). Die
+Vorbericht-Definition des Schuldenstands (`manuell.SCHULDEN_POSTEN`) ist deshalb
+Kredite für Investitionen **plus** Transferleistungen, nicht nur die Kredite allein —
+Ende 2025: 6.879 + 831 = 7.710 T€, bei 11.741 Einwohnern rund 656 € (Pro-Kopf-
+Verschuldung, Regel 9, Anhang B.6).
+
+Regel 5 prüft die Investitionskredit-Fortschreibung (`kredite_fortschreibung`): Ende
+Haushaltsjahr = Ende Vorjahr + GFP-Kreditaufnahme (Z. 33) − GFP-Tilgung (Z. 35) =
+6.879 + 5.200 − 450 = 11.629 T€, exakt wie gedruckt.
+
+### `eigenkapital.csv`
+
+Übersicht über die Entwicklung des Eigenkapitals (S. 311), sechs Jahre 2024–2029:
+Allgemeine Rücklage, Einmalige Verrechnung Bilanzierungshilfe, Sonderrücklagen,
+Ausgleichsrücklage, Bilanzieller Verlustvortrag, Jahresergebnis, Summe Eigenkapital.
+Die all-null Zeile „Nicht durch Eigenkapital gedeckter Fehlbetrag“ wird nicht
+transkribiert (D-11).
+
+**Rundung (D-12):** S. 311 druckt Beträge mit Cent; `betrag` ist **kaufmännisch auf
+int-Euro gerundet** (0,5 Cent aufwärts, von Null weg), z. B. Jahresergebnis 2026
+−2.353.505,75 € → **−2.353.506 €**. Diese Rundung trifft sowohl Satzung § 4 als auch
+Zeile 28 des Gesamtergebnisplans exakt — ein Beleg, dass kaufmännische Rundung (statt
+z. B. Abschneiden) die richtige Wahl ist. Die T€-Werte aus S. 310 (`verbindlichkeiten.csv`)
+bleiben dagegen `betrag_teur` wie gedruckt (D-05); nur S. 311 wird eurogenau gerundet.
+
+**Dokumentierte Abweichung:** Das Jahresergebnis 2025 ist auf S. 311 mit „0,00 €“
+gedruckt, während Zeile 28 des Gesamtergebnisplans für 2025 −1.331.520 € ausweist —
+siehe [`../pruefberichte/befunde.md`](../pruefberichte/befunde.md). Alle anderen fünf
+Jahre treffen Zeile 28 exakt.
+
+**Satzung § 4 (Research Pitfall 4):** Die Verringerung der Ausgleichs- bzw. der
+allgemeinen Rücklage (Satzung § 4, S. 9: 2.132.213 € / 221.293 €) ist **nicht** der
+rohe Jahresdelta der Eigenkapitalübersicht — eine „Einmalige Verrechnung
+Bilanzierungshilfe“ (−476.327 €) überlagert 2026 den reinen Rücklagenverzehr. Die
+korrekte Prüfung (Regel 5, `plan` `satzung_paragraf4`) ist: Ausgleichsrücklage Stand
+Haushaltsjahr − Stand Folgejahr = 2.132.213,17 − 0,00 = 2.132.213 € (gerundet) und die
+Summe beider § 4-Beträge (2.132.213 + 221.293 = 2.353.506 €) entspricht exakt
+|GEP Z. 28| des Haushaltsjahrs.
+
+### `ve_uebersicht.csv`
+
+Übersicht über die aus Verpflichtungsermächtigungen voraussichtlich fällig werdenden
+Auszahlungen (S. 309): acht Fälligkeitszeilen (Produkt, Maßnahme, Fälligkeitsjahr,
+Betrag) und drei Summenzeilen (`ist_gesamt` true, `produkt`/`massnahme` null):
+VE-Gesamtbetrag (`faellig_jahr` null, 11.600 T€ — identisch mit der
+Verpflichtungsermächtigung aus Satzung § 3 und GFP Z. 30), Summe fällig 2027
+(9.400 T€) und Summe fällig 2028 (2.200 T€); 2029 und Folgejahre sind durchgängig „--“
+und werden nicht transkribiert.
+
+**Schreibweise Kohkamp:** S. 309 druckt „Kohkamp IIII“, S. 25 „Kohkamp III“ — beide
+wortwörtlich wie gedruckt übernommen (D-09), mit Anmerkung bei der S.-309-Zeile.
+
+Regel 5 prüft den VE-Gesamtbetrag gegen GFP Z. 30 (Wertart VE) und jedes
+(Produkt, Fälligkeitsjahr)-Paar gegen die bereits extrahierte `ve_faelligkeiten.csv`
+(Phase 3); ein Paar, das nur in einer der beiden Quellen vorkommt, wäre eine
+strukturelle Lücke (wie bei Regel 6) — auf den eingecheckten Daten gibt es keine.
+
+### Regel 9 – Eckwerte (Anhang B.6)
+
+Neben Regel 5 prüft die neue, exakte Regel 9 die `[eckwerte.*]`-Sollwerte aus
+`pipeline/jahrgaenge/2026_sollwerte.toml` (Anhang B.6) gegen `meta.json` bzw.
+`zuwendungen.csv` (Schlüsselzuweisung des Haushaltsjahrs und Vorjahrs): Einwohner,
+die drei Hebesätze, die Kreis-/Jugendamtsumlage-Hebesätze (je mit Vorjahr), die
+Schlüsselzuweisung und (seit `verbindlichkeiten.csv`) die Pro-Kopf-Verschuldung Ende
+Vorjahr — `manuell.pro_kopf_euro(manuell.schuldenstand_euro(verbindlichkeiten, Ende
+Vorjahr), meta.einwohner)` = 7.710.000 // 11.741 = **656 €** (ganzzahlige Division,
+abgerundet, reproduziert den gedruckten Vorbericht-Wert exakt). Ein `[eckwerte.*]`-
+Name, der von keiner Regel konsumiert wird, bricht die Prüfung ab
+(`pruefung.pruefe_eckwerte_konsumiert`) — kein Sollwert bleibt unbewacht.
+
+**Dokumentierte Abweichungen** (Regel 5, Details in
+[`../pruefberichte/befunde.md`](../pruefberichte/befunde.md)): Stufe (a, Posten-Summe
+vs. gedruckte Gesamtzeile) weicht bei `leistungsentgelte` 2024/2029, `kostenerstattungen`
+2025–2029 (außer 2028) und `sachaufwand`/`sonstige_aufwendungen` in mehreren Planungs-
+jahren um 1–3 T€ ab — gedruckte Rundungsdifferenzen im Vorbericht selbst, wortweise
+gegen das PDF verifiziert. Stufe (b, Gesamtzeile vs. Gesamtergebnisplan) weicht bei
+`leistungsentgelte` 2029 (−1.035 €) und bei `sachaufwand` 2027–2029 (−3.021 € / −3.705 €
+/ −3.846 €) über die ±1.000-€-Toleranz hinaus ab.
