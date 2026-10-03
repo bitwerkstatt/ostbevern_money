@@ -80,3 +80,44 @@ die Tabelle druckt nur diese eine Spalte, nicht den ganzen Finanzplanungszeitrau
 (MANU-04). Die Summe der sieben Einrichtungen (559 T€) entspricht sowohl der gedruckten
 Gesamtzeile dieser Tabelle als auch dem Transferaufwendungen-Posten „Zuschüsse an
 Kindertageseinr.“ desselben Jahres — beides prüft Regel 5.
+
+### `weitere_vorberichtstabellen.csv`
+
+Die fünf weiteren Vorberichtstabellen aus Spez. 4.3 (D-08), jede mit Aufschlüsselung und
+Gesamtzeile für 2024–2029, Spalte `tabelle` unterscheidet sie:
+
+| `tabelle` | Vorbericht-Ziffer | Seiten |
+|---|---|---|
+| `leistungsentgelte` | 2.1.4 Öffentlich-rechtliche Leistungsentgelte | 29–30 |
+| `kostenerstattungen` | 2.1.6 Kostenerstattungen und Kostenumlagen | 32 |
+| `personal` | 2.2.1 Personalaufwendungen | 34 |
+| `sachaufwand` | 2.2.3 Aufwendungen für Sach- und Dienstleistungen | 36–37 |
+| `sonstige_aufwendungen` | 2.2.6 Sonstige ordentliche Aufwendungen | 48 |
+
+Posten-Schlüssel folgen derselben Ableitungsregel wie in allen anderen manuellen
+Dateien: gedruckter Name klein geschrieben, Umlaute ausgeschrieben (ä→ae, ö→oe, ü→ue,
+ß→ss), jede Folge anderer nicht-alphanumerischer Zeichen wird zu `_`, führende/
+abschließende `_` entfernt. Zwei Zeilen je Tabelle haben einen über zwei Textzeilen
+umgebrochenen Namen (S. 30 „Auflösung von Sonderposten aus Beiträgen und Gebühren“,
+S. 32 „Erst v. Gemeinden und sonst. öffentlicher Bereich“ und „Erst. für Essen in der
+Mensa und den OGS“); der Name ist mit einem Leerzeichen zusammengefügt.
+
+Bewusst **nicht** abgeschrieben (D-08, MANU-05):
+
+- 2.1.5 Privatrechtliche Leistungsentgelte, 2.1.7 Sonstige ordentliche Erträge, 2.1.9
+  Erträge aus internen Leistungsbeziehungen, 2.2.2 Versorgungsaufwendungen und 2.2.5
+  Transferaufwendungen (separat in `transferaufwendungen.csv`, MANU-03) — Spez. 4.3
+  listet nur die fünf oben genannten Tabellen für Phase 4; 2.1.7 ist explizit auf
+  Phase 5 (EINN-04) verschoben.
+- Die Objekt/Maßnahme-Detailtabelle „Gebäudeunterhaltung“ unter 2.2.3 (S. 37, unterhalb
+  der Gesamtzeile): sie schlüsselt den Posten `gebaeudeunterhaltung` weiter auf,
+  gehört aber nicht zur Haupttabelle (D-08) und wird nicht benötigt.
+
+**Dokumentierte Abweichungen** (Regel 5, Details in
+[`../pruefberichte/befunde.md`](../pruefberichte/befunde.md)): Stufe (a, Posten-Summe
+vs. gedruckte Gesamtzeile) weicht bei `leistungsentgelte` 2024/2029, `kostenerstattungen`
+2025–2029 (außer 2028) und `sachaufwand`/`sonstige_aufwendungen` in mehreren Planungs-
+jahren um 1–3 T€ ab — gedruckte Rundungsdifferenzen im Vorbericht selbst, wortweise
+gegen das PDF verifiziert. Stufe (b, Gesamtzeile vs. Gesamtergebnisplan) weicht bei
+`leistungsentgelte` 2029 (−1.035 €) und bei `sachaufwand` 2027–2029 (−3.021 € / −3.705 €
+/ −3.846 €) über die ±1.000-€-Toleranz hinaus ab.

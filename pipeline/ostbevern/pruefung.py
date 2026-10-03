@@ -39,6 +39,7 @@ from ostbevern.schema import (
     STEUERARTEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
     VE_FAELLIGKEITEN_CSV,
+    WEITERE_VORBERICHTSTABELLEN_CSV,
     WERTARTEN,
     ZUWENDUNGEN_CSV,
     lies_hierarchie_csv,
@@ -965,7 +966,22 @@ REGEL5_GEP_ZEILEN: dict[str, str] = {
     "steuerarten": "01",
     "zuwendungen": "02",
     "transferaufwendungen": "15",
+    "leistungsentgelte": "04",
+    "kostenerstattungen": "06",
+    "personal": "11",
+    "sachaufwand": "13",
+    "sonstige_aufwendungen": "16",
 }
+# weitere_vorberichtstabellen.csv (D-08, MANU-05): die Tabellenmenge dieser Datei muss
+# exakt dieser Menge entsprechen; eine sechste oder fehlende Tabelle bricht mit
+# PruefungsFehler ab (D-08 ist eine abgeschlossene Liste, keine Erweiterung ohne Review).
+WEITERE_VORBERICHTSTABELLEN: tuple[str, ...] = (
+    "leistungsentgelte",
+    "kostenerstattungen",
+    "personal",
+    "sachaufwand",
+    "sonstige_aufwendungen",
+)
 # Stufe (b) vergleicht die gedruckte, nur in T€ geführte Gesamtzeile (×1000) gegen die
 # eurogenaue GEP-Zeile; eine eigene, gröbere Toleranz als TOLERANZ_EURO (Stufe a bleibt
 # bei der strengen 1-€-Toleranz, da dort beide Seiten aus derselben Tabelle stammen).
@@ -1088,6 +1104,24 @@ def _pruefe_regel5_weitergabe(
         if abs(punkt.abweichung) > toleranz:
             abweichungen.append(punkt)
     return geprueft, abweichungen
+
+
+def zerlege_weitere_vorberichtstabellen(df: pl.DataFrame) -> dict[str, pl.DataFrame]:
+    """Zerlegt `weitere_vorberichtstabellen.csv` nach Spalte `tabelle` (D-08, MANU-05).
+
+    Die Tabellenmenge der Datei muss exakt `WEITERE_VORBERICHTSTABELLEN` entsprechen;
+    eine abweichende Menge (fehlend oder zusätzlich) bricht mit `PruefungsFehler` ab —
+    D-08 ist eine abgeschlossene Liste, keine Erweiterung ohne Review."""
+    tatsaechlich = set(df["tabelle"].unique().to_list())
+    erwartet = set(WEITERE_VORBERICHTSTABELLEN)
+    if tatsaechlich != erwartet:
+        raise PruefungsFehler(
+            "Regel 5: weitere_vorberichtstabellen.csv hat eine abweichende Tabellenmenge "
+            f"(gefunden: {sorted(tatsaechlich)}, erwartet: {sorted(erwartet)})"
+        )
+    return {
+        tabelle: df.filter(pl.col("tabelle") == tabelle) for tabelle in WEITERE_VORBERICHTSTABELLEN
+    }
 
 
 def _pruefe_regel5(
@@ -1719,6 +1753,9 @@ def pruefe_alles(
         "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
         "transferaufwendungen": lies_vorbericht_csv(daten_wurzel / TRANSFERAUFWENDUNGEN_CSV),
         "kita_zuschuesse": lies_vorbericht_csv(daten_wurzel / KITA_ZUSCHUESSE_CSV),
+        **zerlege_weitere_vorberichtstabellen(
+            lies_vorbericht_csv(daten_wurzel / WEITERE_VORBERICHTSTABELLEN_CSV)
+        ),
     }
     pfad_befunde = befunde_pfad if befunde_pfad is not None else daten_wurzel / BEFUNDE_MD
     befunde = lies_befunde(pfad_befunde)

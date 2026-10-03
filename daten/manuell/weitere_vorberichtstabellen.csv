@@ -1,0 +1,469 @@
+tabelle,position,posten,posten_name,ist_gesamt,jahr,wertart,betrag_teur,anmerkung,quelle
+kostenerstattungen,1,erstattungen_bund,Erstattungen Bund,false,2024,ergebnis,0,,32
+kostenerstattungen,1,erstattungen_bund,Erstattungen Bund,false,2025,ansatz,0,,32
+kostenerstattungen,1,erstattungen_bund,Erstattungen Bund,false,2026,ansatz,0,,32
+kostenerstattungen,1,erstattungen_bund,Erstattungen Bund,false,2027,planung,0,,32
+kostenerstattungen,1,erstattungen_bund,Erstattungen Bund,false,2028,planung,0,,32
+kostenerstattungen,1,erstattungen_bund,Erstattungen Bund,false,2029,planung,0,,32
+kostenerstattungen,2,erst_bund_u_land_fuer_wahlen,Erst. Bund u. Land für Wahlen,false,2024,ergebnis,12,,32
+kostenerstattungen,2,erst_bund_u_land_fuer_wahlen,Erst. Bund u. Land für Wahlen,false,2025,ansatz,8,,32
+kostenerstattungen,2,erst_bund_u_land_fuer_wahlen,Erst. Bund u. Land für Wahlen,false,2026,ansatz,0,,32
+kostenerstattungen,2,erst_bund_u_land_fuer_wahlen,Erst. Bund u. Land für Wahlen,false,2027,planung,10,,32
+kostenerstattungen,2,erst_bund_u_land_fuer_wahlen,Erst. Bund u. Land für Wahlen,false,2028,planung,0,,32
+kostenerstattungen,2,erst_bund_u_land_fuer_wahlen,Erst. Bund u. Land für Wahlen,false,2029,planung,20,,32
+kostenerstattungen,3,erst_land_fluechtlinge,Erst. Land Flüchtlinge,false,2024,ergebnis,511,,32
+kostenerstattungen,3,erst_land_fluechtlinge,Erst. Land Flüchtlinge,false,2025,ansatz,350,,32
+kostenerstattungen,3,erst_land_fluechtlinge,Erst. Land Flüchtlinge,false,2026,ansatz,420,,32
+kostenerstattungen,3,erst_land_fluechtlinge,Erst. Land Flüchtlinge,false,2027,planung,420,,32
+kostenerstattungen,3,erst_land_fluechtlinge,Erst. Land Flüchtlinge,false,2028,planung,420,,32
+kostenerstattungen,3,erst_land_fluechtlinge,Erst. Land Flüchtlinge,false,2029,planung,420,,32
+kostenerstattungen,4,erst_land_sonstiges,Erst. Land Sonstiges,false,2024,ergebnis,13,,32
+kostenerstattungen,4,erst_land_sonstiges,Erst. Land Sonstiges,false,2025,ansatz,48,,32
+kostenerstattungen,4,erst_land_sonstiges,Erst. Land Sonstiges,false,2026,ansatz,40,,32
+kostenerstattungen,4,erst_land_sonstiges,Erst. Land Sonstiges,false,2027,planung,40,,32
+kostenerstattungen,4,erst_land_sonstiges,Erst. Land Sonstiges,false,2028,planung,40,,32
+kostenerstattungen,4,erst_land_sonstiges,Erst. Land Sonstiges,false,2029,planung,40,,32
+kostenerstattungen,5,erst_v_gemeinden_und_sonst_oeffentlicher_bereich,Erst v. Gemeinden und sonst. öffentlicher Bereich,false,2024,ergebnis,39,,32
+kostenerstattungen,5,erst_v_gemeinden_und_sonst_oeffentlicher_bereich,Erst v. Gemeinden und sonst. öffentlicher Bereich,false,2025,ansatz,3,,32
+kostenerstattungen,5,erst_v_gemeinden_und_sonst_oeffentlicher_bereich,Erst v. Gemeinden und sonst. öffentlicher Bereich,false,2026,ansatz,3,,32
+kostenerstattungen,5,erst_v_gemeinden_und_sonst_oeffentlicher_bereich,Erst v. Gemeinden und sonst. öffentlicher Bereich,false,2027,planung,3,,32
+kostenerstattungen,5,erst_v_gemeinden_und_sonst_oeffentlicher_bereich,Erst v. Gemeinden und sonst. öffentlicher Bereich,false,2028,planung,3,,32
+kostenerstattungen,5,erst_v_gemeinden_und_sonst_oeffentlicher_bereich,Erst v. Gemeinden und sonst. öffentlicher Bereich,false,2029,planung,3,,32
+kostenerstattungen,6,erst_der_eigengesellschaft,Erst. der Eigengesellschaft,false,2024,ergebnis,100,,32
+kostenerstattungen,6,erst_der_eigengesellschaft,Erst. der Eigengesellschaft,false,2025,ansatz,102,,32
+kostenerstattungen,6,erst_der_eigengesellschaft,Erst. der Eigengesellschaft,false,2026,ansatz,103,,32
+kostenerstattungen,6,erst_der_eigengesellschaft,Erst. der Eigengesellschaft,false,2027,planung,103,,32
+kostenerstattungen,6,erst_der_eigengesellschaft,Erst. der Eigengesellschaft,false,2028,planung,103,,32
+kostenerstattungen,6,erst_der_eigengesellschaft,Erst. der Eigengesellschaft,false,2029,planung,103,,32
+kostenerstattungen,7,erst_v_priv_untern_vereinen,Erst. v. priv. Untern. / Vereinen,false,2024,ergebnis,23,,32
+kostenerstattungen,7,erst_v_priv_untern_vereinen,Erst. v. priv. Untern. / Vereinen,false,2025,ansatz,6,,32
+kostenerstattungen,7,erst_v_priv_untern_vereinen,Erst. v. priv. Untern. / Vereinen,false,2026,ansatz,6,,32
+kostenerstattungen,7,erst_v_priv_untern_vereinen,Erst. v. priv. Untern. / Vereinen,false,2027,planung,6,,32
+kostenerstattungen,7,erst_v_priv_untern_vereinen,Erst. v. priv. Untern. / Vereinen,false,2028,planung,6,,32
+kostenerstattungen,7,erst_v_priv_untern_vereinen,Erst. v. priv. Untern. / Vereinen,false,2029,planung,6,,32
+kostenerstattungen,8,erst_dsd_awg,Erst. DSD/AWG,false,2024,ergebnis,14,,32
+kostenerstattungen,8,erst_dsd_awg,Erst. DSD/AWG,false,2025,ansatz,14,,32
+kostenerstattungen,8,erst_dsd_awg,Erst. DSD/AWG,false,2026,ansatz,14,,32
+kostenerstattungen,8,erst_dsd_awg,Erst. DSD/AWG,false,2027,planung,14,,32
+kostenerstattungen,8,erst_dsd_awg,Erst. DSD/AWG,false,2028,planung,14,,32
+kostenerstattungen,8,erst_dsd_awg,Erst. DSD/AWG,false,2029,planung,15,,32
+kostenerstattungen,9,erst_uebrige_bereiche,Erst. übrige Bereiche,false,2024,ergebnis,51,,32
+kostenerstattungen,9,erst_uebrige_bereiche,Erst. übrige Bereiche,false,2025,ansatz,75,,32
+kostenerstattungen,9,erst_uebrige_bereiche,Erst. übrige Bereiche,false,2026,ansatz,76,,32
+kostenerstattungen,9,erst_uebrige_bereiche,Erst. übrige Bereiche,false,2027,planung,75,,32
+kostenerstattungen,9,erst_uebrige_bereiche,Erst. übrige Bereiche,false,2028,planung,74,,32
+kostenerstattungen,9,erst_uebrige_bereiche,Erst. übrige Bereiche,false,2029,planung,75,,32
+kostenerstattungen,10,erst_fuer_essen_in_der_mensa_und_den_ogs,Erst. für Essen in der Mensa und den OGS,false,2024,ergebnis,50,,32
+kostenerstattungen,10,erst_fuer_essen_in_der_mensa_und_den_ogs,Erst. für Essen in der Mensa und den OGS,false,2025,ansatz,82,,32
+kostenerstattungen,10,erst_fuer_essen_in_der_mensa_und_den_ogs,Erst. für Essen in der Mensa und den OGS,false,2026,ansatz,101,,32
+kostenerstattungen,10,erst_fuer_essen_in_der_mensa_und_den_ogs,Erst. für Essen in der Mensa und den OGS,false,2027,planung,101,,32
+kostenerstattungen,10,erst_fuer_essen_in_der_mensa_und_den_ogs,Erst. für Essen in der Mensa und den OGS,false,2028,planung,101,,32
+kostenerstattungen,10,erst_fuer_essen_in_der_mensa_und_den_ogs,Erst. für Essen in der Mensa und den OGS,false,2029,planung,101,,32
+kostenerstattungen,11,gesamt,Gesamt,true,2024,ergebnis,813,,32
+kostenerstattungen,11,gesamt,Gesamt,true,2025,ansatz,686,,32
+kostenerstattungen,11,gesamt,Gesamt,true,2026,ansatz,762,,32
+kostenerstattungen,11,gesamt,Gesamt,true,2027,planung,771,,32
+kostenerstattungen,11,gesamt,Gesamt,true,2028,planung,761,,32
+kostenerstattungen,11,gesamt,Gesamt,true,2029,planung,782,,32
+leistungsentgelte,1,verwaltungsgebuehren,Verwaltungsgebühren,false,2024,ergebnis,153,,29
+leistungsentgelte,1,verwaltungsgebuehren,Verwaltungsgebühren,false,2025,ansatz,119,,29
+leistungsentgelte,1,verwaltungsgebuehren,Verwaltungsgebühren,false,2026,ansatz,133,,29
+leistungsentgelte,1,verwaltungsgebuehren,Verwaltungsgebühren,false,2027,planung,133,,29
+leistungsentgelte,1,verwaltungsgebuehren,Verwaltungsgebühren,false,2028,planung,133,,29
+leistungsentgelte,1,verwaltungsgebuehren,Verwaltungsgebühren,false,2029,planung,133,,29
+leistungsentgelte,2,elternbeitraege_ogs,Elternbeiträge OGS,false,2024,ergebnis,191,,29
+leistungsentgelte,2,elternbeitraege_ogs,Elternbeiträge OGS,false,2025,ansatz,275,,29
+leistungsentgelte,2,elternbeitraege_ogs,Elternbeiträge OGS,false,2026,ansatz,273,,29
+leistungsentgelte,2,elternbeitraege_ogs,Elternbeiträge OGS,false,2027,planung,273,,29
+leistungsentgelte,2,elternbeitraege_ogs,Elternbeiträge OGS,false,2028,planung,273,,29
+leistungsentgelte,2,elternbeitraege_ogs,Elternbeiträge OGS,false,2029,planung,273,,29
+leistungsentgelte,3,gebuehren_fuer_uebergangsheime,Gebühren für Übergangsheime,false,2024,ergebnis,37,,29
+leistungsentgelte,3,gebuehren_fuer_uebergangsheime,Gebühren für Übergangsheime,false,2025,ansatz,46,,29
+leistungsentgelte,3,gebuehren_fuer_uebergangsheime,Gebühren für Übergangsheime,false,2026,ansatz,39,,29
+leistungsentgelte,3,gebuehren_fuer_uebergangsheime,Gebühren für Übergangsheime,false,2027,planung,39,,29
+leistungsentgelte,3,gebuehren_fuer_uebergangsheime,Gebühren für Übergangsheime,false,2028,planung,39,,29
+leistungsentgelte,3,gebuehren_fuer_uebergangsheime,Gebühren für Übergangsheime,false,2029,planung,39,,29
+leistungsentgelte,4,strassenreinigungsgebuehren,Straßenreinigungsgebühren,false,2024,ergebnis,45,,30
+leistungsentgelte,4,strassenreinigungsgebuehren,Straßenreinigungsgebühren,false,2025,ansatz,44,,30
+leistungsentgelte,4,strassenreinigungsgebuehren,Straßenreinigungsgebühren,false,2026,ansatz,60,,30
+leistungsentgelte,4,strassenreinigungsgebuehren,Straßenreinigungsgebühren,false,2027,planung,62,,30
+leistungsentgelte,4,strassenreinigungsgebuehren,Straßenreinigungsgebühren,false,2028,planung,63,,30
+leistungsentgelte,4,strassenreinigungsgebuehren,Straßenreinigungsgebühren,false,2029,planung,64,,30
+leistungsentgelte,5,abfallgebuehren,Abfallgebühren,false,2024,ergebnis,1027,,30
+leistungsentgelte,5,abfallgebuehren,Abfallgebühren,false,2025,ansatz,1200,,30
+leistungsentgelte,5,abfallgebuehren,Abfallgebühren,false,2026,ansatz,1134,,30
+leistungsentgelte,5,abfallgebuehren,Abfallgebühren,false,2027,planung,1153,,30
+leistungsentgelte,5,abfallgebuehren,Abfallgebühren,false,2028,planung,1209,,30
+leistungsentgelte,5,abfallgebuehren,Abfallgebühren,false,2029,planung,1321,,30
+leistungsentgelte,6,abfallgebuehren_recyclinghof,Abfallgebühren Recyclinghof,false,2024,ergebnis,88,,30
+leistungsentgelte,6,abfallgebuehren_recyclinghof,Abfallgebühren Recyclinghof,false,2025,ansatz,70,,30
+leistungsentgelte,6,abfallgebuehren_recyclinghof,Abfallgebühren Recyclinghof,false,2026,ansatz,70,,30
+leistungsentgelte,6,abfallgebuehren_recyclinghof,Abfallgebühren Recyclinghof,false,2027,planung,70,,30
+leistungsentgelte,6,abfallgebuehren_recyclinghof,Abfallgebühren Recyclinghof,false,2028,planung,70,,30
+leistungsentgelte,6,abfallgebuehren_recyclinghof,Abfallgebühren Recyclinghof,false,2029,planung,75,,30
+leistungsentgelte,7,benutzungsgeb_friedhoefe,Benutzungsgeb. Friedhöfe,false,2024,ergebnis,69,,30
+leistungsentgelte,7,benutzungsgeb_friedhoefe,Benutzungsgeb. Friedhöfe,false,2025,ansatz,70,,30
+leistungsentgelte,7,benutzungsgeb_friedhoefe,Benutzungsgeb. Friedhöfe,false,2026,ansatz,63,,30
+leistungsentgelte,7,benutzungsgeb_friedhoefe,Benutzungsgeb. Friedhöfe,false,2027,planung,63,,30
+leistungsentgelte,7,benutzungsgeb_friedhoefe,Benutzungsgeb. Friedhöfe,false,2028,planung,63,,30
+leistungsentgelte,7,benutzungsgeb_friedhoefe,Benutzungsgeb. Friedhöfe,false,2029,planung,63,,30
+leistungsentgelte,8,wasserverbandsgebuehren,Wasserverbandsgebühren,false,2024,ergebnis,119,,30
+leistungsentgelte,8,wasserverbandsgebuehren,Wasserverbandsgebühren,false,2025,ansatz,140,,30
+leistungsentgelte,8,wasserverbandsgebuehren,Wasserverbandsgebühren,false,2026,ansatz,140,,30
+leistungsentgelte,8,wasserverbandsgebuehren,Wasserverbandsgebühren,false,2027,planung,190,,30
+leistungsentgelte,8,wasserverbandsgebuehren,Wasserverbandsgebühren,false,2028,planung,190,,30
+leistungsentgelte,8,wasserverbandsgebuehren,Wasserverbandsgebühren,false,2029,planung,190,,30
+leistungsentgelte,9,marktstandgelder,Marktstandgelder,false,2024,ergebnis,10,,30
+leistungsentgelte,9,marktstandgelder,Marktstandgelder,false,2025,ansatz,10,,30
+leistungsentgelte,9,marktstandgelder,Marktstandgelder,false,2026,ansatz,10,,30
+leistungsentgelte,9,marktstandgelder,Marktstandgelder,false,2027,planung,10,,30
+leistungsentgelte,9,marktstandgelder,Marktstandgelder,false,2028,planung,10,,30
+leistungsentgelte,9,marktstandgelder,Marktstandgelder,false,2029,planung,10,,30
+leistungsentgelte,10,erstatt_f_leist_d_feuerwehr,Erstatt. f. Leist. d. Feuerwehr,false,2024,ergebnis,1,,30
+leistungsentgelte,10,erstatt_f_leist_d_feuerwehr,Erstatt. f. Leist. d. Feuerwehr,false,2025,ansatz,5,,30
+leistungsentgelte,10,erstatt_f_leist_d_feuerwehr,Erstatt. f. Leist. d. Feuerwehr,false,2026,ansatz,5,,30
+leistungsentgelte,10,erstatt_f_leist_d_feuerwehr,Erstatt. f. Leist. d. Feuerwehr,false,2027,planung,5,,30
+leistungsentgelte,10,erstatt_f_leist_d_feuerwehr,Erstatt. f. Leist. d. Feuerwehr,false,2028,planung,5,,30
+leistungsentgelte,10,erstatt_f_leist_d_feuerwehr,Erstatt. f. Leist. d. Feuerwehr,false,2029,planung,5,,30
+leistungsentgelte,11,aufloesung_von_sonderposten_aus_beitraegen_und_gebuehren,Auflösung von Sonderposten aus Beiträgen und Gebühren,false,2024,ergebnis,587,,30
+leistungsentgelte,11,aufloesung_von_sonderposten_aus_beitraegen_und_gebuehren,Auflösung von Sonderposten aus Beiträgen und Gebühren,false,2025,ansatz,450,,30
+leistungsentgelte,11,aufloesung_von_sonderposten_aus_beitraegen_und_gebuehren,Auflösung von Sonderposten aus Beiträgen und Gebühren,false,2026,ansatz,463,,30
+leistungsentgelte,11,aufloesung_von_sonderposten_aus_beitraegen_und_gebuehren,Auflösung von Sonderposten aus Beiträgen und Gebühren,false,2027,planung,378,,30
+leistungsentgelte,11,aufloesung_von_sonderposten_aus_beitraegen_und_gebuehren,Auflösung von Sonderposten aus Beiträgen und Gebühren,false,2028,planung,378,,30
+leistungsentgelte,11,aufloesung_von_sonderposten_aus_beitraegen_und_gebuehren,Auflösung von Sonderposten aus Beiträgen und Gebühren,false,2029,planung,378,,30
+leistungsentgelte,12,gesamt,Gesamt,true,2024,ergebnis,2326,,30
+leistungsentgelte,12,gesamt,Gesamt,true,2025,ansatz,2429,,30
+leistungsentgelte,12,gesamt,Gesamt,true,2026,ansatz,2390,,30
+leistungsentgelte,12,gesamt,Gesamt,true,2027,planung,2376,,30
+leistungsentgelte,12,gesamt,Gesamt,true,2028,planung,2433,,30
+leistungsentgelte,12,gesamt,Gesamt,true,2029,planung,2550,,30
+personal,1,personalaufwendungen,Personalaufwendungen,false,2024,ergebnis,4629,,34
+personal,1,personalaufwendungen,Personalaufwendungen,false,2025,ansatz,4977,,34
+personal,1,personalaufwendungen,Personalaufwendungen,false,2026,ansatz,5204,,34
+personal,1,personalaufwendungen,Personalaufwendungen,false,2027,planung,5449,,34
+personal,1,personalaufwendungen,Personalaufwendungen,false,2028,planung,5667,,34
+personal,1,personalaufwendungen,Personalaufwendungen,false,2029,planung,5893,,34
+personal,2,gesamt,Gesamt,true,2024,ergebnis,4629,,34
+personal,2,gesamt,Gesamt,true,2025,ansatz,4977,,34
+personal,2,gesamt,Gesamt,true,2026,ansatz,5204,,34
+personal,2,gesamt,Gesamt,true,2027,planung,5449,,34
+personal,2,gesamt,Gesamt,true,2028,planung,5667,,34
+personal,2,gesamt,Gesamt,true,2029,planung,5893,,34
+sachaufwand,1,gebaeudeunterhaltung,Gebäudeunterhaltung,false,2024,ergebnis,588,,36
+sachaufwand,1,gebaeudeunterhaltung,Gebäudeunterhaltung,false,2025,ansatz,992,,36
+sachaufwand,1,gebaeudeunterhaltung,Gebäudeunterhaltung,false,2026,ansatz,1090,,36
+sachaufwand,1,gebaeudeunterhaltung,Gebäudeunterhaltung,false,2027,planung,681,,36
+sachaufwand,1,gebaeudeunterhaltung,Gebäudeunterhaltung,false,2028,planung,681,,36
+sachaufwand,1,gebaeudeunterhaltung,Gebäudeunterhaltung,false,2029,planung,681,,36
+sachaufwand,2,strassenunterhaltung,Straßenunterhaltung,false,2024,ergebnis,1219,,36
+sachaufwand,2,strassenunterhaltung,Straßenunterhaltung,false,2025,ansatz,406,,36
+sachaufwand,2,strassenunterhaltung,Straßenunterhaltung,false,2026,ansatz,430,,36
+sachaufwand,2,strassenunterhaltung,Straßenunterhaltung,false,2027,planung,525,,36
+sachaufwand,2,strassenunterhaltung,Straßenunterhaltung,false,2028,planung,525,,36
+sachaufwand,2,strassenunterhaltung,Straßenunterhaltung,false,2029,planung,525,,36
+sachaufwand,3,gewaesser_und_biotope,Gewässer und Biotope,false,2024,ergebnis,0,,36
+sachaufwand,3,gewaesser_und_biotope,Gewässer und Biotope,false,2025,ansatz,5,,36
+sachaufwand,3,gewaesser_und_biotope,Gewässer und Biotope,false,2026,ansatz,5,,36
+sachaufwand,3,gewaesser_und_biotope,Gewässer und Biotope,false,2027,planung,5,,36
+sachaufwand,3,gewaesser_und_biotope,Gewässer und Biotope,false,2028,planung,5,,36
+sachaufwand,3,gewaesser_und_biotope,Gewässer und Biotope,false,2029,planung,5,,36
+sachaufwand,4,unterh_ausgleichsflaechen,Unterh. Ausgleichsflächen,false,2024,ergebnis,3,,36
+sachaufwand,4,unterh_ausgleichsflaechen,Unterh. Ausgleichsflächen,false,2025,ansatz,5,,36
+sachaufwand,4,unterh_ausgleichsflaechen,Unterh. Ausgleichsflächen,false,2026,ansatz,5,,36
+sachaufwand,4,unterh_ausgleichsflaechen,Unterh. Ausgleichsflächen,false,2027,planung,5,,36
+sachaufwand,4,unterh_ausgleichsflaechen,Unterh. Ausgleichsflächen,false,2028,planung,5,,36
+sachaufwand,4,unterh_ausgleichsflaechen,Unterh. Ausgleichsflächen,false,2029,planung,5,,36
+sachaufwand,5,sportplatzunterhaltung,Sportplatzunterhaltung,false,2024,ergebnis,54,,36
+sachaufwand,5,sportplatzunterhaltung,Sportplatzunterhaltung,false,2025,ansatz,46,,36
+sachaufwand,5,sportplatzunterhaltung,Sportplatzunterhaltung,false,2026,ansatz,46,,36
+sachaufwand,5,sportplatzunterhaltung,Sportplatzunterhaltung,false,2027,planung,46,,36
+sachaufwand,5,sportplatzunterhaltung,Sportplatzunterhaltung,false,2028,planung,46,,36
+sachaufwand,5,sportplatzunterhaltung,Sportplatzunterhaltung,false,2029,planung,46,,36
+sachaufwand,6,spielplatzunterhaltung,Spielplatzunterhaltung,false,2024,ergebnis,37,,36
+sachaufwand,6,spielplatzunterhaltung,Spielplatzunterhaltung,false,2025,ansatz,51,,36
+sachaufwand,6,spielplatzunterhaltung,Spielplatzunterhaltung,false,2026,ansatz,40,,36
+sachaufwand,6,spielplatzunterhaltung,Spielplatzunterhaltung,false,2027,planung,40,,36
+sachaufwand,6,spielplatzunterhaltung,Spielplatzunterhaltung,false,2028,planung,40,,36
+sachaufwand,6,spielplatzunterhaltung,Spielplatzunterhaltung,false,2029,planung,40,,36
+sachaufwand,7,park_und_gruenanlagen,Park- und Grünanlagen,false,2024,ergebnis,29,,36
+sachaufwand,7,park_und_gruenanlagen,Park- und Grünanlagen,false,2025,ansatz,47,,36
+sachaufwand,7,park_und_gruenanlagen,Park- und Grünanlagen,false,2026,ansatz,40,,36
+sachaufwand,7,park_und_gruenanlagen,Park- und Grünanlagen,false,2027,planung,40,,36
+sachaufwand,7,park_und_gruenanlagen,Park- und Grünanlagen,false,2028,planung,40,,36
+sachaufwand,7,park_und_gruenanlagen,Park- und Grünanlagen,false,2029,planung,40,,36
+sachaufwand,8,friedhoefe,Friedhöfe,false,2024,ergebnis,67,,36
+sachaufwand,8,friedhoefe,Friedhöfe,false,2025,ansatz,74,,36
+sachaufwand,8,friedhoefe,Friedhöfe,false,2026,ansatz,66,,36
+sachaufwand,8,friedhoefe,Friedhöfe,false,2027,planung,58,,36
+sachaufwand,8,friedhoefe,Friedhöfe,false,2028,planung,58,,36
+sachaufwand,8,friedhoefe,Friedhöfe,false,2029,planung,58,,36
+sachaufwand,9,strassenbeleuchtung_verkehrssicherungsanlagen,"Straßenbeleuchtung, Verkehrssicherungsanlagen",false,2024,ergebnis,88,,36
+sachaufwand,9,strassenbeleuchtung_verkehrssicherungsanlagen,"Straßenbeleuchtung, Verkehrssicherungsanlagen",false,2025,ansatz,104,,36
+sachaufwand,9,strassenbeleuchtung_verkehrssicherungsanlagen,"Straßenbeleuchtung, Verkehrssicherungsanlagen",false,2026,ansatz,104,,36
+sachaufwand,9,strassenbeleuchtung_verkehrssicherungsanlagen,"Straßenbeleuchtung, Verkehrssicherungsanlagen",false,2027,planung,94,,36
+sachaufwand,9,strassenbeleuchtung_verkehrssicherungsanlagen,"Straßenbeleuchtung, Verkehrssicherungsanlagen",false,2028,planung,94,,36
+sachaufwand,9,strassenbeleuchtung_verkehrssicherungsanlagen,"Straßenbeleuchtung, Verkehrssicherungsanlagen",false,2029,planung,94,,36
+sachaufwand,10,kostenerstattung_an_dritte,Kostenerstattung an Dritte,false,2024,ergebnis,278,,36
+sachaufwand,10,kostenerstattung_an_dritte,Kostenerstattung an Dritte,false,2025,ansatz,447,,36
+sachaufwand,10,kostenerstattung_an_dritte,Kostenerstattung an Dritte,false,2026,ansatz,496,,36
+sachaufwand,10,kostenerstattung_an_dritte,Kostenerstattung an Dritte,false,2027,planung,466,,36
+sachaufwand,10,kostenerstattung_an_dritte,Kostenerstattung an Dritte,false,2028,planung,466,,36
+sachaufwand,10,kostenerstattung_an_dritte,Kostenerstattung an Dritte,false,2029,planung,399,,36
+sachaufwand,11,strom,Strom,false,2024,ergebnis,240,,36
+sachaufwand,11,strom,Strom,false,2025,ansatz,324,,36
+sachaufwand,11,strom,Strom,false,2026,ansatz,301,,36
+sachaufwand,11,strom,Strom,false,2027,planung,304,,36
+sachaufwand,11,strom,Strom,false,2028,planung,307,,36
+sachaufwand,11,strom,Strom,false,2029,planung,309,,36
+sachaufwand,12,gas,Gas,false,2024,ergebnis,78,,36
+sachaufwand,12,gas,Gas,false,2025,ansatz,107,,36
+sachaufwand,12,gas,Gas,false,2026,ansatz,107,,36
+sachaufwand,12,gas,Gas,false,2027,planung,108,,36
+sachaufwand,12,gas,Gas,false,2028,planung,110,,36
+sachaufwand,12,gas,Gas,false,2029,planung,111,,36
+sachaufwand,13,nahwaerme,Nahwärme,false,2024,ergebnis,143,,36
+sachaufwand,13,nahwaerme,Nahwärme,false,2025,ansatz,170,,36
+sachaufwand,13,nahwaerme,Nahwärme,false,2026,ansatz,165,,36
+sachaufwand,13,nahwaerme,Nahwärme,false,2027,planung,165,,36
+sachaufwand,13,nahwaerme,Nahwärme,false,2028,planung,167,,36
+sachaufwand,13,nahwaerme,Nahwärme,false,2029,planung,167,,36
+sachaufwand,14,heizoel,Heizöl,false,2024,ergebnis,0,,36
+sachaufwand,14,heizoel,Heizöl,false,2025,ansatz,0,,36
+sachaufwand,14,heizoel,Heizöl,false,2026,ansatz,0,,36
+sachaufwand,14,heizoel,Heizöl,false,2027,planung,0,,36
+sachaufwand,14,heizoel,Heizöl,false,2028,planung,0,,36
+sachaufwand,14,heizoel,Heizöl,false,2029,planung,0,,36
+sachaufwand,15,wasser,Wasser,false,2024,ergebnis,24,,36
+sachaufwand,15,wasser,Wasser,false,2025,ansatz,35,,36
+sachaufwand,15,wasser,Wasser,false,2026,ansatz,35,,36
+sachaufwand,15,wasser,Wasser,false,2027,planung,35,,36
+sachaufwand,15,wasser,Wasser,false,2028,planung,36,,36
+sachaufwand,15,wasser,Wasser,false,2029,planung,37,,36
+sachaufwand,16,abwassergebuehren,Abwassergebühren,false,2024,ergebnis,296,,36
+sachaufwand,16,abwassergebuehren,Abwassergebühren,false,2025,ansatz,348,,36
+sachaufwand,16,abwassergebuehren,Abwassergebühren,false,2026,ansatz,351,,36
+sachaufwand,16,abwassergebuehren,Abwassergebühren,false,2027,planung,352,,36
+sachaufwand,16,abwassergebuehren,Abwassergebühren,false,2028,planung,363,,36
+sachaufwand,16,abwassergebuehren,Abwassergebühren,false,2029,planung,363,,36
+sachaufwand,17,unterhaltsreinigung,Unterhaltsreinigung,false,2024,ergebnis,330,,36
+sachaufwand,17,unterhaltsreinigung,Unterhaltsreinigung,false,2025,ansatz,381,,36
+sachaufwand,17,unterhaltsreinigung,Unterhaltsreinigung,false,2026,ansatz,401,,36
+sachaufwand,17,unterhaltsreinigung,Unterhaltsreinigung,false,2027,planung,402,,36
+sachaufwand,17,unterhaltsreinigung,Unterhaltsreinigung,false,2028,planung,408,,36
+sachaufwand,17,unterhaltsreinigung,Unterhaltsreinigung,false,2029,planung,411,,36
+sachaufwand,18,gebaeudeversicherung,Gebäudeversicherung,false,2024,ergebnis,43,,36
+sachaufwand,18,gebaeudeversicherung,Gebäudeversicherung,false,2025,ansatz,50,,36
+sachaufwand,18,gebaeudeversicherung,Gebäudeversicherung,false,2026,ansatz,57,,36
+sachaufwand,18,gebaeudeversicherung,Gebäudeversicherung,false,2027,planung,58,,36
+sachaufwand,18,gebaeudeversicherung,Gebäudeversicherung,false,2028,planung,59,,36
+sachaufwand,18,gebaeudeversicherung,Gebäudeversicherung,false,2029,planung,54,,36
+sachaufwand,19,sonst_bewirtschaftung,sonst. Bewirtschaftung,false,2024,ergebnis,59,,36
+sachaufwand,19,sonst_bewirtschaftung,sonst. Bewirtschaftung,false,2025,ansatz,53,,36
+sachaufwand,19,sonst_bewirtschaftung,sonst. Bewirtschaftung,false,2026,ansatz,58,,36
+sachaufwand,19,sonst_bewirtschaftung,sonst. Bewirtschaftung,false,2027,planung,54,,36
+sachaufwand,19,sonst_bewirtschaftung,sonst. Bewirtschaftung,false,2028,planung,54,,36
+sachaufwand,19,sonst_bewirtschaftung,sonst. Bewirtschaftung,false,2029,planung,54,,36
+sachaufwand,20,reinig_d_strassen_bushaltest,Reinig. d. Straßen / Bushaltest.,false,2024,ergebnis,36,,36
+sachaufwand,20,reinig_d_strassen_bushaltest,Reinig. d. Straßen / Bushaltest.,false,2025,ansatz,41,,36
+sachaufwand,20,reinig_d_strassen_bushaltest,Reinig. d. Straßen / Bushaltest.,false,2026,ansatz,43,,36
+sachaufwand,20,reinig_d_strassen_bushaltest,Reinig. d. Straßen / Bushaltest.,false,2027,planung,43,,36
+sachaufwand,20,reinig_d_strassen_bushaltest,Reinig. d. Straßen / Bushaltest.,false,2028,planung,43,,36
+sachaufwand,20,reinig_d_strassen_bushaltest,Reinig. d. Straßen / Bushaltest.,false,2029,planung,43,,36
+sachaufwand,21,bes_aufwend_f_grundstuecke,Bes. Aufwend. f. Grundstücke,false,2024,ergebnis,0,,36
+sachaufwand,21,bes_aufwend_f_grundstuecke,Bes. Aufwend. f. Grundstücke,false,2025,ansatz,15,,36
+sachaufwand,21,bes_aufwend_f_grundstuecke,Bes. Aufwend. f. Grundstücke,false,2026,ansatz,5,,36
+sachaufwand,21,bes_aufwend_f_grundstuecke,Bes. Aufwend. f. Grundstücke,false,2027,planung,5,,36
+sachaufwand,21,bes_aufwend_f_grundstuecke,Bes. Aufwend. f. Grundstücke,false,2028,planung,5,,36
+sachaufwand,21,bes_aufwend_f_grundstuecke,Bes. Aufwend. f. Grundstücke,false,2029,planung,5,,36
+sachaufwand,22,fahrzeughaltung,Fahrzeughaltung,false,2024,ergebnis,130,,36
+sachaufwand,22,fahrzeughaltung,Fahrzeughaltung,false,2025,ansatz,102,,36
+sachaufwand,22,fahrzeughaltung,Fahrzeughaltung,false,2026,ansatz,116,,36
+sachaufwand,22,fahrzeughaltung,Fahrzeughaltung,false,2027,planung,118,,36
+sachaufwand,22,fahrzeughaltung,Fahrzeughaltung,false,2028,planung,120,,36
+sachaufwand,22,fahrzeughaltung,Fahrzeughaltung,false,2029,planung,122,,36
+sachaufwand,23,geraete_und_ausruestung,Geräte und Ausrüstung,false,2024,ergebnis,142,,36
+sachaufwand,23,geraete_und_ausruestung,Geräte und Ausrüstung,false,2025,ansatz,208,,36
+sachaufwand,23,geraete_und_ausruestung,Geräte und Ausrüstung,false,2026,ansatz,196,,36
+sachaufwand,23,geraete_und_ausruestung,Geräte und Ausrüstung,false,2027,planung,105,,36
+sachaufwand,23,geraete_und_ausruestung,Geräte und Ausrüstung,false,2028,planung,105,,36
+sachaufwand,23,geraete_und_ausruestung,Geräte und Ausrüstung,false,2029,planung,105,,36
+sachaufwand,24,aufwendungen_f_beschaeftigte,Aufwendungen f. Beschäftigte,false,2024,ergebnis,71,,36
+sachaufwand,24,aufwendungen_f_beschaeftigte,Aufwendungen f. Beschäftigte,false,2025,ansatz,51,,36
+sachaufwand,24,aufwendungen_f_beschaeftigte,Aufwendungen f. Beschäftigte,false,2026,ansatz,60,,36
+sachaufwand,24,aufwendungen_f_beschaeftigte,Aufwendungen f. Beschäftigte,false,2027,planung,60,,36
+sachaufwand,24,aufwendungen_f_beschaeftigte,Aufwendungen f. Beschäftigte,false,2028,planung,60,,36
+sachaufwand,24,aufwendungen_f_beschaeftigte,Aufwendungen f. Beschäftigte,false,2029,planung,60,,36
+sachaufwand,25,lernmittelfreiheit,Lernmittelfreiheit,false,2024,ergebnis,29,,36
+sachaufwand,25,lernmittelfreiheit,Lernmittelfreiheit,false,2025,ansatz,40,,36
+sachaufwand,25,lernmittelfreiheit,Lernmittelfreiheit,false,2026,ansatz,42,,36
+sachaufwand,25,lernmittelfreiheit,Lernmittelfreiheit,false,2027,planung,42,,36
+sachaufwand,25,lernmittelfreiheit,Lernmittelfreiheit,false,2028,planung,42,,36
+sachaufwand,25,lernmittelfreiheit,Lernmittelfreiheit,false,2029,planung,42,,36
+sachaufwand,26,schuelerbefoerderung,Schülerbeförderung,false,2024,ergebnis,382,,36
+sachaufwand,26,schuelerbefoerderung,Schülerbeförderung,false,2025,ansatz,465,,36
+sachaufwand,26,schuelerbefoerderung,Schülerbeförderung,false,2026,ansatz,502,,36
+sachaufwand,26,schuelerbefoerderung,Schülerbeförderung,false,2027,planung,503,,36
+sachaufwand,26,schuelerbefoerderung,Schülerbeförderung,false,2028,planung,503,,36
+sachaufwand,26,schuelerbefoerderung,Schülerbeförderung,false,2029,planung,503,,36
+sachaufwand,27,jugendbudget,Jugendbudget,false,2024,ergebnis,0,,36
+sachaufwand,27,jugendbudget,Jugendbudget,false,2025,ansatz,0,,36
+sachaufwand,27,jugendbudget,Jugendbudget,false,2026,ansatz,3,,36
+sachaufwand,27,jugendbudget,Jugendbudget,false,2027,planung,0,,36
+sachaufwand,27,jugendbudget,Jugendbudget,false,2028,planung,0,,36
+sachaufwand,27,jugendbudget,Jugendbudget,false,2029,planung,0,,36
+sachaufwand,28,lehr_und_unterrichtsmaterial,Lehr- und Unterrichtsmaterial,false,2024,ergebnis,13,,36
+sachaufwand,28,lehr_und_unterrichtsmaterial,Lehr- und Unterrichtsmaterial,false,2025,ansatz,19,,36
+sachaufwand,28,lehr_und_unterrichtsmaterial,Lehr- und Unterrichtsmaterial,false,2026,ansatz,19,,36
+sachaufwand,28,lehr_und_unterrichtsmaterial,Lehr- und Unterrichtsmaterial,false,2027,planung,19,,36
+sachaufwand,28,lehr_und_unterrichtsmaterial,Lehr- und Unterrichtsmaterial,false,2028,planung,19,,36
+sachaufwand,28,lehr_und_unterrichtsmaterial,Lehr- und Unterrichtsmaterial,false,2029,planung,19,,36
+sachaufwand,29,schulschwimmen_aktivitaeten,Schulschwimmen /-aktivitäten,false,2024,ergebnis,45,,36
+sachaufwand,29,schulschwimmen_aktivitaeten,Schulschwimmen /-aktivitäten,false,2025,ansatz,49,,36
+sachaufwand,29,schulschwimmen_aktivitaeten,Schulschwimmen /-aktivitäten,false,2026,ansatz,53,,36
+sachaufwand,29,schulschwimmen_aktivitaeten,Schulschwimmen /-aktivitäten,false,2027,planung,53,,36
+sachaufwand,29,schulschwimmen_aktivitaeten,Schulschwimmen /-aktivitäten,false,2028,planung,53,,36
+sachaufwand,29,schulschwimmen_aktivitaeten,Schulschwimmen /-aktivitäten,false,2029,planung,53,,36
+sachaufwand,30,edv_aufwand,EDV-Aufwand,false,2024,ergebnis,111,,37
+sachaufwand,30,edv_aufwand,EDV-Aufwand,false,2025,ansatz,117,,37
+sachaufwand,30,edv_aufwand,EDV-Aufwand,false,2026,ansatz,128,,37
+sachaufwand,30,edv_aufwand,EDV-Aufwand,false,2027,planung,132,,37
+sachaufwand,30,edv_aufwand,EDV-Aufwand,false,2028,planung,132,,37
+sachaufwand,30,edv_aufwand,EDV-Aufwand,false,2029,planung,133,,37
+sachaufwand,31,entgelte_citeq,Entgelte citeq,false,2024,ergebnis,198,,37
+sachaufwand,31,entgelte_citeq,Entgelte citeq,false,2025,ansatz,198,,37
+sachaufwand,31,entgelte_citeq,Entgelte citeq,false,2026,ansatz,194,,37
+sachaufwand,31,entgelte_citeq,Entgelte citeq,false,2027,planung,204,,37
+sachaufwand,31,entgelte_citeq,Entgelte citeq,false,2028,planung,208,,37
+sachaufwand,31,entgelte_citeq,Entgelte citeq,false,2029,planung,229,,37
+sachaufwand,32,sonst_betriebsaufwendungen,Sonst. Betriebsaufwendungen,false,2024,ergebnis,34,,37
+sachaufwand,32,sonst_betriebsaufwendungen,Sonst. Betriebsaufwendungen,false,2025,ansatz,35,,37
+sachaufwand,32,sonst_betriebsaufwendungen,Sonst. Betriebsaufwendungen,false,2026,ansatz,39,,37
+sachaufwand,32,sonst_betriebsaufwendungen,Sonst. Betriebsaufwendungen,false,2027,planung,39,,37
+sachaufwand,32,sonst_betriebsaufwendungen,Sonst. Betriebsaufwendungen,false,2028,planung,39,,37
+sachaufwand,32,sonst_betriebsaufwendungen,Sonst. Betriebsaufwendungen,false,2029,planung,39,,37
+sachaufwand,33,fremde_dienstleistungen,Fremde Dienstleistungen,false,2024,ergebnis,488,,37
+sachaufwand,33,fremde_dienstleistungen,Fremde Dienstleistungen,false,2025,ansatz,635,,37
+sachaufwand,33,fremde_dienstleistungen,Fremde Dienstleistungen,false,2026,ansatz,567,,37
+sachaufwand,33,fremde_dienstleistungen,Fremde Dienstleistungen,false,2027,planung,560,,37
+sachaufwand,33,fremde_dienstleistungen,Fremde Dienstleistungen,false,2028,planung,560,,37
+sachaufwand,33,fremde_dienstleistungen,Fremde Dienstleistungen,false,2029,planung,555,,37
+sachaufwand,34,abfallbeseitigung,Abfallbeseitigung,false,2024,ergebnis,1172,,37
+sachaufwand,34,abfallbeseitigung,Abfallbeseitigung,false,2025,ansatz,1273,,37
+sachaufwand,34,abfallbeseitigung,Abfallbeseitigung,false,2026,ansatz,1210,,37
+sachaufwand,34,abfallbeseitigung,Abfallbeseitigung,false,2027,planung,1229,,37
+sachaufwand,34,abfallbeseitigung,Abfallbeseitigung,false,2028,planung,1285,,37
+sachaufwand,34,abfallbeseitigung,Abfallbeseitigung,false,2029,planung,1386,,37
+sachaufwand,35,bauleitplanung,Bauleitplanung,false,2024,ergebnis,44,,37
+sachaufwand,35,bauleitplanung,Bauleitplanung,false,2025,ansatz,70,,37
+sachaufwand,35,bauleitplanung,Bauleitplanung,false,2026,ansatz,50,,37
+sachaufwand,35,bauleitplanung,Bauleitplanung,false,2027,planung,27,,37
+sachaufwand,35,bauleitplanung,Bauleitplanung,false,2028,planung,20,,37
+sachaufwand,35,bauleitplanung,Bauleitplanung,false,2029,planung,20,,37
+sachaufwand,36,gesamt,Gesamt,true,2024,ergebnis,6471,,37
+sachaufwand,36,gesamt,Gesamt,true,2025,ansatz,6962,,37
+sachaufwand,36,gesamt,Gesamt,true,2026,ansatz,7023,,37
+sachaufwand,36,gesamt,Gesamt,true,2027,planung,6575,,37
+sachaufwand,36,gesamt,Gesamt,true,2028,planung,6655,,37
+sachaufwand,36,gesamt,Gesamt,true,2029,planung,6710,,37
+sonstige_aufwendungen,1,sonst_personalaufwendungen,Sonst. Personalaufwendungen,false,2024,ergebnis,38,,48
+sonstige_aufwendungen,1,sonst_personalaufwendungen,Sonst. Personalaufwendungen,false,2025,ansatz,44,,48
+sonstige_aufwendungen,1,sonst_personalaufwendungen,Sonst. Personalaufwendungen,false,2026,ansatz,46,,48
+sonstige_aufwendungen,1,sonst_personalaufwendungen,Sonst. Personalaufwendungen,false,2027,planung,46,,48
+sonstige_aufwendungen,1,sonst_personalaufwendungen,Sonst. Personalaufwendungen,false,2028,planung,46,,48
+sonstige_aufwendungen,1,sonst_personalaufwendungen,Sonst. Personalaufwendungen,false,2029,planung,46,,48
+sonstige_aufwendungen,2,aufwendungen_ratsmitglieder,Aufwendungen Ratsmitglieder,false,2024,ergebnis,164,,48
+sonstige_aufwendungen,2,aufwendungen_ratsmitglieder,Aufwendungen Ratsmitglieder,false,2025,ansatz,169,,48
+sonstige_aufwendungen,2,aufwendungen_ratsmitglieder,Aufwendungen Ratsmitglieder,false,2026,ansatz,169,,48
+sonstige_aufwendungen,2,aufwendungen_ratsmitglieder,Aufwendungen Ratsmitglieder,false,2027,planung,172,,48
+sonstige_aufwendungen,2,aufwendungen_ratsmitglieder,Aufwendungen Ratsmitglieder,false,2028,planung,176,,48
+sonstige_aufwendungen,2,aufwendungen_ratsmitglieder,Aufwendungen Ratsmitglieder,false,2029,planung,179,,48
+sonstige_aufwendungen,3,ehrenamtliche_taetigkeiten,Ehrenamtliche Tätigkeiten,false,2024,ergebnis,6,,48
+sonstige_aufwendungen,3,ehrenamtliche_taetigkeiten,Ehrenamtliche Tätigkeiten,false,2025,ansatz,3,,48
+sonstige_aufwendungen,3,ehrenamtliche_taetigkeiten,Ehrenamtliche Tätigkeiten,false,2026,ansatz,4,,48
+sonstige_aufwendungen,3,ehrenamtliche_taetigkeiten,Ehrenamtliche Tätigkeiten,false,2027,planung,4,,48
+sonstige_aufwendungen,3,ehrenamtliche_taetigkeiten,Ehrenamtliche Tätigkeiten,false,2028,planung,4,,48
+sonstige_aufwendungen,3,ehrenamtliche_taetigkeiten,Ehrenamtliche Tätigkeiten,false,2029,planung,4,,48
+sonstige_aufwendungen,4,aufwendungen_feuerwehr,Aufwendungen Feuerwehr,false,2024,ergebnis,83,,48
+sonstige_aufwendungen,4,aufwendungen_feuerwehr,Aufwendungen Feuerwehr,false,2025,ansatz,119,,48
+sonstige_aufwendungen,4,aufwendungen_feuerwehr,Aufwendungen Feuerwehr,false,2026,ansatz,106,,48
+sonstige_aufwendungen,4,aufwendungen_feuerwehr,Aufwendungen Feuerwehr,false,2027,planung,107,,48
+sonstige_aufwendungen,4,aufwendungen_feuerwehr,Aufwendungen Feuerwehr,false,2028,planung,108,,48
+sonstige_aufwendungen,4,aufwendungen_feuerwehr,Aufwendungen Feuerwehr,false,2029,planung,109,,48
+sonstige_aufwendungen,5,mieten_und_pachten,Mieten und Pachten,false,2024,ergebnis,406,,48
+sonstige_aufwendungen,5,mieten_und_pachten,Mieten und Pachten,false,2025,ansatz,346,,48
+sonstige_aufwendungen,5,mieten_und_pachten,Mieten und Pachten,false,2026,ansatz,235,,48
+sonstige_aufwendungen,5,mieten_und_pachten,Mieten und Pachten,false,2027,planung,235,,48
+sonstige_aufwendungen,5,mieten_und_pachten,Mieten und Pachten,false,2028,planung,233,,48
+sonstige_aufwendungen,5,mieten_und_pachten,Mieten und Pachten,false,2029,planung,232,,48
+sonstige_aufwendungen,6,leasing_eines_fahrzeugs,Leasing eines Fahrzeugs,false,2024,ergebnis,0,,48
+sonstige_aufwendungen,6,leasing_eines_fahrzeugs,Leasing eines Fahrzeugs,false,2025,ansatz,0,,48
+sonstige_aufwendungen,6,leasing_eines_fahrzeugs,Leasing eines Fahrzeugs,false,2026,ansatz,0,,48
+sonstige_aufwendungen,6,leasing_eines_fahrzeugs,Leasing eines Fahrzeugs,false,2027,planung,0,,48
+sonstige_aufwendungen,6,leasing_eines_fahrzeugs,Leasing eines Fahrzeugs,false,2028,planung,0,,48
+sonstige_aufwendungen,6,leasing_eines_fahrzeugs,Leasing eines Fahrzeugs,false,2029,planung,0,,48
+sonstige_aufwendungen,7,pruefungsaufwendungen_gerichts_und_sachverstaend,Prüfungsaufwendungen/Gerichts- und Sachverständ.,false,2024,ergebnis,81,,48
+sonstige_aufwendungen,7,pruefungsaufwendungen_gerichts_und_sachverstaend,Prüfungsaufwendungen/Gerichts- und Sachverständ.,false,2025,ansatz,85,,48
+sonstige_aufwendungen,7,pruefungsaufwendungen_gerichts_und_sachverstaend,Prüfungsaufwendungen/Gerichts- und Sachverständ.,false,2026,ansatz,44,,48
+sonstige_aufwendungen,7,pruefungsaufwendungen_gerichts_und_sachverstaend,Prüfungsaufwendungen/Gerichts- und Sachverständ.,false,2027,planung,45,,48
+sonstige_aufwendungen,7,pruefungsaufwendungen_gerichts_und_sachverstaend,Prüfungsaufwendungen/Gerichts- und Sachverständ.,false,2028,planung,45,,48
+sonstige_aufwendungen,7,pruefungsaufwendungen_gerichts_und_sachverstaend,Prüfungsaufwendungen/Gerichts- und Sachverständ.,false,2029,planung,46,,48
+sonstige_aufwendungen,8,geschaeftsaufwendungen,Geschäftsaufwendungen,false,2024,ergebnis,302,,48
+sonstige_aufwendungen,8,geschaeftsaufwendungen,Geschäftsaufwendungen,false,2025,ansatz,336,,48
+sonstige_aufwendungen,8,geschaeftsaufwendungen,Geschäftsaufwendungen,false,2026,ansatz,331,,48
+sonstige_aufwendungen,8,geschaeftsaufwendungen,Geschäftsaufwendungen,false,2027,planung,335,,48
+sonstige_aufwendungen,8,geschaeftsaufwendungen,Geschäftsaufwendungen,false,2028,planung,331,,48
+sonstige_aufwendungen,8,geschaeftsaufwendungen,Geschäftsaufwendungen,false,2029,planung,346,,48
+sonstige_aufwendungen,9,versicherung_ohne_gebaeude,Versicherung (ohne Gebäude),false,2024,ergebnis,252,,48
+sonstige_aufwendungen,9,versicherung_ohne_gebaeude,Versicherung (ohne Gebäude),false,2025,ansatz,203,,48
+sonstige_aufwendungen,9,versicherung_ohne_gebaeude,Versicherung (ohne Gebäude),false,2026,ansatz,207,,48
+sonstige_aufwendungen,9,versicherung_ohne_gebaeude,Versicherung (ohne Gebäude),false,2027,planung,209,,48
+sonstige_aufwendungen,9,versicherung_ohne_gebaeude,Versicherung (ohne Gebäude),false,2028,planung,212,,48
+sonstige_aufwendungen,9,versicherung_ohne_gebaeude,Versicherung (ohne Gebäude),false,2029,planung,214,,48
+sonstige_aufwendungen,10,wertbericht_zu_forderungen_und_sachanlagen,Wertbericht. zu Forderungen und Sachanlagen,false,2024,ergebnis,5,,48
+sonstige_aufwendungen,10,wertbericht_zu_forderungen_und_sachanlagen,Wertbericht. zu Forderungen und Sachanlagen,false,2025,ansatz,0,,48
+sonstige_aufwendungen,10,wertbericht_zu_forderungen_und_sachanlagen,Wertbericht. zu Forderungen und Sachanlagen,false,2026,ansatz,4,,48
+sonstige_aufwendungen,10,wertbericht_zu_forderungen_und_sachanlagen,Wertbericht. zu Forderungen und Sachanlagen,false,2027,planung,4,,48
+sonstige_aufwendungen,10,wertbericht_zu_forderungen_und_sachanlagen,Wertbericht. zu Forderungen und Sachanlagen,false,2028,planung,4,,48
+sonstige_aufwendungen,10,wertbericht_zu_forderungen_und_sachanlagen,Wertbericht. zu Forderungen und Sachanlagen,false,2029,planung,4,,48
+sonstige_aufwendungen,11,aufwend_a_grundstuecksverk,Aufwend. a. Grundstücksverk.,false,2024,ergebnis,92,,48
+sonstige_aufwendungen,11,aufwend_a_grundstuecksverk,Aufwend. a. Grundstücksverk.,false,2025,ansatz,0,,48
+sonstige_aufwendungen,11,aufwend_a_grundstuecksverk,Aufwend. a. Grundstücksverk.,false,2026,ansatz,0,,48
+sonstige_aufwendungen,11,aufwend_a_grundstuecksverk,Aufwend. a. Grundstücksverk.,false,2027,planung,0,,48
+sonstige_aufwendungen,11,aufwend_a_grundstuecksverk,Aufwend. a. Grundstücksverk.,false,2028,planung,559,,48
+sonstige_aufwendungen,11,aufwend_a_grundstuecksverk,Aufwend. a. Grundstücksverk.,false,2029,planung,1142,,48
+sonstige_aufwendungen,12,verfuegungsm_buergermeister,Verfügungsm. Bürgermeister,false,2024,ergebnis,1,,48
+sonstige_aufwendungen,12,verfuegungsm_buergermeister,Verfügungsm. Bürgermeister,false,2025,ansatz,1,,48
+sonstige_aufwendungen,12,verfuegungsm_buergermeister,Verfügungsm. Bürgermeister,false,2026,ansatz,1,,48
+sonstige_aufwendungen,12,verfuegungsm_buergermeister,Verfügungsm. Bürgermeister,false,2027,planung,1,,48
+sonstige_aufwendungen,12,verfuegungsm_buergermeister,Verfügungsm. Bürgermeister,false,2028,planung,1,,48
+sonstige_aufwendungen,12,verfuegungsm_buergermeister,Verfügungsm. Bürgermeister,false,2029,planung,1,,48
+sonstige_aufwendungen,13,fraktionszuwendungen,Fraktionszuwendungen,false,2024,ergebnis,4,,48
+sonstige_aufwendungen,13,fraktionszuwendungen,Fraktionszuwendungen,false,2025,ansatz,4,,48
+sonstige_aufwendungen,13,fraktionszuwendungen,Fraktionszuwendungen,false,2026,ansatz,4,,48
+sonstige_aufwendungen,13,fraktionszuwendungen,Fraktionszuwendungen,false,2027,planung,4,,48
+sonstige_aufwendungen,13,fraktionszuwendungen,Fraktionszuwendungen,false,2028,planung,4,,48
+sonstige_aufwendungen,13,fraktionszuwendungen,Fraktionszuwendungen,false,2029,planung,4,,48
+sonstige_aufwendungen,14,staedtepartnerschaft,Städtepartnerschaft,false,2024,ergebnis,0,,48
+sonstige_aufwendungen,14,staedtepartnerschaft,Städtepartnerschaft,false,2025,ansatz,3,,48
+sonstige_aufwendungen,14,staedtepartnerschaft,Städtepartnerschaft,false,2026,ansatz,3,,48
+sonstige_aufwendungen,14,staedtepartnerschaft,Städtepartnerschaft,false,2027,planung,3,,48
+sonstige_aufwendungen,14,staedtepartnerschaft,Städtepartnerschaft,false,2028,planung,3,,48
+sonstige_aufwendungen,14,staedtepartnerschaft,Städtepartnerschaft,false,2029,planung,3,,48
+sonstige_aufwendungen,15,ehrenpatenschaften,Ehrenpatenschaften,false,2024,ergebnis,0,,48
+sonstige_aufwendungen,15,ehrenpatenschaften,Ehrenpatenschaften,false,2025,ansatz,1,,48
+sonstige_aufwendungen,15,ehrenpatenschaften,Ehrenpatenschaften,false,2026,ansatz,1,,48
+sonstige_aufwendungen,15,ehrenpatenschaften,Ehrenpatenschaften,false,2027,planung,1,,48
+sonstige_aufwendungen,15,ehrenpatenschaften,Ehrenpatenschaften,false,2028,planung,1,,48
+sonstige_aufwendungen,15,ehrenpatenschaften,Ehrenpatenschaften,false,2029,planung,1,,48
+sonstige_aufwendungen,16,sonstige_aufwendungen,Sonstige Aufwendungen,false,2024,ergebnis,147,,48
+sonstige_aufwendungen,16,sonstige_aufwendungen,Sonstige Aufwendungen,false,2025,ansatz,117,,48
+sonstige_aufwendungen,16,sonstige_aufwendungen,Sonstige Aufwendungen,false,2026,ansatz,92,,48
+sonstige_aufwendungen,16,sonstige_aufwendungen,Sonstige Aufwendungen,false,2027,planung,78,,48
+sonstige_aufwendungen,16,sonstige_aufwendungen,Sonstige Aufwendungen,false,2028,planung,70,,48
+sonstige_aufwendungen,16,sonstige_aufwendungen,Sonstige Aufwendungen,false,2029,planung,70,,48
+sonstige_aufwendungen,17,gesamt,Gesamt,true,2024,ergebnis,1581,,48
+sonstige_aufwendungen,17,gesamt,Gesamt,true,2025,ansatz,1431,,48
+sonstige_aufwendungen,17,gesamt,Gesamt,true,2026,ansatz,1247,,48
+sonstige_aufwendungen,17,gesamt,Gesamt,true,2027,planung,1242,,48
+sonstige_aufwendungen,17,gesamt,Gesamt,true,2028,planung,1798,,48
+sonstige_aufwendungen,17,gesamt,Gesamt,true,2029,planung,2400,,48

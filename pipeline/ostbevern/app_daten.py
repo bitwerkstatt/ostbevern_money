@@ -18,13 +18,19 @@ from pathlib import Path
 import polars as pl
 
 from ostbevern.konfiguration import PROJEKT_WURZEL, lade_jahrgang
-from ostbevern.pruefung import REGEL5_GEP_ZEILEN, REGEL5_TOLERANZ_GEP_EURO, Planwerte
+from ostbevern.pruefung import (
+    REGEL5_GEP_ZEILEN,
+    REGEL5_TOLERANZ_GEP_EURO,
+    Planwerte,
+    zerlege_weitere_vorberichtstabellen,
+)
 from ostbevern.schema import (
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
     KITA_ZUSCHUESSE_CSV,
     STEUERARTEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
+    WEITERE_VORBERICHTSTABELLEN_CSV,
     ZUWENDUNGEN_CSV,
     lies_plan_csv,
     lies_vorbericht_csv,
@@ -218,13 +224,18 @@ def erzeuge_app_daten(
     wertarten = [wertart for wertart, _jahr_wert in spalten_zu_wertart]
 
     # Reihenfolge ist Teil des App-JSON-Vertrags (D-21): steuerarten, zuwendungen,
-    # transferaufwendungen, kita_zuschuesse — dict-Einfügereihenfolge bleibt beim Schreiben
-    # erhalten (schreibe_app_json/json.dumps, keine sort_keys).
+    # transferaufwendungen, kita_zuschuesse, dann die fünf D-08-Tabellen (leistungsentgelte,
+    # kostenerstattungen, personal, sachaufwand, sonstige_aufwendungen) — dict-
+    # Einfügereihenfolge bleibt beim Schreiben erhalten (schreibe_app_json/json.dumps,
+    # keine sort_keys).
     vorbericht_quellen = {
         "steuerarten": lies_vorbericht_csv(daten_wurzel / STEUERARTEN_CSV),
         "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
         "transferaufwendungen": lies_vorbericht_csv(daten_wurzel / TRANSFERAUFWENDUNGEN_CSV),
         "kita_zuschuesse": lies_vorbericht_csv(daten_wurzel / KITA_ZUSCHUESSE_CSV),
+        **zerlege_weitere_vorberichtstabellen(
+            lies_vorbericht_csv(daten_wurzel / WEITERE_VORBERICHTSTABELLEN_CSV)
+        ),
     }
     vorbericht = {
         tabelle: baue_vorbericht_tabelle(

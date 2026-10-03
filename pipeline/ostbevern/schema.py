@@ -47,6 +47,10 @@ STEUERARTEN_CSV = MANUELL_WURZEL / "steuerarten.csv"
 ZUWENDUNGEN_CSV = MANUELL_WURZEL / "zuwendungen.csv"
 TRANSFERAUFWENDUNGEN_CSV = MANUELL_WURZEL / "transferaufwendungen.csv"
 KITA_ZUSCHUESSE_CSV = MANUELL_WURZEL / "kita_zuschuesse.csv"
+# Weitere Vorberichtstabellen (Phase 4, D-08, MANU-05): die fünf Tabellen Leistungs-
+# entgelte (2.1.4), Kostenerstattungen (2.1.6), Personal (2.2.1), Sachaufwand (2.2.3)
+# und Sonstige Aufwendungen (2.2.6) in einer Datei, Spalte `tabelle` unterscheidet sie.
+WEITERE_VORBERICHTSTABELLEN_CSV = MANUELL_WURZEL / "weitere_vorberichtstabellen.csv"
 
 
 class SchemaFehler(ValueError):

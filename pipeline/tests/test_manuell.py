@@ -17,13 +17,14 @@ import polars as pl
 import pytest
 
 from ostbevern.konfiguration import STANDARD_JAHR, lade_jahrgang
-from ostbevern.pruefung import PruefungsFehler, pruefe_alles
+from ostbevern.pruefung import WEITERE_VORBERICHTSTABELLEN, PruefungsFehler, pruefe_alles
 from ostbevern.schema import (
     DATEN_WURZEL,
     KITA_ZUSCHUESSE_CSV,
     MANUELL_WURZEL,
     STEUERARTEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
+    WEITERE_VORBERICHTSTABELLEN_CSV,
     ZUWENDUNGEN_CSV,
     lies_vorbericht_csv,
     schreibe_vorbericht_csv,
@@ -217,6 +218,124 @@ def test_regel5_weitergabe_fehlender_posten_bricht_ab(tmp_path: Path) -> None:
 
     with pytest.raises(PruefungsFehler):
         pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+
+
+def test_schema_weitere_vorberichtstabellen_kanonisch(tmp_path: Path) -> None:
+    df = lies_vorbericht_csv(DATEN_WURZEL / WEITERE_VORBERICHTSTABELLEN_CSV)
+
+    # Read -> rewrite -> byte-identical (schreibe_vorbericht_csv ist deterministisch, D-21).
+    ziel = tmp_path / "weitere_vorberichtstabellen.csv"
+    schreibe_vorbericht_csv(df, ziel)
+    assert ziel.read_bytes() == (DATEN_WURZEL / WEITERE_VORBERICHTSTABELLEN_CSV).read_bytes()
+
+    assert (df["quelle"] >= 1).all()
+
+    # Exakt die fünf Tabellen aus D-08 (MANU-05), keine mehr, keine weniger.
+    assert set(df["tabelle"].unique().to_list()) == set(WEITERE_VORBERICHTSTABELLEN)
+
+    # Genau eine Gesamtzeile je (tabelle, jahr); eindeutige posten-Schlüssel je tabelle.
+    gesamt_je_tabelle_jahr = (
+        df.filter(pl.col("ist_gesamt")).group_by(["tabelle", "jahr"]).agg(pl.len().alias("n"))
+    )
+    assert (gesamt_je_tabelle_jahr["n"] == 1).all()
+
+    for tabelle in WEITERE_VORBERICHTSTABELLEN:
+        teil = df.filter(pl.col("tabelle") == tabelle)
+        posten_je_jahr = teil.group_by("jahr").agg(pl.col("posten").n_unique().alias("n"))
+        anzahl_posten = teil.filter(pl.col("jahr") == teil["jahr"][0])["posten"].n_unique()
+        assert (posten_je_jahr["n"] == anzahl_posten).all()
+
+    jahrgang = lade_jahrgang(STANDARD_JAHR)
+    erwartete_jahre_wertarten = {
+        (jahr, wertart)
+        for wertart, jahr in (
+            zerlege_spaltenkopf(kopf) for kopf in jahrgang.spalten["ergebnisplan"]
+        )
+    }
+    tatsaechliche_jahre_wertarten = set(df.select(["jahr", "wertart"]).unique().iter_rows())
+    assert tatsaechliche_jahre_wertarten == erwartete_jahre_wertarten
+
+
+def test_regel5_weitere_tabellen_gegen_gep(tmp_path: Path) -> None:
+    bericht = pruefe_alles(STANDARD_JAHR)
+    regel5 = next(regel for regel in bericht.regeln if regel.regel == 5)
+    assert regel5.status == "grün"
+    assert regel5.abweichungen == ()
+    # Direkter Beleg, dass die fünf neuen Tabellen tatsächlich geprüft wurden (Plan
+    # 04-02 Task 1 kam ohne sie auf weniger geprüfte Punkte).
+    anzahl_vorher = next(
+        regel.geprueft for regel in pruefe_alles(STANDARD_JAHR).regeln if regel.regel == 5
+    )
+    assert anzahl_vorher > 50
+
+    # Stufe (b): personal (GEP Z. 11) ist auf den eingecheckten Daten exakt (keine
+    # Abweichung gedruckt); eine +2-T€-Verschiebung von Posten UND Gesamtzeile
+    # desselben Jahres lässt Stufe (a) grün, verschiebt aber Stufe (b) über die
+    # ±1.000-€-Toleranz und muss Regel 5 rot machen (gep_11).
+    _kopiere_daten_baum_nach(tmp_path)
+    df = lies_vorbericht_csv(tmp_path / WEITERE_VORBERICHTSTABELLEN_CSV)
+    bedingung = (
+        (pl.col("tabelle") == "personal")
+        & pl.col("posten").is_in(("personalaufwendungen", "gesamt"))
+        & (pl.col("jahr") == STANDARD_JAHR)
+    )
+    mutiert = df.with_columns(
+        pl.when(bedingung)
+        .then(pl.col("betrag_teur") + 2)
+        .otherwise(pl.col("betrag_teur"))
+        .alias("betrag_teur")
+    )
+    schreibe_vorbericht_csv(mutiert, tmp_path / WEITERE_VORBERICHTSTABELLEN_CSV)
+
+    bericht_mutiert = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel5_mutiert = next(regel for regel in bericht_mutiert.regeln if regel.regel == 5)
+    assert regel5_mutiert.status == "rot"
+    treffer = [
+        punkt
+        for punkt in regel5_mutiert.abweichungen
+        if punkt.plan == "vorbericht_personal" and punkt.zeile == "gep_11"
+    ]
+    assert len(treffer) == 1
+    assert abs(treffer[0].abweichung) > 1000
+
+
+def test_regel5_unbekannte_tabelle_bricht_ab(tmp_path: Path) -> None:
+    _kopiere_daten_baum_nach(tmp_path)
+    df = lies_vorbericht_csv(tmp_path / WEITERE_VORBERICHTSTABELLEN_CSV)
+    ohne_personal = df.filter(pl.col("tabelle") != "personal")
+    schreibe_vorbericht_csv(ohne_personal, tmp_path / WEITERE_VORBERICHTSTABELLEN_CSV)
+
+    with pytest.raises(PruefungsFehler):
+        pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+
+
+def test_regel5_sachaufwand_tippfehler_rot(tmp_path: Path) -> None:
+    _kopiere_daten_baum_nach(tmp_path)
+    df = lies_vorbericht_csv(tmp_path / WEITERE_VORBERICHTSTABELLEN_CSV)
+    mutiert = df.with_columns(
+        pl.when(
+            (pl.col("tabelle") == "sachaufwand")
+            & (pl.col("posten") == "strom")
+            & (pl.col("jahr") == STANDARD_JAHR)
+        )
+        .then(pl.col("betrag_teur") + 5)
+        .otherwise(pl.col("betrag_teur"))
+        .alias("betrag_teur")
+    )
+    schreibe_vorbericht_csv(mutiert, tmp_path / WEITERE_VORBERICHTSTABELLEN_CSV)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel5 = next(regel for regel in bericht.regeln if regel.regel == 5)
+    assert regel5.status == "rot"
+    treffer = [
+        punkt
+        for punkt in regel5.abweichungen
+        if punkt.plan == "vorbericht_sachaufwand"
+        and punkt.zeile == "summe_posten"
+        and punkt.jahr == STANDARD_JAHR
+    ]
+    assert len(treffer) == 1
+    assert treffer[0].abweichung == 6000
 
 
 def test_readme_nennt_jede_manuelle_datei() -> None:
