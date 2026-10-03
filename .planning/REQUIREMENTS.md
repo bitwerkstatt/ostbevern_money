@@ -55,8 +55,8 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 ### App-Daten
 
 - [ ] **DATA-01**: Das Build-Skript erzeugt `haushalt.json`, `produkte.json` (ohne Personennamen), `investitionen.json` und `stellenplan.json` in `app/src/data/`
-- [ ] **DATA-02**: In allen Ausgabendaten ist „Weitergabe an Kreis und Land“ (Kreisumlage, Gewerbesteuerumlage, Krankenhausinvestitionsumlage) als eigene Kategorie aus PB 16 herausgelöst; der Rest bleibt „Allgemeine Finanzwirtschaft“
-- [ ] **DATA-03**: Zuschussbedarf (Aufwand − Erträge) ist je Knoten und Jahr berechnet und als berechneter Wert gekennzeichnet
+- [x] **DATA-02**: In allen Ausgabendaten ist „Weitergabe an Kreis und Land“ (Kreisumlage, Gewerbesteuerumlage, Krankenhausinvestitionsumlage) als eigene Kategorie aus PB 16 herausgelöst; der Rest bleibt „Allgemeine Finanzwirtschaft“
+- [x] **DATA-03**: Zuschussbedarf (Aufwand − Erträge) ist je Knoten und Jahr berechnet und als berechneter Wert gekennzeichnet
 - [ ] **DATA-04**: Quellenbelege: Zu prominent gezeigten Werten werden PDF-Zeilenrechteck und gerenderte WebP-Seite erzeugt (`quellen.json`, `public/quellen/`)
 
 ### Start
@@ -212,8 +212,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PRUEF-09 | Phase 2 | Complete |
 | PRUEF-10 | Phase 4 | Pending |
 | DATA-01 | Phase 4 | Pending |
-| DATA-02 | Phase 4 | Pending |
-| DATA-03 | Phase 4 | Pending |
+| DATA-02 | Phase 4 | Complete |
+| DATA-03 | Phase 4 | Complete |
 | DATA-04 | Phase 7 | Pending |
 | START-01 | Phase 5 | Pending |
 | START-02 | Phase 5 | Pending |

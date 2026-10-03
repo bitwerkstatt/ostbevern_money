@@ -1,0 +1,2930 @@
+{
+  "haushaltsjahr": 2026,
+  "jahre": [
+    2024,
+    2025,
+    2026,
+    2027,
+    2028,
+    2029
+  ],
+  "wertarten": [
+    "ergebnis",
+    "ansatz",
+    "ansatz",
+    "planung",
+    "planung",
+    "planung"
+  ],
+  "massnahmen": [
+    {
+      "produkt": "010601",
+      "pb": "01",
+      "massnahme_id": "010601",
+      "massnahme_name": "Zentrale Dienste für Organisatioseinheiten im Hause und Dritter",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        3000,
+        3000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 87
+    },
+    {
+      "produkt": "010601",
+      "pb": "01",
+      "massnahme_id": "BGA010601",
+      "massnahme_name": "Büro- und Geschäftsausstattung",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        3480,
+        0,
+        5000,
+        5000,
+        5000,
+        5000
+      ],
+      "ve": 0,
+      "pdf_seite": 87
+    },
+    {
+      "produkt": "010601",
+      "pb": "01",
+      "massnahme_id": "BÜR010601",
+      "massnahme_name": "Büro- und Geschäftsausstattung",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        5000,
+        5000,
+        5000,
+        5000,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 87
+    },
+    {
+      "produkt": "010602",
+      "pb": "01",
+      "massnahme_id": "AIBH010602",
+      "massnahme_name": "Baumaßnahmen am Bauhof",
+      "konto": "782113",
+      "konto_name": "Kauf v. bebauten Grdst. u. Gebäuden",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        50,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 90
+    },
+    {
+      "produkt": "010602",
+      "pb": "01",
+      "massnahme_id": "AIBH010602",
+      "massnahme_name": "Baumaßnahmen am Bauhof",
+      "konto": "785111",
+      "konto_name": "Auszahl. f. d. Abwickl. Hochbaumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        988,
+        300000,
+        250000,
+        300000,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 90
+    },
+    {
+      "produkt": "010602",
+      "pb": "01",
+      "massnahme_id": "BGA010602",
+      "massnahme_name": "Betriebs- u. Geschäftsausstattung",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        949,
+        3500,
+        20000,
+        4000,
+        4000,
+        4000
+      ],
+      "ve": 0,
+      "pdf_seite": 90
+    },
+    {
+      "produkt": "010602",
+      "pb": "01",
+      "massnahme_id": "FAHRZ004",
+      "massnahme_name": "Kauf oder Verkauf von Bauhoffahrzeugen",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        50126,
+        226500,
+        132500,
+        50000,
+        50000,
+        50000
+      ],
+      "ve": 0,
+      "pdf_seite": 90
+    },
+    {
+      "produkt": "010602",
+      "pb": "01",
+      "massnahme_id": "KLIMA1",
+      "massnahme_name": "PV-Anlage Bauhof",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        0,
+        185000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 90
+    },
+    {
+      "produkt": "010602",
+      "pb": "01",
+      "massnahme_id": "MASCH001",
+      "massnahme_name": "Neuanschaffung von Maschinen für den Bauhof",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        14863,
+        11050,
+        31500,
+        12000,
+        12000,
+        12000
+      ],
+      "ve": 0,
+      "pdf_seite": 91
+    },
+    {
+      "produkt": "010603",
+      "pb": "01",
+      "massnahme_id": "010603",
+      "massnahme_name": "Zentrale Dienste für Beteiligungen u. verbundene Unternehmen",
+      "konto": "784011",
+      "konto_name": "Kauf v. Finanzanlagen",
+      "richtung": "auszahlung",
+      "art": "finanzanlagen",
+      "werte": [
+        0,
+        500000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 93
+    },
+    {
+      "produkt": "010901",
+      "pb": "01",
+      "massnahme_id": "FINANL001",
+      "massnahme_name": "Versorgungsfonds Westf.-Lipp. Versorgungskasse",
+      "konto": "784011",
+      "konto_name": "Kauf v. Finanzanlagen",
+      "richtung": "auszahlung",
+      "art": "finanzanlagen",
+      "werte": [
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000
+      ],
+      "ve": 0,
+      "pdf_seite": 101
+    },
+    {
+      "produkt": "011101",
+      "pb": "01",
+      "massnahme_id": "011101",
+      "massnahme_name": "Dienstleistung im IT Bereich",
+      "konto": "782111",
+      "konto_name": "Auszahlung f. Erwerb v. immat. Vermögensgegenständen",
+      "richtung": "auszahlung",
+      "art": "immaterielles",
+      "werte": [
+        5071,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 111
+    },
+    {
+      "produkt": "011101",
+      "pb": "01",
+      "massnahme_id": "011101",
+      "massnahme_name": "Dienstleistung im IT Bereich",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        12000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 111
+    },
+    {
+      "produkt": "011101",
+      "pb": "01",
+      "massnahme_id": "EDVH001",
+      "massnahme_name": "Anschaffung von Hardware über 800 €",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        35836,
+        0,
+        25000,
+        30000,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 111
+    },
+    {
+      "produkt": "011201",
+      "pb": "01",
+      "massnahme_id": "011201",
+      "massnahme_name": "Bauunterhaltung von kommunal genutzten Gebäuden",
+      "konto": "785111",
+      "konto_name": "Auszahl. f. d. Abwickl. Hochbaumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        0,
+        150000,
+        150000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 115
+    },
+    {
+      "produkt": "011201",
+      "pb": "01",
+      "massnahme_id": "BGAFB4",
+      "massnahme_name": "Betriebs- und Geschäftsausstattung",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        5000,
+        2500,
+        2500,
+        3000,
+        3000
+      ],
+      "ve": 0,
+      "pdf_seite": 115
+    },
+    {
+      "produkt": "011201",
+      "pb": "01",
+      "massnahme_id": "KLIMA1",
+      "massnahme_name": "PV-Anlagen Rathaus und ehem. Schule Brock",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        160000,
+        160000,
+        55000,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 115
+    },
+    {
+      "produkt": "011203",
+      "pb": "01",
+      "massnahme_id": "KITA002",
+      "massnahme_name": "Erweiterung des Kindergartens im OT Brock",
+      "konto": "785111",
+      "konto_name": "Auszahl. f. d. Abwickl. Hochbaumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        101143,
+        0,
+        25000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 119
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "011204",
+      "massnahme_name": "Bereitstellung und Bewirtschaftung von Grundstücken",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        -213001,
+        2300000,
+        650000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 122
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "AIBH012",
+      "massnahme_name": "Baumaßnahmen Feuerwehr Brock",
+      "konto": "782113",
+      "konto_name": "Kauf v. bebauten Grdst. u. Gebäuden",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        100000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 122
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "BAUG001",
+      "massnahme_name": "Baugebiet Alte Kläranlage im OT Brock",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        0,
+        1000000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 122
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "GRDST002",
+      "massnahme_name": "Grundstücksverkauf im GE Nord",
+      "konto": "682111",
+      "konto_name": "Einz. a. d. Verkauf v. Grundstücken",
+      "richtung": "einzahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        122220,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 122
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "GRDST006",
+      "massnahme_name": "BG Wischhausstraße (1. und 2. BA)",
+      "konto": "682111",
+      "konto_name": "Einz. a. d. Verkauf v. Grundstücken",
+      "richtung": "einzahlung",
+      "art": "grundstuecke",
+      "werte": [
+        112014,
+        1292770,
+        774000,
+        704640,
+        936205,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 122
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "GRDST006",
+      "massnahme_name": "BG Wischhausstraße (1. und 2. BA)",
+      "konto": "688101",
+      "konto_name": "Beiträge und ähnliche Entgelte",
+      "richtung": "einzahlung",
+      "art": "beitraege",
+      "werte": [
+        -18590,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 122
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "GRDST006",
+      "massnahme_name": "BG Wischhausstraße (1. und 2. BA)",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        188679,
+        0,
+        431384,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 122
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "GRDST007",
+      "massnahme_name": "Grundstückskauf und -verkauf Sonstiges",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        123427,
+        1675000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 123
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "GRDST007",
+      "massnahme_name": "Grundstückskauf und -verkauf Sonstiges",
+      "konto": "782114",
+      "konto_name": "Kauf v. Infrastrukurvermögen",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        2981,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 123
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "GRDST012",
+      "massnahme_name": "BG Kohkamp III",
+      "konto": "682111",
+      "konto_name": "Einz. a. d. Verkauf v. Grundstücken",
+      "richtung": "einzahlung",
+      "art": "grundstuecke",
+      "werte": [
+        1987185,
+        1785000,
+        1471830,
+        1477000,
+        1768100,
+        1080000
+      ],
+      "ve": 0,
+      "pdf_seite": 123
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "GRDST012",
+      "massnahme_name": "BG Kohkamp III",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        47330,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 123
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "GRDST013",
+      "massnahme_name": "GE West",
+      "konto": "682111",
+      "konto_name": "Einz. a. d. Verkauf v. Grundstücken",
+      "richtung": "einzahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        0,
+        0,
+        0,
+        812623,
+        750000
+      ],
+      "ve": 0,
+      "pdf_seite": 123
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "GRDST013",
+      "massnahme_name": "GE West",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        5748,
+        200000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 123
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "GRDST015",
+      "massnahme_name": "GE Nord III",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        0,
+        0,
+        450000,
+        450000,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 123
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "STRAß019",
+      "massnahme_name": "Hauptstraße - Straßenerneuerung",
+      "konto": "782114",
+      "konto_name": "Kauf v. Infrastrukurvermögen",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        450000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 123
+    },
+    {
+      "produkt": "011204",
+      "pb": "01",
+      "massnahme_id": "STRAß019",
+      "massnahme_name": "Hauptstraße - Straßenerneuerung",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        10710,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 123
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "020701",
+      "massnahme_name": "Feuer- und Bevölkerungsschutz",
+      "konto": "683111",
+      "konto_name": "Einz. Veräußerg. v. Verm. Gegenständen über 800 €",
+      "richtung": "einzahlung",
+      "art": "ausstattung",
+      "werte": [
+        14955,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 142
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "020701",
+      "massnahme_name": "Feuer- und Bevölkerungsschutz",
+      "konto": "683113",
+      "konto_name": "Einz. Verkauf von beweglichen Sachen d. AV",
+      "richtung": "einzahlung",
+      "art": "ausstattung",
+      "werte": [
+        233,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 142
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "AIBH011",
+      "massnahme_name": "Erweiterung Feuerwehrgerätehaus Röntgenstraße",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        100000,
+        100000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 142
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "AIBH012",
+      "massnahme_name": "Baumaßnahmen Feuerwehr Brock",
+      "konto": "681111",
+      "konto_name": "Zuweisg v. Land f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        0,
+        0,
+        0,
+        250000,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 143
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "AIBH012",
+      "massnahme_name": "Baumaßnahmen Feuerwehr Brock",
+      "konto": "785111",
+      "konto_name": "Auszahl. f. d. Abwickl. Hochbaumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        8456,
+        100000,
+        100000,
+        2000000,
+        1200000,
+        0
+      ],
+      "ve": 3200000,
+      "pdf_seite": 143
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "AIBH013",
+      "massnahme_name": "Baumaßn. Feuerwehr am Mehrzweckgebäude im OT Brock",
+      "konto": "785111",
+      "konto_name": "Auszahl. f. d. Abwickl. Hochbaumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        201874,
+        0,
+        20000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 143
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "BGA020701",
+      "massnahme_name": "Betriebs- und Geschäftsausst. Feuerwehr",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        26662,
+        20000,
+        20000,
+        20000,
+        20000,
+        20000
+      ],
+      "ve": 0,
+      "pdf_seite": 143
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "BGA0207014",
+      "massnahme_name": "Betriebs- und Geschäftsausstattung für die Feuerwehr seitens FB IV",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        3188,
+        4400,
+        4000,
+        4000,
+        4000,
+        4000
+      ],
+      "ve": 0,
+      "pdf_seite": 143
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "FAHRZ002",
+      "massnahme_name": "Erwerb von Fahrzeugen",
+      "konto": "683111",
+      "konto_name": "Einz. Veräußerg. v. Verm. Gegenständen über 800 €",
+      "richtung": "einzahlung",
+      "art": "ausstattung",
+      "werte": [
+        100,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 144
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "FAHRZ002",
+      "massnahme_name": "Erwerb von Fahrzeugen",
+      "konto": "683113",
+      "konto_name": "Einz. Verkauf von beweglichen Sachen d. AV",
+      "richtung": "einzahlung",
+      "art": "ausstattung",
+      "werte": [
+        13728,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 144
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "FAHRZ002",
+      "massnahme_name": "Erwerb von Fahrzeugen",
+      "konto": "781011",
+      "konto_name": "Aktivierbare Zuweisung",
+      "richtung": "auszahlung",
+      "art": "investitionszuschuesse",
+      "werte": [
+        0,
+        0,
+        140000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 144
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "FAHRZ002",
+      "massnahme_name": "Erwerb von Fahrzeugen",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        6696,
+        140000,
+        0,
+        300000,
+        300000,
+        200000
+      ],
+      "ve": 0,
+      "pdf_seite": 144
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "INFRA005",
+      "massnahme_name": "Maßnahmen für die Löschwasserversorgung",
+      "konto": "782114",
+      "konto_name": "Kauf v. Infrastrukurvermögen",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        175000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 144
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "KLIMA1",
+      "massnahme_name": "PV-Anlage Feuerwehr Ostbevern",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        230000,
+        230000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 144
+    },
+    {
+      "produkt": "020701",
+      "pb": "02",
+      "massnahme_id": "SOPO010",
+      "massnahme_name": "Feuerschutzpauschale",
+      "konto": "681111",
+      "konto_name": "Zuweisg v. Land f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        77854,
+        68000,
+        68000,
+        68000,
+        68000,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 144
+    },
+    {
+      "produkt": "030101",
+      "pb": "03",
+      "massnahme_id": "AIB00001",
+      "massnahme_name": "Baumaßnahmen an der Ambrosius-Grundschule",
+      "konto": "785111",
+      "konto_name": "Auszahl. f. d. Abwickl. Hochbaumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        5224,
+        1885000,
+        2000000,
+        2000000,
+        0,
+        0
+      ],
+      "ve": 2000000,
+      "pdf_seite": 153
+    },
+    {
+      "produkt": "030101",
+      "pb": "03",
+      "massnahme_id": "BGA030101",
+      "massnahme_name": "Betriebs- und Geschäftsausstattung",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        4739,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 153
+    },
+    {
+      "produkt": "030101",
+      "pb": "03",
+      "massnahme_id": "BGA0301014",
+      "massnahme_name": "Betriebs- u. Geschäftsausst. f. die Bauunterhalt.",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        2000,
+        2000,
+        2000,
+        2000,
+        2000
+      ],
+      "ve": 0,
+      "pdf_seite": 153
+    },
+    {
+      "produkt": "030101",
+      "pb": "03",
+      "massnahme_id": "EDV030101",
+      "massnahme_name": "EDV-Anschaffungen Ambrosius-Grundschule",
+      "konto": "681111",
+      "konto_name": "Zuweisg v. Land f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        4818,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 153
+    },
+    {
+      "produkt": "030101",
+      "pb": "03",
+      "massnahme_id": "EDV030101",
+      "massnahme_name": "EDV-Anschaffungen Ambrosius-Grundschule",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        5354,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 153
+    },
+    {
+      "produkt": "030101",
+      "pb": "03",
+      "massnahme_id": "KLIMA1",
+      "massnahme_name": "PV-Anlage Ambrosius-Grundschule",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        2759,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 154
+    },
+    {
+      "produkt": "030102",
+      "pb": "03",
+      "massnahme_id": "AIBH003",
+      "massnahme_name": "Baumaßnahmen an der Franz-von-Assisi-Grundschule",
+      "konto": "785111",
+      "konto_name": "Auszahl. f. d. Abwickl. Hochbaumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        8593,
+        1500000,
+        1700000,
+        1700000,
+        0,
+        0
+      ],
+      "ve": 1700000,
+      "pdf_seite": 157
+    },
+    {
+      "produkt": "030102",
+      "pb": "03",
+      "massnahme_id": "BGA0301024",
+      "massnahme_name": "Betriebs- u. Geschäftsausst. f. die Bauunterhalt.",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        1000,
+        1600,
+        1600,
+        1600,
+        1600
+      ],
+      "ve": 0,
+      "pdf_seite": 157
+    },
+    {
+      "produkt": "030102",
+      "pb": "03",
+      "massnahme_id": "EDV030102",
+      "massnahme_name": "EDV-Anschaffungen Franz-von-Assisi-Grundschule",
+      "konto": "681111",
+      "konto_name": "Zuweisg v. Land f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        5504,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 157
+    },
+    {
+      "produkt": "030102",
+      "pb": "03",
+      "massnahme_id": "EDV030102",
+      "massnahme_name": "EDV-Anschaffungen Franz-von-Assisi-Grundschule",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        6116,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 157
+    },
+    {
+      "produkt": "030103",
+      "pb": "03",
+      "massnahme_id": "030103",
+      "massnahme_name": "Josef-Annegarn-Schule",
+      "konto": "683111",
+      "konto_name": "Einz. Veräußerg. v. Verm. Gegenständen über 800 €",
+      "richtung": "einzahlung",
+      "art": "ausstattung",
+      "werte": [
+        3000,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 160
+    },
+    {
+      "produkt": "030103",
+      "pb": "03",
+      "massnahme_id": "AIBH005",
+      "massnahme_name": "Baumaßnahmen an der Josef-Annegarn-Schule",
+      "konto": "681011",
+      "konto_name": "Zuweisg v. Bund f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        11700,
+        123000,
+        119000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 160
+    },
+    {
+      "produkt": "030103",
+      "pb": "03",
+      "massnahme_id": "AIBH005",
+      "massnahme_name": "Baumaßnahmen an der Josef-Annegarn-Schule",
+      "konto": "785111",
+      "konto_name": "Auszahl. f. d. Abwickl. Hochbaumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        0,
+        191000,
+        330000,
+        1000000,
+        1000000,
+        0
+      ],
+      "ve": 2000000,
+      "pdf_seite": 160
+    },
+    {
+      "produkt": "030103",
+      "pb": "03",
+      "massnahme_id": "BGA030103",
+      "massnahme_name": "Betriebs- und Geschäftsausstattung",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        3593,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 160
+    },
+    {
+      "produkt": "030103",
+      "pb": "03",
+      "massnahme_id": "BGA0301034",
+      "massnahme_name": "Betriebs- u. Geschäftsausst. f. die Bauunterhalt.",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        2000,
+        2000,
+        2000,
+        2000,
+        2000
+      ],
+      "ve": 0,
+      "pdf_seite": 160
+    },
+    {
+      "produkt": "030103",
+      "pb": "03",
+      "massnahme_id": "BGA0301034",
+      "massnahme_name": "Betriebs- u. Geschäftsausst. f. die Bauunterhalt.",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        25020,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 160
+    },
+    {
+      "produkt": "030103",
+      "pb": "03",
+      "massnahme_id": "EDV030103",
+      "massnahme_name": "EDV-Anschaffungen Josef-Annegarn-Schule",
+      "konto": "681111",
+      "konto_name": "Zuweisg v. Land f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        3269,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 161
+    },
+    {
+      "produkt": "030103",
+      "pb": "03",
+      "massnahme_id": "EDV030103",
+      "massnahme_name": "EDV-Anschaffungen Josef-Annegarn-Schule",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        12011,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 161
+    },
+    {
+      "produkt": "030103",
+      "pb": "03",
+      "massnahme_id": "KLIMA1",
+      "massnahme_name": "PV-Anlage Josef-Annegarn-Schule",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        365000,
+        365000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 161
+    },
+    {
+      "produkt": "030104",
+      "pb": "03",
+      "massnahme_id": "AIB00001",
+      "massnahme_name": "Baumaßnahmen an der Ambrosius-Grundschule",
+      "konto": "681011",
+      "konto_name": "Zuweisg v. Bund f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        0,
+        467000,
+        467000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 164
+    },
+    {
+      "produkt": "030104",
+      "pb": "03",
+      "massnahme_id": "BGA030104",
+      "massnahme_name": "Betriebs- und Geschäftsausstattung OGS",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        5509,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 164
+    },
+    {
+      "produkt": "030301",
+      "pb": "03",
+      "massnahme_id": "030301",
+      "massnahme_name": "Zentrale schulbezogene Leistungen",
+      "konto": "681411",
+      "konto_name": "Rueckzahlung Haushalt 2021",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        9832,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 168
+    },
+    {
+      "produkt": "040101",
+      "pb": "04",
+      "massnahme_id": "040101",
+      "massnahme_name": "Kulturveranstaltung und -förderung, Heimatpflege",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        0,
+        0,
+        30000,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 173
+    },
+    {
+      "produkt": "060201",
+      "pb": "06",
+      "massnahme_id": "KLIMA1",
+      "massnahme_name": "PV-Anlage Kinder- und Jugendwerk",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        0,
+        0,
+        65000,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 199
+    },
+    {
+      "produkt": "060202",
+      "pb": "06",
+      "massnahme_id": "KSP001",
+      "massnahme_name": "Kinderspielplätze",
+      "konto": "681411",
+      "konto_name": "Rueckzahlung Haushalt 2021",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        22935,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 202
+    },
+    {
+      "produkt": "060202",
+      "pb": "06",
+      "massnahme_id": "KSP001",
+      "massnahme_name": "Kinderspielplätze",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        103135,
+        25000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 202
+    },
+    {
+      "produkt": "060202",
+      "pb": "06",
+      "massnahme_id": "KSP001",
+      "massnahme_name": "Kinderspielplätze",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        0,
+        0,
+        175000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 202
+    },
+    {
+      "produkt": "080101",
+      "pb": "08",
+      "massnahme_id": "080101",
+      "massnahme_name": "Beverhalle, Förderung des Vereins- und Breitensports",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        20000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 207
+    },
+    {
+      "produkt": "080101",
+      "pb": "08",
+      "massnahme_id": "AIBH008",
+      "massnahme_name": "Baumaßnahmen Turnhallen (Beverhalle)",
+      "konto": "785111",
+      "konto_name": "Auszahl. f. d. Abwickl. Hochbaumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        0,
+        0,
+        85000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 207
+    },
+    {
+      "produkt": "080101",
+      "pb": "08",
+      "massnahme_id": "KLIMA1",
+      "massnahme_name": "PV-Anlage Beverhalle",
+      "konto": "783112",
+      "konto_name": "Kauf v. Technischen Anlagen/EDV-Hardware. /Fzg.",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        0,
+        200000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 207
+    },
+    {
+      "produkt": "090101",
+      "pb": "09",
+      "massnahme_id": "AIBH012",
+      "massnahme_name": "Räumliche Planung und Entwicklung - Baumaßnahmen Feuerwehr Brock",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        50000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 213
+    },
+    {
+      "produkt": "090101",
+      "pb": "09",
+      "massnahme_id": "GRDST006",
+      "massnahme_name": "Baugebiet Wischhausstraße (1. und 2. BA)",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        50,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 213
+    },
+    {
+      "produkt": "090101",
+      "pb": "09",
+      "massnahme_id": "GRDST012",
+      "massnahme_name": "Räumliche Planung und Entwicklung - BG Kohkamp III",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        10000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 213
+    },
+    {
+      "produkt": "090101",
+      "pb": "09",
+      "massnahme_id": "GRDST013",
+      "massnahme_name": "Räumliche Planung und Entwicklung - GE West",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        15000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 213
+    },
+    {
+      "produkt": "090101",
+      "pb": "09",
+      "massnahme_id": "GRDST015",
+      "massnahme_name": "Räumliche Planung und Entwicklung - GE Nord III",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        2225,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 213
+    },
+    {
+      "produkt": "090101",
+      "pb": "09",
+      "massnahme_id": "GRDST016",
+      "massnahme_name": "BG Kohkamp I",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        0,
+        20000,
+        50000,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 213
+    },
+    {
+      "produkt": "090201",
+      "pb": "09",
+      "massnahme_id": "BAUG001",
+      "massnahme_name": "Baugebiet Alte Kläranlage im OT Brock",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        3455,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 216
+    },
+    {
+      "produkt": "090201",
+      "pb": "09",
+      "massnahme_id": "GRDST015",
+      "massnahme_name": "Gewerbegebiet Nord III",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        0,
+        0,
+        50000,
+        50000,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 216
+    },
+    {
+      "produkt": "090201",
+      "pb": "09",
+      "massnahme_id": "GRDST016",
+      "massnahme_name": "Baugebiet Kohkamp I",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        0,
+        0,
+        50000,
+        50000,
+        50000
+      ],
+      "ve": 0,
+      "pdf_seite": 217
+    },
+    {
+      "produkt": "100401",
+      "pb": "10",
+      "massnahme_id": "AIBH014",
+      "massnahme_name": "Verkauf und Neubau der Asylbewerberunterkünfte",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        2975,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 230
+    },
+    {
+      "produkt": "100401",
+      "pb": "10",
+      "massnahme_id": "AIBH014",
+      "massnahme_name": "Verkauf und Neubau der Asylbewerberunterkünfte",
+      "konto": "785111",
+      "konto_name": "Auszahl. f. d. Abwickl. Hochbaumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        568544,
+        65000,
+        90000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 230
+    },
+    {
+      "produkt": "100401",
+      "pb": "10",
+      "massnahme_id": "BGAFB4",
+      "massnahme_name": "Betriebs- und Geschäftsausstattung",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        6232,
+        24000,
+        6000,
+        6000,
+        6000,
+        6000
+      ],
+      "ve": 0,
+      "pdf_seite": 230
+    },
+    {
+      "produkt": "100401",
+      "pb": "10",
+      "massnahme_id": "KLIMA1",
+      "massnahme_name": "PV-Anlage Asylbewerberwohnheim",
+      "konto": "785111",
+      "konto_name": "Auszahl. f. d. Abwickl. Hochbaumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        1260,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 230
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "120101",
+      "massnahme_name": "Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",
+      "konto": "688101",
+      "konto_name": "Beiträge und ähnliche Entgelte",
+      "richtung": "einzahlung",
+      "art": "beitraege",
+      "werte": [
+        0,
+        0,
+        0,
+        0,
+        1018025,
+        1641975
+      ],
+      "ve": 0,
+      "pdf_seite": 243
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "120101",
+      "massnahme_name": "Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 243
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "GRDST006",
+      "massnahme_name": "Bau von Straßen, Wegen, Plätzen und Verkehrsanlagen - BG Wischhausstraße (1. und 2. BA)",
+      "konto": "688101",
+      "konto_name": "Beiträge und ähnliche Entgelte",
+      "richtung": "einzahlung",
+      "art": "beitraege",
+      "werte": [
+        0,
+        0,
+        210000,
+        154140,
+        1211790,
+        206850
+      ],
+      "ve": 0,
+      "pdf_seite": 243
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "INFRA002",
+      "massnahme_name": "Erweiterung Straßenbeleuchtung",
+      "konto": "681011",
+      "konto_name": "Zuweisg v. Bund f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        0,
+        75000,
+        75000,
+        75000,
+        75000,
+        75000
+      ],
+      "ve": 0,
+      "pdf_seite": 243
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "INFRA002",
+      "massnahme_name": "Erweiterung Straßenbeleuchtung",
+      "konto": "782114",
+      "konto_name": "Kauf v. Infrastrukurvermögen",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        300000,
+        350000,
+        300000,
+        300000,
+        300000
+      ],
+      "ve": 0,
+      "pdf_seite": 243
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß004",
+      "massnahme_name": "Am Rathaus - Straßen- / Parkplatzerneuerung",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        0,
+        50000,
+        20000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 243
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß005",
+      "massnahme_name": "Ausbau der Straßen in GE Ost (Aldi/Westeria)",
+      "konto": "688101",
+      "konto_name": "Beiträge und ähnliche Entgelte",
+      "richtung": "einzahlung",
+      "art": "beitraege",
+      "werte": [
+        48359,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 243
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß008",
+      "massnahme_name": "Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",
+      "konto": "688101",
+      "konto_name": "Beiträge und ähnliche Entgelte",
+      "richtung": "einzahlung",
+      "art": "beitraege",
+      "werte": [
+        46200,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 244
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß008",
+      "massnahme_name": "Straßenausbau BG Wischhausstraße (1., 2. u. 3. BA)",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        190,
+        0,
+        0,
+        300000,
+        300000,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 244
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß009",
+      "massnahme_name": "Neubau von Brücken",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        0,
+        0,
+        500000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 244
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß014",
+      "massnahme_name": "Wirtschaftswege - Straßenbau (für Verband)",
+      "konto": "681111",
+      "konto_name": "Zuweisg v. Land f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        0,
+        350000,
+        350000,
+        350000,
+        350000,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 244
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß014",
+      "massnahme_name": "Wirtschaftswege - Straßenbau (für Verband)",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        671881,
+        500000,
+        500000,
+        500000,
+        500000,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 244
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß019",
+      "massnahme_name": "Hauptstraße - Straßenerneuerung",
+      "konto": "681011",
+      "konto_name": "Zuweisg v. Bund f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        472014,
+        85000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 244
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß019",
+      "massnahme_name": "Hauptstraße - Straßenerneuerung",
+      "konto": "681111",
+      "konto_name": "Zuweisg v. Land f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        343273,
+        96000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 244
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß019",
+      "massnahme_name": "Hauptstraße - Straßenerneuerung",
+      "konto": "688101",
+      "konto_name": "Beiträge und ähnliche Entgelte",
+      "richtung": "einzahlung",
+      "art": "beitraege",
+      "werte": [
+        0,
+        0,
+        947000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 244
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß019",
+      "massnahme_name": "Hauptstraße - Straßenerneuerung",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        934053,
+        1600000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 244
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß022",
+      "massnahme_name": "Straßenausbau GE West",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        0,
+        100000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 245
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß022",
+      "massnahme_name": "Straßenausbau GE West",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        0,
+        100000,
+        100000,
+        1650000,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 245
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß024",
+      "massnahme_name": "Straßenausbau BG Kohkamp III",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        44738,
+        1000000,
+        1000000,
+        1000000,
+        0,
+        0
+      ],
+      "ve": 1000000,
+      "pdf_seite": 245
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß027",
+      "massnahme_name": "Hanfgarten - Straßenerneuerung",
+      "konto": "688101",
+      "konto_name": "Beiträge und ähnliche Entgelte",
+      "richtung": "einzahlung",
+      "art": "beitraege",
+      "werte": [
+        0,
+        80000,
+        80000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 245
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß027",
+      "massnahme_name": "Hanfgarten - Straßenerneuerung",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        223819,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 245
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß028",
+      "massnahme_name": "Ausbau Wischhausstraße (Hauptstraße bis Zur Gräfte)",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        0,
+        0,
+        40000,
+        1700000,
+        0,
+        0
+      ],
+      "ve": 1700000,
+      "pdf_seite": 245
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß029",
+      "massnahme_name": "Ausbau Schulstraße (Mühlenweg - Hanfgarten)",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        0,
+        0,
+        0,
+        0,
+        200000,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 245
+    },
+    {
+      "produkt": "120101",
+      "pb": "12",
+      "massnahme_id": "STRAß030",
+      "massnahme_name": "Ausbau Grevener Damm (Bahnhofstr. - Tennisplatz)",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        0,
+        0,
+        0,
+        40000,
+        1000000,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 246
+    },
+    {
+      "produkt": "120102",
+      "pb": "12",
+      "massnahme_id": "120102",
+      "massnahme_name": "Unterhaltung von Straßen, Wegen, Plätzen und Verkehrsanlagen",
+      "konto": "682113",
+      "konto_name": "Einz. Verkauf von Infrastrukturvermögen",
+      "richtung": "einzahlung",
+      "art": "grundstuecke",
+      "werte": [
+        462634,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 249
+    },
+    {
+      "produkt": "120102",
+      "pb": "12",
+      "massnahme_id": "STRAß012",
+      "massnahme_name": "Bau der Westumgehung",
+      "konto": "681111",
+      "konto_name": "Zuweisg v. Land f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        734700,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 249
+    },
+    {
+      "produkt": "120201",
+      "pb": "12",
+      "massnahme_id": "ÖPNV001",
+      "massnahme_name": "Bushaltestellen",
+      "konto": "681111",
+      "konto_name": "Zuweisg v. Land f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        0,
+        0,
+        0,
+        27000,
+        27000,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 252
+    },
+    {
+      "produkt": "120201",
+      "pb": "12",
+      "massnahme_id": "ÖPNV001",
+      "massnahme_name": "Bushaltestellen",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        169943,
+        0,
+        0,
+        30000,
+        30000,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 252
+    },
+    {
+      "produkt": "120201",
+      "pb": "12",
+      "massnahme_id": "ÖPNV002",
+      "massnahme_name": "Baumaßnahmen am Bahnhof (Barrierefreiheit)",
+      "konto": "681311",
+      "konto_name": "Zuweisg v. Zweckverbänden f. Invest. massnahm.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        0,
+        72000,
+        162000,
+        3600000,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 252
+    },
+    {
+      "produkt": "120201",
+      "pb": "12",
+      "massnahme_id": "ÖPNV002",
+      "massnahme_name": "Baumaßnahmen am Bahnhof (Barrierefreiheit)",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        446,
+        80000,
+        180000,
+        3000000,
+        1000000,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 252
+    },
+    {
+      "produkt": "120201",
+      "pb": "12",
+      "massnahme_id": "ÖPNV006",
+      "massnahme_name": "Mobilstation am Bahnhof",
+      "konto": "681111",
+      "konto_name": "Zuweisg v. Land f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        0,
+        510000,
+        510000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 252
+    },
+    {
+      "produkt": "120201",
+      "pb": "12",
+      "massnahme_id": "ÖPNV006",
+      "massnahme_name": "Mobilstation am Bahnhof",
+      "konto": "785311",
+      "konto_name": "Auszahl. f. d. Abwickl. sonstiger Baumaßnahmen",
+      "richtung": "auszahlung",
+      "art": "bau",
+      "werte": [
+        1294,
+        650000,
+        650000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 252
+    },
+    {
+      "produkt": "130101",
+      "pb": "13",
+      "massnahme_id": "ÖKO001",
+      "massnahme_name": "Blanke Wasser",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        26827,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 259
+    },
+    {
+      "produkt": "130101",
+      "pb": "13",
+      "massnahme_id": "ÖKO004",
+      "massnahme_name": "Retentionsfläche Breddewiesenbach",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        15213,
+        155000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 260
+    },
+    {
+      "produkt": "130101",
+      "pb": "13",
+      "massnahme_id": "ÖKO005",
+      "massnahme_name": "Ausgleichsfläche Kattmanns Kamp",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        3380,
+        65000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 260
+    },
+    {
+      "produkt": "130101",
+      "pb": "13",
+      "massnahme_id": "ÖKO008",
+      "massnahme_name": "Ökopool Brüskenheide",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        100000,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 260
+    },
+    {
+      "produkt": "130201",
+      "pb": "13",
+      "massnahme_id": "BGA130201",
+      "massnahme_name": "Betriebs- und Geschäftsausst. für öff. Grünanlagen",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        8500,
+        3000,
+        3000,
+        3000,
+        3000
+      ],
+      "ve": 0,
+      "pdf_seite": 263
+    },
+    {
+      "produkt": "130301",
+      "pb": "13",
+      "massnahme_id": "BGA130301",
+      "massnahme_name": "Betriebs- und Geschäftsausstattung Friedhöfe",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        0,
+        0,
+        11000,
+        6000,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 266
+    },
+    {
+      "produkt": "130301",
+      "pb": "13",
+      "massnahme_id": "FRIED003",
+      "massnahme_name": "Baumaßnahmen Friedhof Dorf",
+      "konto": "782112",
+      "konto_name": "Kauf v. unbebauten Grdst.",
+      "richtung": "auszahlung",
+      "art": "grundstuecke",
+      "werte": [
+        0,
+        43000,
+        80000,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 267
+    },
+    {
+      "produkt": "130301",
+      "pb": "13",
+      "massnahme_id": "FRIED003",
+      "massnahme_name": "Baumaßnahmen Friedhof Dorf",
+      "konto": "783111",
+      "konto_name": "Kauf v. bewegl. Sachen d. AV über 800 EUR",
+      "richtung": "auszahlung",
+      "art": "ausstattung",
+      "werte": [
+        1226,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 267
+    },
+    {
+      "produkt": "150101",
+      "pb": "15",
+      "massnahme_id": "INFRA006",
+      "massnahme_name": "Breitbandnetz",
+      "konto": "781011",
+      "konto_name": "Aktivierbare Zuweisung",
+      "richtung": "auszahlung",
+      "art": "investitionszuschuesse",
+      "werte": [
+        0,
+        119000,
+        30000,
+        30000,
+        18000,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 275
+    },
+    {
+      "produkt": "160101",
+      "pb": "16",
+      "massnahme_id": "160101",
+      "massnahme_name": "Allgemeine Finanzwirtschaft",
+      "konto": "684011",
+      "konto_name": "Einz. Veräußerg. v. Finanzanlagen",
+      "richtung": "einzahlung",
+      "art": "finanzanlagen",
+      "werte": [
+        86187,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ve": 0,
+      "pdf_seite": 282
+    },
+    {
+      "produkt": "160101",
+      "pb": "16",
+      "massnahme_id": "SOPO007",
+      "massnahme_name": "Allgemeine Investitionspauschale",
+      "konto": "681111",
+      "konto_name": "Zuweisg v. Land f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        1370881,
+        1415000,
+        1525000,
+        1525000,
+        1525000,
+        1525000
+      ],
+      "ve": 0,
+      "pdf_seite": 282
+    },
+    {
+      "produkt": "160101",
+      "pb": "16",
+      "massnahme_id": "SOPO008",
+      "massnahme_name": "Schulpauschale",
+      "konto": "681111",
+      "konto_name": "Zuweisg v. Land f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        363263,
+        371000,
+        406000,
+        406000,
+        406000,
+        406000
+      ],
+      "ve": 0,
+      "pdf_seite": 282
+    },
+    {
+      "produkt": "160101",
+      "pb": "16",
+      "massnahme_id": "SOPO009",
+      "massnahme_name": "Sportpauschale",
+      "konto": "681111",
+      "konto_name": "Zuweisg v. Land f. Invest. maßn.",
+      "richtung": "einzahlung",
+      "art": "zuwendungen",
+      "werte": [
+        60000,
+        60000,
+        60000,
+        60000,
+        60000,
+        60000
+      ],
+      "ve": 0,
+      "pdf_seite": 282
+    }
+  ],
+  "ve_faelligkeiten": [
+    {
+      "produkt": "020701",
+      "massnahme_id": "AIBH012",
+      "konto": "785111",
+      "jahr": 2027,
+      "betrag": 2000000,
+      "pdf_seite": 143
+    },
+    {
+      "produkt": "020701",
+      "massnahme_id": "AIBH012",
+      "konto": "785111",
+      "jahr": 2028,
+      "betrag": 1200000,
+      "pdf_seite": 143
+    },
+    {
+      "produkt": "030101",
+      "massnahme_id": "AIB00001",
+      "konto": "785111",
+      "jahr": 2027,
+      "betrag": 2000000,
+      "pdf_seite": 153
+    },
+    {
+      "produkt": "030102",
+      "massnahme_id": "AIBH003",
+      "konto": "785111",
+      "jahr": 2027,
+      "betrag": 1700000,
+      "pdf_seite": 157
+    },
+    {
+      "produkt": "030103",
+      "massnahme_id": "AIBH005",
+      "konto": "785111",
+      "jahr": 2027,
+      "betrag": 1000000,
+      "pdf_seite": 160
+    },
+    {
+      "produkt": "030103",
+      "massnahme_id": "AIBH005",
+      "konto": "785111",
+      "jahr": 2028,
+      "betrag": 1000000,
+      "pdf_seite": 160
+    },
+    {
+      "produkt": "120101",
+      "massnahme_id": "STRAß024",
+      "konto": "785311",
+      "jahr": 2027,
+      "betrag": 1000000,
+      "pdf_seite": 245
+    },
+    {
+      "produkt": "120101",
+      "massnahme_id": "STRAß028",
+      "konto": "785311",
+      "jahr": 2027,
+      "betrag": 1700000,
+      "pdf_seite": 245
+    }
+  ],
+  "finanzierung": {
+    "quelle": 63,
+    "zeilen": {
+      "einzahlungen_investitionen": [
+        6726660,
+        6971990,
+        7224830,
+        8696780,
+        8257743,
+        5744825
+      ],
+      "auszahlungen_investitionen": [
+        3777901,
+        15745950,
+        12280484,
+        16803100,
+        6565600,
+        712600
+      ],
+      "kreditaufnahme": [
+        0,
+        7400000,
+        5200000,
+        9500000,
+        0,
+        0
+      ],
+      "tilgung": [
+        400183,
+        490000,
+        450000,
+        570000,
+        850000,
+        830000
+      ]
+    }
+  },
+  "schuldenstand": {
+    "quelle": 310,
+    "einwohner": 11741,
+    "investitionskredite": [
+      7208000,
+      6879000,
+      11629000,
+      20559000,
+      19709000,
+      18879000
+    ],
+    "nrw_bank": [
+      1221000,
+      831000,
+      746000,
+      746000,
+      746000,
+      746000
+    ],
+    "liquiditaetskredite": [
+      447000,
+      418000,
+      389000,
+      null,
+      null,
+      null
+    ],
+    "gesamt": [
+      8429000,
+      7710000,
+      12375000,
+      21305000,
+      20455000,
+      19625000
+    ],
+    "pro_kopf": [
+      717,
+      656,
+      1053,
+      1814,
+      1742,
+      1671
+    ],
+    "berechnet": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      true
+    ],
+    "formel": "Investitionskredite Ende Jahr = Vorjahr + Kreditaufnahme (GFP Z. 33) − Tilgung (GFP Z. 35); NRW.Bank-Anteil konstant auf dem zuletzt gedruckten Stand; Pro-Kopf abgerundet."
+  },
+  "buergschaften": {
+    "bbo_buergschaft": {
+      "name": "Bürgschaft Bäder- und Beteiligungsgesellschaft Ostbevern mbH",
+      "werte": [
+        307000,
+        242000,
+        177000,
+        null,
+        null,
+        null
+      ]
+    }
+  }
+}
