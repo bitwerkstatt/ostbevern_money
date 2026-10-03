@@ -37,7 +37,7 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [x] **MANU-05**: `weitere_vorberichtstabellen.csv` (Leistungsentgelte, Kostenerstattungen, Personal, Sachaufwand, Sonstige Aufwendungen) aus S. 29–50
 - [x] **MANU-06**: `meta.json` mit Einwohnerzahl 11.741 (Stichtag, Quelle), Hebesätzen, Fläche, Satzungsdatum, Kreisumlage brutto/netto und Kreisumlage-Hebesätzen
 - [x] **MANU-07**: Jede manuelle Datei hat eine Spalte `quelle` mit PDF-Seite; ein README begründet die Werte
-- [ ] **MANU-08**: Geprüfte Erklärtexte (`texte/erklaerungen.md`) mit Seitenverweis, z. B. zu Schlüsselzuweisung, Gewerbesteuer und Kreisumlage
+- [x] **MANU-08**: Geprüfte Erklärtexte (`texte/erklaerungen.md`) mit Seitenverweis, z. B. zu Schlüsselzuweisung, Gewerbesteuer und Kreisumlage
 
 ### Prüfung
 
@@ -50,11 +50,11 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [x] **PRUEF-07**: Querschnitte S. 291 ff. stimmen mit den eigenen PG-Aggregaten überein
 - [x] **PRUEF-08**: Vollständigkeit: 63 Produkte mit Produktinformationen, Bindungsgrad, Teilergebnisplan und Teilfinanzplan
 - [x] **PRUEF-09**: Alle Prüfungen laufen in pytest und erzeugen `daten/pruefberichte/konsistenz.md`; Abweichungen über 1 € sind Fehler, außer sie stehen in `befunde.md`
-- [ ] **PRUEF-10**: `pipeline/alle.py` läuft alle Schritte in Reihenfolge; CI prüft, dass sie keinen Diff an eingecheckten Daten erzeugt
+- [x] **PRUEF-10**: `pipeline/alle.py` läuft alle Schritte in Reihenfolge; CI prüft, dass sie keinen Diff an eingecheckten Daten erzeugt
 
 ### App-Daten
 
-- [ ] **DATA-01**: Das Build-Skript erzeugt `haushalt.json`, `produkte.json` (ohne Personennamen), `investitionen.json` und `stellenplan.json` in `app/src/data/`
+- [x] **DATA-01**: Das Build-Skript erzeugt `haushalt.json`, `produkte.json` (ohne Personennamen), `investitionen.json` und `stellenplan.json` in `app/src/data/`
 - [x] **DATA-02**: In allen Ausgabendaten ist „Weitergabe an Kreis und Land“ (Kreisumlage, Gewerbesteuerumlage, Krankenhausinvestitionsumlage) als eigene Kategorie aus PB 16 herausgelöst; der Rest bleibt „Allgemeine Finanzwirtschaft“
 - [x] **DATA-03**: Zuschussbedarf (Aufwand − Erträge) ist je Knoten und Jahr berechnet und als berechneter Wert gekennzeichnet
 - [ ] **DATA-04**: Quellenbelege: Zu prominent gezeigten Werten werden PDF-Zeilenrechteck und gerenderte WebP-Seite erzeugt (`quellen.json`, `public/quellen/`)
@@ -200,7 +200,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MANU-05 | Phase 4 | Complete |
 | MANU-06 | Phase 4 | Complete |
 | MANU-07 | Phase 4 | Complete |
-| MANU-08 | Phase 4 | Pending |
+| MANU-08 | Phase 4 | Complete |
 | PRUEF-01 | Phase 2 | Complete |
 | PRUEF-02 | Phase 2 | Complete |
 | PRUEF-03 | Phase 2 | Complete |
@@ -210,8 +210,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PRUEF-07 | Phase 3 | Complete |
 | PRUEF-08 | Phase 3 | Complete |
 | PRUEF-09 | Phase 2 | Complete |
-| PRUEF-10 | Phase 4 | Pending |
-| DATA-01 | Phase 4 | Pending |
+| PRUEF-10 | Phase 4 | Complete |
+| DATA-01 | Phase 4 | Complete |
 | DATA-02 | Phase 4 | Complete |
 | DATA-03 | Phase 4 | Complete |
 | DATA-04 | Phase 7 | Pending |

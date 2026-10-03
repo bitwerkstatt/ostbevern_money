@@ -30,6 +30,7 @@ from ostbevern.schema import (
     DATEN_WURZEL,
     EIGENKAPITAL_CSV,
     ERGEBNISPLAN_CSV,
+    ERKLAERUNGEN_MD,
     FINANZPLAN_CSV,
     GRUNDZAHLEN_CSV,
     HIERARCHIE_CSV,
@@ -56,6 +57,7 @@ from ostbevern.schema import (
     lies_vorbericht_csv,
     zerlege_spaltenkopf,
 )
+from ostbevern.texte import lies_erklaerungen, loese_auf, pruefe_text, textwerte
 from ostbevern.zeilen import ZEILEN
 
 
@@ -66,6 +68,7 @@ class AppDatenFehler(ValueError):
 APP_DATEN_WURZEL = PROJEKT_WURZEL / "app" / "src" / "data"
 HAUSHALT_JSON = Path("haushalt.json")
 STELLENPLAN_JSON = Path("stellenplan.json")
+TEXTE_JSON = Path("texte.json")
 
 # Knoten-/Zeilenkonstanten der KL-Herauslösung (D-01 bis D-04, Spez. 3.4). Fachliche
 # Regel, kein Jahrgangswert -- nur der Produktcode selbst kommt aus
@@ -1001,4 +1004,31 @@ def erzeuge_app_daten(
     investitionen_pfad = app_daten_wurzel / INVESTITIONEN_JSON
     schreibe_app_json(investitionen_daten, investitionen_pfad, praefix="investitionen")
 
-    return [pfad, stellenplan_pfad, produkte_pfad, investitionen_pfad]
+    # texte.json (D-15 bis D-17, MANU-08, Plan 04-05): parst erklaerungen.md, prüft jeden
+    # Absatz gegen die Ziffernregel und löst alle verwendeten Platzhalter gegen die oben
+    # gebauten App-Dictionaries auf -- ein unbekannter Schlüssel oder ein unbekanntes
+    # Formatkürzel bricht Schritt 07 mit TexteFehler ab (fail-fast, D-08-Stil). Die
+    # Pipeline formatiert nie (D-15): texte.json trägt nur Rohtexte und Rohwerte.
+    erklaerungen = lies_erklaerungen(daten_wurzel / ERKLAERUNGEN_MD)
+    for erklaertext in erklaerungen:
+        for absatz in erklaertext.absaetze:
+            pruefe_text(absatz)
+    alle_werte = textwerte(daten, investitionen_daten, produkte_daten)
+    verwendet = loese_auf(erklaerungen, alle_werte)
+    texte_daten = {
+        "haushaltsjahr": jahrgang.haushaltsjahr,
+        "texte": [
+            {
+                "schluessel": erklaertext.schluessel,
+                "titel": erklaertext.titel,
+                "quelle_seiten": list(erklaertext.quelle_seiten),
+                "absaetze": list(erklaertext.absaetze),
+            }
+            for erklaertext in erklaerungen
+        ],
+        "werte": {schluessel: wert for schluessel, (wert, _format) in verwendet.items()},
+    }
+    texte_pfad = app_daten_wurzel / TEXTE_JSON
+    schreibe_app_json(texte_daten, texte_pfad, praefix="texte")
+
+    return [pfad, stellenplan_pfad, produkte_pfad, investitionen_pfad, texte_pfad]

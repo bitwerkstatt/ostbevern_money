@@ -74,5 +74,18 @@
       "quelle": 9
     }
   },
-  "vorbericht_werte": {}
+  "vorbericht_werte": {
+    "satzung_verringerung_allgemeine_ruecklage": {
+      "wert": 221293,
+      "einheit": "euro",
+      "quelle": 9,
+      "anmerkung": "Satzung § 4: Verringerung der allgemeinen Rücklage im Haushaltsjahr 2026. Research Pitfall 4: dieser Betrag ist ein Eckwert aus der Satzung, kein roher Jahresdelta der Eigenkapitalübersicht (S. 311) — zusammen mit der Verringerung der Ausgleichsrücklage ergibt er exakt |GEP Z. 28| des Haushaltsjahrs."
+    },
+    "bbo_verlustausgleich_wirtschaftsplan": {
+      "wert": 584000,
+      "einheit": "euro",
+      "quelle": 48,
+      "anmerkung": "BBO-Wirtschaftsplan (Bäder- und Beteiligungsgesellschaft Ostbevern mbH): geplanter Verlustausgleich laut eigenem Wirtschaftsplan, außerhalb des Kernhaushalts (Spez. 3.7). Davon erscheint nur der Transferaufwendungen-Posten 'Verlustübernahme BBO' (transferaufwendungen.csv) im Kernhaushalt."
+    }
+  }
 }

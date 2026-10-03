@@ -42,6 +42,7 @@ from ostbevern.querschnitte import QuerschnitteFehler
 from ostbevern.schema import SchemaFehler
 from ostbevern.seiten import SeitenFehler
 from ostbevern.stellenplan import StellenplanFehler
+from ostbevern.texte import TexteFehler
 
 app = typer.Typer(
     add_completion=False,
@@ -150,7 +151,13 @@ def main(
 
     try:
         pfade_app_daten = app_daten.erzeuge_app_daten(jahr)
-    except (AppDatenFehler, SchemaFehler, KonfigurationsFehler, PruefungsFehler) as fehler:
+    except (
+        AppDatenFehler,
+        SchemaFehler,
+        KonfigurationsFehler,
+        PruefungsFehler,
+        TexteFehler,
+    ) as fehler:
         typer.echo(f"Fehler: {fehler}", err=True)
         raise typer.Exit(code=1) from fehler
     for pfad in pfade_app_daten:
