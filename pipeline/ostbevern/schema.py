@@ -54,6 +54,14 @@ WEITERE_VORBERICHTSTABELLEN_CSV = MANUELL_WURZEL / "weitere_vorberichtstabellen.
 # meta.json (Phase 4, D-10, MANU-06): Einwohner, Fläche, Hebesätze, Kreisumlage,
 # Satzungsdaten, je Wert mit Quelle; validiert über ostbevern.manuell.lies_meta_json.
 META_JSON = MANUELL_WURZEL / "meta.json"
+# Verbindlichkeiten (Phase 4, D-11, D-14, S. 310): VORBERICHT_SPALTEN-Format (TEUR wie
+# gedruckt); zwei Tabellen in einer Datei (verbindlichkeiten, nachrichtlich buergschaften).
+VERBINDLICHKEITEN_CSV = MANUELL_WURZEL / "verbindlichkeiten.csv"
+# Eigenkapital (Phase 4, D-11, D-12, S. 311): EIGENKAPITAL_SPALTEN-Format (int-Euro,
+# kaufmännisch gerundete Cent).
+EIGENKAPITAL_CSV = MANUELL_WURZEL / "eigenkapital.csv"
+# VE-Übersicht (Phase 4, D-11, S. 309): VE_UEBERSICHT_SPALTEN-Format.
+VE_UEBERSICHT_CSV = MANUELL_WURZEL / "ve_uebersicht.csv"
 
 
 class SchemaFehler(ValueError):
@@ -463,3 +471,58 @@ def schreibe_vorbericht_csv(df: pl.DataFrame, pfad: Path) -> None:
 def lies_vorbericht_csv(pfad: Path) -> pl.DataFrame:
     """Liest eine manuelle Vorberichtstabelle über `lies_csv` mit VORBERICHT_SPALTEN."""
     return lies_csv(pfad, VORBERICHT_SPALTEN)
+
+
+# Eigenkapital (Phase 4, D-11, D-12, S. 311): wie VORBERICHT_SPALTEN, aber `betrag` in
+# int-Euro (kaufmännisch gerundete Cent, D-12) statt `betrag_teur` in T€ — die S. 311-
+# Werte sind bereits eurogenau mit Cent gedruckt, keine T€-Quelle.
+EIGENKAPITAL_SPALTEN: dict[str, pl.PolarsDataType] = {
+    "tabelle": pl.Utf8,
+    "position": pl.Int64,
+    "posten": pl.Utf8,
+    "posten_name": pl.Utf8,
+    "ist_gesamt": pl.Boolean,
+    "jahr": pl.Int64,
+    "wertart": pl.Utf8,
+    "betrag": pl.Int64,
+    "anmerkung": pl.Utf8,
+    "quelle": pl.Int64,
+}
+
+
+def schreibe_eigenkapital_csv(df: pl.DataFrame, pfad: Path) -> None:
+    """Schreibt eigenkapital.csv sortiert nach tabelle, position, jahr (D-11, D-12).
+    Nur für die einmalige Abschrift (D-09) und Tests."""
+    schreibe_csv(df, pfad, EIGENKAPITAL_SPALTEN, ["tabelle", "position", "jahr"])
+
+
+def lies_eigenkapital_csv(pfad: Path) -> pl.DataFrame:
+    """Liest eigenkapital.csv über `lies_csv` mit EIGENKAPITAL_SPALTEN."""
+    return lies_csv(pfad, EIGENKAPITAL_SPALTEN)
+
+
+# VE-Übersicht (Phase 4, D-11, S. 309): ein Wert je Fälligkeits- oder Summenzeile.
+# `produkt`/`massnahme` sind null auf einer Summenzeile (`ist_gesamt` true, kein
+# einzelnes Produkt); `faellig_jahr` ist null auf der VE-Gesamtbetrag-Summenzeile
+# (sonst das Jahr, in dem die Auszahlung voraussichtlich fällig wird).
+VE_UEBERSICHT_SPALTEN: dict[str, pl.PolarsDataType] = {
+    "position": pl.Int64,
+    "produkt": pl.Utf8,
+    "massnahme": pl.Utf8,
+    "ist_gesamt": pl.Boolean,
+    "faellig_jahr": pl.Int64,
+    "betrag_teur": pl.Int64,
+    "anmerkung": pl.Utf8,
+    "quelle": pl.Int64,
+}
+
+
+def schreibe_ve_uebersicht_csv(df: pl.DataFrame, pfad: Path) -> None:
+    """Schreibt ve_uebersicht.csv sortiert nach position, faellig_jahr (nulls first,
+    D-11). Nur für die einmalige Abschrift (D-09) und Tests."""
+    schreibe_csv(df, pfad, VE_UEBERSICHT_SPALTEN, ["position", "faellig_jahr"])
+
+
+def lies_ve_uebersicht_csv(pfad: Path) -> pl.DataFrame:
+    """Liest ve_uebersicht.csv über `lies_csv` mit VE_UEBERSICHT_SPALTEN."""
+    return lies_csv(pfad, VE_UEBERSICHT_SPALTEN)

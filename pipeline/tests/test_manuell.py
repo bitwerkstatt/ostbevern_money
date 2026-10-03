@@ -18,7 +18,13 @@ import polars as pl
 import pytest
 
 from ostbevern.konfiguration import STANDARD_JAHR, lade_jahrgang
-from ostbevern.manuell import ManuellFehler, lies_meta_json
+from ostbevern.manuell import (
+    ManuellFehler,
+    investitionskredite_ende,
+    lies_meta_json,
+    pro_kopf_euro,
+    schuldenstand_euro,
+)
 from ostbevern.pruefung import (
     REGEL5_ECKWERTE,
     REGEL9_ECKWERTE,
@@ -30,13 +36,18 @@ from ostbevern.pruefung import (
 )
 from ostbevern.schema import (
     DATEN_WURZEL,
+    EIGENKAPITAL_CSV,
     KITA_ZUSCHUESSE_CSV,
     MANUELL_WURZEL,
     META_JSON,
     STEUERARTEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
+    VE_UEBERSICHT_CSV,
+    VERBINDLICHKEITEN_CSV,
     WEITERE_VORBERICHTSTABELLEN_CSV,
     ZUWENDUNGEN_CSV,
+    lies_eigenkapital_csv,
+    lies_ve_uebersicht_csv,
     lies_vorbericht_csv,
     schreibe_vorbericht_csv,
     zerlege_spaltenkopf,
@@ -496,3 +507,111 @@ def test_regel5_meta_kreisumlage_fussnote_rot(tmp_path: Path) -> None:
     ]
     assert len(treffer) == 1
     assert treffer[0].abweichung == -77522
+
+
+def test_schema_verbindlichkeiten_kanonisch(tmp_path: Path) -> None:
+    df = lies_vorbericht_csv(DATEN_WURZEL / VERBINDLICHKEITEN_CSV)
+    ziel = tmp_path / "verbindlichkeiten.csv"
+    schreibe_vorbericht_csv(df, ziel)
+    assert ziel.read_bytes() == (DATEN_WURZEL / VERBINDLICHKEITEN_CSV).read_bytes()
+    assert set(df["tabelle"].unique().to_list()) == {"verbindlichkeiten", "buergschaften"}
+
+
+def test_schema_eigenkapital_kanonisch(tmp_path: Path) -> None:
+    from ostbevern.schema import EIGENKAPITAL_SPALTEN, schreibe_eigenkapital_csv
+
+    df = lies_eigenkapital_csv(DATEN_WURZEL / EIGENKAPITAL_CSV)
+    ziel = tmp_path / "eigenkapital.csv"
+    schreibe_eigenkapital_csv(df, ziel)
+    assert ziel.read_bytes() == (DATEN_WURZEL / EIGENKAPITAL_CSV).read_bytes()
+    assert df.schema["betrag"] == EIGENKAPITAL_SPALTEN["betrag"]
+    gesamt_je_jahr = df.filter(pl.col("ist_gesamt")).group_by("jahr").agg(pl.len().alias("n"))
+    assert (gesamt_je_jahr["n"] == 1).all()
+
+
+def test_schema_ve_uebersicht_kanonisch(tmp_path: Path) -> None:
+    df = lies_ve_uebersicht_csv(DATEN_WURZEL / VE_UEBERSICHT_CSV)
+    ziel = tmp_path / "ve_uebersicht.csv"
+    from ostbevern.schema import schreibe_ve_uebersicht_csv
+
+    schreibe_ve_uebersicht_csv(df, ziel)
+    assert ziel.read_bytes() == (DATEN_WURZEL / VE_UEBERSICHT_CSV).read_bytes()
+    assert df.height == 11
+    assert df.filter(pl.col("ist_gesamt") & pl.col("faellig_jahr").is_null()).height == 1
+
+
+def test_schulden_funktionen() -> None:
+    verbindlichkeiten = lies_vorbericht_csv(DATEN_WURZEL / VERBINDLICHKEITEN_CSV)
+    schuldenstand = schuldenstand_euro(verbindlichkeiten, 2025)
+    assert schuldenstand == 7710000
+    assert pro_kopf_euro(schuldenstand, 11741) == 656
+    assert investitionskredite_ende(6879000, 5200000, 450000) == 11629000
+
+
+def test_regel5_d11_gruen() -> None:
+    bericht = pruefe_alles(STANDARD_JAHR)
+    regel5 = next(regel for regel in bericht.regeln if regel.regel == 5)
+    assert regel5.status == "grün"
+    assert regel5.luecken == ()
+    # Direkter Beleg, dass die D-11-Erweiterungen (verbindlichkeiten, eigenkapital,
+    # satzung_paragraf4, ve_uebersicht) tatsächlich geprüft wurden.
+    assert regel5.geprueft > 120
+    # Die eine dokumentierte Abweichung (Jahresergebnis 2025) ist "bekannt", nicht offen.
+    offene_jahresergebnis = [
+        p for p in regel5.abweichungen if p.plan == "eigenkapital" and p.jahr == 2025
+    ]
+    assert offene_jahresergebnis == []
+    bekannte_jahresergebnis = [
+        paar for paar in regel5.bekannte if paar[0].plan == "eigenkapital" and paar[0].jahr == 2025
+    ]
+    assert len(bekannte_jahresergebnis) == 1
+
+
+def test_regel5_ve_uebersicht_luecke_bei_fehlendem_paar(tmp_path: Path) -> None:
+    _kopiere_daten_baum_nach(tmp_path)
+    df = lies_ve_uebersicht_csv(tmp_path / VE_UEBERSICHT_CSV)
+    zu_entfernen = ((pl.col("produkt") == "030101") & (pl.col("faellig_jahr") == 2027)).fill_null(
+        False
+    )
+    ohne_ambrosius = df.filter(~zu_entfernen)
+    from ostbevern.schema import schreibe_ve_uebersicht_csv
+
+    schreibe_ve_uebersicht_csv(ohne_ambrosius, tmp_path / VE_UEBERSICHT_CSV)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel5 = next(regel for regel in bericht.regeln if regel.regel == 5)
+    assert regel5.status == "rot"
+    luecken = [luecke for luecke in regel5.luecken if luecke.code == "030101"]
+    assert len(luecken) == 1
+    assert "ve_faelligkeiten.csv" in luecken[0].merkmal
+
+
+def test_regel9_pro_kopf_verschuldung_gruen() -> None:
+    bericht = pruefe_alles(STANDARD_JAHR)
+    regel9 = next(regel for regel in bericht.regeln if regel.regel == 9)
+    assert regel9.status == "grün"
+    treffer = [p for p in regel9.abweichungen if p.zeile == "pro_kopf_verschuldung_vorjahr"]
+    assert treffer == []
+    assert regel9.geprueft == len(REGEL9_ECKWERTE)
+
+
+def test_regel9_pro_kopf_verschuldung_erkennt_abweichung(tmp_path: Path) -> None:
+    _kopiere_daten_baum_nach(tmp_path)
+    df = lies_vorbericht_csv(tmp_path / VERBINDLICHKEITEN_CSV)
+    mutiert = df.with_columns(
+        pl.when(
+            (pl.col("tabelle") == "verbindlichkeiten")
+            & (pl.col("posten") == "transferleistungen")
+            & (pl.col("jahr") == 2025)
+        )
+        .then(pl.col("betrag_teur") + 12)
+        .otherwise(pl.col("betrag_teur"))
+        .alias("betrag_teur")
+    )
+    schreibe_vorbericht_csv(mutiert, tmp_path / VERBINDLICHKEITEN_CSV)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel9 = next(regel for regel in bericht.regeln if regel.regel == 9)
+    assert regel9.status == "rot"
+    treffer = [p for p in regel9.abweichungen if p.zeile == "pro_kopf_verschuldung_vorjahr"]
+    assert len(treffer) == 1

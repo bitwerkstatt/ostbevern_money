@@ -12,11 +12,11 @@ Gesamtstatus: grün
 | Regel 2 – Produkte → PG → PB | grün | 7994 | 0 | 0 | 6 |
 | Regel 3 – Produktbereiche → Gesamtergebnisplan | grün | 114 | 0 | 0 | 1 |
 | Regel 4 – Sollwerte (Anhang B, Satzung § 1-3) | grün | 259 | 0 | 0 | 0 |
-| Regel 5 – Manuelle Tabellen → Planzeilen | grün | 107 | 0 | 0 | 24 |
+| Regel 5 – Manuelle Tabellen → Planzeilen | grün | 133 | 0 | 0 | 25 |
 | Regel 6 – Investitionsmaßnahmen → Teil-/Gesamtfinanzplan | grün | 1964 | 0 | 0 | 8 |
 | Regel 7 – Haushaltsquerschnitte → PG-/PB-Teilpläne | grün | 1152 | 0 | 0 | 18 |
 | Regel 8 – Vollständigkeit der Produkte | grün | 820 | 0 | 0 | 0 |
-| Regel 9 – Eckwerte (Anhang B.6) | grün | 10 | 0 | 0 | 0 |
+| Regel 9 – Eckwerte (Anhang B.6) | grün | 11 | 0 | 0 | 0 |
 
 ## Abweichungen
 
@@ -40,6 +40,7 @@ Keine.
 | 2 | teilergebnisplan | PB | 02 | 31 | 2024 | ergebnis | -2 | 124 | Dieselbe Rundungsdifferenz wie PB 02 Zeile 29 2024 (siehe oben): der globale Minderaufwand (Zeile 30) ist 2024 bei PB 02 und allen seinen Produktgruppen 0, daher gilt Zeile 31 = Zeile 29 unverändert. |
 | 2 | teilfinanzplan | PB | 01 | 09 | 2024 | ergebnis | 2 | 66 | Teilfinanzplan PB 01, Spalte Ergebnis 2024: PB 01 druckt Zeile 09 als "859.878" (S. 66). Die Summe der gedruckten Zeile 09 der 9 Produktgruppen, die diese Zeile drucken (PG 0104/0105/0108 drucken keine Zeile 09, D-11; S. 73, 75, 78, 83, 95, 100, 102, 110, 112), ergibt 859.880. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler. |
 | 3 | gesamtergebnisplan | GESAMT |  | 11 | 2024 | ergebnis | 3 | 62 | Gesamtergebnisplan (Anhang B.1), Spalte Ergebnis 2024: Zeile 11 (Personalaufwendungen) ist mit "4.629.147" gedruckt (S. 62). Die Summe der gedruckten Zeile 11 aller 15 Produktbereiche (S. 66, 124, 145, 169, 178, 192, 203, 208, 220, 231, 234, 255, 268, 271, 278) ergibt 4.629.150. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 3 C im PDF selbst. |
+| 5 | eigenkapital | GESAMT |  | jahresergebnis_gep_28 | 2025 | ansatz | 1331520 | 311 | Entwicklung des Eigenkapitals, Spalte 2025/Plan (S. 311): Jahresergebnis ist mit "0,00 €" gedruckt. Zeile 28 des Gesamtergebnisplans (Anhang B.1, S. 62) weist für 2025 −1.331.520 € aus. Wortweise gegen das PDF verifiziert; die Eigenkapitalübersicht druckt für dieses eine Jahr einen von der Planzeile abweichenden, offenbar vor der letzten Planfortschreibung eingefrorenen Wert — kein Extraktionsfehler (D-11, D-12). |
 | 5 | vorbericht_kostenerstattungen | GESAMT |  | summe_posten | 2025 | ansatz | 2000 | 32 | Kostenerstattungen und Kostenumlagen, Spalte Ansatz 2025 (S. 32): Summe der zehn Posten (0+8+350+48+3+102+6+14+75+82) ergibt 688 T€, gedruckt ist die Gesamtzeile mit 686 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 2 T€ im Vorbericht selbst. |
 | 5 | vorbericht_kostenerstattungen | GESAMT |  | summe_posten | 2026 | ansatz | 1000 | 32 | Kostenerstattungen und Kostenumlagen, Spalte Ansatz 2026 (S. 32): Summe der zehn Posten ergibt 763 T€, gedruckt ist die Gesamtzeile mit 762 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
 | 5 | vorbericht_kostenerstattungen | GESAMT |  | summe_posten | 2027 | planung | 1000 | 32 | Kostenerstattungen und Kostenumlagen, Spalte Planung 2027 (S. 32): Summe der zehn Posten ergibt 772 T€, gedruckt ist die Gesamtzeile mit 771 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |

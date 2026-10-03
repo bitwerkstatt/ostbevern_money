@@ -1963,5 +1963,121 @@
         }
       ]
     }
+  },
+  "eigenkapital": {
+    "tabelle": "eigenkapital",
+    "quelle_einheit": "euro",
+    "planzeile": null,
+    "gesamt_plan": null,
+    "gesamt_vorbericht": {
+      "werte": [
+        41655204,
+        41655204,
+        38825371,
+        37182843,
+        35424016,
+        31866316
+      ],
+      "gerundet": true,
+      "quelle": 311
+    },
+    "posten": [
+      {
+        "posten": "allgemeine_ruecklage",
+        "name": "Allgemeine Rücklage",
+        "werte": [
+          39522991,
+          39522991,
+          39522991,
+          38825371,
+          37182843,
+          35424016
+        ],
+        "gerundet": true,
+        "berechnet": false,
+        "quelle": 311,
+        "anmerkung": null
+      },
+      {
+        "posten": "verrechnung_bilanzierungshilfe",
+        "name": "Einmalige Verrechnung Bilanzierungshilfe",
+        "werte": [
+          0,
+          0,
+          -476327,
+          0,
+          0,
+          0
+        ],
+        "gerundet": true,
+        "berechnet": false,
+        "quelle": 311,
+        "anmerkung": null
+      },
+      {
+        "posten": "sonderruecklagen",
+        "name": "Sonderrücklagen",
+        "werte": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "gerundet": true,
+        "berechnet": false,
+        "quelle": 311,
+        "anmerkung": null
+      },
+      {
+        "posten": "ausgleichsruecklage",
+        "name": "Ausgleichsrücklage",
+        "werte": [
+          1940223,
+          2132213,
+          2132213,
+          0,
+          0,
+          0
+        ],
+        "gerundet": true,
+        "berechnet": false,
+        "quelle": 311,
+        "anmerkung": null
+      },
+      {
+        "posten": "bilanzieller_verlustvortrag",
+        "name": "Bilanzieller Verlustvortrag",
+        "werte": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "gerundet": true,
+        "berechnet": false,
+        "quelle": 311,
+        "anmerkung": null
+      },
+      {
+        "posten": "jahresergebnis",
+        "name": "Jahresergebnis",
+        "werte": [
+          191990,
+          0,
+          -2353506,
+          -1642528,
+          -1758827,
+          -3557700
+        ],
+        "gerundet": true,
+        "berechnet": false,
+        "quelle": 311,
+        "anmerkung": null
+      }
+    ]
   }
 }

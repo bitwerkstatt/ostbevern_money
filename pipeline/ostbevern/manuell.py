@@ -14,6 +14,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+import polars as pl
+
 _META_EINHEITEN = frozenset({"personen", "ha", "prozent", "promille", "euro", "datum"})
 _META_LEAF_PFLICHT = frozenset({"wert", "einheit", "quelle"})
 _META_LEAF_OPTIONAL = frozenset(
@@ -148,3 +150,31 @@ def lies_meta_json(pfad: Path) -> dict[str, Any]:
         _pruefe_meta_leaf(wert, f"vorbericht_werte.{schluessel}")
 
     return daten
+
+
+def schuldenstand_euro(verbindlichkeiten: pl.DataFrame, jahr: int) -> int:
+    """Schuldenstand nach Vorbericht-Definition (D-14): Σ `SCHULDEN_POSTEN` der Tabelle
+    `verbindlichkeiten` zum Stand Ende `jahr`, in Euro (Quelle ist T€, daher × 1000)."""
+    zeilen = verbindlichkeiten.filter(
+        (pl.col("tabelle") == "verbindlichkeiten")
+        & pl.col("posten").is_in(SCHULDEN_POSTEN)
+        & (pl.col("jahr") == jahr)
+    )
+    if zeilen.height != len(SCHULDEN_POSTEN):
+        raise ManuellFehler(
+            f"schuldenstand_euro: verbindlichkeiten.csv hat {zeilen.height} Zeilen für "
+            f"Jahr {jahr}, erwartet {len(SCHULDEN_POSTEN)}"
+        )
+    return int(zeilen["betrag_teur"].sum()) * 1000
+
+
+def pro_kopf_euro(betrag_euro: int, einwohner: int) -> int:
+    """Pro-Kopf-Wert, abgerundet (D-14) — reproduziert den gedruckten Vorbericht-Wert
+    (ganzzahlige Division, kein `round`)."""
+    return betrag_euro // einwohner
+
+
+def investitionskredite_ende(vorjahr_euro: int, kreditaufnahme_euro: int, tilgung_euro: int) -> int:
+    """Fortschreibung der Investitionskredite (D-11, D-13): Ende Jahr = Ende Vorjahr +
+    GFP-Kreditaufnahme (Z. 33) − GFP-Tilgung (Z. 35)."""
+    return vorjahr_euro + kreditaufnahme_euro - tilgung_euro

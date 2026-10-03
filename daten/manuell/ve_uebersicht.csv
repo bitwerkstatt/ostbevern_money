@@ -1,0 +1,12 @@
+position,produkt,massnahme,ist_gesamt,faellig_jahr,betrag_teur,anmerkung,quelle
+1,020701,Auszahlung für Baumaßnahmen - Neubau,false,2027,2000,,309
+1,020701,Auszahlung für Baumaßnahmen - Neubau,false,2028,1200,,309
+2,030101,Auszahlung für Baumaßnahmen - Erweiterung,false,2027,2000,,309
+3,030102,Auszahlung für Baumaßnahmen - Erweiterung,false,2027,1700,,309
+4,030103,Auszahlung für Baumaßnahmen - Erweiterung,false,2027,1000,,309
+4,030103,Auszahlung für Baumaßnahmen - Erweiterung,false,2028,1000,,309
+5,120101,Erschließung BG Kohkamp IIII,false,2027,1000,"S. 309 druckt ""Kohkamp IIII"", S. 25 ""Kohkamp III"" (wortwörtlich übernommen, D-09).",309
+6,120101,Sanierung Wischhausstraße,false,2027,1700,,309
+7,,Summe (VE-Gesamtbetrag),true,,11600,,309
+7,,Summe (fällig 2027),true,2027,9400,,309
+7,,Summe (fällig 2028),true,2028,2200,,309

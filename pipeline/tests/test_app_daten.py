@@ -196,6 +196,20 @@ def test_haushalt_json_meta(tmp_path: Path) -> None:
     assert meta["kreisumlage"]["brutto"]["berechnet"] is True
 
 
+def test_haushalt_json_eigenkapital(tmp_path: Path) -> None:
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    assert list(daten)[-1] == "eigenkapital"
+    eigenkapital = daten["eigenkapital"]
+    assert eigenkapital["tabelle"] == "eigenkapital"
+    assert eigenkapital["quelle_einheit"] == "euro"
+    assert eigenkapital["planzeile"] is None
+    assert eigenkapital["gesamt_plan"] is None
+    jahresergebnis = next(p for p in eigenkapital["posten"] if p["posten"] == "jahresergebnis")
+    index_2026 = daten["jahre"].index(2026)
+    assert jahresergebnis["werte"][index_2026] == -2353506
+
+
 def test_app_daten_liest_kein_pdf() -> None:
     quelle = Path(app_daten.__file__).read_text(encoding="utf-8")
     baum = ast.parse(quelle)

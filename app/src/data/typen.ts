@@ -98,4 +98,6 @@ export interface Haushalt {
   meta: Meta
   /** Manuelle Vorberichtstabellen, Schlüssel = Tabellenname. */
   vorbericht: Record<string, VorberichtTabelle>
+  /** Entwicklung des Eigenkapitals (S. 311, int-Euro), D-11, D-12. */
+  eigenkapital: VorberichtTabelle
 }

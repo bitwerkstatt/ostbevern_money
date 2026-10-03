@@ -22,11 +22,17 @@ from ostbevern.konfiguration import (
     lade_sollwerte,
     layout_text,
 )
-from ostbevern.manuell import lies_meta_json
+from ostbevern.manuell import (
+    investitionskredite_ende,
+    lies_meta_json,
+    pro_kopf_euro,
+    schuldenstand_euro,
+)
 from ostbevern.schema import (
     BEFUNDE_MD,
     DATEN_WURZEL,
     EBENEN,
+    EIGENKAPITAL_CSV,
     ERGEBNISPLAN_CSV,
     FINANZPLAN_CSV,
     HIERARCHIE_CSV,
@@ -41,9 +47,12 @@ from ostbevern.schema import (
     STEUERARTEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
     VE_FAELLIGKEITEN_CSV,
+    VE_UEBERSICHT_CSV,
+    VERBINDLICHKEITEN_CSV,
     WEITERE_VORBERICHTSTABELLEN_CSV,
     WERTARTEN,
     ZUWENDUNGEN_CSV,
+    lies_eigenkapital_csv,
     lies_hierarchie_csv,
     lies_investitionen_csv,
     lies_investitionen_pb_csv,
@@ -52,6 +61,7 @@ from ostbevern.schema import (
     lies_querschnitte_csv,
     lies_seiten_csv,
     lies_ve_faelligkeiten_csv,
+    lies_ve_uebersicht_csv,
     lies_vorbericht_csv,
     zerlege_spaltenkopf,
 )
@@ -1146,7 +1156,11 @@ REGEL5_TOLERANZ_FUSSNOTE_EURO = 50000
 # Eckwerte (Anhang B.6, D-10, D-14, D-20): welcher Name von welcher Regel konsumiert
 # wird. pruefe_alles bricht ab, wenn ein [eckwerte.*]-Name in keiner der beiden Mengen
 # steht (kein Sollwert bleibt unbewacht, D-20).
-REGEL5_ECKWERTE: tuple[str, ...] = ("kreisumlage_umlage_fussnote",)
+REGEL5_ECKWERTE: tuple[str, ...] = (
+    "kreisumlage_umlage_fussnote",
+    "verringerung_ausgleichsruecklage",
+    "verringerung_allgemeine_ruecklage",
+)
 REGEL9_ECKWERTE: tuple[str, ...] = (
     "einwohner",
     "hebesatz_grundsteuer_a",
@@ -1158,7 +1172,11 @@ REGEL9_ECKWERTE: tuple[str, ...] = (
     "hebesatz_jugendamtsumlage_vorjahr_promille",
     "schluesselzuweisung_teur",
     "schluesselzuweisung_vorjahr_teur",
+    "pro_kopf_verschuldung_vorjahr",
 )
+# weitere_vorberichtstabellen-artige Tabellen ohne gedruckte Gesamtzeile (D-11): die
+# generische Stufe (a)/(b)-Prüfung in _pruefe_regel5 wird für sie übersprungen.
+REGEL5_TABELLEN_OHNE_GESAMT: tuple[str, ...] = ("buergschaften",)
 
 
 def pruefe_eckwerte_konsumiert(eckwerte: Mapping[str, Mapping[str, int]]) -> None:
@@ -1280,6 +1298,8 @@ def _pruefe_regel5(
     geprueft = 0
     abweichungen: list[Pruefpunkt] = []
     for tabelle, df in sorted(vorbericht.items()):
+        if tabelle in REGEL5_TABELLEN_OHNE_GESAMT:
+            continue
         gep_zeile = REGEL5_GEP_ZEILEN.get(tabelle)
         for jahr in sorted(df["jahr"].unique().to_list()):
             jahr_df = df.filter(pl.col("jahr") == jahr)
@@ -1364,11 +1384,347 @@ def _pruefe_regel5(
     )
 
 
+def _pruefe_regel5_eigenkapital_summe(
+    *, eigenkapital: pl.DataFrame
+) -> tuple[int, list[Pruefpunkt]]:
+    """Stufe (a) für `eigenkapital.csv` (D-11, D-12): Summe der Posten gegen die
+    gedruckte Gesamtzeile, beide bereits in int-Euro (kaufmännisch gerundete Cent,
+    kein ×1000 nötig — anders als die T€-geführten Vorberichtstabellen)."""
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for jahr in sorted(eigenkapital["jahr"].unique().to_list()):
+        jahr_df = eigenkapital.filter(pl.col("jahr") == jahr)
+        gesamt_zeilen = jahr_df.filter(pl.col("ist_gesamt"))
+        if gesamt_zeilen.height != 1:
+            raise PruefungsFehler(
+                f"Regel 5: eigenkapital Jahr {jahr} hat {gesamt_zeilen.height} "
+                "ist_gesamt-Zeilen, erwartet genau 1"
+            )
+        gesamt = gesamt_zeilen.row(0, named=True)
+        posten_summe = jahr_df.filter(~pl.col("ist_gesamt"))["betrag"].sum() or 0
+        geprueft += 1
+        punkt = Pruefpunkt(
+            regel=5,
+            plan="vorbericht_eigenkapital",
+            ebene="GESAMT",
+            code="",
+            zeile="summe_posten",
+            jahr=jahr,
+            wertart=gesamt["wertart"],
+            soll=gesamt["betrag"],
+            ist=posten_summe,
+            pdf_seite=gesamt["quelle"],
+        )
+        if abs(punkt.abweichung) > TOLERANZ_EURO:
+            abweichungen.append(punkt)
+    return geprueft, abweichungen
+
+
+def _pruefe_regel5_kredite_fortschreibung(
+    *, verbindlichkeiten: pl.DataFrame, planwerte_finanzplan: Planwerte, haushaltsjahr: int
+) -> tuple[int, list[Pruefpunkt]]:
+    """D-11, D-13: Investitionskredite Ende Haushaltsjahr = Ende Vorjahr + GFP-Kredit-
+    aufnahme (Z. 33) − GFP-Tilgung (Z. 35), über `manuell.investitionskredite_ende`."""
+    zeilen = verbindlichkeiten.filter(
+        (pl.col("tabelle") == "verbindlichkeiten") & (pl.col("posten") == "kredite_investitionen")
+    )
+    nach_jahr = {zeile["jahr"]: zeile for zeile in zeilen.iter_rows(named=True)}
+    vorjahr = nach_jahr.get(haushaltsjahr - 1)
+    haushaltsjahr_zeile = nach_jahr.get(haushaltsjahr)
+    if vorjahr is None or haushaltsjahr_zeile is None:
+        raise PruefungsFehler(
+            "Regel 5: verbindlichkeiten.csv hat keinen Posten 'kredite_investitionen' "
+            f"für Vorjahr {haushaltsjahr - 1} oder Haushaltsjahr {haushaltsjahr}"
+        )
+    kreditaufnahme = planwerte_finanzplan.wert("GESAMT", "", "33", haushaltsjahr, "ansatz")
+    tilgung = planwerte_finanzplan.wert("GESAMT", "", "35", haushaltsjahr, "ansatz")
+    ist = investitionskredite_ende(vorjahr["betrag_teur"] * 1000, kreditaufnahme, tilgung)
+    punkt = Pruefpunkt(
+        regel=5,
+        plan="verbindlichkeiten",
+        ebene="GESAMT",
+        code="",
+        zeile="kredite_fortschreibung",
+        jahr=haushaltsjahr,
+        wertart=haushaltsjahr_zeile["wertart"],
+        soll=haushaltsjahr_zeile["betrag_teur"] * 1000,
+        ist=ist,
+        pdf_seite=haushaltsjahr_zeile["quelle"],
+    )
+    abweichungen = [punkt] if abs(punkt.abweichung) > REGEL5_TOLERANZ_GEP_EURO else []
+    return 1, abweichungen
+
+
+def _pruefe_regel5_eigenkapital_jahresergebnis(
+    *, eigenkapital: pl.DataFrame, planwerte_ergebnisplan: Planwerte
+) -> tuple[int, list[Pruefpunkt]]:
+    """D-11: Jahresergebnis (S. 311) == GEP Z. 28 je Jahr (`plan` `eigenkapital`,
+    `zeile` `jahresergebnis_gep_28`)."""
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for zeile in eigenkapital.filter(pl.col("posten") == "jahresergebnis").iter_rows(named=True):
+        soll = planwerte_ergebnisplan.wert("GESAMT", "", "28", zeile["jahr"], zeile["wertart"])
+        geprueft += 1
+        punkt = Pruefpunkt(
+            regel=5,
+            plan="eigenkapital",
+            ebene="GESAMT",
+            code="",
+            zeile="jahresergebnis_gep_28",
+            jahr=zeile["jahr"],
+            wertart=zeile["wertart"],
+            soll=soll,
+            ist=zeile["betrag"],
+            pdf_seite=zeile["quelle"],
+        )
+        if abs(punkt.abweichung) > TOLERANZ_EURO:
+            abweichungen.append(punkt)
+    return geprueft, abweichungen
+
+
+def _pruefe_regel5_satzung_paragraf4(
+    *,
+    eigenkapital: pl.DataFrame,
+    planwerte_ergebnisplan: Planwerte,
+    eckwerte: Mapping[str, Mapping[str, int]],
+    haushaltsjahr: int,
+) -> tuple[int, list[Pruefpunkt]]:
+    """D-11, Research Pitfall 4: Satzung § 4 ist NICHT der rohe Jahresdelta der
+    Eigenkapital-Übersicht, sondern (a) Ausgleichsrücklage Stand Haushaltsjahr − Stand
+    Folgejahr == Eckwert `verringerung_ausgleichsruecklage` (`zeile` `ausgleichsruecklage`)
+    und (b) Σ beider Eckwerte (Ausgleichs- und allgemeine Rücklage) == −GEP Z. 28 des
+    Haushaltsjahrs (`zeile` `summe_verringerung`)."""
+    ausgleich = eigenkapital.filter(pl.col("posten") == "ausgleichsruecklage")
+    hj_zeile = ausgleich.filter(pl.col("jahr") == haushaltsjahr)
+    folge_zeile = ausgleich.filter(pl.col("jahr") == haushaltsjahr + 1)
+    if hj_zeile.height != 1 or folge_zeile.height != 1:
+        raise PruefungsFehler(
+            "Regel 5: eigenkapital.csv hat keine eindeutige Ausgleichsrücklage-Zeile "
+            f"für Haushaltsjahr {haushaltsjahr} oder Folgejahr {haushaltsjahr + 1}"
+        )
+    hj = hj_zeile.row(0, named=True)
+    folge = folge_zeile.row(0, named=True)
+    verringerung_ausgleich = hj["betrag"] - folge["betrag"]
+
+    eckwert_ausgleich = eckwerte["verringerung_ausgleichsruecklage"]
+    eckwert_allgemein = eckwerte["verringerung_allgemeine_ruecklage"]
+
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+
+    geprueft += 1
+    punkt_ausgleich = Pruefpunkt(
+        regel=5,
+        plan="satzung_paragraf4",
+        ebene="GESAMT",
+        code="",
+        zeile="ausgleichsruecklage",
+        jahr=haushaltsjahr,
+        wertart=hj["wertart"],
+        soll=eckwert_ausgleich["wert"],
+        ist=verringerung_ausgleich,
+        pdf_seite=eckwert_ausgleich["pdf_seite"],
+    )
+    if abs(punkt_ausgleich.abweichung) > TOLERANZ_EURO:
+        abweichungen.append(punkt_ausgleich)
+
+    gep_28 = planwerte_ergebnisplan.wert("GESAMT", "", "28", haushaltsjahr, hj["wertart"])
+    geprueft += 1
+    punkt_summe = Pruefpunkt(
+        regel=5,
+        plan="satzung_paragraf4",
+        ebene="GESAMT",
+        code="",
+        zeile="summe_verringerung",
+        jahr=haushaltsjahr,
+        wertart=hj["wertart"],
+        soll=-gep_28,
+        ist=eckwert_ausgleich["wert"] + eckwert_allgemein["wert"],
+        pdf_seite=eckwert_ausgleich["pdf_seite"],
+    )
+    if abs(punkt_summe.abweichung) > TOLERANZ_EURO:
+        abweichungen.append(punkt_summe)
+
+    return geprueft, abweichungen
+
+
+def _pruefe_regel5_ve_uebersicht(
+    *,
+    ve_uebersicht: pl.DataFrame,
+    ve_faelligkeiten: pl.DataFrame,
+    planwerte_finanzplan: Planwerte,
+    haushaltsjahr: int,
+) -> tuple[int, list[Pruefpunkt], list[Luecke]]:
+    """D-11: VE-Gesamtbetrag == GFP-VE Z. 30 (`zeile` `summe_gfp_ve`) und je (Produkt,
+    Fälligkeitsjahr) die VE-Übersicht gegen `ve_faelligkeiten.csv` (`zeile`
+    `faellig_{produkt}`); ein Paar nur in einer Quelle ist eine `Luecke` (structural,
+    keine Betragsabweichung, 03-03-Mechanismus)."""
+    gesamtbetrag_zeilen = ve_uebersicht.filter(
+        pl.col("ist_gesamt") & pl.col("faellig_jahr").is_null()
+    )
+    if gesamtbetrag_zeilen.height != 1:
+        raise PruefungsFehler(
+            "Regel 5: ve_uebersicht.csv hat keine eindeutige VE-Gesamtbetrag-Summenzeile"
+        )
+    gesamtbetrag = gesamtbetrag_zeilen.row(0, named=True)
+
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    luecken: list[Luecke] = []
+
+    soll_gfp_ve = planwerte_finanzplan.wert("GESAMT", "", "30", haushaltsjahr, "ve")
+    geprueft += 1
+    punkt_summe = Pruefpunkt(
+        regel=5,
+        plan="ve_uebersicht",
+        ebene="GESAMT",
+        code="",
+        zeile="summe_gfp_ve",
+        jahr=haushaltsjahr,
+        wertart="ve",
+        soll=soll_gfp_ve,
+        ist=gesamtbetrag["betrag_teur"] * 1000,
+        pdf_seite=gesamtbetrag["quelle"],
+    )
+    if abs(punkt_summe.abweichung) > TOLERANZ_EURO:
+        abweichungen.append(punkt_summe)
+
+    einzel = ve_uebersicht.filter(~pl.col("ist_gesamt"))
+    ist_gruppiert = einzel.group_by(["produkt", "faellig_jahr"]).agg(
+        pl.col("betrag_teur").sum().alias("betrag_teur"), pl.col("quelle").min().alias("quelle")
+    )
+    soll_gruppiert = ve_faelligkeiten.group_by(["produkt", "jahr"]).agg(
+        pl.col("betrag").sum().alias("betrag"), pl.col("pdf_seite").min().alias("pdf_seite")
+    )
+    ist_dict = {
+        (z["produkt"], z["faellig_jahr"]): (z["betrag_teur"] * 1000, z["quelle"])
+        for z in ist_gruppiert.iter_rows(named=True)
+    }
+    soll_dict = {
+        (z["produkt"], z["jahr"]): (z["betrag"], z["pdf_seite"])
+        for z in soll_gruppiert.iter_rows(named=True)
+    }
+
+    for produkt, jahr in sorted(set(ist_dict) | set(soll_dict)):
+        in_ve_uebersicht = (produkt, jahr) in ist_dict
+        in_ve_faelligkeiten = (produkt, jahr) in soll_dict
+        if in_ve_uebersicht and in_ve_faelligkeiten:
+            ist, ist_seite = ist_dict[(produkt, jahr)]
+            soll, soll_seite = soll_dict[(produkt, jahr)]
+            geprueft += 1
+            punkt = Pruefpunkt(
+                regel=5,
+                plan="ve_uebersicht",
+                ebene="P",
+                code=produkt,
+                zeile=f"faellig_{produkt}",
+                jahr=jahr,
+                wertart="ve",
+                soll=soll,
+                ist=ist,
+                pdf_seite=soll_seite,
+            )
+            if abs(punkt.abweichung) > TOLERANZ_EURO:
+                abweichungen.append(punkt)
+        elif in_ve_uebersicht:
+            _, ist_seite = ist_dict[(produkt, jahr)]
+            luecken.append(
+                Luecke(
+                    regel=5,
+                    ebene="P",
+                    code=produkt,
+                    merkmal=f"Fälligkeit {jahr}: nur in ve_uebersicht.csv",
+                    pdf_seite=ist_seite,
+                )
+            )
+        else:
+            _, soll_seite = soll_dict[(produkt, jahr)]
+            luecken.append(
+                Luecke(
+                    regel=5,
+                    ebene="P",
+                    code=produkt,
+                    merkmal=f"Fälligkeit {jahr}: nur in ve_faelligkeiten.csv",
+                    pdf_seite=soll_seite,
+                )
+            )
+
+    return geprueft, abweichungen, luecken
+
+
+def pruefe_regel5_schulden_ruecklagen_ve(
+    *,
+    verbindlichkeiten: pl.DataFrame,
+    eigenkapital: pl.DataFrame,
+    ve_uebersicht: pl.DataFrame,
+    ve_faelligkeiten: pl.DataFrame,
+    planwerte_ergebnisplan: Planwerte,
+    planwerte_finanzplan: Planwerte,
+    eckwerte: Mapping[str, Mapping[str, int]],
+    haushaltsjahr: int,
+) -> tuple[int, list[Pruefpunkt], list[Luecke]]:
+    """Orchestriert die D-11 bis D-14-Erweiterungen von Regel 5 (Schulden, Rücklagen,
+    VE): Eigenkapital-Summe, Kredit-Fortschreibung, Jahresergebnis vs. GEP Z. 28,
+    Satzung § 4 und die VE-Übersicht gegen `ve_faelligkeiten.csv`."""
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    luecken: list[Luecke] = []
+
+    geprueft_ek, abweichungen_ek = _pruefe_regel5_eigenkapital_summe(eigenkapital=eigenkapital)
+    geprueft += geprueft_ek
+    abweichungen += abweichungen_ek
+
+    geprueft_kredite, abweichungen_kredite = _pruefe_regel5_kredite_fortschreibung(
+        verbindlichkeiten=verbindlichkeiten,
+        planwerte_finanzplan=planwerte_finanzplan,
+        haushaltsjahr=haushaltsjahr,
+    )
+    geprueft += geprueft_kredite
+    abweichungen += abweichungen_kredite
+
+    (
+        geprueft_jahresergebnis,
+        abweichungen_jahresergebnis,
+    ) = _pruefe_regel5_eigenkapital_jahresergebnis(
+        eigenkapital=eigenkapital, planwerte_ergebnisplan=planwerte_ergebnisplan
+    )
+    geprueft += geprueft_jahresergebnis
+    abweichungen += abweichungen_jahresergebnis
+
+    geprueft_satzung, abweichungen_satzung = _pruefe_regel5_satzung_paragraf4(
+        eigenkapital=eigenkapital,
+        planwerte_ergebnisplan=planwerte_ergebnisplan,
+        eckwerte=eckwerte,
+        haushaltsjahr=haushaltsjahr,
+    )
+    geprueft += geprueft_satzung
+    abweichungen += abweichungen_satzung
+
+    geprueft_ve, abweichungen_ve, luecken_ve = _pruefe_regel5_ve_uebersicht(
+        ve_uebersicht=ve_uebersicht,
+        ve_faelligkeiten=ve_faelligkeiten,
+        planwerte_finanzplan=planwerte_finanzplan,
+        haushaltsjahr=haushaltsjahr,
+    )
+    geprueft += geprueft_ve
+    abweichungen += abweichungen_ve
+    luecken += luecken_ve
+
+    return geprueft, abweichungen, luecken
+
+
 def _regel9_ist_werte(
-    *, meta: Mapping, zuwendungen: pl.DataFrame, haushaltsjahr: int
+    *,
+    meta: Mapping,
+    zuwendungen: pl.DataFrame,
+    verbindlichkeiten: pl.DataFrame | None,
+    haushaltsjahr: int,
 ) -> dict[str, int]:
-    """Ist-Werte der Regel-9-Eckwerte (D-10, D-20): `meta.json`-Pfade und
-    `zuwendungen.csv`-Posten `schluesselzuweisung` des Haushaltsjahrs und Vorjahrs."""
+    """Ist-Werte der Regel-9-Eckwerte (D-10, D-14, D-20): `meta.json`-Pfade,
+    `zuwendungen.csv`-Posten `schluesselzuweisung` des Haushaltsjahrs und Vorjahrs,
+    und (wenn `verbindlichkeiten` übergeben ist, 04-02 Task 3) die Pro-Kopf-Verschuldung
+    des Vorjahrs nach der Vorbericht-Definition (D-14, `manuell.schuldenstand_euro`/
+    `pro_kopf_euro`)."""
 
     def _zuwendung(posten: str, jahr: int) -> int:
         zeile = zuwendungen.filter((pl.col("posten") == posten) & (pl.col("jahr") == jahr))
@@ -1381,7 +1737,7 @@ def _regel9_ist_werte(
 
     hebesaetze = meta["hebesaetze"]
     kreisumlage = meta["kreisumlage"]
-    return {
+    werte = {
         "einwohner": meta["einwohner"]["wert"],
         "hebesatz_grundsteuer_a": hebesaetze["grundsteuer_a"]["wert"],
         "hebesatz_grundsteuer_b": hebesaetze["grundsteuer_b"]["wert"],
@@ -1395,6 +1751,12 @@ def _regel9_ist_werte(
         "schluesselzuweisung_teur": _zuwendung("schluesselzuweisung", haushaltsjahr),
         "schluesselzuweisung_vorjahr_teur": _zuwendung("schluesselzuweisung", haushaltsjahr - 1),
     }
+    if verbindlichkeiten is not None:
+        schuldenstand_vorjahr = schuldenstand_euro(verbindlichkeiten, haushaltsjahr - 1)
+        werte["pro_kopf_verschuldung_vorjahr"] = pro_kopf_euro(
+            schuldenstand_vorjahr, meta["einwohner"]["wert"]
+        )
+    return werte
 
 
 def _pruefe_regel9(
@@ -1403,10 +1765,16 @@ def _pruefe_regel9(
     meta: Mapping,
     zuwendungen: pl.DataFrame,
     haushaltsjahr: int,
+    verbindlichkeiten: pl.DataFrame | None = None,
 ) -> Regelergebnis:
     """Regel 9 – Eckwerte (Anhang B.6, D-10, D-14, D-20): exakter Soll/Ist-Vergleich
     (Toleranz 0, `toleranz_fuer(9)`) für jeden Namen in `REGEL9_ECKWERTE`."""
-    ist_werte = _regel9_ist_werte(meta=meta, zuwendungen=zuwendungen, haushaltsjahr=haushaltsjahr)
+    ist_werte = _regel9_ist_werte(
+        meta=meta,
+        zuwendungen=zuwendungen,
+        verbindlichkeiten=verbindlichkeiten,
+        haushaltsjahr=haushaltsjahr,
+    )
 
     geprueft = 0
     abweichungen: list[Pruefpunkt] = []
@@ -1962,6 +2330,19 @@ def pruefe_alles(
     investitionen_pb = lies_investitionen_pb_csv(daten_wurzel / INVESTITIONEN_PB_CSV)
     ve_faelligkeiten = lies_ve_faelligkeiten_csv(daten_wurzel / VE_FAELLIGKEITEN_CSV)
     produkte = lies_produkte_json(daten_wurzel / PRODUKTE_JSON)
+    verbindlichkeiten_roh = lies_vorbericht_csv(daten_wurzel / VERBINDLICHKEITEN_CSV)
+    erwartete_verbindlichkeiten_tabellen = {"verbindlichkeiten", "buergschaften"}
+    tatsaechliche_verbindlichkeiten_tabellen = set(
+        verbindlichkeiten_roh["tabelle"].unique().to_list()
+    )
+    if tatsaechliche_verbindlichkeiten_tabellen != erwartete_verbindlichkeiten_tabellen:
+        raise PruefungsFehler(
+            "Regel 5: verbindlichkeiten.csv hat eine abweichende Tabellenmenge (gefunden: "
+            f"{sorted(tatsaechliche_verbindlichkeiten_tabellen)}, erwartet: "
+            f"{sorted(erwartete_verbindlichkeiten_tabellen)})"
+        )
+    eigenkapital = lies_eigenkapital_csv(daten_wurzel / EIGENKAPITAL_CSV)
+    ve_uebersicht = lies_ve_uebersicht_csv(daten_wurzel / VE_UEBERSICHT_CSV)
     vorbericht = {
         "steuerarten": lies_vorbericht_csv(daten_wurzel / STEUERARTEN_CSV),
         "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
@@ -1970,6 +2351,8 @@ def pruefe_alles(
         **zerlege_weitere_vorberichtstabellen(
             lies_vorbericht_csv(daten_wurzel / WEITERE_VORBERICHTSTABELLEN_CSV)
         ),
+        "verbindlichkeiten": verbindlichkeiten_roh.filter(pl.col("tabelle") == "verbindlichkeiten"),
+        "buergschaften": verbindlichkeiten_roh.filter(pl.col("tabelle") == "buergschaften"),
     }
     meta = lies_meta_json(daten_wurzel / META_JSON)
     eckwerte = sollwerte.get("eckwerte", {})
@@ -2007,6 +2390,22 @@ def pruefe_alles(
         meta=meta,
         eckwerte=eckwerte,
     )
+    geprueft_d11, abweichungen_d11, luecken_d11 = pruefe_regel5_schulden_ruecklagen_ve(
+        verbindlichkeiten=vorbericht["verbindlichkeiten"],
+        eigenkapital=eigenkapital,
+        ve_uebersicht=ve_uebersicht,
+        ve_faelligkeiten=ve_faelligkeiten,
+        planwerte_ergebnisplan=Planwerte(ergebnisplan, datei="ergebnisplan"),
+        planwerte_finanzplan=Planwerte(finanzplan, datei="finanzplan"),
+        eckwerte=eckwerte,
+        haushaltsjahr=jahrgang.haushaltsjahr,
+    )
+    regel5 = replace(
+        regel5,
+        geprueft=regel5.geprueft + geprueft_d11,
+        abweichungen=regel5.abweichungen + tuple(abweichungen_d11),
+        luecken=regel5.luecken + tuple(luecken_d11),
+    )
     regel6 = _pruefe_regel6(
         investitionen=investitionen,
         investitionen_pb=investitionen_pb,
@@ -2032,6 +2431,7 @@ def pruefe_alles(
         eckwerte=eckwerte,
         meta=meta,
         zuwendungen=vorbericht["zuwendungen"],
+        verbindlichkeiten=vorbericht["verbindlichkeiten"],
         haushaltsjahr=jahrgang.haushaltsjahr,
     )
 

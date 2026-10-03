@@ -362,3 +362,20 @@ pdf_seite = 28
 [eckwerte.kreisumlage_umlage_fussnote]
 wert = 11500000
 pdf_seite = 46
+
+# Satzung § 4 (Phase 4, Task 3, D-11, Research Pitfall 4): dieselben Beträge wie
+# [satzung] in der Haushaltssatzung (PDF S. 9), hier als Eckwerte für den Regel-5-
+# Vergleich gegen die Ausgleichsrücklagen-Fortschreibung in eigenkapital.csv.
+[eckwerte.verringerung_ausgleichsruecklage]
+wert = 2132213
+pdf_seite = 9
+
+[eckwerte.verringerung_allgemeine_ruecklage]
+wert = 221293
+pdf_seite = 9
+
+# Pro-Kopf-Verschuldung Ende Vorjahr (Anhang B.6, D-14): Investitionskredite +
+# NRW.Bank-Mittel Ende 2025 (7.710 T€) / 11.741 Einwohner, abgerundet (Vorbericht S. 25).
+[eckwerte.pro_kopf_verschuldung_vorjahr]
+wert = 656
+pdf_seite = 25

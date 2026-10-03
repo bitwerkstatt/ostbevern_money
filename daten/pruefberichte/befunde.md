@@ -55,11 +55,28 @@ Fußnotentext „rd. 11,5 Mio. €“ selbst gerundet ist). In allen Fällen gil
 Regel 9 (Eckwerte, Anhang B.6, D-10/D-14) vergleicht jeden `[eckwerte.*]`-Sollwert exakt (0 €
 bzw. 0 Einheiten Toleranz, `pruefung.TOLERANZ_JE_REGEL`) gegen den aus `meta.json` oder
 `zuwendungen.csv` hergeleiteten Ist-Wert; `plan` ist `anhang_b6`, `ebene` `GESAMT`, `zeile` der
-Eckwert-Name (z. B. `hebesatz_kreisumlage_promille`), `jahr` das Haushaltsjahr, `wertart`
-`ansatz`. Die Einheit eines Eckwerts (Prozent, Promille, T€, Personen) ist dieselbe wie im
-Sollwert selbst — Regel 9 rechnet nichts um. Ein `[eckwerte.*]`-Schlüssel, den weder Regel 5
-noch Regel 9 konsumiert, bricht `pruefe_alles` mit `PruefungsFehler` ab (kein Sollwert bleibt
-unbewacht).
+Eckwert-Name (z. B. `hebesatz_kreisumlage_promille`, `pro_kopf_verschuldung_vorjahr`), `jahr`
+das Haushaltsjahr, `wertart` `ansatz`. Die Einheit eines Eckwerts (Prozent, Promille, T€,
+Personen, Euro) ist dieselbe wie im Sollwert selbst — Regel 9 rechnet nichts um. Ein
+`[eckwerte.*]`-Schlüssel, den weder Regel 5 noch Regel 9 konsumiert, bricht `pruefe_alles` mit
+`PruefungsFehler` ab (kein Sollwert bleibt unbewacht).
+
+Die D-11-Erweiterungen (Schulden, Rücklagen, VE, Task 04-02/3) prüfen `verbindlichkeiten.csv`,
+`eigenkapital.csv` und `ve_uebersicht.csv` quer gegen Extrahiertes: `plan` `vorbericht_eigenkapital`
+`zeile` `summe_posten` ist dieselbe Stufe-(a)-Prüfung wie bei den Vorberichtstabellen, aber
+bereits in int-Euro (kein ×1000, D-12). `plan` `verbindlichkeiten` `zeile`
+`kredite_fortschreibung` vergleicht die gedruckte Investitionskredit-Zeile Ende Haushaltsjahr
+gegen `manuell.investitionskredite_ende(Ende Vorjahr, GFP Z. 33, GFP Z. 35)`, Toleranz ±1.000 €.
+`plan` `eigenkapital` `zeile` `jahresergebnis_gep_28` vergleicht das gedruckte Jahresergebnis
+(S. 311) je Jahr gegen Zeile 28 des Gesamtergebnisplans. `plan` `satzung_paragraf4` prüft
+Research Pitfall 4 (nicht der rohe Jahresdelta!): `zeile` `ausgleichsruecklage` vergleicht
+Ausgleichsrücklage Stand Haushaltsjahr − Stand Folgejahr gegen den Eckwert
+`verringerung_ausgleichsruecklage`, `zeile` `summe_verringerung` vergleicht die Summe beider
+Satzungs-§-4-Eckwerte gegen −GEP Z. 28 des Haushaltsjahrs. `plan` `ve_uebersicht` `zeile`
+`summe_gfp_ve` vergleicht den VE-Gesamtbetrag (S. 309) gegen die GFP-Zeile 30 (Wertart `ve`);
+`zeile` `faellig_{produkt}` vergleicht je (Produkt, Fälligkeitsjahr) die VE-Übersicht gegen
+`ve_faelligkeiten.csv` — ein Paar, das nur in einer der beiden Quellen vorkommt, ist eine
+Lücke (strukturell, nicht über diese Datei abdeckbar, wie bei Regel 6).
 
 Ein Befund deckt eine Abweichung nur ab, wenn Regel, Plan, Ebene, Code, Zeile, Jahr und
 Wertart übereinstimmen **und** die tatsächliche Abweichung um höchstens `toleranz_fuer(regel)`
@@ -140,6 +157,7 @@ Parsing-Fehlern.
 | 5 | vorbericht_sonstige_aufwendungen | GESAMT |  | summe_posten | 2027 | planung | 2000 | 48 | Sonstige ordentliche Aufwendungen, Spalte Planung 2027 (S. 48): Summe der 16 Posten ergibt 1.244 T€, gedruckt ist die Gesamtzeile mit 1.242 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 2 T€ im Vorbericht selbst. |
 | 5 | vorbericht_sonstige_aufwendungen | GESAMT |  | summe_posten | 2028 | planung | -1000 | 48 | Sonstige ordentliche Aufwendungen, Spalte Planung 2028 (S. 48): Summe der 16 Posten ergibt 1.797 T€, gedruckt ist die Gesamtzeile mit 1.798 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
 | 5 | vorbericht_sonstige_aufwendungen | GESAMT |  | summe_posten | 2029 | planung | 1000 | 48 | Sonstige ordentliche Aufwendungen, Spalte Planung 2029 (S. 48): Summe der 16 Posten ergibt 2.401 T€, gedruckt ist die Gesamtzeile mit 2.400 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | eigenkapital | GESAMT |  | jahresergebnis_gep_28 | 2025 | ansatz | 1331520 | 311 | Entwicklung des Eigenkapitals, Spalte 2025/Plan (S. 311): Jahresergebnis ist mit "0,00 €" gedruckt. Zeile 28 des Gesamtergebnisplans (Anhang B.1, S. 62) weist für 2025 −1.331.520 € aus. Wortweise gegen das PDF verifiziert; die Eigenkapitalübersicht druckt für dieses eine Jahr einen von der Planzeile abweichenden, offenbar vor der letzten Planfortschreibung eingefrorenen Wert — kein Extraktionsfehler (D-11, D-12). |
 
 ## Beobachtungen ohne Prüfregel
 
