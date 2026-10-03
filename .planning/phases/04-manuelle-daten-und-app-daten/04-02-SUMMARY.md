@@ -239,3 +239,10 @@ None - no external service configuration required.
 ---
 *Phase: 04-manuelle-daten-und-app-daten*
 *Completed: 2026-10-03*
+
+## Self-Check: PASSED
+
+- All `key-files.created` paths verified present on disk with `[ -f ]`.
+- All three task commits (`684c872`, `cabf5c1`, `ad850bb`) and the metadata commit (`14bd3d8`) confirmed via `git log --oneline --all`.
+- Re-ran every `<acceptance_criteria>` check from all three tasks: all pass (verified via individual `grep`/`test`/`uv run python -c` commands matching the plan's exact assertions).
+- Re-ran the plan-level `<verification>` block: `uv run --directory pipeline pytest -q` (370 passed), `alle.py --jahr 2026` followed by `git diff --exit-code -- daten app/src/data` and an untracked-file check (both clean), app `type-check`/`lint`/`format:check` in a fresh scratch copy (all green).
