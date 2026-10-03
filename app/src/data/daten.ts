@@ -3,8 +3,12 @@
 // die JSON-Struktur vom Typ in `typen.ts` ab, schlägt `npm run type-check` fehl.
 
 import haushaltJson from './haushalt.json'
+import investitionenJson from './investitionen.json'
+import produkteJson from './produkte.json'
 import stellenplanJson from './stellenplan.json'
-import type { Haushalt, Stellenplan } from './typen'
+import type { Haushalt, Investitionen, Produkt, Stellenplan } from './typen'
 
 export const haushalt: Haushalt = haushaltJson
 export const stellenplan: Stellenplan = stellenplanJson
+export const produkte: Produkt[] = produkteJson
+export const investitionen: Investitionen = investitionenJson

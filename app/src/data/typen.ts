@@ -197,3 +197,144 @@ export interface Stellenplan {
   /** Alle Stellenplan-Zeilen in CSV-Reihenfolge. */
   zeilen: StellenplanZeile[]
 }
+
+/** Ein einzelner Jahreswert einer Grundzahl (EXTR-07, D-13, D-21). */
+export interface GrundzahlWert {
+  jahr: number
+  /** `int`, wenn `nachkommastellen` der Grundzahl 0 ist, sonst mit `nachkommastellen`
+   * Nachkommastellen gerundet (Gebühren, Quoten). */
+  wert: number
+  /** Stichtag- oder Fußnotentext, `null` ohne Hinweis. */
+  hinweis: string | null
+}
+
+/** Eine Grundzahl (Kennzahl) eines Produkts, gruppiert nach `position` (EXTR-07, D-13). */
+export interface Grundzahl {
+  position: number
+  /** Gruppenüberschrift, `null` ohne eigene Gruppe. */
+  gruppe: string | null
+  bezeichnung: string
+  einheit: string
+  nachkommastellen: number
+  pdf_seite: number
+  werte: GrundzahlWert[]
+}
+
+/** Ein Erläuterungsposten eines Produkts (EXTR-08). */
+export interface Erlaeuterung {
+  block: number
+  position: number
+  /** Zweistellige Zeilennummern, auf die sich der Posten bezieht, `null` ohne Bezug. */
+  zu_zeilen: string[] | null
+  /** `null` für eine Freitextzeile. */
+  betrag: number | null
+  text: string
+  pdf_seite: number
+}
+
+/** Ein Produkt der App (DATA-01, D-13, D-21): `daten/aufbereitet/produkte.json`
+ * (bereits namensfrei, Phase 3 D-09) plus seine Grundzahlen. */
+export interface Produkt {
+  code: string
+  name: string
+  pb: string
+  pg: string
+  fachbereich: string
+  gremium: string
+  beschreibung: string
+  leistungen: string[]
+  auftragsgrundlage: string
+  bindungsgrad: string
+  bindungsgrad_original: string
+  klassifizierung: string
+  zielgruppe: string
+  ziele: string
+  erlaeuterungen: Erlaeuterung[]
+  pdf_seiten: number[]
+  grundzahlen: Grundzahl[]
+}
+
+/** Eine Investitionsmaßnahme (D-13, D-21), gruppiert nach Produkt/Maßnahme/Konto. */
+export interface Massnahme {
+  produkt: string
+  /** Produktbereichscode, über die Hierarchie aus `produkt` abgeleitet. */
+  pb: string
+  massnahme_id: string
+  massnahme_name: string
+  konto: string
+  konto_name: string
+  /** "einzahlung" | "auszahlung". */
+  richtung: string
+  /** Investitionsart (z. B. "bau", "ausstattung", "grundstuecke"), `null` für
+   * Finanzierungstätigkeit-Konten. */
+  art: string | null
+  /** Betrag je Eintrag von `jahre` (haushalt.json-Jahre), `null` ohne Wert für dieses
+   * Jahr. */
+  werte: (number | null)[]
+  /** Verpflichtungsermächtigung zum Haushaltsjahr, `null` ohne VE. */
+  ve: number | null
+  pdf_seite: number
+}
+
+/** Eine VE-Fälligkeitszeile (EXTR-09, D-13, D-21). */
+export interface VeFaelligkeit {
+  produkt: string
+  massnahme_id: string
+  konto: string
+  jahr: number
+  betrag: number
+  pdf_seite: number
+}
+
+/** Finanzierung der Investitionstätigkeit (GFP Z. 23, 30, 33, 35), D-13, D-21. */
+export interface Finanzierung {
+  /** 1-basierte PDF-Seite des Gesamtfinanzplans. */
+  quelle: number
+  zeilen: {
+    einzahlungen_investitionen: number[]
+    auszahlungen_investitionen: number[]
+    kreditaufnahme: number[]
+    tilgung: number[]
+  }
+}
+
+/** Schuldenstand nach Vorbericht-Definition (D-14, D-21): Investitionskredite plus die
+ * als Transferverbindlichkeit gebuchten NRW.Bank-Mittel. Fortgeschrieben ab dem letzten
+ * gedruckten Stand (`berechnet: true`), NRW.Bank-Anteil dabei konstant (Pitfall 5). */
+export interface Schuldenstand {
+  /** 1-basierte PDF-Seite der Verbindlichkeiten-Tabelle (S. 310). */
+  quelle: number
+  einwohner: number
+  /** Je Eintrag von `jahre`. */
+  investitionskredite: number[]
+  nrw_bank: number[]
+  /** `null` für ein Jahr ohne gedruckten Stand. */
+  liquiditaetskredite: (number | null)[]
+  gesamt: number[]
+  /** Abgerundet (`pro_kopf_euro`, ganzzahlige Division). */
+  pro_kopf: number[]
+  /** `true` für ein fortgeschriebenes (nicht gedrucktes) Jahr. */
+  berechnet: boolean[]
+  /** Deutscher Formelhinweis, identisch für jedes Jahr (D-15: keine Formatierung). */
+  formel: string
+}
+
+/** Eine Bürgschaft (nachrichtlich, D-21). */
+export interface Buergschaft {
+  name: string
+  /** Je Eintrag von `jahre`, `null` ohne gedruckten Wert. */
+  werte: (number | null)[]
+}
+
+/** Gesamtstruktur von `investitionen.json` (D-13, D-14, D-21). */
+export interface Investitionen {
+  haushaltsjahr: number
+  jahre: number[]
+  wertarten: string[]
+  massnahmen: Massnahme[]
+  ve_faelligkeiten: VeFaelligkeit[]
+  finanzierung: Finanzierung
+  schuldenstand: Schuldenstand
+  /** Schlüssel = Postenname (z. B. "bbo_buergschaft"). */
+  buergschaften: Record<string, Buergschaft>
+}

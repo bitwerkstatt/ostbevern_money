@@ -57,7 +57,12 @@ def kontext() -> tuple[pl.DataFrame, pl.DataFrame]:
 def test_haushalt_json_steuerarten_aus_manueller_tabelle(tmp_path: Path) -> None:
     app_daten_wurzel = tmp_path / "app"
     pfade = erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=app_daten_wurzel)
-    assert pfade == [app_daten_wurzel / HAUSHALT_JSON, app_daten_wurzel / STELLENPLAN_JSON]
+    assert pfade == [
+        app_daten_wurzel / HAUSHALT_JSON,
+        app_daten_wurzel / STELLENPLAN_JSON,
+        app_daten_wurzel / app_daten.PRODUKTE_APP_JSON,
+        app_daten_wurzel / app_daten.INVESTITIONEN_JSON,
+    ]
 
     daten = json.loads((app_daten_wurzel / HAUSHALT_JSON).read_text(encoding="utf-8"))
     steuerarten = daten["vorbericht"]["steuerarten"]
@@ -90,7 +95,12 @@ def test_app_json_deterministisch(tmp_path: Path) -> None:
     erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=ziel_a)
     erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=ziel_b)
 
-    for json_pfad in (HAUSHALT_JSON, STELLENPLAN_JSON):
+    for json_pfad in (
+        HAUSHALT_JSON,
+        STELLENPLAN_JSON,
+        app_daten.PRODUKTE_APP_JSON,
+        app_daten.INVESTITIONEN_JSON,
+    ):
         inhalt_a = (ziel_a / json_pfad).read_bytes()
         inhalt_b = (ziel_b / json_pfad).read_bytes()
         assert inhalt_a == inhalt_b
@@ -506,6 +516,89 @@ def test_haushalt_json_knoten_und_ergebnisplan(tmp_path: Path) -> None:
     assert daten["ergebnisplan"]["16"]["berechnet"]["ueberschuss"][index_haushaltsjahr] is True
     assert list(daten["finanzplan"]) == ["GESAMT"]
     assert "interne_ertraege" not in json.dumps(daten["ergebnisplan"])
+
+
+def test_produkte_app_json_eingecheckt_aktuell(tmp_path: Path) -> None:
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    neu = (tmp_path / app_daten.PRODUKTE_APP_JSON).read_bytes()
+    eingecheckt = (APP_DATEN_WURZEL / app_daten.PRODUKTE_APP_JSON).read_bytes()
+    assert neu == eingecheckt
+
+
+def test_investitionen_json_eingecheckt_aktuell(tmp_path: Path) -> None:
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    neu = (tmp_path / app_daten.INVESTITIONEN_JSON).read_bytes()
+    eingecheckt = (APP_DATEN_WURZEL / app_daten.INVESTITIONEN_JSON).read_bytes()
+    assert neu == eingecheckt
+
+
+def test_produkte_json_ohne_personenfelder(tmp_path: Path) -> None:
+    """D-13, D-21: 63 Datensätze, exakt APP_PRODUKT_SCHLUESSEL, keine PERSONENFELDER;
+    Grundzahlen-Werte sind int bei nachkommastellen == 0."""
+    from ostbevern.produkte import PERSONENFELDER
+
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    produkte = json.loads((tmp_path / app_daten.PRODUKTE_APP_JSON).read_text(encoding="utf-8"))
+    assert len(produkte) == 63
+    for produkt in produkte:
+        assert set(produkt) == set(app_daten.APP_PRODUKT_SCHLUESSEL)
+        for feld in PERSONENFELDER:
+            assert feld not in produkt
+        assert "grundzahlen" in produkt
+        for eintrag in produkt["grundzahlen"]:
+            if eintrag["nachkommastellen"] == 0:
+                for wert in eintrag["werte"]:
+                    assert isinstance(wert["wert"], int)
+
+
+def test_investitionen_massnahmen_summen_und_pb(tmp_path: Path) -> None:
+    """D-13: Σ werte (Auszahlung) im Haushaltsjahr == GFP Z. 30, Σ (Einzahlung) ==
+    GFP Z. 23 (wie Regel 6); jede Maßnahme hat ein pb."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / app_daten.INVESTITIONEN_JSON).read_text(encoding="utf-8"))
+    jahre = daten["jahre"]
+    index_haushaltsjahr = jahre.index(daten["haushaltsjahr"])
+
+    finanzplan = lies_plan_csv(DATEN_WURZEL / FINANZPLAN_CSV)
+    planwerte = Planwerte(finanzplan, datei="finanzplan")
+    wertart_haushaltsjahr = daten["wertarten"][index_haushaltsjahr]
+
+    for richtung, zeile in (("auszahlung", "30"), ("einzahlung", "23")):
+        summe = sum(
+            massnahme["werte"][index_haushaltsjahr] or 0
+            for massnahme in daten["massnahmen"]
+            if massnahme["richtung"] == richtung
+        )
+        erwartet = planwerte.wert(
+            "GESAMT", "", zeile, daten["haushaltsjahr"], wertart_haushaltsjahr
+        )
+        assert summe == erwartet
+
+    for massnahme in daten["massnahmen"]:
+        assert massnahme["pb"]
+
+
+def test_investitionen_schuldenstand_fortschreibung(tmp_path: Path) -> None:
+    """D-14: gedruckte Jahre == verbindlichkeiten x1000, berechnet False; spätere Jahre
+    per Formel, NRW.Bank konstant auf dem letzten gedruckten Stand, berechnet True;
+    pro_kopf trifft 656 Ende Vorjahr; liquiditaetskredite null ohne gedruckten Stand."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / app_daten.INVESTITIONEN_JSON).read_text(encoding="utf-8"))
+    s = daten["schuldenstand"]
+    jahre = daten["jahre"]
+    i = jahre.index(daten["haushaltsjahr"])
+
+    assert s["pro_kopf"][i - 1] == 656
+    assert s["investitionskredite"][i] == 11629000
+    assert s["berechnet"][i] is False
+    assert s["berechnet"][i + 1] is True
+    assert s["nrw_bank"][i + 1] == s["nrw_bank"][i]
+    for index in range(len(jahre)):
+        assert s["gesamt"][index] == s["investitionskredite"][index] + s["nrw_bank"][index]
+    for index in range(i + 1, len(jahre)):
+        assert s["liquiditaetskredite"][index] is None
+    for index in range(0, i + 1):
+        assert s["liquiditaetskredite"][index] is not None
 
 
 def test_app_daten_liest_kein_pdf() -> None:

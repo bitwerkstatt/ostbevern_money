@@ -18,7 +18,7 @@ from pathlib import Path
 import polars as pl
 
 from ostbevern.konfiguration import PROJEKT_WURZEL, lade_jahrgang, layout_text
-from ostbevern.manuell import lies_meta_json
+from ostbevern.manuell import investitionskredite_ende, lies_meta_json, pro_kopf_euro
 from ostbevern.pruefung import (
     REGEL5_GEP_ZEILEN,
     REGEL5_TOLERANZ_GEP_EURO,
@@ -31,18 +31,28 @@ from ostbevern.schema import (
     EIGENKAPITAL_CSV,
     ERGEBNISPLAN_CSV,
     FINANZPLAN_CSV,
+    GRUNDZAHLEN_CSV,
     HIERARCHIE_CSV,
+    INVESTITIONEN_CSV,
     KITA_ZUSCHUESSE_CSV,
     META_JSON,
+    PRODUKT_SCHLUESSEL,
+    PRODUKTE_JSON,
     STELLENPLAN_CSV,
     STEUERARTEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
+    VE_FAELLIGKEITEN_CSV,
+    VERBINDLICHKEITEN_CSV,
     WEITERE_VORBERICHTSTABELLEN_CSV,
     ZUWENDUNGEN_CSV,
     lies_eigenkapital_csv,
+    lies_grundzahlen_csv,
     lies_hierarchie_csv,
+    lies_investitionen_csv,
     lies_plan_csv,
+    lies_produkte_json,
     lies_stellenplan_csv,
+    lies_ve_faelligkeiten_csv,
     lies_vorbericht_csv,
     zerlege_spaltenkopf,
 )
@@ -346,6 +356,270 @@ def baue_finanzplan(
     }
 
     return {"GESAMT": {"zeilen": zeilen_werte, "ve": ve_werte}}
+
+
+# produkte.json / investitionen.json (D-13, D-14, D-21, Plan 04-04 Task 2).
+PRODUKTE_APP_JSON = Path("produkte.json")
+APP_PRODUKT_SCHLUESSEL: tuple[str, ...] = PRODUKT_SCHLUESSEL + ("grundzahlen",)
+INVESTITIONEN_JSON = Path("investitionen.json")
+
+# Schuldenstand-Formel (D-14), identisch für jedes Jahr -- Rohtext statt Formatierung
+# (D-15 verbietet Formatierung in der Pipeline).
+_SCHULDENSTAND_FORMEL = (
+    "Investitionskredite Ende Jahr = Vorjahr + Kreditaufnahme (GFP Z. 33) − Tilgung "
+    "(GFP Z. 35); NRW.Bank-Anteil konstant auf dem zuletzt gedruckten Stand; "
+    "Pro-Kopf abgerundet."
+)
+
+
+def _eltern_kette(eltern_je_code: Mapping[str, str | None], code: str) -> list[str]:
+    """Liefert [code, eltern, elternseltern, ...] bis zum Wurzelknoten (eltern None)."""
+    kette = [code]
+    aktuell = code
+    while True:
+        eltern = eltern_je_code.get(aktuell)
+        if eltern is None:
+            break
+        kette.append(eltern)
+        aktuell = eltern
+    return kette
+
+
+def baue_produkte_json(
+    produkte: list[dict[str, object]], grundzahlen: pl.DataFrame
+) -> list[dict[str, object]]:
+    """Baut `produkte.json` der App (D-13, D-21): jedes Produkt aus
+    `daten/aufbereitet/produkte.json` (bereits namensfrei, Phase 3 D-09) plus seine
+    Grundzahlen, gruppiert nach `position`. Ein Produkt ohne exakt
+    `APP_PRODUKT_SCHLUESSEL`-Schlüsselmenge bricht mit `AppDatenFehler` ab (Allowlist
+    wie `schema.schreibe_produkte_json`)."""
+    schluessel_menge = set(APP_PRODUKT_SCHLUESSEL)
+    ergebnis: list[dict[str, object]] = []
+    for produkt in sorted(produkte, key=lambda p: p["code"]):
+        code = produkt["code"]
+        eigene = grundzahlen.filter(pl.col("produkt") == code)
+        positionen = sorted(eigene["position"].unique().to_list())
+        grundzahlen_liste: list[dict[str, object]] = []
+        for position in positionen:
+            teil = eigene.filter(pl.col("position") == position)
+            erste = teil.row(0, named=True)
+            werte = [
+                {
+                    "jahr": zeile["jahr"],
+                    "wert": (
+                        int(zeile["wert"])
+                        if zeile["nachkommastellen"] == 0
+                        else round(zeile["wert"], zeile["nachkommastellen"])
+                    ),
+                    "hinweis": zeile["hinweis"],
+                }
+                for zeile in teil.sort("jahr").iter_rows(named=True)
+            ]
+            grundzahlen_liste.append(
+                {
+                    "position": position,
+                    "gruppe": erste["gruppe"],
+                    "bezeichnung": erste["bezeichnung"],
+                    "einheit": erste["einheit"],
+                    "nachkommastellen": erste["nachkommastellen"],
+                    "pdf_seite": erste["pdf_seite"],
+                    "werte": werte,
+                }
+            )
+
+        eintrag = {**produkt, "grundzahlen": grundzahlen_liste}
+        vorhandene = set(eintrag)
+        if vorhandene != schluessel_menge:
+            raise AppDatenFehler(
+                f"produkte.json: Produkt {code!r} hat abweichende Schlüssel "
+                f"(fehlend: {sorted(schluessel_menge - vorhandene)}, "
+                f"unerwartet: {sorted(vorhandene - schluessel_menge)})"
+            )
+        ergebnis.append({schluessel: eintrag[schluessel] for schluessel in APP_PRODUKT_SCHLUESSEL})
+    return ergebnis
+
+
+def _baue_massnahmen(
+    investitionen: pl.DataFrame,
+    *,
+    hierarchie: pl.DataFrame,
+    jahre: list[int],
+) -> list[dict[str, object]]:
+    eltern_je_code = {
+        zeile["code"]: zeile["eltern_code"] for zeile in hierarchie.iter_rows(named=True)
+    }
+    pb_je_produkt: dict[str, str] = {}
+
+    gruppen = sorted(
+        investitionen.select("produkt", "massnahme_id", "konto").unique().iter_rows(named=True),
+        key=lambda z: (z["produkt"], z["massnahme_id"], z["konto"]),
+    )
+    massnahmen: list[dict[str, object]] = []
+    for schluessel in gruppen:
+        produkt = schluessel["produkt"]
+        massnahme_id = schluessel["massnahme_id"]
+        konto = schluessel["konto"]
+        teil = investitionen.filter(
+            (pl.col("produkt") == produkt)
+            & (pl.col("massnahme_id") == massnahme_id)
+            & (pl.col("konto") == konto)
+        )
+        erste = teil.row(0, named=True)
+        if produkt not in pb_je_produkt:
+            pb_je_produkt[produkt] = _eltern_kette(eltern_je_code, produkt)[-1]
+
+        werte_df = teil.filter(pl.col("wertart") != "ve")
+        werte_nach_jahr = {
+            zeile["jahr"]: zeile["betrag"] for zeile in werte_df.iter_rows(named=True)
+        }
+        werte = [werte_nach_jahr.get(jahr) for jahr in jahre]
+
+        ve_zeile = teil.filter(pl.col("wertart") == "ve")
+        ve_betrag = ve_zeile["betrag"][0] if ve_zeile.height > 0 else None
+
+        massnahmen.append(
+            {
+                "produkt": produkt,
+                "pb": pb_je_produkt[produkt],
+                "massnahme_id": massnahme_id,
+                "massnahme_name": erste["massnahme_name"],
+                "konto": konto,
+                "konto_name": erste["konto_name"],
+                "richtung": erste["richtung"],
+                "art": erste["art"],
+                "werte": werte,
+                "ve": ve_betrag,
+                "pdf_seite": int(teil["pdf_seite"].min()),
+            }
+        )
+    return massnahmen
+
+
+def baue_investitionen_json(
+    *,
+    investitionen: pl.DataFrame,
+    ve_faelligkeiten: pl.DataFrame,
+    hierarchie: pl.DataFrame,
+    verbindlichkeiten: pl.DataFrame,
+    finanzplan: pl.DataFrame,
+    meta: Mapping[str, object],
+    haushaltsjahr: int,
+    jahre: list[int],
+    wertarten: list[str],
+) -> dict[str, object]:
+    """Baut `investitionen.json` der App (D-13, D-14, D-21): Maßnahmen (gruppiert nach
+    Produkt/Maßnahme/Konto), VE-Fälligkeiten, Finanzierung (GFP), Schuldenstand
+    (fortgeschrieben ab dem letzten gedruckten Stand, D-14) und Bürgschaften."""
+    massnahmen = _baue_massnahmen(investitionen, hierarchie=hierarchie, jahre=jahre)
+
+    ve_faelligkeiten_liste = [
+        {
+            "produkt": zeile["produkt"],
+            "massnahme_id": zeile["massnahme_id"],
+            "konto": zeile["konto"],
+            "jahr": zeile["jahr"],
+            "betrag": zeile["betrag"],
+            "pdf_seite": zeile["pdf_seite"],
+        }
+        for zeile in ve_faelligkeiten.sort(["produkt", "massnahme_id", "konto", "jahr"]).iter_rows(
+            named=True
+        )
+    ]
+
+    planwerte_finanzplan = Planwerte(finanzplan, datei="finanzplan")
+    gfp_pdf_seite = int(finanzplan.filter(pl.col("ebene") == "GESAMT")["pdf_seite"][0])
+    finanzierung_zeile_je_kanonisch = {
+        "einzahlungen_investitionen": "23",
+        "auszahlungen_investitionen": "30",
+        "kreditaufnahme": "33",
+        "tilgung": "35",
+    }
+    finanzierung = {
+        "quelle": gfp_pdf_seite,
+        "zeilen": {
+            kanonisch: [
+                planwerte_finanzplan.wert("GESAMT", "", zeile, jahr, wertart)
+                for jahr, wertart in zip(jahre, wertarten, strict=True)
+            ]
+            for kanonisch, zeile in finanzierung_zeile_je_kanonisch.items()
+        },
+    }
+
+    verbindlichkeiten_df = verbindlichkeiten.filter(pl.col("tabelle") == "verbindlichkeiten")
+    einwohner = meta["einwohner"]["wert"]
+    quelle_310 = int(verbindlichkeiten_df["quelle"][0])
+
+    def _posten_nach_jahr(posten: str) -> dict[int, int]:
+        teil = verbindlichkeiten_df.filter(pl.col("posten") == posten)
+        return {zeile["jahr"]: zeile["betrag_teur"] * 1000 for zeile in teil.iter_rows(named=True)}
+
+    investitionskredite_gedruckt = _posten_nach_jahr("kredite_investitionen")
+    nrw_bank_gedruckt = _posten_nach_jahr("transferleistungen")
+    liquiditaetskredite_gedruckt = _posten_nach_jahr("liquiditaetskredite")
+
+    letztes_gedrucktes_jahr = max(nrw_bank_gedruckt)
+    nrw_bank_letzter_wert = nrw_bank_gedruckt[letztes_gedrucktes_jahr]
+
+    investitionskredite: list[int] = []
+    nrw_bank: list[int] = []
+    liquiditaetskredite: list[int | None] = []
+    berechnet: list[bool] = []
+    for index, jahr in enumerate(jahre):
+        if jahr in investitionskredite_gedruckt:
+            investitionskredite.append(investitionskredite_gedruckt[jahr])
+            nrw_bank.append(nrw_bank_gedruckt[jahr])
+            berechnet.append(False)
+        else:
+            vorjahr_euro = investitionskredite[index - 1]
+            investitionskredite.append(
+                investitionskredite_ende(
+                    vorjahr_euro,
+                    finanzierung["zeilen"]["kreditaufnahme"][index],
+                    finanzierung["zeilen"]["tilgung"][index],
+                )
+            )
+            nrw_bank.append(nrw_bank_letzter_wert)
+            berechnet.append(True)
+        liquiditaetskredite.append(liquiditaetskredite_gedruckt.get(jahr))
+
+    gesamt = [investitionskredite[i] + nrw_bank[i] for i in range(len(jahre))]
+    pro_kopf = [pro_kopf_euro(wert, einwohner) for wert in gesamt]
+
+    schuldenstand = {
+        "quelle": quelle_310,
+        "einwohner": einwohner,
+        "investitionskredite": investitionskredite,
+        "nrw_bank": nrw_bank,
+        "liquiditaetskredite": liquiditaetskredite,
+        "gesamt": gesamt,
+        "pro_kopf": pro_kopf,
+        "berechnet": berechnet,
+        "formel": _SCHULDENSTAND_FORMEL,
+    }
+
+    buergschaften_df = verbindlichkeiten.filter(pl.col("tabelle") == "buergschaften")
+    buergschaften: dict[str, object] = {}
+    for posten in sorted(buergschaften_df["posten"].unique().to_list()):
+        teil = buergschaften_df.filter(pl.col("posten") == posten)
+        name = teil["posten_name"][0]
+        nach_jahr = {
+            zeile["jahr"]: zeile["betrag_teur"] * 1000 for zeile in teil.iter_rows(named=True)
+        }
+        buergschaften[posten] = {
+            "name": name,
+            "werte": [nach_jahr.get(jahr) for jahr in jahre],
+        }
+
+    return {
+        "haushaltsjahr": haushaltsjahr,
+        "jahre": jahre,
+        "wertarten": wertarten,
+        "massnahmen": massnahmen,
+        "ve_faelligkeiten": ve_faelligkeiten_liste,
+        "finanzierung": finanzierung,
+        "schuldenstand": schuldenstand,
+        "buergschaften": buergschaften,
+    }
 
 
 def schreibe_app_json(daten: Mapping[str, object], pfad: Path, *, praefix: str) -> None:
@@ -704,4 +978,27 @@ def erzeuge_app_daten(
     stellenplan_pfad = app_daten_wurzel / STELLENPLAN_JSON
     schreibe_app_json(stellenplan_daten, stellenplan_pfad, praefix="stellenplan")
 
-    return [pfad, stellenplan_pfad]
+    produkte = lies_produkte_json(daten_wurzel / PRODUKTE_JSON)
+    grundzahlen = lies_grundzahlen_csv(daten_wurzel / GRUNDZAHLEN_CSV)
+    produkte_daten = baue_produkte_json(produkte, grundzahlen)
+    produkte_pfad = app_daten_wurzel / PRODUKTE_APP_JSON
+    schreibe_app_json(produkte_daten, produkte_pfad, praefix="produkte")
+
+    investitionen_df = lies_investitionen_csv(daten_wurzel / INVESTITIONEN_CSV)
+    ve_faelligkeiten_df = lies_ve_faelligkeiten_csv(daten_wurzel / VE_FAELLIGKEITEN_CSV)
+    verbindlichkeiten_df = lies_vorbericht_csv(daten_wurzel / VERBINDLICHKEITEN_CSV)
+    investitionen_daten = baue_investitionen_json(
+        investitionen=investitionen_df,
+        ve_faelligkeiten=ve_faelligkeiten_df,
+        hierarchie=hierarchie,
+        verbindlichkeiten=verbindlichkeiten_df,
+        finanzplan=finanzplan,
+        meta=meta,
+        haushaltsjahr=jahrgang.haushaltsjahr,
+        jahre=jahre,
+        wertarten=wertarten,
+    )
+    investitionen_pfad = app_daten_wurzel / INVESTITIONEN_JSON
+    schreibe_app_json(investitionen_daten, investitionen_pfad, praefix="investitionen")
+
+    return [pfad, stellenplan_pfad, produkte_pfad, investitionen_pfad]
