@@ -26,7 +26,7 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [x] **EXTR-07**: Grundzahlen je Produkt stehen in `grundzahlen.csv` mit Einheit, Jahr und Stichtagshinweis; die Steuer-Istwerte 2022–2025 aus 160101 sind enthalten
 - [x] **EXTR-08**: Erläuterungsposten („Erläuterung zu Nr. …“) sind je Produkt mit Betrag, Text und Zeilenbezug extrahiert
 - [x] **EXTR-09**: Investitionsmaßnahmen werden nur aus den Produktseiten in `investitionen.csv` extrahiert (Konto, Richtung, Jahr, Wertart); „(Kassenwirksamkeit)“-Zeilen landen in `ve_faelligkeiten.csv` und nicht in Summen
-- [ ] **EXTR-10**: Der Stellenplan (Teil A Beamte, Teil B Tarif, Stellenübersicht nach PB) steht in `stellenplan.csv` mit Stellen 2026, 2025, besetzt 30.06.2025 und Vermerken
+- [x] **EXTR-10**: Der Stellenplan (Teil A Beamte, Teil B Tarif, Stellenübersicht nach PB) steht in `stellenplan.csv` mit Stellen 2026, 2025, besetzt 30.06.2025 und Vermerken
 
 ### Manuelle Daten
 
@@ -192,7 +192,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXTR-07 | Phase 3 | Complete |
 | EXTR-08 | Phase 3 | Complete |
 | EXTR-09 | Phase 3 | Complete |
-| EXTR-10 | Phase 4 | Pending |
+| EXTR-10 | Phase 4 | Complete |
 | MANU-01 | Phase 4 | Complete |
 | MANU-02 | Phase 4 | Complete |
 | MANU-03 | Phase 4 | Complete |
