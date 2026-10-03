@@ -50,3 +50,34 @@ export function vzae(wert: number): string {
 export function prozent(anteil: number): string {
   return PROZENT_FORMAT.format(anteil)
 }
+
+/**
+ * Formatkürzel der Platzhalter in `texte.json` (D-15), z. B. `{{meta.einwohner|zahl}}`.
+ * Muss exakt `ostbevern.texte.FORMATKUERZEL` entsprechen
+ * (Pipeline-Test `test_formatkuerzel_wie_format_ts`).
+ */
+export type FormatKuerzel = 'euro' | 'mio' | 'zahl' | 'prozent' | 'promille' | 'vzae'
+
+/**
+ * Formatiert einen Rohwert aus `texte.json` nach seinem Platzhalter-Formatkürzel
+ * (D-15): die Pipeline liefert nur Rohwerte, diese Funktion ist die einzige Stelle,
+ * die einen `{{…|kuerzel}}`-Platzhalter in einen angezeigten String verwandelt.
+ * `prozent`/`promille` erwarten den Rohwert als ganze Prozent- bzw. Promillepunkte
+ * (z. B. Hebesatz 554 oder 363), nicht als Anteil 0–1.
+ */
+export function formatiere(wert: number, kuerzel: FormatKuerzel): string {
+  switch (kuerzel) {
+    case 'euro':
+      return euro(wert)
+    case 'mio':
+      return euroKurz(wert)
+    case 'zahl':
+      return zahl(wert)
+    case 'prozent':
+      return prozent(wert / 100)
+    case 'promille':
+      return prozent(wert / 1000)
+    case 'vzae':
+      return vzae(wert)
+  }
+}
