@@ -17,6 +17,7 @@ from ostbevern.konfiguration import (
 )
 from ostbevern.pruefung import PruefungsFehler
 from ostbevern.schema import SchemaFehler
+from ostbevern.texte import TexteFehler
 
 app = typer.Typer(
     add_completion=False,
@@ -33,7 +34,13 @@ def main(
 ) -> None:
     try:
         pfade = erzeuge_app_daten(jahr)
-    except (AppDatenFehler, SchemaFehler, KonfigurationsFehler, PruefungsFehler) as fehler:
+    except (
+        AppDatenFehler,
+        SchemaFehler,
+        KonfigurationsFehler,
+        PruefungsFehler,
+        TexteFehler,
+    ) as fehler:
         typer.echo(f"Fehler: {fehler}", err=True)
         raise typer.Exit(code=1) from fehler
 

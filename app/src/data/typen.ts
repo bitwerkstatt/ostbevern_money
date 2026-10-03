@@ -338,3 +338,28 @@ export interface Investitionen {
   /** Schlüssel = Postenname (z. B. "bbo_buergschaft"). */
   buergschaften: Record<string, Buergschaft>
 }
+
+/**
+ * Ein geprüfter Erklärtext (D-15 bis D-17, MANU-08). `absaetze` enthält den Rohtext
+ * mit unaufgelösten `{{schluessel|formatkuerzel}}`-Platzhaltern — die App ersetzt sie
+ * zur Laufzeit gegen `Texte.werte` und formatiert mit `format.ts::formatiere`. Die
+ * Pipeline formatiert nie (D-15).
+ */
+export interface Erklaertext {
+  /** Eindeutiger Schlüssel, z. B. "schluesselzuweisung". */
+  schluessel: string
+  titel: string
+  /** 1-basierte PDF-Seite(n) des Vorberichts, die diesen Text belegen. */
+  quelle_seiten: number[]
+  /** Absätze in Reihenfolge; jeder kann mehrere Platzhalter enthalten. */
+  absaetze: string[]
+}
+
+/** Gesamtstruktur von `texte.json` (D-15 bis D-17, MANU-08, D-21). */
+export interface Texte {
+  haushaltsjahr: number
+  texte: Erklaertext[]
+  /** Nur die tatsächlich in `texte` verwendeten Datenschlüssel -> Rohwert (kein
+   * vollständiger Daten-Dump, D-15). */
+  werte: Record<string, number>
+}

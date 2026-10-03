@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import ast
 import json
+import shutil
 from pathlib import Path
 
 import polars as pl
@@ -33,6 +34,7 @@ from ostbevern.pruefung import REGEL5_TOLERANZ_GEP_EURO, WEITERGABE_POSTEN, Plan
 from ostbevern.schema import (
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
+    ERKLAERUNGEN_MD,
     FINANZPLAN_CSV,
     HIERARCHIE_CSV,
     SEITEN_CSV,
@@ -45,6 +47,7 @@ from ostbevern.schema import (
     lies_stellenplan_csv,
     lies_vorbericht_csv,
 )
+from ostbevern.texte import PLATZHALTER_MUSTER, TexteFehler
 
 
 @pytest.fixture(scope="module")
@@ -62,6 +65,7 @@ def test_haushalt_json_steuerarten_aus_manueller_tabelle(tmp_path: Path) -> None
         app_daten_wurzel / STELLENPLAN_JSON,
         app_daten_wurzel / app_daten.PRODUKTE_APP_JSON,
         app_daten_wurzel / app_daten.INVESTITIONEN_JSON,
+        app_daten_wurzel / app_daten.TEXTE_JSON,
     ]
 
     daten = json.loads((app_daten_wurzel / HAUSHALT_JSON).read_text(encoding="utf-8"))
@@ -100,6 +104,7 @@ def test_app_json_deterministisch(tmp_path: Path) -> None:
         STELLENPLAN_JSON,
         app_daten.PRODUKTE_APP_JSON,
         app_daten.INVESTITIONEN_JSON,
+        app_daten.TEXTE_JSON,
     ):
         inhalt_a = (ziel_a / json_pfad).read_bytes()
         inhalt_b = (ziel_b / json_pfad).read_bytes()
@@ -612,3 +617,51 @@ def test_app_daten_liest_kein_pdf() -> None:
             module_namen.add(knoten.module)
     verbotene = {"pdfplumber", "ostbevern.pdf"}
     assert not (module_namen & verbotene)
+
+
+def test_texte_json_eingecheckt_aktuell(tmp_path: Path) -> None:
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    neu = (tmp_path / app_daten.TEXTE_JSON).read_bytes()
+    eingecheckt = (APP_DATEN_WURZEL / app_daten.TEXTE_JSON).read_bytes()
+    assert neu == eingecheckt
+
+
+def test_texte_json_nur_verwendete_werte(tmp_path: Path) -> None:
+    """D-15: `werte` enthält ausschließlich die tatsächlich in `texte` verwendeten
+    Datenschlüssel, kein vollständiger Dump der textwerte-Namensraum (die hunderte
+    ungenutzte Schlüssel hat)."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / app_daten.TEXTE_JSON).read_text(encoding="utf-8"))
+    assert list(daten) == ["haushaltsjahr", "texte", "werte"]
+
+    verwendete_schluessel: set[str] = set()
+    for text in daten["texte"]:
+        assert text["quelle_seiten"]
+        for absatz in text["absaetze"]:
+            for treffer in PLATZHALTER_MUSTER.finditer(absatz):
+                verwendete_schluessel.add(treffer.group(1))
+
+    assert set(daten["werte"]) == verwendete_schluessel
+    # Deutlich weniger als die vollständige textwerte-Namensraum (hunderte Schlüssel).
+    assert len(daten["werte"]) < 100
+
+
+def test_unbekannter_platzhalter_bricht_schritt_07_ab(tmp_path: Path) -> None:
+    """D-15: ein Platzhalter mit unbekanntem Datenschlüssel bricht erzeuge_app_daten mit
+    TexteFehler ab -- geprüft über eine tmp-Kopie von daten/ mit manipulierter
+    erklaerungen.md (die eingecheckte Datei bleibt unberührt, D-06-Stil)."""
+    daten_kopie = tmp_path / "daten"
+    shutil.copytree(DATEN_WURZEL, daten_kopie)
+    ziel = daten_kopie / ERKLAERUNGEN_MD
+    ziel.write_text(
+        "# Erklärtexte\n\n"
+        "## testschluessel\n"
+        "Titel: Test\n"
+        "Quelle: S. 1\n\n"
+        "Ein Text mit {{nicht.vorhandener.schluessel|euro}}.\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(TexteFehler, match="nicht.vorhandener.schluessel"):
+        erzeuge_app_daten(
+            STANDARD_JAHR, daten_wurzel=daten_kopie, app_daten_wurzel=tmp_path / "app"
+        )

@@ -175,6 +175,11 @@ Regel 5 prüft die Investitionskredit-Fortschreibung (`kredite_fortschreibung`):
 Haushaltsjahr = Ende Vorjahr + GFP-Kreditaufnahme (Z. 33) − GFP-Tilgung (Z. 35) =
 6.879 + 5.200 − 450 = 11.629 T€, exakt wie gedruckt.
 
+**Fortschreibungsbasis bestätigt (D-14, Plan 04-05 Task 2):** Der NRW.Bank-Anteil für
+2027–2029 wird auf dem zuletzt gedruckten Stand (746 T€, Ende 2026, S. 310) konstant
+gehalten, nicht auf dem Ende-2025-Wert (831 T€). Fachlich geprüft und bestätigt am
+2026-10-03.
+
 ### `eigenkapital.csv`
 
 Übersicht über die Entwicklung des Eigenkapitals (S. 311), sechs Jahre 2024–2029:
@@ -243,3 +248,50 @@ jahren um 1–3 T€ ab — gedruckte Rundungsdifferenzen im Vorbericht selbst, 
 gegen das PDF verifiziert. Stufe (b, Gesamtzeile vs. Gesamtergebnisplan) weicht bei
 `leistungsentgelte` 2029 (−1.035 €) und bei `sachaufwand` 2027–2029 (−3.021 € / −3.705 €
 / −3.846 €) über die ±1.000-€-Toleranz hinaus ab.
+
+### `texte/erklaerungen.md`
+
+Die zehn Erklärtexte des Vorberichts (MANU-08, D-15 bis D-17), die Phase 5/6 in der
+App anzeigen. Die Datei folgt einem eigenen, von `ostbevern.texte` geparsten Format,
+keinem CSV-Langformat:
+
+```markdown
+# Erklärtexte
+
+## schluessel
+Titel: Ein Titel
+Quelle: S. 28
+
+Ein Absatz mit {{meta.einwohner|zahl}} Platzhaltern. Jahreszahlen wie 2026, "§ 4"
+und "S. 311" dürfen als bloße Ziffern stehen; jede andere Zahl muss ein Platzhalter
+sein, sonst bricht die Pipeline ab.
+
+Ein zweiter Absatz, durch eine Leerzeile getrennt.
+```
+
+**Platzhalter-Syntax (D-15):** `{{schluessel|formatkuerzel}}`. `schluessel` ist ein
+Pfad in die kuratierte Werte-Namensraum, die `ostbevern.texte.textwerte` aus
+`haushalt.json`/`investitionen.json`/`produkte.json` baut (z. B.
+`vorbericht.zuwendungen.schluesselzuweisung.2026`, `meta.einwohner`,
+`schulden.pro_kopf.2025`, `ve.gesamt`, `abgeleitet.<name>` für benannte, in
+`ostbevern/texte.py::ABGELEITET` dokumentierte Formeln). `formatkuerzel` ist eines aus
+`ostbevern.texte.FORMATKUERZEL` = `app/src/charts/format.ts::FormatKuerzel`: `euro`,
+`mio`, `zahl`, `prozent`, `promille`, `vzae`. Die Pipeline löst den Schlüssel gegen den
+Rohwert auf und schreibt ihn unformatiert nach `app/src/data/texte.json` — **formatiert
+wird ausschließlich in der App** über `format.ts::formatiere` (D-15). Ein unbekannter
+Schlüssel oder ein unbekanntes Formatkürzel bricht Schritt 07 mit `TexteFehler` ab.
+
+**Ziffernregel:** Jede Zahl außerhalb eines Platzhalters ist ein Fehler, den
+`ostbevern.texte.pruefe_text` findet — mit drei Ausnahmen: eine vierstellige
+Jahreszahl (19xx/20xx), ein Paragraph (`§ n`) und ein Seitenverweis (`S. n`, auch als
+Spanne wie `S. 24/25`). HTML-Zeichen (`<`, `>`) sind ebenfalls verboten, weil die App
+die Texte als reinen Text rendert (T-04-17).
+
+**Fachliche Prüfung vor Commit (D-17):** Der Executor entwirft die Texte auf Basis der
+zitierten Vorbericht-Seiten; ein Checkpoint im Plan legt sie dem Nutzer zur fachlichen
+Abnahme vor — Zahlen gegen das PDF, neutrale Formulierung (Einschätzungen der
+Verwaltung werden dem Vorbericht zugeschrieben, nie als Aussage der App dargestellt).
+Erst nach Freigabe werden `erklaerungen.md` und etwaige neue `meta.json`-Einträge
+unter `vorbericht_werte` committet. Zwei solche Einträge — `bbo_verlustausgleich_wirtschaftsplan`
+(S. 48) und `satzung_verringerung_allgemeine_ruecklage` (S. 9, § 4) — existieren in
+keiner anderen Datei und sind deshalb hier statt in einer CSV gespeichert.

@@ -14,7 +14,8 @@ from pathlib import Path
 
 import pytest
 
-from ostbevern.konfiguration import PROJEKT_WURZEL
+from ostbevern.konfiguration import PROJEKT_WURZEL, STANDARD_JAHR, lade_jahrgang
+from ostbevern.schema import DATEN_WURZEL, ERKLAERUNGEN_MD
 from ostbevern.texte import (
     ABGELEITET,
     FORMATKUERZEL,
@@ -28,6 +29,21 @@ from ostbevern.texte import (
 )
 
 APP_DATEN_WURZEL = PROJEKT_WURZEL / "app" / "src" / "data"
+
+# Die zehn Erklärtexte des Phase-4-Umfangs (D-16); gleicher Vollständigkeits-Check wie
+# die Task-1-Acceptance-Kriterien, aber als dauerhafter Regressionstest.
+_D16_SCHLUESSEL = {
+    "schluesselzuweisung",
+    "gewerbesteuer",
+    "kreisumlage",
+    "grundsteuer_hebesaetze",
+    "sonderposten",
+    "globaler_minderaufwand",
+    "defizit_ruecklagen",
+    "schulden",
+    "verpflichtungsermaechtigungen",
+    "nicht_im_haushalt",
+}
 
 
 def _schreibe(tmp_path: Path, inhalt: str) -> Path:
@@ -315,6 +331,40 @@ von {{{{gep.jahresergebnis.{haushaltsjahr}|euro}}}}.
             pruefe_text(absatz)
     aufgeloest = loese_auf(texte, werte)
     assert "gep.jahresergebnis." + str(haushaltsjahr) in aufgeloest
+
+
+# ---------------------------------------------------------------------------
+# Echte Datei: daten/manuell/texte/erklaerungen.md (D-16, D-17)
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def echte_erklaerungen() -> list[Erklaertext]:
+    return lies_erklaerungen(DATEN_WURZEL / ERKLAERUNGEN_MD)
+
+
+def test_erklaerungen_umfang_d16(echte_erklaerungen: list[Erklaertext]) -> None:
+    assert {text.schluessel for text in echte_erklaerungen} == _D16_SCHLUESSEL
+
+
+def test_erklaerungen_keine_nackten_ziffern(echte_erklaerungen: list[Erklaertext]) -> None:
+    for text in echte_erklaerungen:
+        for absatz in text.absaetze:
+            pruefe_text(absatz)  # darf nicht werfen
+
+
+def test_erklaerungen_alle_schluessel_existieren(
+    echte_erklaerungen: list[Erklaertext], werte: dict[str, int | float]
+) -> None:
+    loese_auf(echte_erklaerungen, werte)  # darf nicht werfen
+
+
+def test_erklaerungen_jeder_text_hat_quelle(echte_erklaerungen: list[Erklaertext]) -> None:
+    jahrgang = lade_jahrgang(STANDARD_JAHR)
+    for text in echte_erklaerungen:
+        assert text.quelle_seiten
+        for seite in text.quelle_seiten:
+            assert 1 <= seite <= jahrgang.anzahlen.pdf_seiten
 
 
 # ---------------------------------------------------------------------------
