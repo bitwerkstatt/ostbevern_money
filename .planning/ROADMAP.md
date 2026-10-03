@@ -132,7 +132,7 @@ Plans:
   4. `app/src/data/` enthält `haushalt.json`, `produkte.json`, `investitionen.json` und `stellenplan.json`. Ein Test bestätigt, dass keine Personennamen enthalten sind. „Weitergabe an Kreis und Land“ (Kreisumlage, Gewerbesteuerumlage, Krankenhausinvestitionsumlage) ist eine eigene Kategorie, und der Rest von PB 16 heißt „Allgemeine Finanzwirtschaft“. Der Zuschussbedarf ist je Knoten und Jahr als berechneter Wert gekennzeichnet.
   5. `uv run pipeline/alle.py` führt alle Schritte in Reihenfolge aus. Die CI schlägt fehl, wenn danach eingecheckte Daten einen Diff zeigen.
 
-**Plans**: 3/5 plans executed
+**Plans**: 4/5 plans executed
 
 Plans:
 **Wave 1**
@@ -145,7 +145,7 @@ Plans:
 - [x] 04-03-PLAN.md — Stellenplan S. 284–290 → stellenplan.csv (Schritt 05, Hundertstel), Regel 10 Kreuzprüfung, Beamte = 8, stellenplan.json (Wave 3)
 
 **Wave 4** *(blocked on Wave 3 completion)*
-- [ ] 04-04-PLAN.md — haushalt.json mit KL-Knoten „Weitergabe an Kreis und Land“, Zuschussbedarf je Knoten, Finanzplan GESAMT; produkte.json, investitionen.json mit Schuldenstand (Wave 4)
+- [x] 04-04-PLAN.md — haushalt.json mit KL-Knoten „Weitergabe an Kreis und Land“, Zuschussbedarf je Knoten, Finanzplan GESAMT; produkte.json, investitionen.json mit Schuldenstand (Wave 4)
 
 **Wave 5** *(blocked on Wave 4 completion)*
 - [ ] 04-05-PLAN.md — Erklärtexte mit Platzhaltern (D-15/D-16), Abnahme-Checkpoint vor Commit (D-17), texte.json, Abschluss-Gate alle.py ohne Diff (Wave 5, Checkpoint)
@@ -215,7 +215,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 1. Setup | 5/5 | Complete    | 2026-10-01 |
 | 2. Kernzahlen | 5/5 | Complete    | 2026-10-01 |
 | 3. Details | 5/5 | Complete    | 2026-10-02 |
-| 4. Manuelle Daten und App-Daten | 3/5 | In Progress|  |
+| 4. Manuelle Daten und App-Daten | 4/5 | In Progress|  |
 | 5. Leitfragen-Seiten | 0/TBD | Not started | - |
 | 6. Kontext-Seiten | 0/TBD | Not started | - |
 | 7. Feinschliff und Veröffentlichung | 0/TBD | Not started | - |
