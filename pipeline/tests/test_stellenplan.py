@@ -18,7 +18,7 @@ import pytest
 
 from ostbevern.konfiguration import Jahrgang
 from ostbevern.pdf import PdfDokument, Textzeile
-from ostbevern.schema import DATEN_WURZEL, STELLENPLAN_CSV, lies_stellenplan_csv
+from ostbevern.schema import DATEN_WURZEL, HIERARCHIE_CSV, STELLENPLAN_CSV, lies_stellenplan_csv
 from ostbevern.stellenplan import (
     StellenplanFehler,
     Stellenwert,
@@ -26,6 +26,14 @@ from ostbevern.stellenplan import (
     lies_stellen_hundertstel,
     lies_stellenplan,
 )
+
+
+def _kopiere_hierarchie_nach(tmp_pfad: Path) -> None:
+    """Kopiert die eingecheckte hierarchie.csv unverändert in den tmp-Datenbaum (D-06):
+    `lies_stellenplan` liest sie für die Stellenübersicht-PB-Codes bei jedem Aufruf."""
+    ziel = tmp_pfad / HIERARCHIE_CSV
+    ziel.parent.mkdir(parents=True, exist_ok=True)
+    ziel.write_bytes((DATEN_WURZEL / HIERARCHIE_CSV).read_bytes())
 
 
 @pytest.fixture(scope="module")
@@ -53,7 +61,22 @@ def _als_dataframe(werte: tuple[Stellenwert, ...]) -> pl.DataFrame:
                 "pdf_seite": w.pdf_seite,
             }
             for w in werte
-        ]
+        ],
+        schema={
+            "teil": pl.Utf8,
+            "position": pl.Int64,
+            "gruppe": pl.Utf8,
+            "amtsbezeichnung": pl.Utf8,
+            "verguetung": pl.Utf8,
+            "produktbereich": pl.Utf8,
+            "merkmal": pl.Utf8,
+            "jahr": pl.Int64,
+            "stichtag": pl.Utf8,
+            "stellen_hundertstel": pl.Int64,
+            "personen": pl.Int64,
+            "vermerk": pl.Utf8,
+            "pdf_seite": pl.Int64,
+        },
     )
 
 
@@ -104,7 +127,11 @@ def test_stellenplan_beamte_a14_stellen_vermerk_besetzt(
 ) -> None:
     """A 14 hat Stellen 2026=200 mit Vermerk, Stellen 2025=300, besetzt 2025-06-30=300."""
     df = _als_dataframe(stellenwerte)
-    a14 = df.filter((pl.col("teil") == "beamte") & (pl.col("gruppe") == "A 14"))
+    a14 = df.filter(
+        (pl.col("teil") == "beamte")
+        & (pl.col("gruppe") == "A 14")
+        & pl.col("produktbereich").is_null()
+    )
     stellen_2026 = a14.filter((pl.col("merkmal") == "stellen") & (pl.col("jahr") == 2026))
     assert stellen_2026.height == 1
     assert stellen_2026["stellen_hundertstel"][0] == 200
@@ -128,7 +155,11 @@ def test_stellenplan_beamte_a13_nur_haushaltsjahr(
 ) -> None:
     """A 13 hat nur Stellen 2026 (keine Stellen 2025, kein besetzt, D-19)."""
     df = _als_dataframe(stellenwerte)
-    a13 = df.filter((pl.col("teil") == "beamte") & (pl.col("gruppe") == "A 13"))
+    a13 = df.filter(
+        (pl.col("teil") == "beamte")
+        & (pl.col("gruppe") == "A 13")
+        & pl.col("produktbereich").is_null()
+    )
     assert a13.height == 1
     assert a13["merkmal"][0] == "stellen"
     assert a13["jahr"][0] == 2026
@@ -138,7 +169,11 @@ def test_stellenplan_beamte_a13_nur_haushaltsjahr(
 def test_stellenplan_beamte_a11_keine_zeile(stellenwerte: tuple[Stellenwert, ...]) -> None:
     """A 11 (ohne gedruckte Werte) erzeugt keine Zeile (D-19: leer heißt kein Eintrag)."""
     df = _als_dataframe(stellenwerte)
-    a11 = df.filter((pl.col("teil") == "beamte") & (pl.col("gruppe") == "A 11"))
+    a11 = df.filter(
+        (pl.col("teil") == "beamte")
+        & (pl.col("gruppe") == "A 11")
+        & pl.col("produktbereich").is_null()
+    )
     assert a11.height == 0
 
 
@@ -151,10 +186,18 @@ def test_stellenplan_tarif_9c_nicht_an_10_angehaengt(
     """9c hat Stellen 2026=326, 2025=426, besetzt=526 — nicht an EG 10 angehängt (D-20,
     Research Pitfall: Werte stehen auf einer anderen `top`-Zeile als ihr Label)."""
     df = _als_dataframe(stellenwerte)
-    eg10 = df.filter((pl.col("teil") == "tarif") & (pl.col("gruppe") == "10"))
+    eg10 = df.filter(
+        (pl.col("teil") == "tarif")
+        & (pl.col("gruppe") == "10")
+        & pl.col("produktbereich").is_null()
+    )
     assert eg10.height == 0
 
-    eg9c = df.filter((pl.col("teil") == "tarif") & (pl.col("gruppe") == "9c"))
+    eg9c = df.filter(
+        (pl.col("teil") == "tarif")
+        & (pl.col("gruppe") == "9c")
+        & pl.col("produktbereich").is_null()
+    )
     stellen_2026 = eg9c.filter((pl.col("merkmal") == "stellen") & (pl.col("jahr") == 2026))
     stellen_2025 = eg9c.filter((pl.col("merkmal") == "stellen") & (pl.col("jahr") == 2025))
     besetzt = eg9c.filter(pl.col("merkmal") == "besetzt")
@@ -168,7 +211,11 @@ def test_stellenplan_tarif_9a_vermerk_sperrvermerk(
 ) -> None:
     """9a trägt den Vermerk "0,46 VZÄ mit Sperrvermerk" nur auf der Stellen-2026-Zeile."""
     df = _als_dataframe(stellenwerte)
-    eg9a = df.filter((pl.col("teil") == "tarif") & (pl.col("gruppe") == "9a"))
+    eg9a = df.filter(
+        (pl.col("teil") == "tarif")
+        & (pl.col("gruppe") == "9a")
+        & pl.col("produktbereich").is_null()
+    )
     stellen_2026 = eg9a.filter((pl.col("merkmal") == "stellen") & (pl.col("jahr") == 2026))
     assert stellen_2026["vermerk"][0] == "0,46 VZÄ mit Sperrvermerk"
     andere = eg9a.filter(~((pl.col("merkmal") == "stellen") & (pl.col("jahr") == 2026)))
@@ -178,7 +225,9 @@ def test_stellenplan_tarif_9a_vermerk_sperrvermerk(
 def test_stellenplan_tarif_eg3_nur_vorjahr(stellenwerte: tuple[Stellenwert, ...]) -> None:
     """EG 3 hat nur einen Wert in der 2025-Spalte (merkmal=stellen, jahr=2025, D-19)."""
     df = _als_dataframe(stellenwerte)
-    eg3 = df.filter((pl.col("teil") == "tarif") & (pl.col("gruppe") == "3"))
+    eg3 = df.filter(
+        (pl.col("teil") == "tarif") & (pl.col("gruppe") == "3") & pl.col("produktbereich").is_null()
+    )
     assert eg3.height == 1
     assert eg3["merkmal"][0] == "stellen"
     assert eg3["jahr"][0] == 2025
@@ -303,7 +352,90 @@ def test_stellenplan_csv_eingecheckt_aktuell(jahrgang: Jahrgang) -> None:
     stellenplan.csv (D-21, D-24)."""
     with tempfile.TemporaryDirectory() as tmp:
         tmp_pfad = Path(tmp)
+        _kopiere_hierarchie_nach(tmp_pfad)
         extrahiere_stellenplan(jahrgang, daten_wurzel=tmp_pfad)
         frisch = lies_stellenplan_csv(tmp_pfad / STELLENPLAN_CSV)
     eingecheckt = lies_stellenplan_csv(DATEN_WURZEL / STELLENPLAN_CSV)
     assert frisch.equals(eingecheckt)
+
+
+# --- Stellenübersicht nach Produktbereichen (S. 287-289, Task 2) -------------------
+
+
+def test_stellenplan_uebersicht_pb11_pb16_ohne_summe_zelle(
+    stellenwerte: tuple[Stellenwert, ...],
+) -> None:
+    """PB 11 und PB 16 liefern je eine A-14-Zeile (1 bzw. 6 Hundertstel), obwohl S. 287
+    für sie keine gedruckte Summe-Zelle zeigt (Research Pitfall 1: dünn besetzte
+    Matrix, fehlende Summe-Zelle ist kein Fehler, D-20)."""
+    df = _als_dataframe(stellenwerte)
+    pb11 = df.filter(
+        (pl.col("teil") == "beamte")
+        & (pl.col("produktbereich") == "11")
+        & (pl.col("gruppe") == "A 14")
+    )
+    pb16 = df.filter(
+        (pl.col("teil") == "beamte")
+        & (pl.col("produktbereich") == "16")
+        & (pl.col("gruppe") == "A 14")
+    )
+    assert pb11.height == 1
+    assert pb11["stellen_hundertstel"][0] == 1
+    assert pb16.height == 1
+    assert pb16["stellen_hundertstel"][0] == 6
+
+
+def test_stellenplan_uebersicht_tarif_pb09_zwei_namenszeilen(
+    stellenwerte: tuple[Stellenwert, ...],
+) -> None:
+    """PB 09 (Tarif, S. 288) hat Werte auf beiden Namenszeilen des umgebrochenen
+    PB-Namens; ihre Summe ist 0,11 (Research Pitfall 2)."""
+    df = _als_dataframe(stellenwerte)
+    pb09 = df.filter((pl.col("teil") == "tarif") & (pl.col("produktbereich") == "09"))
+    assert pb09.height == 2
+    assert pb09["stellen_hundertstel"].sum() == 11
+
+
+def test_stellenplan_uebersicht_summen_je_teil(stellenwerte: tuple[Stellenwert, ...]) -> None:
+    """Σ Stellenübersicht je Teil entspricht der Teil-A/B-Haushaltsjahr-Summe (800 /
+    5226 / 265, D-20)."""
+    df = _als_dataframe(stellenwerte)
+    uebersicht = df.filter(pl.col("produktbereich").is_not_null())
+    summen = dict(uebersicht.group_by("teil").agg(pl.col("stellen_hundertstel").sum()).iter_rows())
+    assert summen == {"beamte": 800, "tarif": 5226, "sozial_erziehungsdienst": 265}
+
+
+def test_stellenplan_uebersicht_manipulierte_summe_zeile_bricht_ab(jahrgang: Jahrgang) -> None:
+    """Eine verfälschte PB-Summe-Zelle auf S. 287 (Beamte-Übersicht) bricht ab (D-20)."""
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        zeilen = dokument.zeilen(287)
+        index, zeile = _finde_zeile(
+            zeilen,
+            lambda z: (
+                bool(z.woerter)
+                and z.woerter[0].text == "01"
+                and any(w.text == "3,87" for w in z.woerter)
+            ),
+        )
+        ziel_wort = next(w for w in zeile.woerter if w.text == "3,87")
+        verfaelscht = dataclasses.replace(ziel_wort, text="9,99")
+        neue_woerter = tuple(verfaelscht if w is ziel_wort else w for w in zeile.woerter)
+        manipuliert = dataclasses.replace(zeile, woerter=neue_woerter)
+        ersatz = _ersetze_zeile(zeilen, index, manipuliert)
+        fehlerhaft = _FehlerhaftesDokument(echt=dokument, seite=287, ersatz=ersatz)
+        with pytest.raises(StellenplanFehler, match=r"S\. 287.*PB 01.*Summe"):
+            lies_stellenplan(fehlerhaft, jahrgang)
+
+
+def test_stellenplan_uebersicht_unbekannter_pb_code_bricht_ab(jahrgang: Jahrgang) -> None:
+    """Ein PB-Code, der nicht in hierarchie.csv steht, bricht ab (D-20)."""
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        zeilen = dokument.zeilen(287)
+        index, zeile = _finde_zeile(zeilen, lambda z: bool(z.woerter) and z.woerter[0].text == "01")
+        erstes_wort = zeile.woerter[0]
+        unbekannt = dataclasses.replace(erstes_wort, text="99")
+        manipuliert = dataclasses.replace(zeile, woerter=(unbekannt, *zeile.woerter[1:]))
+        ersatz = _ersetze_zeile(zeilen, index, manipuliert)
+        fehlerhaft = _FehlerhaftesDokument(echt=dokument, seite=287, ersatz=ersatz)
+        with pytest.raises(StellenplanFehler):
+            lies_stellenplan(fehlerhaft, jahrgang)

@@ -25,7 +25,13 @@ import polars as pl
 from ostbevern.konfiguration import Jahrgang, layout_text
 from ostbevern.pdf import PdfDokument, Textzeile, Wort
 from ostbevern.plaene import ExtraktionsErgebnis
-from ostbevern.schema import DATEN_WURZEL, STELLENPLAN_CSV, schreibe_stellenplan_csv
+from ostbevern.schema import (
+    DATEN_WURZEL,
+    HIERARCHIE_CSV,
+    STELLENPLAN_CSV,
+    lies_hierarchie_csv,
+    schreibe_stellenplan_csv,
+)
 from ostbevern.spalten import SpaltenFehler, ordne_spalten
 
 # Maximaler top-Abstand zwischen einer wertlosen Zeile und der Gruppe, der sie zugeordnet
@@ -589,13 +595,229 @@ def _lies_nachwuchs_seite(
     return ergebnis
 
 
-def lies_stellenplan(dokument: PdfDokument, jahrgang: Jahrgang) -> list[Stellenwert]:
+def _lies_uebersicht_anker(
+    rest: tuple[Wort, ...],
+    *,
+    teil: str,
+    praefix: str,
+    pauschal_kopf: str,
+    pauschal: str,
+    summe_wort: str,
+) -> tuple[list[str], list[float]]:
+    """Zerlegt die Gruppe-Token einer Stellenübersicht-Kopfzeile (nach "Nr." und
+    "Produktbereich") in Namen und x1-Anker, inkl. "Summe" als letztem Eintrag.
+
+    Beamte: Buchstabe + Zahl (zwei Wörter, Anker = Zahl-Wort); Sozial- und
+    Erziehungsdienst: eine Zahl (mit `praefix` versehen) oder `pauschal_kopf` (->
+    `pauschal`); Tarif: die Zahl/EG-Bezeichnung selbst (ein Wort)."""
+    namen: list[str] = []
+    anker: list[float] = []
+    index = 0
+    while index < len(rest):
+        wort = rest[index]
+        if wort.text == summe_wort:
+            namen.append(summe_wort)
+            anker.append(wort.x1)
+            index += 1
+            continue
+        if teil == "beamte":
+            namen.append(f"{wort.text} {rest[index + 1].text}")
+            anker.append(rest[index + 1].x1)
+            index += 2
+        elif teil == "sozial_erziehungsdienst":
+            namen.append(pauschal if wort.text == pauschal_kopf else f"{praefix}{wort.text}")
+            anker.append(wort.x1)
+            index += 1
+        else:  # tarif
+            namen.append(wort.text)
+            anker.append(wort.x1)
+            index += 1
+    return namen, anker
+
+
+@dataclass
+class _PbBlock:
+    """Ein erkannter Produktbereichs-Block einer Stellenübersichtsseite (D-19, D-20)."""
+
+    pb: str
+    werte: dict[int, Wort] = field(default_factory=dict)
+
+
+def _lies_uebersicht_seite(
+    zeilen: tuple[Textzeile, ...],
+    *,
+    teil: str,
+    jahrgang: Jahrgang,
+    pdf_seite: int,
+    hierarchie: pl.DataFrame,
+) -> list[Stellenwert]:
+    """Liest eine Stellenübersicht nach Produktbereichen (S. 287-289, D-19, D-20).
+
+    Anders als die Teil-A/B-Tabellen ist diese Matrix dünn besetzt (Research Pattern 1,
+    Pitfall 1): fehlt ein Wert für eine (PB, Gruppe)-Kombination, ist das kein Fehler und
+    keine 0, sondern "kein Eintrag". Ein PB-Block beginnt bei einer Zeile, deren erstes
+    Wort ein in `hierarchie` bekannter zweistelliger PB-Code ist, und endet vor dem
+    nächsten PB-Code oder der abschließenden Summe-Zeile; seine Werte können über mehrere
+    Textzeile verteilt sein (umgebrochene PB-Namen, Research Pitfall 2). Eine gedruckte
+    Summe-Zelle je PB (falls vorhanden) und die abschließende Summe-Zeile werden gegen die
+    Summe der Gruppenwerte geprüft, nie gespeichert (D-20)."""
+    kopf_beginn = layout_text(jahrgang, "stellenplan", "uebersicht_kopf_beginn")
+    summe_wort = layout_text(jahrgang, "stellenplan", "summe")
+    praefix = layout_text(jahrgang, "stellenplan", "sozial_erziehungsdienst_kopf_praefix")
+    pauschal_kopf = layout_text(jahrgang, "stellenplan", "sozial_erziehungsdienst_pauschal_kopf")
+    pauschal = layout_text(jahrgang, "stellenplan", "sozial_erziehungsdienst_pauschal")
+    haushaltsjahr = jahrgang.haushaltsjahr
+
+    kopf_index = next(
+        (
+            index
+            for index, zeile in enumerate(zeilen)
+            if zeile.woerter
+            and zeile.woerter[0].text == kopf_beginn
+            and zeile.woerter[-1].text == summe_wort
+        ),
+        None,
+    )
+    if kopf_index is None:
+        raise StellenplanFehler(f"S. {pdf_seite}: Stellenübersicht-Kopfzeile nicht gefunden")
+    rest = zeilen[kopf_index].woerter[2:]  # "Nr." und "Produktbereich" überspringen
+    namen, anker = _lies_uebersicht_anker(
+        rest,
+        teil=teil,
+        praefix=praefix,
+        pauschal_kopf=pauschal_kopf,
+        pauschal=pauschal,
+        summe_wort=summe_wort,
+    )
+    gruppen_namen = namen[:-1]
+    alle_anker = tuple(anker)
+    summe_spalten_index = len(gruppen_namen)
+
+    pb_codes = set(hierarchie.filter(pl.col("ebene") == "PB")["code"].to_list())
+
+    summe_index = _finde_zeile_mit_erstem_wort(
+        zeilen, text=summe_wort, start=kopf_index + 1, pdf_seite=pdf_seite, kontext=summe_wort
+    )
+    koerper = zeilen[kopf_index + 1 : summe_index]
+
+    bloecke: list[_PbBlock] = []
+    for zeile in koerper:
+        if not zeile.woerter:
+            continue
+        erstes_wort = zeile.woerter[0].text
+        if erstes_wort in pb_codes:
+            bloecke.append(_PbBlock(pb=erstes_wort))
+            rest_woerter = zeile.woerter[1:]
+        else:
+            if not bloecke:
+                raise StellenplanFehler(f"S. {pdf_seite}: Zeile ohne offenen PB-Block")
+            rest_woerter = zeile.woerter
+        wert_woerter = [
+            wort for wort in rest_woerter if _STELLENWERT_MUSTER.match(wort.text.replace("−", "-"))
+        ]
+        if not wert_woerter:
+            continue
+        block = bloecke[-1]
+        zugeordnet = _ordne_werte(
+            wert_woerter, alle_anker, pdf_seite=pdf_seite, bezeichner=f"PB {block.pb}"
+        )
+        if set(zugeordnet) & set(block.werte):
+            raise StellenplanFehler(f"S. {pdf_seite}: PB {block.pb} hat doppelte Spaltenwerte")
+        block.werte.update(zugeordnet)
+
+    def _gruppen_summe(werte: dict[int, Wort]) -> int:
+        return sum(
+            (wert or 0)
+            for index in range(len(gruppen_namen))
+            if (wort := werte.get(index)) is not None
+            for wert in (lies_stellen_hundertstel(wort.text),)
+        )
+
+    for block in bloecke:
+        summe_zelle = block.werte.get(summe_spalten_index)
+        if summe_zelle is None:
+            continue
+        gedruckt = lies_stellen_hundertstel(summe_zelle.text) or 0
+        erwartet = _gruppen_summe(block.werte)
+        if gedruckt != erwartet:
+            raise StellenplanFehler(
+                f"S. {pdf_seite}: PB {block.pb} Summe gedruckt {gedruckt}, Summe der "
+                f"Gruppenwerte {erwartet}"
+            )
+
+    summe_wert_woerter = [
+        wort
+        for wort in zeilen[summe_index].woerter[1:]
+        if _STELLENWERT_MUSTER.match(wort.text.replace("−", "-"))
+    ]
+    summe_zugeordnet = _ordne_werte(
+        summe_wert_woerter, alle_anker, pdf_seite=pdf_seite, bezeichner=summe_wort
+    )
+    gesamtsumme_aller_pb = 0
+    for index, name in enumerate(gruppen_namen):
+        spalten_summe = sum(
+            (wert or 0)
+            for block in bloecke
+            if (wort := block.werte.get(index)) is not None
+            for wert in (lies_stellen_hundertstel(wort.text),)
+        )
+        gesamtsumme_aller_pb += spalten_summe
+        gedruckt_wort = summe_zugeordnet.get(index)
+        gedruckt = lies_stellen_hundertstel(gedruckt_wort.text) if gedruckt_wort else None
+        if (gedruckt or 0) != spalten_summe:
+            raise StellenplanFehler(
+                f"S. {pdf_seite}: {summe_wort} Spalte {name!r}: gedruckt {gedruckt}, Summe "
+                f"der Zeilen {spalten_summe}"
+            )
+    gesamt_wort = summe_zugeordnet.get(summe_spalten_index)
+    gedruckter_gesamt = lies_stellen_hundertstel(gesamt_wort.text) if gesamt_wort else None
+    if (gedruckter_gesamt or 0) != gesamtsumme_aller_pb:
+        raise StellenplanFehler(
+            f"S. {pdf_seite}: {summe_wort} Gesamtsumme: gedruckt {gedruckter_gesamt}, Summe "
+            f"aller Gruppenwerte {gesamtsumme_aller_pb}"
+        )
+
+    ergebnis: list[Stellenwert] = []
+    for block in bloecke:
+        for index, name in enumerate(gruppen_namen):
+            wort = block.werte.get(index)
+            if wort is None:
+                continue
+            wert = lies_stellen_hundertstel(wort.text)
+            if wert is None:
+                continue
+            ergebnis.append(
+                Stellenwert(
+                    teil=teil,
+                    position=index + 1,
+                    gruppe=name,
+                    amtsbezeichnung=None,
+                    verguetung=None,
+                    produktbereich=block.pb,
+                    merkmal="stellen",
+                    jahr=haushaltsjahr,
+                    stichtag=None,
+                    stellen_hundertstel=wert,
+                    personen=None,
+                    vermerk=None,
+                    pdf_seite=pdf_seite,
+                )
+            )
+    return ergebnis
+
+
+def lies_stellenplan(
+    dokument: PdfDokument, jahrgang: Jahrgang, *, hierarchie: pl.DataFrame | None = None
+) -> list[Stellenwert]:
     """Liest alle Stellenplan-Seiten des konfigurierten Seitenbereichs (D-18 bis D-20).
 
     Jede Seite wird über ihren gedruckten Titel (exakter Textzeile.text-Vergleich) einer
-    der konfigurierten Tabellen zugeordnet; eine Seite ohne passenden Titel wird noch
-    übersprungen, bis der letzte Plan-Task (Stellenübersichten) alle Titel abdeckt.
-    """
+    der konfigurierten Tabellen zugeordnet; eine Seite ohne passenden Titel bricht ab
+    (D-20). `hierarchie` (PB-Codes für die Stellenübersichten) wird, falls nicht
+    übergeben, aus `DATEN_WURZEL/HIERARCHIE_CSV` gelesen."""
+    if hierarchie is None:
+        hierarchie = lies_hierarchie_csv(DATEN_WURZEL / HIERARCHIE_CSV)
+
     bereich = jahrgang.seitenbereiche["stellenplan"]
     titel_beamte = layout_text(jahrgang, "stellenplan", "titel_beamte")
     titel_tarif = layout_text(jahrgang, "stellenplan", "titel_tarif")
@@ -603,11 +825,30 @@ def lies_stellenplan(dokument: PdfDokument, jahrgang: Jahrgang) -> list[Stellenw
         jahrgang, "stellenplan", "titel_sozial_erziehungsdienst"
     )
     titel_nachwuchs = layout_text(jahrgang, "stellenplan", "titel_nachwuchs")
+    titel_uebersicht_beamte = layout_text(jahrgang, "stellenplan", "titel_uebersicht_beamte")
+    titel_uebersicht_tarif = layout_text(jahrgang, "stellenplan", "titel_uebersicht_tarif")
+    titel_uebersicht_sozial_erziehungsdienst = layout_text(
+        jahrgang, "stellenplan", "titel_uebersicht_sozial_erziehungsdienst"
+    )
+    alle_titel = (
+        titel_beamte,
+        titel_tarif,
+        titel_sozial_erziehungsdienst,
+        titel_nachwuchs,
+        titel_uebersicht_beamte,
+        titel_uebersicht_tarif,
+        titel_uebersicht_sozial_erziehungsdienst,
+    )
 
     werte: list[Stellenwert] = []
+    gefundene_titel: set[str] = set()
     for pdf_seite in range(bereich.von, bereich.bis + 1):
         zeilen = _entferne_seitenzahl(dokument.zeilen(pdf_seite), pdf_seite)
         titel_texte = {zeile.text for zeile in zeilen}
+        titel_auf_seite = titel_texte & set(alle_titel)
+        if not titel_auf_seite:
+            raise StellenplanFehler(f"S. {pdf_seite}: kein bekannter Stellenplan-Titel gefunden")
+        gefundene_titel |= titel_auf_seite
 
         if titel_beamte in titel_texte:
             werte += _lies_teil_ab_seite(
@@ -635,7 +876,29 @@ def lies_stellenplan(dokument: PdfDokument, jahrgang: Jahrgang) -> list[Stellenw
             )
         elif titel_nachwuchs in titel_texte:
             werte += _lies_nachwuchs_seite(zeilen, jahrgang=jahrgang, pdf_seite=pdf_seite)
-        # Stellenübersichten (S. 287-289) folgen in einem späteren Task dieses Plans.
+        elif titel_uebersicht_beamte in titel_texte:
+            werte += _lies_uebersicht_seite(
+                zeilen, teil="beamte", jahrgang=jahrgang, pdf_seite=pdf_seite, hierarchie=hierarchie
+            )
+        elif titel_uebersicht_tarif in titel_texte:
+            werte += _lies_uebersicht_seite(
+                zeilen, teil="tarif", jahrgang=jahrgang, pdf_seite=pdf_seite, hierarchie=hierarchie
+            )
+        elif titel_uebersicht_sozial_erziehungsdienst in titel_texte:
+            werte += _lies_uebersicht_seite(
+                zeilen,
+                teil="sozial_erziehungsdienst",
+                jahrgang=jahrgang,
+                pdf_seite=pdf_seite,
+                hierarchie=hierarchie,
+            )
+
+    fehlende_titel = set(alle_titel) - gefundene_titel
+    if fehlende_titel:
+        raise StellenplanFehler(
+            f"Stellenplan: Titel ohne Seite im Bereich {bereich.von}-{bereich.bis}: "
+            f"{sorted(fehlende_titel)}"
+        )
 
     return werte
 
@@ -646,9 +909,11 @@ def extrahiere_stellenplan(
     """Liest den Stellenplan und schreibt `daten_wurzel/STELLENPLAN_CSV` (D-18 bis D-20).
 
     Öffnet das PDF selbst und liest direkt über `jahrgang.seitenbereiche["stellenplan"]`
-    (kein `seiten.csv`-Zwischenschritt, Research Pitfall 7)."""
+    (kein `seiten.csv`-Zwischenschritt, Research Pitfall 7). `hierarchie.csv` wird aus
+    demselben `daten_wurzel` gelesen (PB-Codes für die Stellenübersichten, D-20)."""
+    hierarchie = lies_hierarchie_csv(daten_wurzel / HIERARCHIE_CSV)
     with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
-        werte = lies_stellenplan(dokument, jahrgang)
+        werte = lies_stellenplan(dokument, jahrgang, hierarchie=hierarchie)
 
     df = pl.DataFrame(
         [

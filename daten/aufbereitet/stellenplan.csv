@@ -16,6 +16,26 @@ beamte,5,A 10,Oberinspektor/in,,,stellen,2026,,100,,,284
 beamte,6,A 8,Hauptsekretär/in,,,besetzt,2025,2025-06-30,149,,,284
 beamte,6,A 8,Hauptsekretär/in,,,stellen,2025,,200,,,284
 beamte,6,A 8,Hauptsekretär/in,,,stellen,2026,,200,,,284
+beamte,1,B 3,,,01,stellen,2026,,100,,,287
+beamte,4,A 14,,,01,stellen,2026,,172,,,287
+beamte,6,A 12,,,01,stellen,2026,,15,,,287
+beamte,8,A 10,,,01,stellen,2026,,100,,,287
+beamte,5,A 13,,,02,stellen,2026,,70,,,287
+beamte,6,A 12,,,02,stellen,2026,,3,,,287
+beamte,10,A 8,,,02,stellen,2026,,100,,,287
+beamte,4,A 14,,,03,stellen,2026,,15,,,287
+beamte,4,A 14,,,04,stellen,2026,,4,,,287
+beamte,5,A 13,,,05,stellen,2026,,25,,,287
+beamte,10,A 8,,,05,stellen,2026,,43,,,287
+beamte,5,A 13,,,06,stellen,2026,,5,,,287
+beamte,10,A 8,,,06,stellen,2026,,1,,,287
+beamte,6,A 12,,,09,stellen,2026,,52,,,287
+beamte,6,A 12,,,10,stellen,2026,,20,,,287
+beamte,10,A 8,,,10,stellen,2026,,56,,,287
+beamte,4,A 14,,,11,stellen,2026,,1,,,287
+beamte,4,A 14,,,12,stellen,2026,,2,,,287
+beamte,6,A 12,,,14,stellen,2026,,10,,,287
+beamte,4,A 14,,,16,stellen,2026,,6,,,287
 nachwuchs,1,Inspektoranwärterinnen/ Inspektoranwärter,,Unterhaltszuschuß,,beschaeftigt,2025,2025-10-01,,1,,290
 nachwuchs,1,Inspektoranwärterinnen/ Inspektoranwärter,,Unterhaltszuschuß,,vorgesehen,2026,,,2,,290
 nachwuchs,2,Auszubildende,,Ausbildungsvergütung,,beschaeftigt,2025,2025-10-01,,4,,290
@@ -26,6 +46,8 @@ sozial_erziehungsdienst,1,S 12,,,,stellen,2026,,214,,,286
 sozial_erziehungsdienst,2,S 11,,,,besetzt,2025,2025-06-30,31,,,286
 sozial_erziehungsdienst,2,S 11,,,,stellen,2025,,38,,,286
 sozial_erziehungsdienst,2,S 11,,,,stellen,2026,,51,,,286
+sozial_erziehungsdienst,7,S 12,,,03,stellen,2026,,214,,,289
+sozial_erziehungsdienst,8,S 11,,,05,stellen,2026,,51,,,289
 tarif,1,14,,,,besetzt,2025,2025-06-30,200,,,285
 tarif,1,14,,,,stellen,2025,,200,,,285
 tarif,1,14,,,,stellen,2026,,200,,,285
@@ -60,3 +82,82 @@ tarif,11,3,,,,stellen,2025,,26,,,285
 tarif,12,1,,,,besetzt,2025,2025-06-30,15,,,285
 tarif,12,1,,,,stellen,2025,,15,,,285
 tarif,12,1,,,,stellen,2026,,15,,,285
+tarif,1,14,,,01,stellen,2026,,101,,,288
+tarif,3,12,,,01,stellen,2026,,244,,,288
+tarif,4,11,,,01,stellen,2026,,412,,,288
+tarif,6,9c,,,01,stellen,2026,,217,,,288
+tarif,7,9b,,,01,stellen,2026,,11,,,288
+tarif,8,9a,,,01,stellen,2026,,268,,,288
+tarif,9,8,,,01,stellen,2026,,214,,,288
+tarif,10,7,,,01,stellen,2026,,127,,,288
+tarif,11,6,,,01,stellen,2026,,191,,,288
+tarif,16,1,,,01,stellen,2026,,15,,,288
+tarif,1,14,,,02,stellen,2026,,3,,,288
+tarif,3,12,,,02,stellen,2026,,3,,,288
+tarif,4,11,,,02,stellen,2026,,105,,,288
+tarif,7,9b,,,02,stellen,2026,,112,,,288
+tarif,8,9a,,,02,stellen,2026,,50,,,288
+tarif,10,7,,,02,stellen,2026,,71,,,288
+tarif,11,6,,,02,stellen,2026,,211,,,288
+tarif,12,5,,,02,stellen,2026,,76,,,288
+tarif,1,14,,,03,stellen,2026,,3,,,288
+tarif,3,12,,,03,stellen,2026,,15,,,288
+tarif,8,9a,,,03,stellen,2026,,54,,,288
+tarif,9,8,,,03,stellen,2026,,52,,,288
+tarif,10,7,,,03,stellen,2026,,27,,,288
+tarif,11,6,,,03,stellen,2026,,475,,,288
+tarif,9,8,,,04,stellen,2026,,1,,,288
+tarif,10,7,,,04,stellen,2026,,9,,,288
+tarif,11,6,,,04,stellen,2026,,8,,,288
+tarif,4,11,,,05,stellen,2026,,50,,,288
+tarif,6,9c,,,05,stellen,2026,,90,,,288
+tarif,7,9b,,,05,stellen,2026,,178,,,288
+tarif,8,9a,,,05,stellen,2026,,5,,,288
+tarif,1,14,,,06,stellen,2026,,1,,,288
+tarif,4,11,,,06,stellen,2026,,3,,,288
+tarif,6,9c,,,06,stellen,2026,,5,,,288
+tarif,7,9b,,,06,stellen,2026,,3,,,288
+tarif,8,9a,,,06,stellen,2026,,20,,,288
+tarif,11,6,,,06,stellen,2026,,134,,,288
+tarif,3,12,,,08,stellen,2026,,5,,,288
+tarif,8,9a,,,08,stellen,2026,,3,,,288
+tarif,10,7,,,08,stellen,2026,,6,,,288
+tarif,11,6,,,08,stellen,2026,,10,,,288
+tarif,1,14,,,09,stellen,2026,,6,,,288
+tarif,7,9b,,,09,stellen,2026,,5,,,288
+tarif,1,14,,,10,stellen,2026,,1,,,288
+tarif,7,9b,,,10,stellen,2026,,61,,,288
+tarif,8,9a,,,10,stellen,2026,,75,,,288
+tarif,9,8,,,10,stellen,2026,,5,,,288
+tarif,11,6,,,10,stellen,2026,,162,,,288
+tarif,1,14,,,11,stellen,2026,,3,,,288
+tarif,3,12,,,11,stellen,2026,,3,,,288
+tarif,6,9c,,,11,stellen,2026,,2,,,288
+tarif,9,8,,,11,stellen,2026,,44,,,288
+tarif,10,7,,,11,stellen,2026,,5,,,288
+tarif,11,6,,,11,stellen,2026,,15,,,288
+tarif,1,14,,,12,stellen,2026,,29,,,288
+tarif,3,12,,,12,stellen,2026,,4,,,288
+tarif,4,11,,,12,stellen,2026,,90,,,288
+tarif,8,9a,,,12,stellen,2026,,20,,,288
+tarif,9,8,,,12,stellen,2026,,10,,,288
+tarif,10,7,,,12,stellen,2026,,15,,,288
+tarif,11,6,,,12,stellen,2026,,356,,,288
+tarif,1,14,,,13,stellen,2026,,18,,,288
+tarif,4,11,,,13,stellen,2026,,25,,,288
+tarif,7,9b,,,13,stellen,2026,,20,,,288
+tarif,8,9a,,,13,stellen,2026,,30,,,288
+tarif,11,6,,,13,stellen,2026,,252,,,288
+tarif,1,14,,,14,stellen,2026,,15,,,288
+tarif,3,12,,,14,stellen,2026,,1,,,288
+tarif,6,9c,,,14,stellen,2026,,7,,,288
+tarif,8,9a,,,14,stellen,2026,,30,,,288
+tarif,1,14,,,15,stellen,2026,,10,,,288
+tarif,3,12,,,15,stellen,2026,,5,,,288
+tarif,4,11,,,15,stellen,2026,,50,,,288
+tarif,8,9a,,,15,stellen,2026,,83,,,288
+tarif,11,6,,,15,stellen,2026,,81,,,288
+tarif,1,14,,,16,stellen,2026,,10,,,288
+tarif,3,12,,,16,stellen,2026,,20,,,288
+tarif,4,11,,,16,stellen,2026,,65,,,288
+tarif,6,9c,,,16,stellen,2026,,5,,,288
