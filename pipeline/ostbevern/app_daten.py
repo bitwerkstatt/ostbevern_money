@@ -31,12 +31,14 @@ from ostbevern.schema import (
     ERGEBNISPLAN_CSV,
     KITA_ZUSCHUESSE_CSV,
     META_JSON,
+    STELLENPLAN_CSV,
     STEUERARTEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
     WEITERE_VORBERICHTSTABELLEN_CSV,
     ZUWENDUNGEN_CSV,
     lies_eigenkapital_csv,
     lies_plan_csv,
+    lies_stellenplan_csv,
     lies_vorbericht_csv,
     zerlege_spaltenkopf,
 )
@@ -49,6 +51,7 @@ class AppDatenFehler(ValueError):
 
 APP_DATEN_WURZEL = PROJEKT_WURZEL / "app" / "src" / "data"
 HAUSHALT_JSON = Path("haushalt.json")
+STELLENPLAN_JSON = Path("stellenplan.json")
 
 
 def schreibe_app_json(daten: Mapping[str, object], pfad: Path, *, praefix: str) -> None:
@@ -276,6 +279,40 @@ def baue_eigenkapital_tabelle(df: pl.DataFrame, *, jahre: list[int]) -> dict[str
     }
 
 
+def baue_stellenplan_json(df: pl.DataFrame, *, haushaltsjahr: int) -> dict[str, object]:
+    """Baut die App-JSON-Struktur von `stellenplan.csv` (D-18, D-21, Plan 04-03): eine
+    Zeile je CSV-Zeile (bereits in CSV-Reihenfolge, teil/produktbereich/position/
+    merkmal/jahr), `stellen_hundertstel` durch 100 geteilt (VZÄ, `einheit_stellen`
+    "vzae"); `personen` bleibt unverändert (D-19: Nachwuchskräfte sind keine Stellen)."""
+
+    def _stellen(hundertstel: int | None) -> float | None:
+        return hundertstel / 100 if hundertstel is not None else None
+
+    zeilen = [
+        {
+            "teil": zeile["teil"],
+            "position": zeile["position"],
+            "gruppe": zeile["gruppe"],
+            "amtsbezeichnung": zeile["amtsbezeichnung"],
+            "verguetung": zeile["verguetung"],
+            "produktbereich": zeile["produktbereich"],
+            "merkmal": zeile["merkmal"],
+            "jahr": zeile["jahr"],
+            "stichtag": zeile["stichtag"],
+            "stellen": _stellen(zeile["stellen_hundertstel"]),
+            "personen": zeile["personen"],
+            "vermerk": zeile["vermerk"],
+            "pdf_seite": zeile["pdf_seite"],
+        }
+        for zeile in df.iter_rows(named=True)
+    ]
+    return {
+        "haushaltsjahr": haushaltsjahr,
+        "einheit_stellen": "vzae",
+        "zeilen": zeilen,
+    }
+
+
 def erzeuge_app_daten(
     jahr: int,
     *,
@@ -335,4 +372,10 @@ def erzeuge_app_daten(
 
     pfad = app_daten_wurzel / HAUSHALT_JSON
     schreibe_app_json(daten, pfad, praefix="haushalt")
-    return [pfad]
+
+    stellenplan_df = lies_stellenplan_csv(daten_wurzel / STELLENPLAN_CSV)
+    stellenplan_daten = baue_stellenplan_json(stellenplan_df, haushaltsjahr=jahrgang.haushaltsjahr)
+    stellenplan_pfad = app_daten_wurzel / STELLENPLAN_JSON
+    schreibe_app_json(stellenplan_daten, stellenplan_pfad, praefix="stellenplan")
+
+    return [pfad, stellenplan_pfad]

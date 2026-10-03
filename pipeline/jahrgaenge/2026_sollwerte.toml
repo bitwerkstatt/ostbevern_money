@@ -379,3 +379,10 @@ pdf_seite = 9
 [eckwerte.pro_kopf_verschuldung_vorjahr]
 wert = 656
 pdf_seite = 25
+
+# Beamtenstellen 2026 (Anhang B.6, D-20, Plan 04-03): Σ Teil A (Beamte, S. 284) Stellen
+# Haushaltsjahr ohne Produktbereich (keine Hundertstel — Regel 9 multipliziert × 100,
+# wie bei den übrigen Eckwerten, deren Ist-Wert in einer feineren Einheit geführt wird).
+[eckwerte.stellen_beamte]
+wert = 8
+pdf_seite = 284

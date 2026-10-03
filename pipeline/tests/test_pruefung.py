@@ -37,6 +37,7 @@ from ostbevern.pruefung import (
     PruefungsFehler,
     Regelergebnis,
     _pruefe_regel1,
+    _pruefe_regel10,
     _wende_befunde_an,
     gleiche_befunde_ab,
     lies_befunde,
@@ -59,6 +60,8 @@ from ostbevern.schema import (
     PRODUKTE_JSON,
     QUERSCHNITTE_CSV,
     SEITEN_CSV,
+    STELLENPLAN_CSV,
+    STELLENPLAN_SPALTEN,
     STEUERARTEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
     VE_FAELLIGKEITEN_CSV,
@@ -69,6 +72,7 @@ from ostbevern.schema import (
     lies_produkte_json,
     lies_querschnitte_csv,
     lies_seiten_csv,
+    lies_stellenplan_csv,
     lies_ve_faelligkeiten_csv,
     lies_vorbericht_csv,
     schreibe_investitionen_csv,
@@ -219,14 +223,19 @@ def _kopiere_hierarchie_nach(tmp_path: Path) -> None:
 
     Kopiert außerdem produkte.json mit (03-05, Regel 8 liest beide bei jedem
     `pruefe_alles()`-Aufruf; praktisch jeder Aufrufer dieser Funktion braucht sie,
-    wie `_kopiere_finanzplan_nach` es für investitionen*.csv bereits tut) sowie den
+    wie `_kopiere_finanzplan_nach` es für investitionen*.csv bereits tut), den
     gesamten `daten/manuell/`-Baum (Phase 4, Regel 5 liest ihn bei jedem
-    `pruefe_alles()`-Aufruf, derselbe Huckepack-Mechanismus)."""
+    `pruefe_alles()`-Aufruf, derselbe Huckepack-Mechanismus) sowie stellenplan.csv
+    (Phase 4, Plan 04-03: Regel 9 (Eckwert `stellen_beamte`) und Regel 10 lesen sie bei
+    jedem `pruefe_alles()`-Aufruf)."""
     pfad_ziel = tmp_path / HIERARCHIE_CSV
     pfad_ziel.parent.mkdir(parents=True, exist_ok=True)
     pfad_ziel.write_bytes((DATEN_WURZEL / HIERARCHIE_CSV).read_bytes())
     _kopiere_produkte_nach(tmp_path)
     shutil.copytree(DATEN_WURZEL / MANUELL_WURZEL, tmp_path / MANUELL_WURZEL, dirs_exist_ok=True)
+    stellenplan_ziel = tmp_path / STELLENPLAN_CSV
+    stellenplan_ziel.parent.mkdir(parents=True, exist_ok=True)
+    stellenplan_ziel.write_bytes((DATEN_WURZEL / STELLENPLAN_CSV).read_bytes())
 
 
 def _kopiere_befunde_nach(tmp_path: Path) -> None:
@@ -2035,3 +2044,127 @@ def test_regel8_luecke_macht_bericht_rot(tmp_path: Path) -> None:
 
     bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
     assert bericht.ist_gruen is False
+
+
+# --- Regel 10 – Stellenplan: Stellenübersicht -> Teil A/B (Plan 04-03, D-20) --------
+
+
+def _stellenplan_zeile(
+    *,
+    teil: str,
+    gruppe: str,
+    produktbereich: str | None,
+    stellen_hundertstel: int,
+    pdf_seite: int,
+    jahr: int = 2026,
+) -> dict[str, object]:
+    return {
+        "teil": teil,
+        "position": 1,
+        "gruppe": gruppe,
+        "amtsbezeichnung": None,
+        "verguetung": None,
+        "produktbereich": produktbereich,
+        "merkmal": "stellen",
+        "jahr": jahr,
+        "stichtag": None,
+        "stellen_hundertstel": stellen_hundertstel,
+        "personen": None,
+        "vermerk": None,
+        "pdf_seite": pdf_seite,
+    }
+
+
+def test_regel10_gruen_wenn_summen_uebereinstimmen() -> None:
+    """Σ Übersicht (zwei PB-Zeilen) == Teil-A/B-Wert -> keine Abweichung."""
+    df = pl.DataFrame(
+        [
+            _stellenplan_zeile(
+                teil="beamte",
+                gruppe="A 14",
+                produktbereich=None,
+                stellen_hundertstel=200,
+                pdf_seite=284,
+            ),
+            _stellenplan_zeile(
+                teil="beamte",
+                gruppe="A 14",
+                produktbereich="01",
+                stellen_hundertstel=150,
+                pdf_seite=287,
+            ),
+            _stellenplan_zeile(
+                teil="beamte",
+                gruppe="A 14",
+                produktbereich="02",
+                stellen_hundertstel=50,
+                pdf_seite=287,
+            ),
+        ],
+        schema=STELLENPLAN_SPALTEN,
+    )
+    regel10 = _pruefe_regel10(stellenplan=df, haushaltsjahr=2026)
+    assert regel10.status == "grün"
+    assert regel10.geprueft == 1
+    assert regel10.abweichungen == ()
+
+
+def test_regel10_erkennt_abweichende_summe() -> None:
+    """Eine um 1 Hundertstel abweichende Übersicht-Summe macht Regel 10 rot (D-20)."""
+    df = pl.DataFrame(
+        [
+            _stellenplan_zeile(
+                teil="tarif",
+                gruppe="9c",
+                produktbereich=None,
+                stellen_hundertstel=326,
+                pdf_seite=285,
+            ),
+            _stellenplan_zeile(
+                teil="tarif",
+                gruppe="9c",
+                produktbereich="03",
+                stellen_hundertstel=325,
+                pdf_seite=288,
+            ),
+        ],
+        schema=STELLENPLAN_SPALTEN,
+    )
+    regel10 = _pruefe_regel10(stellenplan=df, haushaltsjahr=2026)
+    assert regel10.status == "rot"
+    treffer = next(p for p in regel10.abweichungen if p.zeile == "9c")
+    assert treffer.plan == "stellenuebersicht_tarif"
+    assert treffer.soll == 326
+    assert treffer.ist == 325
+    assert treffer.pdf_seite == 288
+
+
+def test_regel10_gruppe_nur_in_uebersicht_zaehlt_teil_ab_als_0() -> None:
+    """Eine Gruppe, die nur in der Übersicht vorkommt (kein Teil-A/B-Eintrag), wird mit
+    Soll 0 verglichen und erzeugt deshalb eine Abweichung."""
+    df = pl.DataFrame(
+        [
+            _stellenplan_zeile(
+                teil="sozial_erziehungsdienst",
+                gruppe="S 99",
+                produktbereich="05",
+                stellen_hundertstel=10,
+                pdf_seite=289,
+            ),
+        ],
+        schema=STELLENPLAN_SPALTEN,
+    )
+    regel10 = _pruefe_regel10(stellenplan=df, haushaltsjahr=2026)
+    assert regel10.status == "rot"
+    treffer = next(p for p in regel10.abweichungen if p.zeile == "S 99")
+    assert treffer.soll == 0
+    assert treffer.ist == 10
+
+
+def test_regel10_gruen_auf_eingecheckten_daten() -> None:
+    """Auf den eingecheckten Daten ist Regel 10 grün (D-20, Plan 04-03)."""
+    stellenplan = lies_stellenplan_csv(DATEN_WURZEL / STELLENPLAN_CSV)
+    regel10 = _pruefe_regel10(stellenplan=stellenplan, haushaltsjahr=2026)
+    assert regel10.status == "grün"
+    assert regel10.geprueft > 0
+    assert regel10.abweichungen == ()

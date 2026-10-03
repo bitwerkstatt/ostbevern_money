@@ -59,7 +59,21 @@ Eckwert-Name (z. B. `hebesatz_kreisumlage_promille`, `pro_kopf_verschuldung_vorj
 das Haushaltsjahr, `wertart` `ansatz`. Die Einheit eines Eckwerts (Prozent, Promille, T€,
 Personen, Euro) ist dieselbe wie im Sollwert selbst — Regel 9 rechnet nichts um. Ein
 `[eckwerte.*]`-Schlüssel, den weder Regel 5 noch Regel 9 konsumiert, bricht `pruefe_alles` mit
-`PruefungsFehler` ab (kein Sollwert bleibt unbewacht).
+`PruefungsFehler` ab (kein Sollwert bleibt unbewacht). Der Eckwert `stellen_beamte`
+(`soll` = Sollwert × 100, da `ist` in Hundertsteln geführt wird, D-20, Plan 04-03) vergleicht
+Anhang B.6 „Beamte 2026 = 8“ gegen Σ Teil A (Beamte, S. 284) Stellen des Haushaltsjahrs ohne
+Produktbereich aus `stellenplan.csv`.
+
+Regel 10 (Stellenplan: Stellenübersicht → Teil A/B, D-20, Plan 04-03) prüft je (`teil`, `zeile`
+= Gruppe, z. B. `A 14`, `9c`, `S 12`) exakt (0 Hundertstel Toleranz): `soll` ist der Teil-A/B-
+Stellenwert des Haushaltsjahrs ohne Produktbereich (0, wenn die Gruppe dort nicht vorkommt),
+`ist` ist die Summe aller Stellenübersicht-Zeilen derselben Gruppe über alle Produktbereiche
+(0, wenn die Gruppe in keiner Stellenübersicht vorkommt). `plan` ist `stellenuebersicht_{teil}`
+(`teil` = `beamte`, `tarif` oder `sozial_erziehungsdienst`), `ebene` `GESAMT`, `jahr` das
+Haushaltsjahr, `wertart` `ansatz`, `pdf_seite` die Seite der Stellenübersicht (S. 287-289), bei
+einer Gruppe ohne Stellenübersicht-Zeile die Teil-A/B-Seite. Eine gedruckte VZÄ-
+Rundungsdifferenz zwischen beiden Tabellen wäre hier mit Seitenbeleg zu dokumentieren; auf den
+eingecheckten Daten tritt keine auf.
 
 Die D-11-Erweiterungen (Schulden, Rücklagen, VE, Task 04-02/3) prüfen `verbindlichkeiten.csv`,
 `eigenkapital.csv` und `ve_uebersicht.csv` quer gegen Extrahiertes: `plan` `vorbericht_eigenkapital`
@@ -80,13 +94,15 @@ Lücke (strukturell, nicht über diese Datei abdeckbar, wie bei Regel 6).
 
 Ein Befund deckt eine Abweichung nur ab, wenn Regel, Plan, Ebene, Code, Zeile, Jahr und
 Wertart übereinstimmen **und** die tatsächliche Abweichung um höchstens `toleranz_fuer(regel)`
-von der hier dokumentierten abweicht (D-05, Phase 4). Für Regel 9 (Eckwerte, Anhang B.6) ist
-diese Toleranz exakt 0 €, für jede andere Regel bleibt es bei 1 € (`pruefung.TOLERANZ_JE_REGEL`).
+von der hier dokumentierten abweicht (D-05, Phase 4). Für Regel 9 (Eckwerte, Anhang B.6) und
+Regel 10 (Stellenplan: Stellenübersicht → Teil A/B) ist diese Toleranz exakt 0 (€ bzw.
+Hundertstel), für jede andere Regel bleibt es bei 1 € (`pruefung.TOLERANZ_JE_REGEL`).
 `abweichung = ist − soll`, je nach Regel in `pruefung.py` berechnet (Regel 1: Formelkette minus
 gedruckte Summe; Regel 2: Summe der Kinder minus gedruckter Elternwert, je Ebene PG→P bzw.
 PB→PG; Regel 3: Summe der 15 PB minus gedrucktem Gesamtergebnisplan; Regel 4: Pipeline-Wert
 minus Sollwert aus Anhang B bzw. Satzung; Regel 9: Sollwert aus Anhang B.6 minus Ist-Wert aus
-`meta.json`/`zuwendungen.csv`).
+`meta.json`/`zuwendungen.csv`/`stellenplan.csv`; Regel 10: Teil-A/B-Stellenwert minus Σ
+Stellenübersicht derselben Gruppe).
 
 Ein Befund, der nicht mehr auftritt, gilt selbst als Fehler (D-04) — diese Datei darf keine
 Fehler still verdecken. Einträge sind nur für Abweichungen erlaubt, die so im PDF gedruckt

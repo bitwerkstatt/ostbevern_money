@@ -1,4 +1,5 @@
-"""Tests für den alle.py-Einstiegspunkt: Schrittfolge 01 -> 02 -> 03 -> 04 -> 06 (D-09)."""
+"""Tests für den alle.py-Einstiegspunkt: Schrittfolge 01 -> 02 -> 03 -> 04 -> Querschnitte
+-> 05 -> 06 -> 07 (D-09, D-24)."""
 
 from __future__ import annotations
 
@@ -9,7 +10,16 @@ import pytest
 from typer.testing import CliRunner
 
 import alle
-from ostbevern import app_daten, investitionen, plaene, produkte, pruefung, querschnitte, seiten
+from ostbevern import (
+    app_daten,
+    investitionen,
+    plaene,
+    produkte,
+    pruefung,
+    querschnitte,
+    seiten,
+    stellenplan,
+)
 from ostbevern.app_daten import AppDatenFehler
 from ostbevern.investitionen import ExtraktionsErgebnis as InvestitionenErgebnis
 from ostbevern.investitionen import InvestitionenFehler
@@ -20,6 +30,7 @@ from ostbevern.produkte import ProdukteFehler
 from ostbevern.pruefung import Bericht, Pruefpunkt, Regelergebnis
 from ostbevern.querschnitte import QuerschnitteFehler
 from ostbevern.seiten import KlassifizierungsErgebnis, SeitenFehler
+from ostbevern.stellenplan import StellenplanFehler
 
 runner = CliRunner()
 
@@ -77,6 +88,13 @@ def _produkte_ergebnisse() -> tuple[ProdukteErgebnis, ProdukteErgebnis, Produkte
 def _querschnitte_ergebnis() -> ExtraktionsErgebnis:
     return ExtraktionsErgebnis(
         zeilen_geschrieben=1152, pfad=Path("daten/zwischen/querschnitte.csv")
+    )
+
+
+def _stellenplan_ergebnis() -> ExtraktionsErgebnis:
+    # alle.py ruft .relative_to(PROJEKT_WURZEL) auf diesem Pfad auf (wie bei investitionen).
+    return ExtraktionsErgebnis(
+        zeilen_geschrieben=162, pfad=PROJEKT_WURZEL / "daten/aufbereitet/stellenplan.csv"
     )
 
 
@@ -156,6 +174,11 @@ def aufrufe(monkeypatch: pytest.MonkeyPatch) -> _Aufrufe:
         aufzeichnung.jahre["querschnitte"] = jahrgang.haushaltsjahr
         return _querschnitte_ergebnis()
 
+    def _extrahiere_stellenplan(jahrgang, **kwargs):  # noqa: ANN001, ANN003, ANN202
+        aufzeichnung.reihenfolge.append("stellenplan")
+        aufzeichnung.jahre["stellenplan"] = jahrgang.haushaltsjahr
+        return _stellenplan_ergebnis()
+
     def _pruefe_alles(jahr, **kwargs):  # noqa: ANN001, ANN003, ANN202
         aufzeichnung.reihenfolge.append("pruefe")
         aufzeichnung.jahre["pruefe"] = jahr
@@ -176,6 +199,7 @@ def aufrufe(monkeypatch: pytest.MonkeyPatch) -> _Aufrufe:
     monkeypatch.setattr(produkte, "extrahiere_produkte", _extrahiere_produkte)
     monkeypatch.setattr(investitionen, "extrahiere_investitionen", _extrahiere_investitionen)
     monkeypatch.setattr(querschnitte, "extrahiere_querschnitte", _extrahiere_querschnitte)
+    monkeypatch.setattr(stellenplan, "extrahiere_stellenplan", _extrahiere_stellenplan)
     monkeypatch.setattr(pruefung, "pruefe_alles", _pruefe_alles)
     monkeypatch.setattr(pruefung, "schreibe_konsistenzbericht", _schreibe_konsistenzbericht)
     monkeypatch.setattr(app_daten, "erzeuge_app_daten", _erzeuge_app_daten)
@@ -192,6 +216,7 @@ def test_ohne_jahr_nutzt_standardjahr(aufrufe: _Aufrufe) -> None:
         "produkte",
         "investitionen",
         "querschnitte",
+        "stellenplan",
         "pruefe",
         "schreibe",
         "app_daten",
@@ -202,6 +227,7 @@ def test_ohne_jahr_nutzt_standardjahr(aufrufe: _Aufrufe) -> None:
         "produkte": STANDARD_JAHR,
         "investitionen": STANDARD_JAHR,
         "querschnitte": STANDARD_JAHR,
+        "stellenplan": STANDARD_JAHR,
         "pruefe": STANDARD_JAHR,
         "app_daten": STANDARD_JAHR,
     }
@@ -235,6 +261,7 @@ def test_roter_bericht_beendet_mit_fehler(
         "produkte",
         "investitionen",
         "querschnitte",
+        "stellenplan",
         "pruefe",
         "schreibe",
     ]
@@ -317,6 +344,32 @@ def test_querschnittfehler_beendet_mit_fehler(
     assert aufrufe.reihenfolge == ["seiten", "plaene", "produkte", "investitionen", "querschnitte"]
 
 
+def test_stellenplanfehler_beendet_mit_fehler(
+    aufrufe: _Aufrufe, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def _bricht_ab(jahrgang, **kwargs):  # noqa: ANN001, ANN003, ANN202
+        aufrufe.reihenfolge.append("stellenplan")
+        raise StellenplanFehler("Testfehler: Stellenplan nicht lesbar")
+
+    monkeypatch.setattr(stellenplan, "extrahiere_stellenplan", _bricht_ab)
+
+    ergebnis = runner.invoke(alle.app, [])
+    assert ergebnis.exit_code == 1
+    ausgabe = (
+        ergebnis.output if ergebnis.stderr_bytes is None else ergebnis.output + ergebnis.stderr
+    )
+    assert "Fehler:" in ausgabe
+    # pruefung wurde nicht aufgerufen (D-09: Abbruch nach dem ersten Fehler).
+    assert aufrufe.reihenfolge == [
+        "seiten",
+        "plaene",
+        "produkte",
+        "investitionen",
+        "querschnitte",
+        "stellenplan",
+    ]
+
+
 def test_roter_bericht_ruft_app_daten_nicht_auf(
     aufrufe: _Aufrufe, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -336,6 +389,7 @@ def test_roter_bericht_ruft_app_daten_nicht_auf(
         "produkte",
         "investitionen",
         "querschnitte",
+        "stellenplan",
         "pruefe",
         "schreibe",
     ]
@@ -363,6 +417,7 @@ def test_app_daten_fehler_beendet_mit_fehler(
         "produkte",
         "investitionen",
         "querschnitte",
+        "stellenplan",
         "pruefe",
         "schreibe",
         "app_daten",
