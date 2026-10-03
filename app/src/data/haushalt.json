@@ -1,0 +1,586 @@
+{
+  "haushaltsjahr": 2026,
+  "jahre": [
+    2024,
+    2025,
+    2026,
+    2027,
+    2028,
+    2029
+  ],
+  "wertarten": [
+    "ergebnis",
+    "ansatz",
+    "ansatz",
+    "planung",
+    "planung",
+    "planung"
+  ],
+  "vorbericht": {
+    "steuerarten": {
+      "tabelle": "steuerarten",
+      "quelle_einheit": "teur",
+      "planzeile": "steuern",
+      "gesamt_plan": [
+        19614808,
+        17964000,
+        18443000,
+        19866000,
+        20801000,
+        21721000
+      ],
+      "gesamt_vorbericht": {
+        "werte": [
+          19615000,
+          17964000,
+          18443000,
+          19866000,
+          20801000,
+          21721000
+        ],
+        "gerundet": true,
+        "quelle": 27
+      },
+      "posten": [
+        {
+          "posten": "grundsteuer_a",
+          "name": "Grundsteuer A",
+          "werte": [
+            160000,
+            130000,
+            90000,
+            90000,
+            90000,
+            90000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "grundsteuer_b",
+          "name": "Grundsteuer B",
+          "werte": [
+            1851000,
+            2000000,
+            2060000,
+            2285000,
+            2312000,
+            2340000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "gewerbesteuer",
+          "name": "Gewerbesteuer",
+          "werte": [
+            9511000,
+            7165000,
+            7800000,
+            8300000,
+            8800000,
+            9300000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "anteil_einkommensteuer",
+          "name": "Anteil Einkommensteuer",
+          "werte": [
+            6471000,
+            7002000,
+            6830000,
+            7421000,
+            7784000,
+            8134000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "anteil_umsatzsteuer",
+          "name": "Anteil Umsatzsteuer",
+          "werte": [
+            855000,
+            879000,
+            887000,
+            931000,
+            954000,
+            974000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "vergnuegungssteuer",
+          "name": "Vergnügungssteuer",
+          "werte": [
+            54000,
+            50000,
+            55000,
+            55000,
+            55000,
+            55000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "hundesteuer",
+          "name": "Hundesteuer",
+          "werte": [
+            65000,
+            65000,
+            66000,
+            66000,
+            66000,
+            66000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        },
+        {
+          "posten": "kompensationszahlungen",
+          "name": "Kompensationszahlungen",
+          "werte": [
+            648000,
+            673000,
+            655000,
+            718000,
+            740000,
+            762000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 27,
+          "anmerkung": null
+        }
+      ]
+    },
+    "zuwendungen": {
+      "tabelle": "zuwendungen",
+      "quelle_einheit": "teur",
+      "planzeile": "zuwendungen",
+      "gesamt_plan": [
+        4333024,
+        4967048,
+        3113200,
+        4472920,
+        4521039,
+        4210051
+      ],
+      "gesamt_vorbericht": {
+        "werte": [
+          4333000,
+          4967000,
+          3109000,
+          4473000,
+          4521000,
+          4210000
+        ],
+        "gerundet": true,
+        "quelle": 28
+      },
+      "posten": [
+        {
+          "posten": "schluesselzuweisung",
+          "name": "Schlüsselzuweisung",
+          "werte": [
+            2104000,
+            2807000,
+            890000,
+            2391000,
+            2475000,
+            2179000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 28,
+          "anmerkung": null
+        },
+        {
+          "posten": "zuweisungen_laufende_zwecke",
+          "name": "Zuweisungen für lfd. Zwecke",
+          "werte": [
+            1332000,
+            936000,
+            1323000,
+            1266000,
+            1261000,
+            1261000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 28,
+          "anmerkung": null
+        },
+        {
+          "posten": "aufloesung_sonderposten",
+          "name": "Auflösung von Sonderposten",
+          "werte": [
+            897000,
+            1225000,
+            895000,
+            816000,
+            785000,
+            770000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 28,
+          "anmerkung": null
+        },
+        {
+          "posten": "sonstige",
+          "name": "Sonstige",
+          "werte": [
+            null,
+            null,
+            5200,
+            null,
+            null,
+            null
+          ],
+          "gerundet": false,
+          "berechnet": true,
+          "quelle": 28,
+          "anmerkung": "Differenz zwischen der eurogenauen Planzeile des Gesamtergebnisplans und der Summe der gedruckten Vorbericht-Posten (Spez. 3.8); die Planzeile ist maßgeblich."
+        }
+      ]
+    },
+    "transferaufwendungen": {
+      "tabelle": "transferaufwendungen",
+      "quelle_einheit": "teur",
+      "planzeile": "transferaufwendungen",
+      "gesamt_plan": [
+        14523567,
+        13782286,
+        13764981,
+        15756800,
+        16232800,
+        16746800
+      ],
+      "gesamt_vorbericht": {
+        "werte": [
+          14523000,
+          13782000,
+          13764000,
+          15757000,
+          16233000,
+          16747000
+        ],
+        "gerundet": true,
+        "quelle": 46
+      },
+      "posten": [
+        {
+          "posten": "wasser_bodenverband",
+          "name": "Wasser- u. Bodenverband",
+          "werte": [
+            140000,
+            152000,
+            152000,
+            152000,
+            152000,
+            152000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 45,
+          "anmerkung": null
+        },
+        {
+          "posten": "zuschuesse_kindertageseinrichtungen",
+          "name": "Zuschüsse an Kindertageseinr.",
+          "werte": [
+            508000,
+            529000,
+            559000,
+            583000,
+            605000,
+            619000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 45,
+          "anmerkung": null
+        },
+        {
+          "posten": "zuschuss_kinder_jugendwerk",
+          "name": "Zuschuss an das Kinder- und Jugendwerk",
+          "werte": [
+            302000,
+            301000,
+            300000,
+            300000,
+            300000,
+            300000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        },
+        {
+          "posten": "zuschuss_ogs",
+          "name": "Zuschuss an die OGS",
+          "werte": [
+            499000,
+            738000,
+            871000,
+            871000,
+            871000,
+            871000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        },
+        {
+          "posten": "zuschuesse_laufende_zwecke",
+          "name": "Zuschüsse für lfd. Zwecke",
+          "werte": [
+            183000,
+            203000,
+            120000,
+            117000,
+            112000,
+            112000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        },
+        {
+          "posten": "sozialleistungen",
+          "name": "Sozialleistungen",
+          "werte": [
+            298000,
+            481000,
+            491000,
+            491000,
+            491000,
+            491000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        },
+        {
+          "posten": "gewerbesteuerumlage",
+          "name": "Gewerbesteuerumlage",
+          "werte": [
+            706000,
+            600000,
+            654000,
+            695000,
+            737000,
+            779000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        },
+        {
+          "posten": "krankenhausinvestitionsumlage",
+          "name": "Krankenhausinvestitionsuml.",
+          "werte": [
+            196000,
+            200000,
+            200000,
+            200000,
+            200000,
+            200000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        },
+        {
+          "posten": "kreisumlage",
+          "name": "Kreisumlage (siehe Fußnote)",
+          "werte": [
+            11212000,
+            10163000,
+            10147000,
+            11932000,
+            12349000,
+            12807000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        },
+        {
+          "posten": "verlustuebernahme_bbo",
+          "name": "Verlustübernahme BBO",
+          "werte": [
+            479000,
+            415000,
+            270000,
+            415000,
+            415000,
+            415000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        }
+      ]
+    },
+    "kita_zuschuesse": {
+      "tabelle": "kita_zuschuesse",
+      "quelle_einheit": "teur",
+      "planzeile": null,
+      "gesamt_plan": null,
+      "gesamt_vorbericht": {
+        "werte": [
+          null,
+          null,
+          559000,
+          null,
+          null,
+          null
+        ],
+        "gerundet": true,
+        "quelle": 46
+      },
+      "posten": [
+        {
+          "posten": "kita_st_ambrosius_st_josef",
+          "name": "Kita St. Ambrosius und Kita St. Josef",
+          "werte": [
+            null,
+            null,
+            72000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        },
+        {
+          "posten": "kita_zauberburg",
+          "name": "Kita Zauberburg",
+          "werte": [
+            null,
+            null,
+            104000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        },
+        {
+          "posten": "kita_bahnhofstrasse",
+          "name": "Kita Bahnhofstraße",
+          "werte": [
+            null,
+            null,
+            71000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        },
+        {
+          "posten": "kita_grevener_damm",
+          "name": "Kita Grevener Damm",
+          "werte": [
+            null,
+            null,
+            59000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        },
+        {
+          "posten": "kita_and_more_brock",
+          "name": "Kita & More Brock",
+          "werte": [
+            null,
+            null,
+            56000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        },
+        {
+          "posten": "kita_biberbande",
+          "name": "Kita Biberbande",
+          "werte": [
+            null,
+            null,
+            101000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        },
+        {
+          "posten": "kita_bullerbue",
+          "name": "Kita Bullerbü",
+          "werte": [
+            null,
+            null,
+            96000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 46,
+          "anmerkung": null
+        }
+      ]
+    }
+  }
+}

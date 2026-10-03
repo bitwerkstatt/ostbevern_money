@@ -27,6 +27,23 @@ Gesamtanzahl, leeres Pflichtfeld, unbekannter Bindungsgrad, fehlende Teilergebni
 Teilfinanzplan-Zeile) als Lücke. Eine Lücke ist, wie bei Regel 6, nie über diese Datei
 abdeckbar — ein fehlendes Produkt oder eine leere Produktbeschreibung ist kein Rundungsfehler.
 
+Regel 5 (manuelle Vorberichtstabellen → Planzeilen, PRUEF-05, D-07) prüft vier Tabellen unter
+`daten/manuell/` zweistufig: Stufe (a) `zeile` `summe_posten` vergleicht die Summe der Posten
+mit der mit abgeschriebenen, gedruckten Gesamtzeile derselben Tabelle und desselben Jahres
+(beide in T€, × 1000 in Euro umgerechnet; jede Differenz ab 1 T€ = 1.000 € überschreitet die
+strenge TOLERANZ_EURO = 1 € und wird dokumentationspflichtig). Stufe (b) `zeile` `gep_NN`
+vergleicht die gedruckte Gesamtzeile × 1000 mit der zugeordneten Zeile NN des
+Gesamtergebnisplans (`plan` `vorbericht_{tabelle}`), Toleranz ±1.000 €. Für `kita_zuschuesse`
+prüft `zeile` `transfer_kita` zusätzlich die Kita-Gesamtzeile gegen den Transferaufwendungen-
+Posten „Zuschüsse an Kindertageseinr.“ desselben Jahres (strenge TOLERANZ_EURO = 1 €, D-07).
+Die Weitergabe an Kreis und Land (D-01, `plan` `weitergabe_kreis_land`, `ebene` `P`, `code` der
+Produktcode aus `[layout.weitergabe_kreis_land]`, `zeile` `tp_15`) vergleicht die Summe der drei
+Transferaufwendungen-Posten Kreisumlage, Gewerbesteuerumlage und Krankenhausinvestitionsumlage
+(× 1000) mit Zeile 15 des Teilergebnisplans dieses Produkts, Toleranz ±3.000 € (drei Posten ×
+±1.000 €). In allen Fällen gilt `abweichung = ist − soll`, mit `ist` dem aus den Vorbericht-
+Posten hergeleiteten Wert und `soll` dem jeweils gedruckten oder im Gesamtergebnisplan
+ausgewiesenen Referenzwert.
+
 Ein Befund deckt eine Abweichung nur ab, wenn Regel, Plan, Ebene, Code, Zeile, Jahr und
 Wertart übereinstimmen **und** die tatsächliche Abweichung um höchstens 1 € von der hier
 dokumentierten abweicht (D-05). `abweichung = ist − soll`, je nach Regel in `pruefung.py`
@@ -79,6 +96,12 @@ Parsing-Fehlern.
 | 6 | investitionen_produkt | P | 120102 | 30 | 2024 | ergebnis | -134535 | 249 | Produkt 120102 (Unterhaltung von Straßen, Wegen, Plätzen und sonstigen Verkehrsanlagen), Teilfinanzplan Zeile 30, Spalte Ergebnis 2024 (S. 249): gedruckt 134.535 C. Das Produkt druckt im aktuellen Haushalt keine Investitionsmaßnahmen-Tabelle mehr (EXTR-09, Flagged assumption: ohne Tabelle 0 C), die Summe ist daher 0 C. Wortweise gegen das PDF verifiziert: eine 2024 gebuchte, im aktuellen Haushalt nicht mehr geführte historische Ist-Buchung, kein Extraktionsfehler. |
 | 6 | investitionen_gesamt | GESAMT |  | 23 | 2024 | ergebnis | -490612 | 63 | Gesamtfinanzplan Zeile 23, Spalte Ergebnis 2024 (S. 63): Summe der sechs produktweisen Ergebnis-2024-Differenzen bei Zeile 23 (011201, 030102, 050201, 120101, siehe oben), da alle anderen Produkte exakt übereinstimmen. Folge derselben historischen Ist-Differenzen, kein Extraktionsfehler. |
 | 6 | investitionen_gesamt | GESAMT |  | 30 | 2024 | ergebnis | -142826 | 63 | Gesamtfinanzplan Zeile 30, Spalte Ergebnis 2024 (S. 63): Summe der produktweisen Ergebnis-2024-Differenzen bei Zeile 30 (020701, 120102, siehe oben), da alle anderen Produkte exakt übereinstimmen. Folge derselben historischen Ist-Differenzen, kein Extraktionsfehler. |
+| 5 | vorbericht_zuwendungen | GESAMT |  | summe_posten | 2025 | ansatz | 1000 | 28 | Zuwendungen und allgemeine Umlagen, Spalte Ansatz 2025 (S. 28): Summe der Posten Schlüsselzuweisung (2.807), Zuweisungen für lfd. Zwecke (936) und Auflösung von Sonderposten (1.225) ergibt 4.968 T€, gedruckt ist die Gesamtzeile mit 4.967 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | vorbericht_zuwendungen | GESAMT |  | summe_posten | 2026 | ansatz | -1000 | 28 | Zuwendungen und allgemeine Umlagen, Spalte Ansatz 2026 (S. 28): Summe der Posten (890 + 1.323 + 895 = 3.108 T€) liegt 1 T€ unter der gedruckten Gesamtzeile von 3.109 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz im Vorbericht selbst. |
+| 5 | vorbericht_zuwendungen | GESAMT |  | gep_02 | 2026 | ansatz | -4200 | 28 | Zuwendungen und allgemeine Umlagen, Spalte Ansatz 2026 (S. 28): Die gedruckte Gesamtzeile von 3.109 T€ (= 3.109.000 €) weicht um 4.200 € von der Zeile 02 des Gesamtergebnisplans ab (3.113.200 €, S. 62, Spez. 3.8). Die App weist die Differenz als eigenen, berechneten Posten "Sonstige" aus. |
+| 5 | vorbericht_transferaufwendungen | GESAMT |  | summe_posten | 2027 | planung | -1000 | 46 | Transferaufwendungen, Spalte Planung 2027 (S. 45-46): Summe der zehn Posten ergibt 15.756 T€, gedruckt ist die Gesamtzeile mit 15.757 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | vorbericht_transferaufwendungen | GESAMT |  | summe_posten | 2028 | planung | -1000 | 46 | Transferaufwendungen, Spalte Planung 2028 (S. 45-46): Summe der zehn Posten ergibt 16.232 T€, gedruckt ist die Gesamtzeile mit 16.233 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | vorbericht_transferaufwendungen | GESAMT |  | summe_posten | 2029 | planung | -1000 | 46 | Transferaufwendungen, Spalte Planung 2029 (S. 45-46): Summe der zehn Posten ergibt 16.746 T€, gedruckt ist die Gesamtzeile mit 16.747 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
 
 ## Beobachtungen ohne Prüfregel
 

@@ -1,0 +1,25 @@
+tabelle,position,posten,posten_name,ist_gesamt,jahr,wertart,betrag_teur,anmerkung,quelle
+zuwendungen,1,schluesselzuweisung,Schlüsselzuweisung,false,2024,ergebnis,2104,,28
+zuwendungen,1,schluesselzuweisung,Schlüsselzuweisung,false,2025,ansatz,2807,,28
+zuwendungen,1,schluesselzuweisung,Schlüsselzuweisung,false,2026,ansatz,890,,28
+zuwendungen,1,schluesselzuweisung,Schlüsselzuweisung,false,2027,planung,2391,,28
+zuwendungen,1,schluesselzuweisung,Schlüsselzuweisung,false,2028,planung,2475,,28
+zuwendungen,1,schluesselzuweisung,Schlüsselzuweisung,false,2029,planung,2179,,28
+zuwendungen,2,zuweisungen_laufende_zwecke,Zuweisungen für lfd. Zwecke,false,2024,ergebnis,1332,,28
+zuwendungen,2,zuweisungen_laufende_zwecke,Zuweisungen für lfd. Zwecke,false,2025,ansatz,936,,28
+zuwendungen,2,zuweisungen_laufende_zwecke,Zuweisungen für lfd. Zwecke,false,2026,ansatz,1323,,28
+zuwendungen,2,zuweisungen_laufende_zwecke,Zuweisungen für lfd. Zwecke,false,2027,planung,1266,,28
+zuwendungen,2,zuweisungen_laufende_zwecke,Zuweisungen für lfd. Zwecke,false,2028,planung,1261,,28
+zuwendungen,2,zuweisungen_laufende_zwecke,Zuweisungen für lfd. Zwecke,false,2029,planung,1261,,28
+zuwendungen,3,aufloesung_sonderposten,Auflösung von Sonderposten,false,2024,ergebnis,897,,28
+zuwendungen,3,aufloesung_sonderposten,Auflösung von Sonderposten,false,2025,ansatz,1225,,28
+zuwendungen,3,aufloesung_sonderposten,Auflösung von Sonderposten,false,2026,ansatz,895,,28
+zuwendungen,3,aufloesung_sonderposten,Auflösung von Sonderposten,false,2027,planung,816,,28
+zuwendungen,3,aufloesung_sonderposten,Auflösung von Sonderposten,false,2028,planung,785,,28
+zuwendungen,3,aufloesung_sonderposten,Auflösung von Sonderposten,false,2029,planung,770,,28
+zuwendungen,4,gesamt,Gesamt,true,2024,ergebnis,4333,,28
+zuwendungen,4,gesamt,Gesamt,true,2025,ansatz,4967,,28
+zuwendungen,4,gesamt,Gesamt,true,2026,ansatz,3109,,28
+zuwendungen,4,gesamt,Gesamt,true,2027,planung,4473,,28
+zuwendungen,4,gesamt,Gesamt,true,2028,planung,4521,,28
+zuwendungen,4,gesamt,Gesamt,true,2029,planung,4210,,28

@@ -276,3 +276,40 @@ produkt = "160101"
 bezeichnung = "Gewerbesteuerumlage für Fond deutscher Einheit (Zeile 15)"
 jahre = [2022]
 wert = 0
+
+# Anhang B.4/B.5 (Phase 4, PRUEF-05, D-07): unabhängige, zweite Abschrift der
+# Vorbericht-Tabellen Steuerarten (S. 27) und Transferaufwendungen (S. 45-46), übertragen
+# aus discussion/SPEZIFIKATION.md Anhang B.4/B.5 — NICHT aus daten/manuell/*.csv kopiert.
+# Regel 4 vergleicht sie gegen die manuellen CSVs (T€, × 1000 in Euro); ein Tippfehler in
+# einer der beiden unabhängigen Quellen macht sowohl Regel 4 als auch Regel 5 rot.
+[anhang_b4_steuerarten]
+jahre = [2024, 2025, 2026, 2027, 2028, 2029]
+pdf_seite = 27
+
+[anhang_b4_steuerarten.werte_teur]
+grundsteuer_a = [160, 130, 90, 90, 90, 90]
+grundsteuer_b = [1851, 2000, 2060, 2285, 2312, 2340]
+gewerbesteuer = [9511, 7165, 7800, 8300, 8800, 9300]
+anteil_einkommensteuer = [6471, 7002, 6830, 7421, 7784, 8134]
+anteil_umsatzsteuer = [855, 879, 887, 931, 954, 974]
+vergnuegungssteuer = [54, 50, 55, 55, 55, 55]
+hundesteuer = [65, 65, 66, 66, 66, 66]
+kompensationszahlungen = [648, 673, 655, 718, 740, 762]
+gesamt = [19615, 17964, 18443, 19866, 20801, 21721]
+
+[anhang_b5_transferaufwendungen]
+jahr = 2026
+pdf_seite = 46
+
+[anhang_b5_transferaufwendungen.werte_teur]
+wasser_bodenverband = 152
+zuschuesse_kindertageseinrichtungen = 559
+zuschuss_kinder_jugendwerk = 300
+zuschuss_ogs = 871
+zuschuesse_laufende_zwecke = 120
+sozialleistungen = 491
+gewerbesteuerumlage = 654
+krankenhausinvestitionsumlage = 200
+kreisumlage = 10147
+verlustuebernahme_bbo = 270
+gesamt = 13764

@@ -36,6 +36,15 @@ jobs:
         run: uv run ruff format --check .
       - name: Tests
         run: uv run pytest
+      - name: Pipeline reproduzierbar (D-24)
+        working-directory: ${{ github.workspace }}
+        run: |
+          uv run --directory pipeline python alle.py
+          git diff --stat --exit-code -- daten app/src/data
+          if [ -n "$(git status --porcelain --untracked-files=all -- daten app/src/data)" ]; then
+            git status --porcelain --untracked-files=all -- daten app/src/data
+            exit 1
+          fi
 
   app:
     runs-on: ubuntu-latest

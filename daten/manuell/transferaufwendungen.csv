@@ -1,0 +1,67 @@
+tabelle,position,posten,posten_name,ist_gesamt,jahr,wertart,betrag_teur,anmerkung,quelle
+transferaufwendungen,1,wasser_bodenverband,Wasser- u. Bodenverband,false,2024,ergebnis,140,,45
+transferaufwendungen,1,wasser_bodenverband,Wasser- u. Bodenverband,false,2025,ansatz,152,,45
+transferaufwendungen,1,wasser_bodenverband,Wasser- u. Bodenverband,false,2026,ansatz,152,,45
+transferaufwendungen,1,wasser_bodenverband,Wasser- u. Bodenverband,false,2027,planung,152,,45
+transferaufwendungen,1,wasser_bodenverband,Wasser- u. Bodenverband,false,2028,planung,152,,45
+transferaufwendungen,1,wasser_bodenverband,Wasser- u. Bodenverband,false,2029,planung,152,,45
+transferaufwendungen,2,zuschuesse_kindertageseinrichtungen,Zuschüsse an Kindertageseinr.,false,2024,ergebnis,508,,45
+transferaufwendungen,2,zuschuesse_kindertageseinrichtungen,Zuschüsse an Kindertageseinr.,false,2025,ansatz,529,,45
+transferaufwendungen,2,zuschuesse_kindertageseinrichtungen,Zuschüsse an Kindertageseinr.,false,2026,ansatz,559,,45
+transferaufwendungen,2,zuschuesse_kindertageseinrichtungen,Zuschüsse an Kindertageseinr.,false,2027,planung,583,,45
+transferaufwendungen,2,zuschuesse_kindertageseinrichtungen,Zuschüsse an Kindertageseinr.,false,2028,planung,605,,45
+transferaufwendungen,2,zuschuesse_kindertageseinrichtungen,Zuschüsse an Kindertageseinr.,false,2029,planung,619,,45
+transferaufwendungen,3,zuschuss_kinder_jugendwerk,Zuschuss an das Kinder- und Jugendwerk,false,2024,ergebnis,302,,46
+transferaufwendungen,3,zuschuss_kinder_jugendwerk,Zuschuss an das Kinder- und Jugendwerk,false,2025,ansatz,301,,46
+transferaufwendungen,3,zuschuss_kinder_jugendwerk,Zuschuss an das Kinder- und Jugendwerk,false,2026,ansatz,300,,46
+transferaufwendungen,3,zuschuss_kinder_jugendwerk,Zuschuss an das Kinder- und Jugendwerk,false,2027,planung,300,,46
+transferaufwendungen,3,zuschuss_kinder_jugendwerk,Zuschuss an das Kinder- und Jugendwerk,false,2028,planung,300,,46
+transferaufwendungen,3,zuschuss_kinder_jugendwerk,Zuschuss an das Kinder- und Jugendwerk,false,2029,planung,300,,46
+transferaufwendungen,4,zuschuss_ogs,Zuschuss an die OGS,false,2024,ergebnis,499,,46
+transferaufwendungen,4,zuschuss_ogs,Zuschuss an die OGS,false,2025,ansatz,738,,46
+transferaufwendungen,4,zuschuss_ogs,Zuschuss an die OGS,false,2026,ansatz,871,,46
+transferaufwendungen,4,zuschuss_ogs,Zuschuss an die OGS,false,2027,planung,871,,46
+transferaufwendungen,4,zuschuss_ogs,Zuschuss an die OGS,false,2028,planung,871,,46
+transferaufwendungen,4,zuschuss_ogs,Zuschuss an die OGS,false,2029,planung,871,,46
+transferaufwendungen,5,zuschuesse_laufende_zwecke,Zuschüsse für lfd. Zwecke,false,2024,ergebnis,183,,46
+transferaufwendungen,5,zuschuesse_laufende_zwecke,Zuschüsse für lfd. Zwecke,false,2025,ansatz,203,,46
+transferaufwendungen,5,zuschuesse_laufende_zwecke,Zuschüsse für lfd. Zwecke,false,2026,ansatz,120,,46
+transferaufwendungen,5,zuschuesse_laufende_zwecke,Zuschüsse für lfd. Zwecke,false,2027,planung,117,,46
+transferaufwendungen,5,zuschuesse_laufende_zwecke,Zuschüsse für lfd. Zwecke,false,2028,planung,112,,46
+transferaufwendungen,5,zuschuesse_laufende_zwecke,Zuschüsse für lfd. Zwecke,false,2029,planung,112,,46
+transferaufwendungen,6,sozialleistungen,Sozialleistungen,false,2024,ergebnis,298,,46
+transferaufwendungen,6,sozialleistungen,Sozialleistungen,false,2025,ansatz,481,,46
+transferaufwendungen,6,sozialleistungen,Sozialleistungen,false,2026,ansatz,491,,46
+transferaufwendungen,6,sozialleistungen,Sozialleistungen,false,2027,planung,491,,46
+transferaufwendungen,6,sozialleistungen,Sozialleistungen,false,2028,planung,491,,46
+transferaufwendungen,6,sozialleistungen,Sozialleistungen,false,2029,planung,491,,46
+transferaufwendungen,7,gewerbesteuerumlage,Gewerbesteuerumlage,false,2024,ergebnis,706,,46
+transferaufwendungen,7,gewerbesteuerumlage,Gewerbesteuerumlage,false,2025,ansatz,600,,46
+transferaufwendungen,7,gewerbesteuerumlage,Gewerbesteuerumlage,false,2026,ansatz,654,,46
+transferaufwendungen,7,gewerbesteuerumlage,Gewerbesteuerumlage,false,2027,planung,695,,46
+transferaufwendungen,7,gewerbesteuerumlage,Gewerbesteuerumlage,false,2028,planung,737,,46
+transferaufwendungen,7,gewerbesteuerumlage,Gewerbesteuerumlage,false,2029,planung,779,,46
+transferaufwendungen,8,krankenhausinvestitionsumlage,Krankenhausinvestitionsuml.,false,2024,ergebnis,196,,46
+transferaufwendungen,8,krankenhausinvestitionsumlage,Krankenhausinvestitionsuml.,false,2025,ansatz,200,,46
+transferaufwendungen,8,krankenhausinvestitionsumlage,Krankenhausinvestitionsuml.,false,2026,ansatz,200,,46
+transferaufwendungen,8,krankenhausinvestitionsumlage,Krankenhausinvestitionsuml.,false,2027,planung,200,,46
+transferaufwendungen,8,krankenhausinvestitionsumlage,Krankenhausinvestitionsuml.,false,2028,planung,200,,46
+transferaufwendungen,8,krankenhausinvestitionsumlage,Krankenhausinvestitionsuml.,false,2029,planung,200,,46
+transferaufwendungen,9,kreisumlage,Kreisumlage (siehe Fußnote),false,2024,ergebnis,11212,,46
+transferaufwendungen,9,kreisumlage,Kreisumlage (siehe Fußnote),false,2025,ansatz,10163,,46
+transferaufwendungen,9,kreisumlage,Kreisumlage (siehe Fußnote),false,2026,ansatz,10147,"Der Vorbericht druckt für 2026 ""10.1473"": die Fußnotenziffer 3 ist an den Betrag 10.147 angeklebt. Die Fußnote (S. 46) erläutert, dass zur Entlastung des Haushalts 2026 eine Rückstellung aus dem Jahresabschluss 2024 in Höhe von 1.325.478 EUR aufgelöst wird und die Umlage 2026 bei rd. 11,5 Mio. EUR liegt (Kreisumlage brutto, siehe meta.json); der hier gespeicherte Betrag 10.147 T€ ist die Kreisumlage netto.",46
+transferaufwendungen,9,kreisumlage,Kreisumlage (siehe Fußnote),false,2027,planung,11932,,46
+transferaufwendungen,9,kreisumlage,Kreisumlage (siehe Fußnote),false,2028,planung,12349,,46
+transferaufwendungen,9,kreisumlage,Kreisumlage (siehe Fußnote),false,2029,planung,12807,,46
+transferaufwendungen,10,verlustuebernahme_bbo,Verlustübernahme BBO,false,2024,ergebnis,479,,46
+transferaufwendungen,10,verlustuebernahme_bbo,Verlustübernahme BBO,false,2025,ansatz,415,,46
+transferaufwendungen,10,verlustuebernahme_bbo,Verlustübernahme BBO,false,2026,ansatz,270,,46
+transferaufwendungen,10,verlustuebernahme_bbo,Verlustübernahme BBO,false,2027,planung,415,,46
+transferaufwendungen,10,verlustuebernahme_bbo,Verlustübernahme BBO,false,2028,planung,415,,46
+transferaufwendungen,10,verlustuebernahme_bbo,Verlustübernahme BBO,false,2029,planung,415,,46
+transferaufwendungen,11,gesamt,Gesamt,true,2024,ergebnis,14523,,46
+transferaufwendungen,11,gesamt,Gesamt,true,2025,ansatz,13782,,46
+transferaufwendungen,11,gesamt,Gesamt,true,2026,ansatz,13764,,46
+transferaufwendungen,11,gesamt,Gesamt,true,2027,planung,15757,,46
+transferaufwendungen,11,gesamt,Gesamt,true,2028,planung,16233,,46
+transferaufwendungen,11,gesamt,Gesamt,true,2029,planung,16747,,46
