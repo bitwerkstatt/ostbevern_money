@@ -247,3 +247,10 @@ None - no external service configuration required.
 ---
 *Phase: 04-manuelle-daten-und-app-daten*
 *Completed: 2026-10-02*
+
+## Self-Check: PASSED
+
+- All `key-files.created` paths verified present on disk with `[ -f ]`.
+- All four task commits (`bce07ab`, `d2d64f0`, `c22f255`, `d77a47f`) and the metadata commit (`e728fe5`) confirmed via `git log --oneline --all`.
+- Re-ran every `<acceptance_criteria>` check from all three tasks: all pass.
+- Re-ran the plan-level `<verification>` block: `pytest -q` (333 passed), `alle.py --jahr 2026` + `git diff --exit-code -- daten app/src/data` (clean), app `type-check`/`lint`/`format:check` in a scratch copy (all green).
