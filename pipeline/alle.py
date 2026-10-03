@@ -1,12 +1,12 @@
 """Pipeline-Einstiegspunkt (Spez. 5.2).
 
 Prüft den gewählten Jahrgang (Jahrgangs- und Sollwertdatei, PDF-Existenz) und führt die
-nummerierten Schritte in Reihenfolge aus (D-09): 01 (Seiten klassifizieren), 02 (Pläne
-extrahieren), 03 (Produktinformationen und Erläuterungen), 04 (Investitionsmaßnahmen),
-Querschnitte (Kontrollquelle, PDF-lesend, D-14), 06 (Konsistenzprüfung, liest danach nur
-noch CSVs, D-06), 07 (App-JSON-Erzeugung, nur nach einem grünen Bericht, D-24). Spätere
-Phasen hängen 05 nach Schritt 04 an. Die eigentliche Logik lebt in `ostbevern/`; dieses
-Modul bleibt ein dünner typer-Einstiegspunkt.
+nummerierten Schritte in Reihenfolge aus (D-09, D-24): 01 (Seiten klassifizieren), 02
+(Pläne extrahieren), 03 (Produktinformationen und Erläuterungen), 04
+(Investitionsmaßnahmen), Querschnitte (Kontrollquelle, PDF-lesend, D-14), 05
+(Stellenplan, EXTR-10), 06 (Konsistenzprüfung, liest danach nur noch CSVs, D-06), 07
+(App-JSON-Erzeugung, nur nach einem grünen Bericht, D-24). Die eigentliche Logik lebt in
+`ostbevern/`; dieses Modul bleibt ein dünner typer-Einstiegspunkt.
 """
 
 from __future__ import annotations
@@ -15,7 +15,16 @@ from typing import Annotated
 
 import typer
 
-from ostbevern import app_daten, investitionen, plaene, produkte, pruefung, querschnitte, seiten
+from ostbevern import (
+    app_daten,
+    investitionen,
+    plaene,
+    produkte,
+    pruefung,
+    querschnitte,
+    seiten,
+    stellenplan,
+)
 from ostbevern.app_daten import AppDatenFehler
 from ostbevern.investitionen import InvestitionenFehler
 from ostbevern.konfiguration import (
@@ -32,6 +41,7 @@ from ostbevern.pruefung import PruefungsFehler
 from ostbevern.querschnitte import QuerschnitteFehler
 from ostbevern.schema import SchemaFehler
 from ostbevern.seiten import SeitenFehler
+from ostbevern.stellenplan import StellenplanFehler
 
 app = typer.Typer(
     add_completion=False,
@@ -112,6 +122,16 @@ def main(
         typer.echo(f"Fehler: {fehler}", err=True)
         raise typer.Exit(code=1) from fehler
     typer.echo(f"Querschnitte: {ergebnis_querschnitte.zeilen_geschrieben} Werte geschrieben.")
+
+    try:
+        ergebnis_stellenplan = stellenplan.extrahiere_stellenplan(jahrgang)
+    except (PdfFehler, StellenplanFehler, SchemaFehler) as fehler:
+        typer.echo(f"Fehler: {fehler}", err=True)
+        raise typer.Exit(code=1) from fehler
+    typer.echo(
+        f"Schritt 05: {ergebnis_stellenplan.zeilen_geschrieben} Zeilen geschrieben: "
+        f"{ergebnis_stellenplan.pfad.relative_to(PROJEKT_WURZEL)}"
+    )
 
     try:
         bericht = pruefung.pruefe_alles(jahr)

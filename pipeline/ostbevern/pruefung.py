@@ -44,6 +44,7 @@ from ostbevern.schema import (
     PRODUKTE_JSON,
     QUERSCHNITTE_CSV,
     SEITEN_CSV,
+    STELLENPLAN_CSV,
     STEUERARTEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
     VE_FAELLIGKEITEN_CSV,
@@ -60,6 +61,7 @@ from ostbevern.schema import (
     lies_produkte_json,
     lies_querschnitte_csv,
     lies_seiten_csv,
+    lies_stellenplan_csv,
     lies_ve_faelligkeiten_csv,
     lies_ve_uebersicht_csv,
     lies_vorbericht_csv,
@@ -77,11 +79,12 @@ _SCHLUESSELTABELLE_KOPF = (
 
 TOLERANZ_EURO = 1
 
-# Toleranz je Regel (Phase 4, D-14, Anhang B.6): Regel 9 (Eckwerte) ist exakt (0 €
-# Toleranz), jede andere Regel behält die strenge TOLERANZ_EURO = 1 €. `toleranz_fuer`
-# ist die einzige Stelle, die diese Zuordnung kennt — Regelergebnis.status, lies_befunde
-# und gleiche_befunde_ab lesen sie, statt TOLERANZ_EURO weiterhin hart zu verdrahten.
-TOLERANZ_JE_REGEL: Mapping[int, int] = {9: 0}
+# Toleranz je Regel (Phase 4, D-14, D-20, Anhang B.6): Regel 9 (Eckwerte) und Regel 10
+# (Stellenübersicht → Teil A/B, Hundertstel) sind exakt (0 Toleranz), jede andere Regel
+# behält die strenge TOLERANZ_EURO = 1 €. `toleranz_fuer` ist die einzige Stelle, die
+# diese Zuordnung kennt — Regelergebnis.status, lies_befunde und gleiche_befunde_ab
+# lesen sie, statt TOLERANZ_EURO weiterhin hart zu verdrahten.
+TOLERANZ_JE_REGEL: Mapping[int, int] = {9: 0, 10: 0}
 
 
 def toleranz_fuer(regel: int) -> int:
@@ -1173,6 +1176,7 @@ REGEL9_ECKWERTE: tuple[str, ...] = (
     "schluesselzuweisung_teur",
     "schluesselzuweisung_vorjahr_teur",
     "pro_kopf_verschuldung_vorjahr",
+    "stellen_beamte",
 )
 # weitere_vorberichtstabellen-artige Tabellen ohne gedruckte Gesamtzeile (D-11): die
 # generische Stufe (a)/(b)-Prüfung in _pruefe_regel5 wird für sie übersprungen.
@@ -1713,18 +1717,27 @@ def pruefe_regel5_schulden_ruecklagen_ve(
     return geprueft, abweichungen, luecken
 
 
+# Eckwerte, deren Ist-Wert in einer feineren Einheit geführt wird als der gedruckte
+# Sollwert (D-20, Plan 04-03): der Sollwert wird mit dem hier angegebenen Faktor
+# multipliziert, bevor er gegen den Ist-Wert verglichen wird. `stellen_beamte` ist
+# Stellen (ganzzahlig), Σ stellen_hundertstel ist Hundertstel.
+_REGEL9_SOLL_FAKTOR: Mapping[str, int] = {"stellen_beamte": 100}
+
+
 def _regel9_ist_werte(
     *,
     meta: Mapping,
     zuwendungen: pl.DataFrame,
     verbindlichkeiten: pl.DataFrame | None,
+    stellenplan: pl.DataFrame | None,
     haushaltsjahr: int,
 ) -> dict[str, int]:
     """Ist-Werte der Regel-9-Eckwerte (D-10, D-14, D-20): `meta.json`-Pfade,
     `zuwendungen.csv`-Posten `schluesselzuweisung` des Haushaltsjahrs und Vorjahrs,
-    und (wenn `verbindlichkeiten` übergeben ist, 04-02 Task 3) die Pro-Kopf-Verschuldung
+    (wenn `verbindlichkeiten` übergeben ist, 04-02 Task 3) die Pro-Kopf-Verschuldung
     des Vorjahrs nach der Vorbericht-Definition (D-14, `manuell.schuldenstand_euro`/
-    `pro_kopf_euro`)."""
+    `pro_kopf_euro`), und (wenn `stellenplan` übergeben ist, Plan 04-03) Σ Teil A
+    (Beamte) Stellen des Haushaltsjahrs ohne Produktbereich."""
 
     def _zuwendung(posten: str, jahr: int) -> int:
         zeile = zuwendungen.filter((pl.col("posten") == posten) & (pl.col("jahr") == jahr))
@@ -1756,6 +1769,14 @@ def _regel9_ist_werte(
         werte["pro_kopf_verschuldung_vorjahr"] = pro_kopf_euro(
             schuldenstand_vorjahr, meta["einwohner"]["wert"]
         )
+    if stellenplan is not None:
+        beamte_stellen = stellenplan.filter(
+            (pl.col("teil") == "beamte")
+            & (pl.col("merkmal") == "stellen")
+            & (pl.col("jahr") == haushaltsjahr)
+            & pl.col("produktbereich").is_null()
+        )
+        werte["stellen_beamte"] = beamte_stellen["stellen_hundertstel"].sum() or 0
     return werte
 
 
@@ -1766,13 +1787,17 @@ def _pruefe_regel9(
     zuwendungen: pl.DataFrame,
     haushaltsjahr: int,
     verbindlichkeiten: pl.DataFrame | None = None,
+    stellenplan: pl.DataFrame | None = None,
 ) -> Regelergebnis:
     """Regel 9 – Eckwerte (Anhang B.6, D-10, D-14, D-20): exakter Soll/Ist-Vergleich
-    (Toleranz 0, `toleranz_fuer(9)`) für jeden Namen in `REGEL9_ECKWERTE`."""
+    (Toleranz 0, `toleranz_fuer(9)`) für jeden Namen in `REGEL9_ECKWERTE`. Ein Soll-Faktor
+    (`_REGEL9_SOLL_FAKTOR`) skaliert den gedruckten Sollwert auf die Ist-Einheit, wo diese
+    feiner ist (D-20: `stellen_beamte` vergleicht Stellen gegen Hundertstel)."""
     ist_werte = _regel9_ist_werte(
         meta=meta,
         zuwendungen=zuwendungen,
         verbindlichkeiten=verbindlichkeiten,
+        stellenplan=stellenplan,
         haushaltsjahr=haushaltsjahr,
     )
 
@@ -1781,6 +1806,7 @@ def _pruefe_regel9(
     for name in REGEL9_ECKWERTE:
         eckwert = eckwerte[name]
         geprueft += 1
+        soll = eckwert["wert"] * _REGEL9_SOLL_FAKTOR.get(name, 1)
         punkt = Pruefpunkt(
             regel=9,
             plan="anhang_b6",
@@ -1789,7 +1815,7 @@ def _pruefe_regel9(
             zeile=name,
             jahr=haushaltsjahr,
             wertart="ansatz",
-            soll=eckwert["wert"],
+            soll=soll,
             ist=ist_werte[name],
             pdf_seite=eckwert["pdf_seite"],
         )
@@ -1798,6 +1824,67 @@ def _pruefe_regel9(
     return Regelergebnis(
         regel=9,
         titel="Regel 9 – Eckwerte (Anhang B.6)",
+        geprueft=geprueft,
+        abweichungen=tuple(abweichungen),
+    )
+
+
+def _pruefe_regel10(*, stellenplan: pl.DataFrame, haushaltsjahr: int) -> Regelergebnis:
+    """Regel 10 – Stellenplan: Stellenübersicht → Teil A/B (D-20, Plan 04-03): je (teil,
+    gruppe) muss Σ Stellenübersicht (über alle Produktbereiche) exakt der Teil-A/B-
+    Stellenzeile des Haushaltsjahrs entsprechen (Toleranz 0, `toleranz_fuer(10)`). Eine
+    Gruppe, die nur in einer der beiden Quellen vorkommt, zählt in der fehlenden Quelle
+    als 0. Ein gedrucktes VZÄ-Rundungsdetail wäre hier als Befund zu belegen (D-20); auf
+    den eingecheckten Daten gibt es keine Abweichung."""
+    teil_ab = stellenplan.filter(
+        (pl.col("merkmal") == "stellen")
+        & (pl.col("jahr") == haushaltsjahr)
+        & pl.col("produktbereich").is_null()
+    )
+    uebersicht = stellenplan.filter(
+        (pl.col("merkmal") == "stellen")
+        & (pl.col("jahr") == haushaltsjahr)
+        & pl.col("produktbereich").is_not_null()
+    )
+
+    teil_ab_werte: dict[tuple[str, str], tuple[int, int]] = {
+        (zeile["teil"], zeile["gruppe"]): (zeile["stellen_hundertstel"], zeile["pdf_seite"])
+        for zeile in teil_ab.iter_rows(named=True)
+    }
+    uebersicht_summen: dict[tuple[str, str], int] = {}
+    uebersicht_seiten: dict[tuple[str, str], int] = {}
+    for zeile in uebersicht.iter_rows(named=True):
+        schluessel = (zeile["teil"], zeile["gruppe"])
+        uebersicht_summen[schluessel] = (
+            uebersicht_summen.get(schluessel, 0) + zeile["stellen_hundertstel"]
+        )
+        uebersicht_seiten.setdefault(schluessel, zeile["pdf_seite"])
+
+    alle_schluessel = set(teil_ab_werte) | set(uebersicht_summen)
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for teil, gruppe in sorted(alle_schluessel):
+        soll, teil_ab_seite = teil_ab_werte.get((teil, gruppe), (0, None))
+        ist = uebersicht_summen.get((teil, gruppe), 0)
+        pdf_seite = uebersicht_seiten.get((teil, gruppe), teil_ab_seite)
+        geprueft += 1
+        punkt = Pruefpunkt(
+            regel=10,
+            plan=f"stellenuebersicht_{teil}",
+            ebene="GESAMT",
+            code="",
+            zeile=gruppe,
+            jahr=haushaltsjahr,
+            wertart="ansatz",
+            soll=soll,
+            ist=ist,
+            pdf_seite=pdf_seite,
+        )
+        if punkt.abweichung != 0:
+            abweichungen.append(punkt)
+    return Regelergebnis(
+        regel=10,
+        titel="Regel 10 – Stellenplan: Stellenübersicht → Teil A/B",
         geprueft=geprueft,
         abweichungen=tuple(abweichungen),
     )
@@ -2343,6 +2430,7 @@ def pruefe_alles(
         )
     eigenkapital = lies_eigenkapital_csv(daten_wurzel / EIGENKAPITAL_CSV)
     ve_uebersicht = lies_ve_uebersicht_csv(daten_wurzel / VE_UEBERSICHT_CSV)
+    stellenplan = lies_stellenplan_csv(daten_wurzel / STELLENPLAN_CSV)
     vorbericht = {
         "steuerarten": lies_vorbericht_csv(daten_wurzel / STEUERARTEN_CSV),
         "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
@@ -2432,11 +2520,14 @@ def pruefe_alles(
         meta=meta,
         zuwendungen=vorbericht["zuwendungen"],
         verbindlichkeiten=vorbericht["verbindlichkeiten"],
+        stellenplan=stellenplan,
         haushaltsjahr=jahrgang.haushaltsjahr,
     )
+    regel10 = _pruefe_regel10(stellenplan=stellenplan, haushaltsjahr=jahrgang.haushaltsjahr)
 
     regeln, veraltete_befunde = _wende_befunde_an(
-        (regel1, regel2, regel3, regel4, regel5, regel6, regel7, regel8, regel9), befunde
+        (regel1, regel2, regel3, regel4, regel5, regel6, regel7, regel8, regel9, regel10),
+        befunde,
     )
     unbekannte_seiten = tuple(
         sorted(seiten.filter(pl.col("typ") == "unbekannt")["pdf_seite"].to_list())

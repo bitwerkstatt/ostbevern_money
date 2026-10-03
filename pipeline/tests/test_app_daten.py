@@ -20,7 +20,12 @@ import polars as pl
 import pytest
 
 from ostbevern import app_daten
-from ostbevern.app_daten import APP_DATEN_WURZEL, HAUSHALT_JSON, erzeuge_app_daten
+from ostbevern.app_daten import (
+    APP_DATEN_WURZEL,
+    HAUSHALT_JSON,
+    STELLENPLAN_JSON,
+    erzeuge_app_daten,
+)
 from ostbevern.konfiguration import STANDARD_JAHR, Jahrgang
 from ostbevern.pdf import PdfDokument
 from ostbevern.produkte import lies_personennamen
@@ -30,10 +35,12 @@ from ostbevern.schema import (
     ERGEBNISPLAN_CSV,
     HIERARCHIE_CSV,
     SEITEN_CSV,
+    STELLENPLAN_CSV,
     STEUERARTEN_CSV,
     lies_hierarchie_csv,
     lies_plan_csv,
     lies_seiten_csv,
+    lies_stellenplan_csv,
     lies_vorbericht_csv,
 )
 
@@ -48,7 +55,7 @@ def kontext() -> tuple[pl.DataFrame, pl.DataFrame]:
 def test_haushalt_json_steuerarten_aus_manueller_tabelle(tmp_path: Path) -> None:
     app_daten_wurzel = tmp_path / "app"
     pfade = erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=app_daten_wurzel)
-    assert pfade == [app_daten_wurzel / HAUSHALT_JSON]
+    assert pfade == [app_daten_wurzel / HAUSHALT_JSON, app_daten_wurzel / STELLENPLAN_JSON]
 
     daten = json.loads((app_daten_wurzel / HAUSHALT_JSON).read_text(encoding="utf-8"))
     steuerarten = daten["vorbericht"]["steuerarten"]
@@ -81,19 +88,27 @@ def test_app_json_deterministisch(tmp_path: Path) -> None:
     erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=ziel_a)
     erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=ziel_b)
 
-    inhalt_a = (ziel_a / HAUSHALT_JSON).read_bytes()
-    inhalt_b = (ziel_b / HAUSHALT_JSON).read_bytes()
-    assert inhalt_a == inhalt_b
+    for json_pfad in (HAUSHALT_JSON, STELLENPLAN_JSON):
+        inhalt_a = (ziel_a / json_pfad).read_bytes()
+        inhalt_b = (ziel_b / json_pfad).read_bytes()
+        assert inhalt_a == inhalt_b
 
-    text = inhalt_a.decode("utf-8")
-    assert text.endswith("\n")
-    assert "\r" not in text
+        text = inhalt_a.decode("utf-8")
+        assert text.endswith("\n")
+        assert "\r" not in text
 
 
 def test_haushalt_json_eingecheckt_aktuell(tmp_path: Path) -> None:
     erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
     neu = (tmp_path / HAUSHALT_JSON).read_bytes()
     eingecheckt = (APP_DATEN_WURZEL / HAUSHALT_JSON).read_bytes()
+    assert neu == eingecheckt
+
+
+def test_stellenplan_json_eingecheckt_aktuell(tmp_path: Path) -> None:
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    neu = (tmp_path / STELLENPLAN_JSON).read_bytes()
+    eingecheckt = (APP_DATEN_WURZEL / STELLENPLAN_JSON).read_bytes()
     assert neu == eingecheckt
 
 
@@ -208,6 +223,40 @@ def test_haushalt_json_eigenkapital(tmp_path: Path) -> None:
     jahresergebnis = next(p for p in eigenkapital["posten"] if p["posten"] == "jahresergebnis")
     index_2026 = daten["jahre"].index(2026)
     assert jahresergebnis["werte"][index_2026] == -2353506
+
+
+def test_stellenplan_json_vzae(tmp_path: Path) -> None:
+    """`stellenplan.json`-Zeilen entsprechen `stellenplan.csv`-Zeilen mit
+    `stellen = stellen_hundertstel / 100` (VZÄ); `personen` bleibt unverändert (D-18,
+    D-19, Plan 04-03)."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / STELLENPLAN_JSON).read_text(encoding="utf-8"))
+    assert daten["haushaltsjahr"] == STANDARD_JAHR
+    assert daten["einheit_stellen"] == "vzae"
+
+    df = lies_stellenplan_csv(DATEN_WURZEL / STELLENPLAN_CSV)
+    assert len(daten["zeilen"]) == df.height
+
+    for zeile_json, zeile_csv in zip(daten["zeilen"], df.iter_rows(named=True), strict=True):
+        assert zeile_json["teil"] == zeile_csv["teil"]
+        assert zeile_json["gruppe"] == zeile_csv["gruppe"]
+        assert zeile_json["merkmal"] == zeile_csv["merkmal"]
+        assert zeile_json["jahr"] == zeile_csv["jahr"]
+        assert zeile_json["personen"] == zeile_csv["personen"]
+        if zeile_csv["stellen_hundertstel"] is None:
+            assert zeile_json["stellen"] is None
+        else:
+            assert zeile_json["stellen"] == zeile_csv["stellen_hundertstel"] / 100
+
+    tarif_2026 = [
+        zeile
+        for zeile in daten["zeilen"]
+        if zeile["teil"] == "tarif"
+        and zeile["produktbereich"] is None
+        and zeile["merkmal"] == "stellen"
+        and zeile["jahr"] == daten["haushaltsjahr"]
+    ]
+    assert round(sum(zeile["stellen"] for zeile in tarif_2026), 2) == 52.26
 
 
 def test_app_daten_liest_kein_pdf() -> None:

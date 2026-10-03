@@ -101,3 +101,48 @@ export interface Haushalt {
   /** Entwicklung des Eigenkapitals (S. 311, int-Euro), D-11, D-12. */
   eigenkapital: VorberichtTabelle
 }
+
+/** Eine einzelne Stellenplan-Zeile (D-18 bis D-20, EXTR-10, D-21). */
+export interface StellenplanZeile {
+  /** "beamte" | "tarif" | "sozial_erziehungsdienst" | "nachwuchs". */
+  teil: string
+  /** Gedruckte Zeilenordnung innerhalb der Tabelle (Teil A/B) bzw. Spaltenordnung
+   * (Stellenübersicht). */
+  position: number
+  /** Gedruckte Gruppe/Entgeltgruppe/Bezeichnung (z. B. "A 14", "9c", "S 12", "pauschal",
+   * oder die Nachwuchskräfte-Bezeichnung). */
+  gruppe: string
+  /** Amtsbezeichnung (nur Beamte, S. 284), sonst `null`. */
+  amtsbezeichnung: string | null
+  /** Art der Vergütung (nur Nachwuchskräfte, S. 290), sonst `null`. */
+  verguetung: string | null
+  /** Zweistelliger Produktbereichscode (nur Stellenübersicht-Zeilen, S. 287-289), sonst
+   * `null` (Teil A/B- und Nachwuchskräfte-Zeilen). */
+  produktbereich: string | null
+  /** "stellen" | "davon_ausgesondert" | "besetzt" | "vorgesehen" | "beschaeftigt". */
+  merkmal: string
+  /** Haushaltsjahr oder Vorjahr, je nach `merkmal` (D-19). */
+  jahr: number
+  /** ISO-Stichtag für `merkmal` "besetzt"/"beschaeftigt", sonst `null`. */
+  stichtag: string | null
+  /** Stellen in VZÄ (Hundertstel / 100), `null` für Nachwuchskräfte-Zeilen (D-19: nie
+   * eine Stelle). */
+  stellen: number | null
+  /** Personenzahl (nur Nachwuchskräfte-Zeilen), sonst `null`. */
+  personen: number | null
+  /** Vermerk zur Gruppe (nur auf der merkmal="stellen"-Zeile des Haushaltsjahrs), sonst
+   * `null`. */
+  vermerk: string | null
+  /** 1-basierte PDF-Seite der Zeile. */
+  pdf_seite: number
+}
+
+/** Gesamtstruktur von `stellenplan.json` (D-18 bis D-20, EXTR-10, D-21). */
+export interface Stellenplan {
+  /** Das aktuell dargestellte Haushaltsjahr. */
+  haushaltsjahr: number
+  /** Einheit der `stellen`-Werte; aktuell immer "vzae" (D-18). */
+  einheit_stellen: string
+  /** Alle Stellenplan-Zeilen in CSV-Reihenfolge. */
+  zeilen: StellenplanZeile[]
+}

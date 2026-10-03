@@ -16,7 +16,8 @@ Gesamtstatus: grün
 | Regel 6 – Investitionsmaßnahmen → Teil-/Gesamtfinanzplan | grün | 1964 | 0 | 0 | 8 |
 | Regel 7 – Haushaltsquerschnitte → PG-/PB-Teilpläne | grün | 1152 | 0 | 0 | 18 |
 | Regel 8 – Vollständigkeit der Produkte | grün | 820 | 0 | 0 | 0 |
-| Regel 9 – Eckwerte (Anhang B.6) | grün | 11 | 0 | 0 | 0 |
+| Regel 9 – Eckwerte (Anhang B.6) | grün | 12 | 0 | 0 | 0 |
+| Regel 10 – Stellenplan: Stellenübersicht → Teil A/B | grün | 19 | 0 | 0 | 0 |
 
 ## Abweichungen
 
