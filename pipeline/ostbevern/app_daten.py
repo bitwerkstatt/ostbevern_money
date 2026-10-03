@@ -17,11 +17,12 @@ from pathlib import Path
 
 import polars as pl
 
-from ostbevern.konfiguration import PROJEKT_WURZEL, lade_jahrgang
+from ostbevern.konfiguration import PROJEKT_WURZEL, lade_jahrgang, layout_text
 from ostbevern.manuell import lies_meta_json
 from ostbevern.pruefung import (
     REGEL5_GEP_ZEILEN,
     REGEL5_TOLERANZ_GEP_EURO,
+    WEITERGABE_POSTEN,
     Planwerte,
     zerlege_weitere_vorberichtstabellen,
 )
@@ -29,6 +30,8 @@ from ostbevern.schema import (
     DATEN_WURZEL,
     EIGENKAPITAL_CSV,
     ERGEBNISPLAN_CSV,
+    FINANZPLAN_CSV,
+    HIERARCHIE_CSV,
     KITA_ZUSCHUESSE_CSV,
     META_JSON,
     STELLENPLAN_CSV,
@@ -37,6 +40,7 @@ from ostbevern.schema import (
     WEITERE_VORBERICHTSTABELLEN_CSV,
     ZUWENDUNGEN_CSV,
     lies_eigenkapital_csv,
+    lies_hierarchie_csv,
     lies_plan_csv,
     lies_stellenplan_csv,
     lies_vorbericht_csv,
@@ -52,6 +56,296 @@ class AppDatenFehler(ValueError):
 APP_DATEN_WURZEL = PROJEKT_WURZEL / "app" / "src" / "data"
 HAUSHALT_JSON = Path("haushalt.json")
 STELLENPLAN_JSON = Path("stellenplan.json")
+
+# Knoten-/Zeilenkonstanten der KL-Herauslösung (D-01 bis D-04, Spez. 3.4). Fachliche
+# Regel, kein Jahrgangswert -- nur der Produktcode selbst kommt aus
+# [layout.weitergabe_kreis_land] (jahrgangsabhängig).
+GESAMT_CODE = "GESAMT"
+GESAMT_NAME = "Gesamthaushalt"
+KL_CODE = "KL"
+KL_NAME = "Weitergabe an Kreis und Land"
+# Schlüssel müssen exakt pruefung.WEITERGABE_POSTEN entsprechen (Reihenfolge = App-
+# Kinderreihenfolge); geprüft zur Laufzeit in baue_knoten (AppDatenFehler sonst).
+KL_POSTEN_NAMEN: dict[str, str] = {
+    "kreisumlage": "Kreisumlage",
+    "gewerbesteuerumlage": "Gewerbesteuerumlage",
+    "krankenhausinvestitionsumlage": "Krankenhausinvestitionsumlage",
+}
+
+# App-Zeilenmenge des Ergebnisplans je Knoten (D-22, D-23): GEP-Zeilen 01-26 (gleiche
+# kanonische Schlüssel in GEP und TP), dann der Minderaufwand und das Ergebnis danach
+# (GEP 27/28, TP 30/31 -- Lookup über ZEILEN, nie hartkodierte Zeilennummern unten).
+ERGEBNISPLAN_APP_ZEILEN: tuple[str, ...] = tuple(
+    ZEILEN["gesamtergebnisplan"][f"{nummer:02d}"].kanonisch for nummer in range(1, 27)
+) + (
+    ZEILEN["gesamtergebnisplan"]["27"].kanonisch,
+    ZEILEN["gesamtergebnisplan"]["28"].kanonisch,
+)
+
+# Die beiden Aufwand-Zeilen und die vier Ergebnis-Zeilen, die die KL-Herauslösung
+# verschiebt (D-01 bis D-04): Δ wird von den Aufwand-Zeilen abgezogen und auf die
+# Ergebnis-Zeilen addiert (Produkt/PG/PB-Kette), bzw. umgekehrt auf KL/KL.<posten>.
+_KL_AUFWAND_ZEILEN: tuple[str, ...] = ("transferaufwendungen", "ordentliche_aufwendungen")
+_KL_ERGEBNIS_ZEILEN: tuple[str, ...] = (
+    "ordentliches_ergebnis",
+    "ergebnis_laufende_verwaltung",
+    "jahresergebnis",
+    "ergebnis_nach_minderaufwand",
+)
+
+
+def _pruefe_kl_posten_namen() -> None:
+    if tuple(KL_POSTEN_NAMEN) != WEITERGABE_POSTEN:
+        raise AppDatenFehler(
+            "KL_POSTEN_NAMEN-Schlüssel weichen von pruefung.WEITERGABE_POSTEN ab: "
+            f"{tuple(KL_POSTEN_NAMEN)!r} != {WEITERGABE_POSTEN!r}"
+        )
+
+
+def _pruefe_ergebnisplan_app_zeilen() -> None:
+    """D-22: die Zeilen 01-26 müssen in GEP und TP denselben kanonischen Schlüssel
+    tragen, sonst würde `baue_ergebnisplan` beim Nachschlagen in ZEILEN["teilergebnisplan"]
+    eine falsche Zeile treffen."""
+    for nummer in range(1, 27):
+        zeile = f"{nummer:02d}"
+        gep_kanonisch = ZEILEN["gesamtergebnisplan"][zeile].kanonisch
+        tp_kanonisch = ZEILEN["teilergebnisplan"][zeile].kanonisch
+        if gep_kanonisch != tp_kanonisch:
+            raise AppDatenFehler(
+                f"Zeile {zeile}: GEP-Schlüssel {gep_kanonisch!r} != TP-Schlüssel {tp_kanonisch!r}"
+            )
+
+
+def _zeile_fuer_kanonisch(plantyp: str) -> dict[str, str]:
+    """Kehrt ZEILEN[plantyp] um: kanonischer Schlüssel -> Zeilennummer."""
+    return {definition.kanonisch: zeile for zeile, definition in ZEILEN[plantyp].items()}
+
+
+def baue_knoten(
+    hierarchie: pl.DataFrame,
+    *,
+    ergebnisplan: pl.DataFrame,
+    transfer_df: pl.DataFrame,
+    produkt: str,
+    gep_pdf_seite: int,
+) -> list[dict[str, object]]:
+    """Baut die Knotenliste von `haushalt.json` (D-03, D-21): GESAMT, dann jede
+    hierarchie.csv-Zeile in Dateireihenfolge, dann der synthetische KL-Knoten und seine
+    drei Unterposten-Kinder (D-02). Mutiert `hierarchie` nie; die Herauslösung lebt
+    ausschließlich in dieser Funktion und in `baue_ergebnisplan` (nie in
+    `daten/aufbereitet/hierarchie.csv`)."""
+    _pruefe_kl_posten_namen()
+
+    tp_zeile = ergebnisplan.filter(
+        (pl.col("ebene") == "P") & (pl.col("code") == produkt) & (pl.col("zeile") == "15")
+    )
+    if tp_zeile.height == 0:
+        raise AppDatenFehler(f"Teilergebnisplan von Produkt {produkt!r} hat keine Zeile 15")
+    kl_pdf_seite = tp_zeile["pdf_seite"][0]
+
+    knoten: list[dict[str, object]] = [
+        {
+            "code": GESAMT_CODE,
+            "ebene": "GESAMT",
+            "name": GESAMT_NAME,
+            "eltern": None,
+            "synthetisch": False,
+            "gerundet": False,
+            "pdf_seite": gep_pdf_seite,
+        }
+    ]
+    for zeile in hierarchie.iter_rows(named=True):
+        eltern = zeile["eltern_code"]
+        if eltern is None and zeile["ebene"] == "PB":
+            eltern = GESAMT_CODE
+        knoten.append(
+            {
+                "code": zeile["code"],
+                "ebene": zeile["ebene"],
+                "name": zeile["name"],
+                "eltern": eltern,
+                "synthetisch": zeile["synthetisch"],
+                "gerundet": False,
+                "pdf_seite": zeile["pdf_seite_start"],
+            }
+        )
+
+    knoten.append(
+        {
+            "code": KL_CODE,
+            "ebene": "PB",
+            "name": KL_NAME,
+            "eltern": GESAMT_CODE,
+            "synthetisch": True,
+            "gerundet": False,
+            "pdf_seite": kl_pdf_seite,
+        }
+    )
+    for posten in WEITERGABE_POSTEN:
+        posten_df = transfer_df.filter(pl.col("posten") == posten)
+        if posten_df.height == 0:
+            raise AppDatenFehler(f"Weitergabe-Posten {posten!r} fehlt in transferaufwendungen.csv")
+        knoten.append(
+            {
+                "code": f"{KL_CODE}.{posten}",
+                "ebene": "PG",
+                "name": KL_POSTEN_NAMEN[posten],
+                "eltern": KL_CODE,
+                "synthetisch": True,
+                "gerundet": True,
+                "pdf_seite": posten_df["quelle"][0],
+            }
+        )
+    return knoten
+
+
+def baue_ergebnisplan(
+    knoten: list[dict[str, object]],
+    *,
+    ergebnisplan: pl.DataFrame,
+    transfer_df: pl.DataFrame,
+    hierarchie: pl.DataFrame,
+    produkt: str,
+    jahre: list[int],
+    wertarten: list[str],
+) -> dict[str, dict[str, object]]:
+    """Baut `ergebnisplan` von `haushalt.json` (D-01 bis D-04, D-22, D-23): je Knoten
+    die Ergebnisplan-Zeilen (`ERGEBNISPLAN_APP_ZEILEN`) nach der KL-Herauslösung, plus
+    die daraus abgeleiteten `berechnet`-Werte (Aufwand, Erträge, Zuschussbedarf,
+    Überschuss). Die Herauslösung arbeitet ausschließlich auf In-Memory-DataFrames/
+    Listen; `daten/aufbereitet/ergebnisplan.csv` bleibt unverändert."""
+    _pruefe_ergebnisplan_app_zeilen()
+    planwerte = Planwerte(ergebnisplan, datei="ergebnisplan")
+
+    eltern_je_code = {
+        zeile["code"]: zeile["eltern_code"] for zeile in hierarchie.iter_rows(named=True)
+    }
+    kette: list[str] = []
+    code = produkt
+    while True:
+        kette.append(code)
+        eltern = eltern_je_code.get(code)
+        if eltern is None:
+            break
+        code = eltern
+    if len(kette) != 3:
+        raise AppDatenFehler(
+            f"Weitergabe-Produkt {produkt!r}: unerwartete Hierarchietiefe {kette!r}"
+        )
+    kette_menge = set(kette)
+
+    delta = [
+        planwerte.wert("P", produkt, "15", jahr, wertart)
+        for jahr, wertart in zip(jahre, wertarten, strict=True)
+    ]
+
+    posten_delta: dict[str, list[int]] = {}
+    for posten in WEITERGABE_POSTEN:
+        posten_df = transfer_df.filter(pl.col("posten") == posten)
+        nach_jahr = {
+            zeile["jahr"]: zeile["betrag_teur"] for zeile in posten_df.iter_rows(named=True)
+        }
+        posten_delta[posten] = [nach_jahr[jahr] * 1000 for jahr in jahre]
+
+    reverse_gesamt = _zeile_fuer_kanonisch("gesamtergebnisplan")
+    reverse_teil = _zeile_fuer_kanonisch("teilergebnisplan")
+
+    ergebnisplan_app: dict[str, dict[str, object]] = {}
+    for eintrag in knoten:
+        code_wert = str(eintrag["code"])
+        ebene = str(eintrag["ebene"])
+        plantyp_code = "" if ebene == "GESAMT" else code_wert
+        reverse = reverse_gesamt if ebene == "GESAMT" else reverse_teil
+
+        zeilen_werte: dict[str, list[int]] = {
+            kanonisch: [
+                planwerte.wert(ebene, plantyp_code, reverse[kanonisch], jahr, wertart)
+                for jahr, wertart in zip(jahre, wertarten, strict=True)
+            ]
+            for kanonisch in ERGEBNISPLAN_APP_ZEILEN
+        }
+
+        if code_wert in kette_menge:
+            for index in range(len(jahre)):
+                for zeile_kanonisch in _KL_AUFWAND_ZEILEN:
+                    zeilen_werte[zeile_kanonisch][index] -= delta[index]
+                for zeile_kanonisch in _KL_ERGEBNIS_ZEILEN:
+                    zeilen_werte[zeile_kanonisch][index] += delta[index]
+        elif code_wert == KL_CODE:
+            for index in range(len(jahre)):
+                for zeile_kanonisch in _KL_AUFWAND_ZEILEN:
+                    zeilen_werte[zeile_kanonisch][index] += delta[index]
+                for zeile_kanonisch in _KL_ERGEBNIS_ZEILEN:
+                    zeilen_werte[zeile_kanonisch][index] -= delta[index]
+        elif code_wert.startswith(f"{KL_CODE}."):
+            posten = code_wert.removeprefix(f"{KL_CODE}.")
+            werte_posten = posten_delta[posten]
+            for index in range(len(jahre)):
+                for zeile_kanonisch in _KL_AUFWAND_ZEILEN:
+                    zeilen_werte[zeile_kanonisch][index] += werte_posten[index]
+                for zeile_kanonisch in _KL_ERGEBNIS_ZEILEN:
+                    zeilen_werte[zeile_kanonisch][index] -= werte_posten[index]
+
+        aufwand = [
+            zeilen_werte["ordentliche_aufwendungen"][i] + zeilen_werte["zinsaufwendungen"][i]
+            for i in range(len(jahre))
+        ]
+        ertraege = [
+            zeilen_werte["ordentliche_ertraege"][i] + zeilen_werte["finanzertraege"][i]
+            for i in range(len(jahre))
+        ]
+        zuschussbedarf = [aufwand[i] - ertraege[i] for i in range(len(jahre))]
+        ueberschuss = [wert < 0 for wert in zuschussbedarf]
+
+        ergebnisplan_app[code_wert] = {
+            "zeilen": zeilen_werte,
+            "berechnet": {
+                "aufwand": aufwand,
+                "ertraege": ertraege,
+                "zuschussbedarf": zuschussbedarf,
+                "ueberschuss": ueberschuss,
+            },
+        }
+    return ergebnisplan_app
+
+
+def baue_finanzplan(
+    finanzplan: pl.DataFrame,
+    *,
+    jahre: list[int],
+    wertarten: list[str],
+    haushaltsjahr: int,
+) -> dict[str, dict[str, object]]:
+    """Baut `finanzplan` von `haushalt.json` (D-22): nur die GESAMT-Ebene, alle
+    Gesamtfinanzplan-Zeilen 01-41 (`zeilen`, entlang `jahre`) sowie die VE-Werte zum
+    Haushaltsjahr (`ve`, ein int je Zeile mit gedruckter VE-Zeile -- nicht entlang
+    `jahre`, VE wird nur für das Haushaltsjahr geführt)."""
+    planwerte = Planwerte(finanzplan, datei="finanzplan")
+
+    zeilen_werte: dict[str, list[int]] = {
+        kanonisch: [
+            planwerte.wert("GESAMT", "", zeile, jahr, wertart)
+            for jahr, wertart in zip(jahre, wertarten, strict=True)
+        ]
+        for kanonisch, zeile in ((d.kanonisch, z) for z, d in ZEILEN["gesamtfinanzplan"].items())
+    }
+
+    # `.unique()` auf einer polars-Series ist hash-basiert und NICHT reihenfolgestabil
+    # (verifiziert: wiederholte Läufe lieferten unterschiedliche Reihenfolgen) — würde
+    # D-24 (deterministisches JSON) verletzen. Deshalb nur als Mengentest verwendet; die
+    # Ausgabereihenfolge kommt aus der festen Einfügereihenfolge von ZEILEN (D-21).
+    ve_zeilen_menge = set(
+        finanzplan.filter((pl.col("ebene") == "GESAMT") & (pl.col("wertart") == "ve"))[
+            "zeile"
+        ].to_list()
+    )
+    ve_werte: dict[str, int] = {
+        definition.kanonisch: planwerte.wert("GESAMT", "", zeile, haushaltsjahr, "ve")
+        for zeile, definition in ZEILEN["gesamtfinanzplan"].items()
+        if zeile in ve_zeilen_menge
+    }
+
+    return {"GESAMT": {"zeilen": zeilen_werte, "ve": ve_werte}}
 
 
 def schreibe_app_json(daten: Mapping[str, object], pfad: Path, *, praefix: str) -> None:
@@ -326,21 +620,27 @@ def erzeuge_app_daten(
     """
     jahrgang = lade_jahrgang(jahr)
     ergebnisplan = lies_plan_csv(daten_wurzel / ERGEBNISPLAN_CSV)
+    finanzplan = lies_plan_csv(daten_wurzel / FINANZPLAN_CSV)
+    hierarchie = lies_hierarchie_csv(daten_wurzel / HIERARCHIE_CSV)
     planwerte = Planwerte(ergebnisplan, datei="ergebnisplan")
 
     spalten_zu_wertart = [zerlege_spaltenkopf(kopf) for kopf in jahrgang.spalten["ergebnisplan"]]
     jahre = [jahr_wert for _wertart, jahr_wert in spalten_zu_wertart]
     wertarten = [wertart for wertart, _jahr_wert in spalten_zu_wertart]
 
+    weitergabe_produkt = layout_text(jahrgang, "weitergabe_kreis_land", "produkt")
+    gep_pdf_seite = ergebnisplan.filter(pl.col("ebene") == "GESAMT")["pdf_seite"][0]
+
     # Reihenfolge ist Teil des App-JSON-Vertrags (D-21): steuerarten, zuwendungen,
     # transferaufwendungen, kita_zuschuesse, dann die fünf D-08-Tabellen (leistungsentgelte,
     # kostenerstattungen, personal, sachaufwand, sonstige_aufwendungen) — dict-
     # Einfügereihenfolge bleibt beim Schreiben erhalten (schreibe_app_json/json.dumps,
     # keine sort_keys).
+    transferaufwendungen_df = lies_vorbericht_csv(daten_wurzel / TRANSFERAUFWENDUNGEN_CSV)
     vorbericht_quellen = {
         "steuerarten": lies_vorbericht_csv(daten_wurzel / STEUERARTEN_CSV),
         "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
-        "transferaufwendungen": lies_vorbericht_csv(daten_wurzel / TRANSFERAUFWENDUNGEN_CSV),
+        "transferaufwendungen": transferaufwendungen_df,
         "kita_zuschuesse": lies_vorbericht_csv(daten_wurzel / KITA_ZUSCHUESSE_CSV),
         **zerlege_weitere_vorberichtstabellen(
             lies_vorbericht_csv(daten_wurzel / WEITERE_VORBERICHTSTABELLEN_CSV)
@@ -361,11 +661,37 @@ def erzeuge_app_daten(
     eigenkapital_df = lies_eigenkapital_csv(daten_wurzel / EIGENKAPITAL_CSV)
     eigenkapital = baue_eigenkapital_tabelle(eigenkapital_df, jahre=jahre)
 
+    knoten = baue_knoten(
+        hierarchie,
+        ergebnisplan=ergebnisplan,
+        transfer_df=transferaufwendungen_df,
+        produkt=weitergabe_produkt,
+        gep_pdf_seite=gep_pdf_seite,
+    )
+    ergebnisplan_app = baue_ergebnisplan(
+        knoten,
+        ergebnisplan=ergebnisplan,
+        transfer_df=transferaufwendungen_df,
+        hierarchie=hierarchie,
+        produkt=weitergabe_produkt,
+        jahre=jahre,
+        wertarten=wertarten,
+    )
+    finanzplan_app = baue_finanzplan(
+        finanzplan,
+        jahre=jahre,
+        wertarten=wertarten,
+        haushaltsjahr=jahrgang.haushaltsjahr,
+    )
+
     daten = {
         "haushaltsjahr": jahrgang.haushaltsjahr,
         "jahre": jahre,
         "wertarten": wertarten,
         "meta": meta,
+        "knoten": knoten,
+        "ergebnisplan": ergebnisplan_app,
+        "finanzplan": finanzplan_app,
         "vorbericht": vorbericht,
         "eigenkapital": eigenkapital,
     }
