@@ -30,10 +30,10 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 
 ### Manuelle Daten
 
-- [ ] **MANU-01**: `steuerarten.csv` (8 Steuerarten, 2024–2029, T€) aus Vorbericht S. 27
-- [ ] **MANU-02**: `zuwendungen.csv` (Schlüsselzuweisung, laufende Zwecke, Sonderposten) aus S. 28
-- [ ] **MANU-03**: `transferaufwendungen.csv` inklusive Kreisumlage netto mit Fußnote (Rückstellungsauflösung 1.325.478 €) aus S. 45–46
-- [ ] **MANU-04**: `kita_zuschuesse.csv` (7 Einrichtungen, Summe 559 T€) aus S. 46
+- [x] **MANU-01**: `steuerarten.csv` (8 Steuerarten, 2024–2029, T€) aus Vorbericht S. 27
+- [x] **MANU-02**: `zuwendungen.csv` (Schlüsselzuweisung, laufende Zwecke, Sonderposten) aus S. 28
+- [x] **MANU-03**: `transferaufwendungen.csv` inklusive Kreisumlage netto mit Fußnote (Rückstellungsauflösung 1.325.478 €) aus S. 45–46
+- [x] **MANU-04**: `kita_zuschuesse.csv` (7 Einrichtungen, Summe 559 T€) aus S. 46
 - [ ] **MANU-05**: `weitere_vorberichtstabellen.csv` (Leistungsentgelte, Kostenerstattungen, Personal, Sachaufwand, Sonstige Aufwendungen) aus S. 29–50
 - [ ] **MANU-06**: `meta.json` mit Einwohnerzahl 11.741 (Stichtag, Quelle), Hebesätzen, Fläche, Satzungsdatum, Kreisumlage brutto/netto und Kreisumlage-Hebesätzen
 - [ ] **MANU-07**: Jede manuelle Datei hat eine Spalte `quelle` mit PDF-Seite; ein README begründet die Werte
@@ -193,10 +193,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXTR-08 | Phase 3 | Complete |
 | EXTR-09 | Phase 3 | Complete |
 | EXTR-10 | Phase 4 | Pending |
-| MANU-01 | Phase 4 | Pending |
-| MANU-02 | Phase 4 | Pending |
-| MANU-03 | Phase 4 | Pending |
-| MANU-04 | Phase 4 | Pending |
+| MANU-01 | Phase 4 | Complete |
+| MANU-02 | Phase 4 | Complete |
+| MANU-03 | Phase 4 | Complete |
+| MANU-04 | Phase 4 | Complete |
 | MANU-05 | Phase 4 | Pending |
 | MANU-06 | Phase 4 | Pending |
 | MANU-07 | Phase 4 | Pending |
