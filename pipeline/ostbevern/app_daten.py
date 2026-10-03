@@ -18,6 +18,7 @@ from pathlib import Path
 import polars as pl
 
 from ostbevern.konfiguration import PROJEKT_WURZEL, lade_jahrgang
+from ostbevern.manuell import lies_meta_json
 from ostbevern.pruefung import (
     REGEL5_GEP_ZEILEN,
     REGEL5_TOLERANZ_GEP_EURO,
@@ -28,6 +29,7 @@ from ostbevern.schema import (
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
     KITA_ZUSCHUESSE_CSV,
+    META_JSON,
     STEUERARTEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
     WEITERE_VORBERICHTSTABELLEN_CSV,
@@ -248,10 +250,13 @@ def erzeuge_app_daten(
         for tabelle, df in vorbericht_quellen.items()
     }
 
+    meta = lies_meta_json(daten_wurzel / META_JSON)
+
     daten = {
         "haushaltsjahr": jahrgang.haushaltsjahr,
         "jahre": jahre,
         "wertarten": wertarten,
+        "meta": meta,
         "vorbericht": vorbericht,
     }
 

@@ -16,6 +16,84 @@
     "planung",
     "planung"
   ],
+  "meta": {
+    "einwohner": {
+      "wert": 11741,
+      "einheit": "personen",
+      "stichtag": "2024-06-30",
+      "herkunft": "IT.NRW",
+      "quelle": 25
+    },
+    "flaeche": {
+      "wert": 8960,
+      "einheit": "ha",
+      "quelle": 10,
+      "anmerkung": "Vorbericht S. 10 druckt die Gemeindefläche als 89,6 qkm."
+    },
+    "hebesaetze": {
+      "grundsteuer_a": {
+        "wert": 242,
+        "einheit": "prozent",
+        "quelle": 9
+      },
+      "grundsteuer_b": {
+        "wert": 554,
+        "einheit": "prozent",
+        "quelle": 9
+      },
+      "gewerbesteuer": {
+        "wert": 418,
+        "einheit": "prozent",
+        "quelle": 9
+      }
+    },
+    "kreisumlage": {
+      "netto": {
+        "wert": 10147000,
+        "einheit": "euro",
+        "quelle": 46,
+        "gerundet": true
+      },
+      "rueckstellungsaufloesung": {
+        "wert": 1325478,
+        "einheit": "euro",
+        "quelle": 46
+      },
+      "brutto": {
+        "wert": 11472478,
+        "einheit": "euro",
+        "quelle": 46,
+        "berechnet": true,
+        "gerundet": true,
+        "formel": "netto + rueckstellungsaufloesung"
+      },
+      "hebesatz_kreisumlage": {
+        "wert": 363,
+        "einheit": "promille",
+        "vorjahr": 330,
+        "quelle": 47
+      },
+      "hebesatz_jugendamtsumlage": {
+        "wert": 210,
+        "einheit": "promille",
+        "vorjahr": 203,
+        "quelle": 47
+      }
+    },
+    "satzung": {
+      "beschluss": {
+        "wert": "2026-03-03",
+        "einheit": "datum",
+        "quelle": 8
+      },
+      "ausfertigung": {
+        "wert": "2026-03-04",
+        "einheit": "datum",
+        "quelle": 9
+      }
+    },
+    "vorbericht_werte": {}
+  },
   "vorbericht": {
     "steuerarten": {
       "tabelle": "steuerarten",

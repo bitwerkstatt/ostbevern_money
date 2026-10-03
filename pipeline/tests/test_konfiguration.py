@@ -677,3 +677,50 @@ def test_lade_sollwerte_anhang_b4_b5_vollstaendig() -> None:
     assert isinstance(anhang_b5["jahr"], int)
     assert anhang_b5["pdf_seite"] >= 1
     assert anhang_b5["werte_teur"]
+
+
+# [eckwerte.*] (Phase 4, D-10, D-14, D-20, Anhang B.6): optionale Tabelle fester
+# Eckwerte, je mit int `wert` und int `pdf_seite` >= 1. Mutiert die echte
+# 2026_sollwerte.toml, der Block steht am Dateiende (nach allen anhang_b4/b5-Tabellen).
+
+
+def test_eckwerte_wert_nicht_ganzzahl_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(r"(?m)^wert = 11741$", "wert = 11741.5", _sollwertdatei_text(), count=1)
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="eckwerte.einwohner.wert"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_eckwerte_fehlende_pdf_seite_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(r"(?m)^pdf_seite = 25$", "", _sollwertdatei_text(), count=1)
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="eckwerte.einwohner"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_eckwerte_unbekanntes_feld_wird_abgelehnt(tmp_path: Path) -> None:
+    text = re.sub(
+        r"(?m)^\[eckwerte\.einwohner\]$",
+        '[eckwerte.einwohner]\nanmerkung = "x"',
+        _sollwertdatei_text(),
+        count=1,
+    )
+    _schreibe_sollwertdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match="eckwerte.einwohner"):
+        lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+def test_sollwertdatei_ohne_eckwerte_bleibt_gueltig(tmp_path: Path) -> None:
+    text = re.sub(r"(?ms)^\[eckwerte\.einwohner\]\n.*\Z", "", _sollwertdatei_text())
+    _schreibe_sollwertdatei(tmp_path, text)
+    sollwerte = lade_sollwerte(STANDARD_JAHR, verzeichnis=tmp_path)
+    assert sollwerte.get("eckwerte", {}) == {}
+
+
+def test_lade_sollwerte_eckwerte_vollstaendig() -> None:
+    sollwerte = lade_sollwerte(STANDARD_JAHR)
+    eckwerte = sollwerte["eckwerte"]
+    assert eckwerte["einwohner"]["wert"] == 11741
+    for eintrag in eckwerte.values():
+        assert isinstance(eintrag["wert"], int)
+        assert eintrag["pdf_seite"] >= 1

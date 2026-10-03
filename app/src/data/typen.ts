@@ -51,6 +51,41 @@ export interface VorberichtTabelle {
   posten: VorberichtPosten[]
 }
 
+/** Ein einzelner Wert in `meta.json` (D-10, MANU-06, D-21). */
+export interface MetaWert {
+  /** Der Wert selbst; ein ISO-Datum als String nur, wenn `einheit` "datum" ist. */
+  wert: number | string
+  /** Einheit: "personen" | "ha" | "prozent" | "promille" | "euro" | "datum". */
+  einheit: string
+  /** 1-basierte PDF-Seite des Werts. */
+  quelle: number
+  /** ISO-Stichtag des Werts (z. B. Einwohnerzahl), `null` ohne Stichtag. */
+  stichtag?: string
+  /** Herkunft des Werts (z. B. "IT.NRW"), `null` ohne eigene Herkunftsangabe. */
+  herkunft?: string
+  /** `true` für einen aus anderen meta.json-Werten berechneten Wert (D-10). */
+  berechnet?: boolean
+  /** `true`, wenn der Wert aus einer in T€ geführten Quelle × 1000 stammt. */
+  gerundet?: boolean
+  /** Formelhinweis für einen berechneten Wert, z. B. "netto + rueckstellungsaufloesung". */
+  formel?: string
+  /** Vorjahreswert desselben Felds, falls im Vorbericht genannt (z. B. Hebesätze). */
+  vorjahr?: number
+  /** Fußnotentext oder sonstige Anmerkung, `null` ohne Anmerkung. */
+  anmerkung?: string
+}
+
+/** Meta-Angaben des Haushalts (D-10, MANU-06): Einwohner, Fläche, Hebesätze,
+ * Kreisumlage, Satzungsdaten, reservierte Vorbericht-Einzelwerte. */
+export interface Meta {
+  einwohner: MetaWert
+  flaeche: MetaWert
+  hebesaetze: Record<string, MetaWert>
+  kreisumlage: Record<string, MetaWert>
+  satzung: Record<string, MetaWert>
+  vorbericht_werte: Record<string, MetaWert>
+}
+
 /** Gesamtstruktur von `haushalt.json` (D-21, D-24). */
 export interface Haushalt {
   /** Das aktuell dargestellte Haushaltsjahr. */
@@ -59,6 +94,8 @@ export interface Haushalt {
   jahre: number[]
   /** Wertart je Eintrag von `jahre` ("ergebnis" | "ansatz" | "planung"), D-06. */
   wertarten: string[]
+  /** Meta-Angaben (Einwohner, Hebesätze, Kreisumlage, Satzung), D-10. */
+  meta: Meta
   /** Manuelle Vorberichtstabellen, Schlüssel = Tabellenname. */
   vorbericht: Record<string, VorberichtTabelle>
 }

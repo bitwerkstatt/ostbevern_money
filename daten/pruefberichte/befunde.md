@@ -43,16 +43,33 @@ Die Weitergabe an Kreis und Land (D-01, `plan` `weitergabe_kreis_land`, `ebene` 
 Produktcode aus `[layout.weitergabe_kreis_land]`, `zeile` `tp_15`) vergleicht die Summe der drei
 Transferaufwendungen-Posten Kreisumlage, Gewerbesteuerumlage und Krankenhausinvestitionsumlage
 (× 1000) mit Zeile 15 des Teilergebnisplans dieses Produkts, Toleranz ±3.000 € (drei Posten ×
-±1.000 €). In allen Fällen gilt `abweichung = ist − soll`, mit `ist` dem aus den Vorbericht-
-Posten hergeleiteten Wert und `soll` dem jeweils gedruckten oder im Gesamtergebnisplan
-ausgewiesenen Referenzwert.
+±1.000 €). Die D-10-Unterprüfungen (`plan` `meta_kreisumlage`, `ebene` `GESAMT`) prüfen die
+Kreisumlage aus `meta.json`: `zeile` `brutto_formel` (`soll` netto + Rückstellungsauflösung,
+`ist` brutto, exakt), `zeile` `netto_transfer` (`soll` Transferaufwendungen-Posten Kreisumlage
+des Haushaltsjahrs × 1000, `ist` meta netto, exakt) und `zeile` `brutto_fussnote` (`soll`
+Eckwert `kreisumlage_umlage_fussnote`, Anhang B.6, `ist` brutto, Toleranz ±50.000 €, da der
+Fußnotentext „rd. 11,5 Mio. €“ selbst gerundet ist). In allen Fällen gilt
+`abweichung = ist − soll`, mit `ist` dem aus den Vorbericht-Posten hergeleiteten Wert und
+`soll` dem jeweils gedruckten oder im Gesamtergebnisplan ausgewiesenen Referenzwert.
+
+Regel 9 (Eckwerte, Anhang B.6, D-10/D-14) vergleicht jeden `[eckwerte.*]`-Sollwert exakt (0 €
+bzw. 0 Einheiten Toleranz, `pruefung.TOLERANZ_JE_REGEL`) gegen den aus `meta.json` oder
+`zuwendungen.csv` hergeleiteten Ist-Wert; `plan` ist `anhang_b6`, `ebene` `GESAMT`, `zeile` der
+Eckwert-Name (z. B. `hebesatz_kreisumlage_promille`), `jahr` das Haushaltsjahr, `wertart`
+`ansatz`. Die Einheit eines Eckwerts (Prozent, Promille, T€, Personen) ist dieselbe wie im
+Sollwert selbst — Regel 9 rechnet nichts um. Ein `[eckwerte.*]`-Schlüssel, den weder Regel 5
+noch Regel 9 konsumiert, bricht `pruefe_alles` mit `PruefungsFehler` ab (kein Sollwert bleibt
+unbewacht).
 
 Ein Befund deckt eine Abweichung nur ab, wenn Regel, Plan, Ebene, Code, Zeile, Jahr und
-Wertart übereinstimmen **und** die tatsächliche Abweichung um höchstens 1 € von der hier
-dokumentierten abweicht (D-05). `abweichung = ist − soll`, je nach Regel in `pruefung.py`
-berechnet (Regel 1: Formelkette minus gedruckte Summe; Regel 2: Summe der Kinder minus
-gedruckter Elternwert, je Ebene PG→P bzw. PB→PG; Regel 3: Summe der 15 PB minus gedrucktem
-Gesamtergebnisplan; Regel 4: Pipeline-Wert minus Sollwert aus Anhang B bzw. Satzung).
+Wertart übereinstimmen **und** die tatsächliche Abweichung um höchstens `toleranz_fuer(regel)`
+von der hier dokumentierten abweicht (D-05, Phase 4). Für Regel 9 (Eckwerte, Anhang B.6) ist
+diese Toleranz exakt 0 €, für jede andere Regel bleibt es bei 1 € (`pruefung.TOLERANZ_JE_REGEL`).
+`abweichung = ist − soll`, je nach Regel in `pruefung.py` berechnet (Regel 1: Formelkette minus
+gedruckte Summe; Regel 2: Summe der Kinder minus gedruckter Elternwert, je Ebene PG→P bzw.
+PB→PG; Regel 3: Summe der 15 PB minus gedrucktem Gesamtergebnisplan; Regel 4: Pipeline-Wert
+minus Sollwert aus Anhang B bzw. Satzung; Regel 9: Sollwert aus Anhang B.6 minus Ist-Wert aus
+`meta.json`/`zuwendungen.csv`).
 
 Ein Befund, der nicht mehr auftritt, gilt selbst als Fehler (D-04) — diese Datei darf keine
 Fehler still verdecken. Einträge sind nur für Abweichungen erlaubt, die so im PDF gedruckt

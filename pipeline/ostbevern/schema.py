@@ -51,6 +51,9 @@ KITA_ZUSCHUESSE_CSV = MANUELL_WURZEL / "kita_zuschuesse.csv"
 # entgelte (2.1.4), Kostenerstattungen (2.1.6), Personal (2.2.1), Sachaufwand (2.2.3)
 # und Sonstige Aufwendungen (2.2.6) in einer Datei, Spalte `tabelle` unterscheidet sie.
 WEITERE_VORBERICHTSTABELLEN_CSV = MANUELL_WURZEL / "weitere_vorberichtstabellen.csv"
+# meta.json (Phase 4, D-10, MANU-06): Einwohner, Fläche, Hebesätze, Kreisumlage,
+# Satzungsdaten, je Wert mit Quelle; validiert über ostbevern.manuell.lies_meta_json.
+META_JSON = MANUELL_WURZEL / "meta.json"
 
 
 class SchemaFehler(ValueError):

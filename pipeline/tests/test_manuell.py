@@ -10,6 +10,7 @@ konsistent vorfindet (derselbe Huckepack-Mechanismus wie in test_pruefung.py).
 
 from __future__ import annotations
 
+import json
 import shutil
 from pathlib import Path
 
@@ -17,11 +18,21 @@ import polars as pl
 import pytest
 
 from ostbevern.konfiguration import STANDARD_JAHR, lade_jahrgang
-from ostbevern.pruefung import WEITERE_VORBERICHTSTABELLEN, PruefungsFehler, pruefe_alles
+from ostbevern.manuell import ManuellFehler, lies_meta_json
+from ostbevern.pruefung import (
+    REGEL5_ECKWERTE,
+    REGEL9_ECKWERTE,
+    WEITERE_VORBERICHTSTABELLEN,
+    PruefungsFehler,
+    pruefe_alles,
+    pruefe_eckwerte_konsumiert,
+    toleranz_fuer,
+)
 from ostbevern.schema import (
     DATEN_WURZEL,
     KITA_ZUSCHUESSE_CSV,
     MANUELL_WURZEL,
+    META_JSON,
     STEUERARTEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
     WEITERE_VORBERICHTSTABELLEN_CSV,
@@ -348,3 +359,140 @@ def test_readme_nennt_jede_manuelle_datei() -> None:
     assert dateien
     for datei in dateien:
         assert datei in readme, f"README.md erwähnt {datei} nicht"
+
+
+def _lies_meta_dict() -> dict:
+    return json.loads((DATEN_WURZEL / META_JSON).read_text(encoding="utf-8"))
+
+
+def test_meta_json_gueltig() -> None:
+    meta = lies_meta_json(DATEN_WURZEL / META_JSON)
+    assert meta["einwohner"]["wert"] == 11741
+    assert meta["kreisumlage"]["brutto"]["wert"] == 11472478
+    assert meta["kreisumlage"]["brutto"]["berechnet"] is True
+
+
+@pytest.mark.parametrize(
+    "mutiere",
+    [
+        lambda d: d.pop("satzung"),
+        lambda d: d.update(unbekannt={"wert": 1, "einheit": "personen", "quelle": 1}),
+        lambda d: d["einwohner"].pop("quelle"),
+        lambda d: d["einwohner"].update(einheit="unbekannt"),
+        lambda d: d["einwohner"].update(wert=11741.0),
+        lambda d: d["einwohner"].update(quelle=0),
+        lambda d: d["satzung"]["beschluss"].update(wert="03.03.2026"),
+        lambda d: d["kreisumlage"]["netto"].update(unbekanntes_feld=True),
+        lambda d: d["vorbericht_werte"].update(
+            Grossbuchstabe={"wert": 1, "einheit": "euro", "quelle": 1}
+        ),
+    ],
+    ids=[
+        "fehlender_top_schluessel",
+        "unbekannter_top_schluessel",
+        "fehlende_quelle",
+        "unbekannte_einheit",
+        "float_wert",
+        "quelle_kleiner_1",
+        "nicht_iso_datum",
+        "unbekanntes_blatt_feld",
+        "ungueltiger_vorbericht_werte_schluessel",
+    ],
+)
+def test_meta_json_bricht_ab(tmp_path: Path, mutiere) -> None:
+    meta = _lies_meta_dict()
+    mutiere(meta)
+    ziel = tmp_path / "meta.json"
+    ziel.write_text(json.dumps(meta), encoding="utf-8")
+    with pytest.raises(ManuellFehler):
+        lies_meta_json(ziel)
+
+
+def test_toleranz_je_regel() -> None:
+    assert toleranz_fuer(9) == 0
+    for regel in (1, 2, 3, 4, 5, 6, 7, 8):
+        assert toleranz_fuer(regel) == 1
+
+
+def test_regel9_eckwerte_gruen() -> None:
+    bericht = pruefe_alles(STANDARD_JAHR)
+    regel9 = next(regel for regel in bericht.regeln if regel.regel == 9)
+    assert regel9.status == "grün"
+    assert regel9.abweichungen == ()
+    assert regel9.geprueft == len(REGEL9_ECKWERTE)
+
+
+def test_regel9_hebesatz_abweichung_rot(tmp_path: Path) -> None:
+    _kopiere_daten_baum_nach(tmp_path)
+    meta = json.loads((tmp_path / META_JSON).read_text(encoding="utf-8"))
+    meta["hebesaetze"]["grundsteuer_b"]["wert"] += 1
+    (tmp_path / META_JSON).write_text(json.dumps(meta), encoding="utf-8")
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel9 = next(regel for regel in bericht.regeln if regel.regel == 9)
+    assert regel9.status == "rot"
+    treffer = [p for p in regel9.abweichungen if p.zeile == "hebesatz_grundsteuer_b"]
+    assert len(treffer) == 1
+    assert treffer[0].abweichung == 1
+
+
+def test_eckwerte_ohne_pruefung_bricht_ab() -> None:
+    eckwerte = {name: {"wert": 1, "pdf_seite": 1} for name in (*REGEL9_ECKWERTE, *REGEL5_ECKWERTE)}
+    eckwerte["unbekannter_eckwert"] = {"wert": 1, "pdf_seite": 1}
+    with pytest.raises(PruefungsFehler):
+        pruefe_eckwerte_konsumiert(eckwerte)
+
+
+def test_regel5_meta_kreisumlage_formel_rot(tmp_path: Path) -> None:
+    _kopiere_daten_baum_nach(tmp_path)
+    meta = json.loads((tmp_path / META_JSON).read_text(encoding="utf-8"))
+    meta["kreisumlage"]["brutto"]["wert"] += 5
+    (tmp_path / META_JSON).write_text(json.dumps(meta), encoding="utf-8")
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel5 = next(regel for regel in bericht.regeln if regel.regel == 5)
+    assert regel5.status == "rot"
+    treffer = [
+        p
+        for p in regel5.abweichungen
+        if p.plan == "meta_kreisumlage" and p.zeile == "brutto_formel"
+    ]
+    assert len(treffer) == 1
+    assert treffer[0].abweichung == 5
+
+
+def test_regel5_meta_kreisumlage_netto_transfer_rot(tmp_path: Path) -> None:
+    _kopiere_daten_baum_nach(tmp_path)
+    meta = json.loads((tmp_path / META_JSON).read_text(encoding="utf-8"))
+    meta["kreisumlage"]["netto"]["wert"] += 3
+    (tmp_path / META_JSON).write_text(json.dumps(meta), encoding="utf-8")
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel5 = next(regel for regel in bericht.regeln if regel.regel == 5)
+    assert regel5.status == "rot"
+    treffer = [
+        p
+        for p in regel5.abweichungen
+        if p.plan == "meta_kreisumlage" and p.zeile == "netto_transfer"
+    ]
+    assert len(treffer) == 1
+    assert treffer[0].abweichung == 3
+
+
+def test_regel5_meta_kreisumlage_fussnote_rot(tmp_path: Path) -> None:
+    _kopiere_daten_baum_nach(tmp_path)
+    meta = json.loads((tmp_path / META_JSON).read_text(encoding="utf-8"))
+    meta["kreisumlage"]["netto"]["wert"] -= 50000
+    meta["kreisumlage"]["brutto"]["wert"] -= 50000
+    (tmp_path / META_JSON).write_text(json.dumps(meta), encoding="utf-8")
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel5 = next(regel for regel in bericht.regeln if regel.regel == 5)
+    assert regel5.status == "rot"
+    treffer = [
+        p
+        for p in regel5.abweichungen
+        if p.plan == "meta_kreisumlage" and p.zeile == "brutto_fussnote"
+    ]
+    assert len(treffer) == 1
+    assert treffer[0].abweichung == -77522

@@ -686,6 +686,44 @@ def lade_sollwerte(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> 
                     f"{posten} muss eine Ganzzahl sein"
                 )
 
+    # [eckwerte.*] (Phase 4, D-14, D-20, Anhang B.6): optionale Tabelle fester Eckwerte
+    # (Einwohner, Hebesätze, Schlüsselzuweisung, Pro-Kopf-Verschuldung, ...), je mit
+    # einem int `wert` (Einheit je Eckwert, Regel 9 rechnet nichts um) und einer
+    # ganzzahligen `pdf_seite` >= 1. Konsumiert von Regel 5 (REGEL5_ECKWERTE) oder
+    # Regel 9 (REGEL9_ECKWERTE, _pruefe_nur_ganzzahlen prüft die Zahlenwerte zusätzlich).
+    eckwerte = rohdaten.get("eckwerte", {})
+    if not isinstance(eckwerte, dict):
+        raise KonfigurationsFehler(
+            f"Sollwertdatei {pfad}: eckwerte muss eine Tabelle sein, nicht {eckwerte!r}"
+        )
+    for name, eintrag in eckwerte.items():
+        if not isinstance(eintrag, dict):
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: eckwerte.{name} muss eine Tabelle sein, nicht {eintrag!r}"
+            )
+        fehlende_felder = {"wert", "pdf_seite"} - set(eintrag)
+        if fehlende_felder:
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: eckwerte.{name} fehlen Felder: "
+                f"{', '.join(sorted(fehlende_felder))}"
+            )
+        unbekannte_felder = set(eintrag) - {"wert", "pdf_seite"}
+        if unbekannte_felder:
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: eckwerte.{name} hat unbekannte Felder: "
+                f"{', '.join(sorted(unbekannte_felder))}"
+            )
+        wert = eintrag["wert"]
+        if not isinstance(wert, int) or isinstance(wert, bool):
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: eckwerte.{name}.wert muss eine Ganzzahl sein"
+            )
+        pdf_seite = eintrag["pdf_seite"]
+        if not isinstance(pdf_seite, int) or isinstance(pdf_seite, bool) or pdf_seite < 1:
+            raise KonfigurationsFehler(
+                f"Sollwertdatei {pfad}: eckwerte.{name}.pdf_seite muss eine Ganzzahl >= 1 sein"
+            )
+
     _pruefe_nur_ganzzahlen(rohdaten, "sollwerte")
 
     return rohdaten

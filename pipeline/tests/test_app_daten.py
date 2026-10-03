@@ -186,6 +186,16 @@ def test_haushalt_json_weitere_vorberichtstabellen(tmp_path: Path) -> None:
         assert eintrag["posten"], f"{tabelle}: keine Posten"
 
 
+def test_haushalt_json_meta(tmp_path: Path) -> None:
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    assert list(daten)[:4] == ["haushaltsjahr", "jahre", "wertarten", "meta"]
+    meta = daten["meta"]
+    assert meta["einwohner"]["wert"] == 11741
+    assert meta["kreisumlage"]["brutto"]["wert"] == 11472478
+    assert meta["kreisumlage"]["brutto"]["berechnet"] is True
+
+
 def test_app_daten_liest_kein_pdf() -> None:
     quelle = Path(app_daten.__file__).read_text(encoding="utf-8")
     baum = ast.parse(quelle)

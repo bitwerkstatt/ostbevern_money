@@ -22,6 +22,7 @@ from ostbevern.konfiguration import (
     lade_sollwerte,
     layout_text,
 )
+from ostbevern.manuell import lies_meta_json
 from ostbevern.schema import (
     BEFUNDE_MD,
     DATEN_WURZEL,
@@ -33,6 +34,7 @@ from ostbevern.schema import (
     INVESTITIONEN_PB_CSV,
     KITA_ZUSCHUESSE_CSV,
     KONSISTENZ_MD,
+    META_JSON,
     PRODUKTE_JSON,
     QUERSCHNITTE_CSV,
     SEITEN_CSV,
@@ -64,6 +66,18 @@ _SCHLUESSELTABELLE_KOPF = (
 )
 
 TOLERANZ_EURO = 1
+
+# Toleranz je Regel (Phase 4, D-14, Anhang B.6): Regel 9 (Eckwerte) ist exakt (0 €
+# Toleranz), jede andere Regel behält die strenge TOLERANZ_EURO = 1 €. `toleranz_fuer`
+# ist die einzige Stelle, die diese Zuordnung kennt — Regelergebnis.status, lies_befunde
+# und gleiche_befunde_ab lesen sie, statt TOLERANZ_EURO weiterhin hart zu verdrahten.
+TOLERANZ_JE_REGEL: Mapping[int, int] = {9: 0}
+
+
+def toleranz_fuer(regel: int) -> int:
+    """Liefert die Toleranz (in Euro) einer Regel; Standard ist TOLERANZ_EURO."""
+    return TOLERANZ_JE_REGEL.get(regel, TOLERANZ_EURO)
+
 
 # Regel 3 (Spez. 5.5): nur diese Zeilen des Ergebnisplans werden über die 15 PB summiert und
 # gegen den Gesamtergebnisplan geprüft. TP 27/28 (interne Leistungsbeziehungen) und der
@@ -216,10 +230,8 @@ class Regelergebnis:
 
     @property
     def status(self) -> str:
-        if (
-            any(abs(punkt.abweichung) > TOLERANZ_EURO for punkt in self.abweichungen)
-            or self.luecken
-        ):
+        toleranz = toleranz_fuer(self.regel)
+        if any(abs(punkt.abweichung) > toleranz for punkt in self.abweichungen) or self.luecken:
             return "rot"
         return "grün"
 
@@ -365,10 +377,11 @@ def lies_befunde(pfad: Path) -> tuple[Befund, ...]:
                 f"{pfad}:{zeilennummer}: Zelle ist keine Ganzzahl ({fehler})"
             ) from fehler
 
-        if abs(abweichung) <= TOLERANZ_EURO:
+        toleranz = toleranz_fuer(regel)
+        if abs(abweichung) <= toleranz:
             raise PruefungsFehler(
                 f"{pfad}:{zeilennummer}: Abweichung {abweichung} liegt innerhalb der "
-                f"Toleranz von {TOLERANZ_EURO} EUR; ein Befund ist dafür nicht nötig"
+                f"Toleranz von {toleranz} EUR (Regel {regel}); ein Befund ist dafür nicht nötig"
             )
 
         befunde.append(
@@ -392,8 +405,9 @@ def gleiche_befunde_ab(abweichungen: Sequence[Pruefpunkt], befunde: Sequence[Bef
     """Ordnet Abweichungen bekannten Befunden zu (D-05) und markiert ungenutzte als veraltet (D-04).
 
     Ein Befund deckt eine Abweichung ab, wenn beide denselben Schlüssel tragen und sich ihre
-    Abweichungsbeträge um höchstens TOLERANZ_EURO unterscheiden. Jeder Befund wird höchstens
-    einmal verwendet; ungenutzte Befunde gelten als veraltet.
+    Abweichungsbeträge um höchstens `toleranz_fuer(punkt.regel)` unterscheiden (Regel 9 ist
+    exakt, jede andere Regel behält die strenge TOLERANZ_EURO = 1 €). Jeder Befund wird
+    höchstens einmal verwendet; ungenutzte Befunde gelten als veraltet.
     """
     befunde_nach_schluessel: dict[tuple, list[Befund]] = {}
     for befund in befunde:
@@ -405,12 +419,13 @@ def gleiche_befunde_ab(abweichungen: Sequence[Pruefpunkt], befunde: Sequence[Bef
 
     for punkt in abweichungen:
         kandidaten = befunde_nach_schluessel.get(punkt.schluessel, [])
+        toleranz = toleranz_fuer(punkt.regel)
         treffer = next(
             (
                 kandidat
                 for kandidat in kandidaten
                 if id(kandidat) not in genutzt
-                and abs(punkt.abweichung - kandidat.abweichung) <= TOLERANZ_EURO
+                and abs(punkt.abweichung - kandidat.abweichung) <= toleranz
             ),
             None,
         )
@@ -1124,12 +1139,130 @@ def zerlege_weitere_vorberichtstabellen(df: pl.DataFrame) -> dict[str, pl.DataFr
     }
 
 
+# D-10 (Kreisumlage brutto/netto): eigene, grobere Toleranz für den Gegenabgleich gegen
+# die gerundete Fußnote "rd. 11,5 Mio. €" (Anhang B.6); die beiden exakten Formel-Checks
+# (brutto_formel, netto_transfer) bleiben bei TOLERANZ_EURO.
+REGEL5_TOLERANZ_FUSSNOTE_EURO = 50000
+# Eckwerte (Anhang B.6, D-10, D-14, D-20): welcher Name von welcher Regel konsumiert
+# wird. pruefe_alles bricht ab, wenn ein [eckwerte.*]-Name in keiner der beiden Mengen
+# steht (kein Sollwert bleibt unbewacht, D-20).
+REGEL5_ECKWERTE: tuple[str, ...] = ("kreisumlage_umlage_fussnote",)
+REGEL9_ECKWERTE: tuple[str, ...] = (
+    "einwohner",
+    "hebesatz_grundsteuer_a",
+    "hebesatz_grundsteuer_b",
+    "hebesatz_gewerbesteuer",
+    "hebesatz_kreisumlage_promille",
+    "hebesatz_kreisumlage_vorjahr_promille",
+    "hebesatz_jugendamtsumlage_promille",
+    "hebesatz_jugendamtsumlage_vorjahr_promille",
+    "schluesselzuweisung_teur",
+    "schluesselzuweisung_vorjahr_teur",
+)
+
+
+def pruefe_eckwerte_konsumiert(eckwerte: Mapping[str, Mapping[str, int]]) -> None:
+    """Bricht ab, wenn ein `[eckwerte.*]`-Name von keiner Regel konsumiert wird (D-20)."""
+    konsumiert = set(REGEL9_ECKWERTE) | set(REGEL5_ECKWERTE)
+    unkonsumiert = set(eckwerte) - konsumiert
+    if unkonsumiert:
+        raise PruefungsFehler(
+            f"Eckwerte ohne Prüfregel (von weder Regel 5 noch Regel 9 konsumiert): "
+            f"{sorted(unkonsumiert)}"
+        )
+
+
+def _pruefe_regel5_meta_kreisumlage(
+    *,
+    meta: Mapping,
+    transfer_df: pl.DataFrame,
+    eckwerte: Mapping[str, Mapping[str, int]],
+    haushaltsjahr: int,
+) -> tuple[int, list[Pruefpunkt]]:
+    """D-10: Kreisumlage brutto/netto aus `meta.json` gegen den Transferaufwendungen-
+    Posten `kreisumlage` und den Fußnoten-Eckwert (Anhang B.6) geprüft (`plan`
+    `meta_kreisumlage`): `brutto_formel` (soll netto + Rückstellungsauflösung, exakt),
+    `netto_transfer` (soll Transferposten × 1000, exakt) und `brutto_fussnote` (soll
+    Eckwert `kreisumlage_umlage_fussnote`, Toleranz ±REGEL5_TOLERANZ_FUSSNOTE_EURO, da
+    die Fußnote selbst nur "rd. 11,5 Mio. €" nennt)."""
+    netto = meta["kreisumlage"]["netto"]
+    rueckstellung = meta["kreisumlage"]["rueckstellungsaufloesung"]
+    brutto = meta["kreisumlage"]["brutto"]
+    pdf_seite = brutto["quelle"]
+
+    kreisumlage_zeile = transfer_df.filter(
+        (pl.col("posten") == "kreisumlage") & (pl.col("jahr") == haushaltsjahr)
+    )
+    if kreisumlage_zeile.height != 1:
+        raise PruefungsFehler(
+            "Regel 5: transferaufwendungen.csv hat keinen eindeutigen Posten "
+            f"'kreisumlage' für Jahr {haushaltsjahr}"
+        )
+    wertart = kreisumlage_zeile["wertart"][0]
+
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+
+    geprueft += 1
+    punkt_formel = Pruefpunkt(
+        regel=5,
+        plan="meta_kreisumlage",
+        ebene="GESAMT",
+        code="",
+        zeile="brutto_formel",
+        jahr=haushaltsjahr,
+        wertart=wertart,
+        soll=netto["wert"] + rueckstellung["wert"],
+        ist=brutto["wert"],
+        pdf_seite=pdf_seite,
+    )
+    if abs(punkt_formel.abweichung) > TOLERANZ_EURO:
+        abweichungen.append(punkt_formel)
+
+    geprueft += 1
+    punkt_netto = Pruefpunkt(
+        regel=5,
+        plan="meta_kreisumlage",
+        ebene="GESAMT",
+        code="",
+        zeile="netto_transfer",
+        jahr=haushaltsjahr,
+        wertart=wertart,
+        soll=kreisumlage_zeile["betrag_teur"][0] * 1000,
+        ist=netto["wert"],
+        pdf_seite=pdf_seite,
+    )
+    if abs(punkt_netto.abweichung) > TOLERANZ_EURO:
+        abweichungen.append(punkt_netto)
+
+    fussnote = eckwerte["kreisumlage_umlage_fussnote"]
+    geprueft += 1
+    punkt_fussnote = Pruefpunkt(
+        regel=5,
+        plan="meta_kreisumlage",
+        ebene="GESAMT",
+        code="",
+        zeile="brutto_fussnote",
+        jahr=haushaltsjahr,
+        wertart=wertart,
+        soll=fussnote["wert"],
+        ist=brutto["wert"],
+        pdf_seite=fussnote["pdf_seite"],
+    )
+    if abs(punkt_fussnote.abweichung) > REGEL5_TOLERANZ_FUSSNOTE_EURO:
+        abweichungen.append(punkt_fussnote)
+
+    return geprueft, abweichungen
+
+
 def _pruefe_regel5(
     *,
     vorbericht: Mapping[str, pl.DataFrame],
     planwerte_ergebnisplan: Planwerte,
     ergebnisplan: pl.DataFrame,
     jahrgang: Jahrgang,
+    meta: Mapping | None = None,
+    eckwerte: Mapping[str, Mapping[str, int]] | None = None,
 ) -> Regelergebnis:
     """Regel 5 – manuelle Vorberichtstabellen → Planzeilen (PRUEF-05, D-01, D-07).
 
@@ -1213,9 +1346,90 @@ def _pruefe_regel5(
         geprueft += geprueft_weitergabe
         abweichungen += abweichungen_weitergabe
 
+    if "transferaufwendungen" in vorbericht and meta is not None and eckwerte is not None:
+        geprueft_meta, abweichungen_meta = _pruefe_regel5_meta_kreisumlage(
+            meta=meta,
+            transfer_df=vorbericht["transferaufwendungen"],
+            eckwerte=eckwerte,
+            haushaltsjahr=jahrgang.haushaltsjahr,
+        )
+        geprueft += geprueft_meta
+        abweichungen += abweichungen_meta
+
     return Regelergebnis(
         regel=5,
         titel="Regel 5 – Manuelle Tabellen → Planzeilen",
+        geprueft=geprueft,
+        abweichungen=tuple(abweichungen),
+    )
+
+
+def _regel9_ist_werte(
+    *, meta: Mapping, zuwendungen: pl.DataFrame, haushaltsjahr: int
+) -> dict[str, int]:
+    """Ist-Werte der Regel-9-Eckwerte (D-10, D-20): `meta.json`-Pfade und
+    `zuwendungen.csv`-Posten `schluesselzuweisung` des Haushaltsjahrs und Vorjahrs."""
+
+    def _zuwendung(posten: str, jahr: int) -> int:
+        zeile = zuwendungen.filter((pl.col("posten") == posten) & (pl.col("jahr") == jahr))
+        if zeile.height != 1:
+            raise PruefungsFehler(
+                f"Regel 9: Posten {posten!r} hat {zeile.height} Zeilen für Jahr {jahr}, "
+                "erwartet genau 1"
+            )
+        return zeile["betrag_teur"][0]
+
+    hebesaetze = meta["hebesaetze"]
+    kreisumlage = meta["kreisumlage"]
+    return {
+        "einwohner": meta["einwohner"]["wert"],
+        "hebesatz_grundsteuer_a": hebesaetze["grundsteuer_a"]["wert"],
+        "hebesatz_grundsteuer_b": hebesaetze["grundsteuer_b"]["wert"],
+        "hebesatz_gewerbesteuer": hebesaetze["gewerbesteuer"]["wert"],
+        "hebesatz_kreisumlage_promille": kreisumlage["hebesatz_kreisumlage"]["wert"],
+        "hebesatz_kreisumlage_vorjahr_promille": kreisumlage["hebesatz_kreisumlage"]["vorjahr"],
+        "hebesatz_jugendamtsumlage_promille": kreisumlage["hebesatz_jugendamtsumlage"]["wert"],
+        "hebesatz_jugendamtsumlage_vorjahr_promille": kreisumlage["hebesatz_jugendamtsumlage"][
+            "vorjahr"
+        ],
+        "schluesselzuweisung_teur": _zuwendung("schluesselzuweisung", haushaltsjahr),
+        "schluesselzuweisung_vorjahr_teur": _zuwendung("schluesselzuweisung", haushaltsjahr - 1),
+    }
+
+
+def _pruefe_regel9(
+    *,
+    eckwerte: Mapping[str, Mapping[str, int]],
+    meta: Mapping,
+    zuwendungen: pl.DataFrame,
+    haushaltsjahr: int,
+) -> Regelergebnis:
+    """Regel 9 – Eckwerte (Anhang B.6, D-10, D-14, D-20): exakter Soll/Ist-Vergleich
+    (Toleranz 0, `toleranz_fuer(9)`) für jeden Namen in `REGEL9_ECKWERTE`."""
+    ist_werte = _regel9_ist_werte(meta=meta, zuwendungen=zuwendungen, haushaltsjahr=haushaltsjahr)
+
+    geprueft = 0
+    abweichungen: list[Pruefpunkt] = []
+    for name in REGEL9_ECKWERTE:
+        eckwert = eckwerte[name]
+        geprueft += 1
+        punkt = Pruefpunkt(
+            regel=9,
+            plan="anhang_b6",
+            ebene="GESAMT",
+            code="",
+            zeile=name,
+            jahr=haushaltsjahr,
+            wertart="ansatz",
+            soll=eckwert["wert"],
+            ist=ist_werte[name],
+            pdf_seite=eckwert["pdf_seite"],
+        )
+        if punkt.abweichung != 0:
+            abweichungen.append(punkt)
+    return Regelergebnis(
+        regel=9,
+        titel="Regel 9 – Eckwerte (Anhang B.6)",
         geprueft=geprueft,
         abweichungen=tuple(abweichungen),
     )
@@ -1757,6 +1971,9 @@ def pruefe_alles(
             lies_vorbericht_csv(daten_wurzel / WEITERE_VORBERICHTSTABELLEN_CSV)
         ),
     }
+    meta = lies_meta_json(daten_wurzel / META_JSON)
+    eckwerte = sollwerte.get("eckwerte", {})
+    pruefe_eckwerte_konsumiert(eckwerte)
     pfad_befunde = befunde_pfad if befunde_pfad is not None else daten_wurzel / BEFUNDE_MD
     befunde = lies_befunde(pfad_befunde)
 
@@ -1787,6 +2004,8 @@ def pruefe_alles(
         planwerte_ergebnisplan=Planwerte(ergebnisplan, datei="ergebnisplan"),
         ergebnisplan=ergebnisplan,
         jahrgang=jahrgang,
+        meta=meta,
+        eckwerte=eckwerte,
     )
     regel6 = _pruefe_regel6(
         investitionen=investitionen,
@@ -1809,9 +2028,15 @@ def pruefe_alles(
         hierarchie=hierarchie,
         jahrgang=jahrgang,
     )
+    regel9 = _pruefe_regel9(
+        eckwerte=eckwerte,
+        meta=meta,
+        zuwendungen=vorbericht["zuwendungen"],
+        haushaltsjahr=jahrgang.haushaltsjahr,
+    )
 
     regeln, veraltete_befunde = _wende_befunde_an(
-        (regel1, regel2, regel3, regel4, regel5, regel6, regel7, regel8), befunde
+        (regel1, regel2, regel3, regel4, regel5, regel6, regel7, regel8, regel9), befunde
     )
     unbekannte_seiten = tuple(
         sorted(seiten.filter(pl.col("typ") == "unbekannt")["pdf_seite"].to_list())

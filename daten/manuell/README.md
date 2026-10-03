@@ -113,6 +113,52 @@ Bewusst **nicht** abgeschrieben (D-08, MANU-05):
   der Gesamtzeile): sie schlüsselt den Posten `gebaeudeunterhaltung` weiter auf,
   gehört aber nicht zur Haupttabelle (D-08) und wird nicht benötigt.
 
+### `meta.json`
+
+Einzelwerte aus der Haushaltssatzung (S. 8/9) und dem Vorbericht (S. 9/10/24-25/46-47),
+validiert über `ostbevern.manuell.lies_meta_json` gegen eine strikte Schlüssel-Allowlist
+(MANU-06): jeder Wert trägt `wert`, `einheit` und `quelle` (1-basierte PDF-Seite), optional
+`stichtag`, `herkunft`, `berechnet`, `gerundet`, `formel`, `vorjahr`, `anmerkung`.
+
+| Schlüssel | Wert | Quelle |
+|---|---|---|
+| `einwohner` | 11.741 (Stichtag 30.06.2024, Herkunft IT.NRW) | S. 25 |
+| `flaeche` | 8.960 ha (= 89,6 qkm, wie gedruckt umgerechnet) | S. 10 |
+| `hebesaetze.grundsteuer_a` / `_b` / `gewerbesteuer` | 242 / 554 / 418 v. H. | S. 9 (§ 6) |
+| `kreisumlage.netto` | 10.147.000 € (T€-Wert aus `transferaufwendungen.csv`, gerundet) | S. 46 |
+| `kreisumlage.rueckstellungsaufloesung` | 1.325.478 € (Fußnote 3) | S. 46 |
+| `kreisumlage.brutto` | 11.472.478 € = netto + Rückstellungsauflösung (berechnet, gerundet) | S. 46 |
+| `kreisumlage.hebesatz_kreisumlage` | 36,3 % (363 Promille, Vorjahr 33 % = 330) | S. 47 |
+| `kreisumlage.hebesatz_jugendamtsumlage` | 21 % (210 Promille, Vorjahr 20,3 % = 203) | S. 47 |
+| `satzung.beschluss` | 2026-03-03 (Ratsbeschluss) | S. 8 |
+| `satzung.ausfertigung` | 2026-03-04 (Unterschriftsdatum) | S. 9 |
+
+**Warum `kreisumlage.brutto` berechnet ist:** Der Vorbericht druckt auf S. 46 nur den
+**netto**-Betrag der Kreisumlage (10.1473 T€, mit angeklebter Fußnotenziffer 3 — siehe
+`transferaufwendungen.csv` oben). Die Fußnote erklärt, dass eine Rückstellungsauflösung
+von 1.325.478 € den Haushalt 2026 entlastet und die tatsächliche Umlage 2026 „bei rd.
+11,5 Mio. €" liegt. `kreisumlage.brutto` bildet diese Rechnung nach (Regel 5,
+`meta_kreisumlage`, D-10) und wird zusätzlich gegen die gerundete Fußnote geprüft
+(±50.000 €, da der Fußnotentext selbst nur „rd." ist).
+
+**Promille statt Prozent beim Kreis:** `hebesatz_kreisumlage`/`hebesatz_jugendamtsumlage`
+stehen als int-Promille (36,3 % → 363), damit `meta.json` durchgängig ganzzahlig bleibt
+(anders als `hebesaetze.*`, die als ganze Prozentpunkte bereits ganzzahlig sind).
+
+**Bewusst nicht gespeichert (Datenschutz):** Die Unterschriftenzeile auf S. 9 druckt die
+Namen der Kämmerin und des Bürgermeisters neben dem Ausfertigungsdatum — diese Namen
+werden nicht abgeschrieben, nur das Datum selbst (`satzung.ausfertigung`).
+
+### Regel 9 – Eckwerte (Anhang B.6)
+
+Neben Regel 5 prüft die neue, exakte Regel 9 die `[eckwerte.*]`-Sollwerte aus
+`pipeline/jahrgaenge/2026_sollwerte.toml` (Anhang B.6) gegen `meta.json` bzw.
+`zuwendungen.csv` (Schlüsselzuweisung des Haushaltsjahrs und Vorjahrs): Einwohner,
+die drei Hebesätze, die Kreis-/Jugendamtsumlage-Hebesätze (je mit Vorjahr) und die
+Schlüsselzuweisung. Ein `[eckwerte.*]`-Name, der von keiner Regel konsumiert wird,
+bricht die Prüfung ab (`pruefung.pruefe_eckwerte_konsumiert`) — kein Sollwert bleibt
+unbewacht.
+
 **Dokumentierte Abweichungen** (Regel 5, Details in
 [`../pruefberichte/befunde.md`](../pruefberichte/befunde.md)): Stufe (a, Posten-Summe
 vs. gedruckte Gesamtzeile) weicht bei `leistungsentgelte` 2024/2029, `kostenerstattungen`
