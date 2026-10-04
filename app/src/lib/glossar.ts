@@ -3,7 +3,7 @@
 // `texte.json` (Pipeline); hier liegt nur, was die App daraus ableitet.
 
 import { texte } from '@/data/daten'
-import type { Glossarbegriff } from '@/data/typen'
+import type { Glossarbegriff, Produkt } from '@/data/typen'
 import { rendereAbsatz } from '@/lib/texte'
 
 /**
@@ -85,4 +85,20 @@ function ersterSatzVon(text: string): string {
 export function ersterSatz(schluessel: GlossarSchluessel): string {
   const erster = findeBegriff(schluessel)?.absaetze[0]
   return erster === undefined ? '' : ersterSatzVon(rendereAbsatz(erster).trim())
+}
+
+/** Ein Aufgabenbereich mit seinen Produkten für das Produktakkordeon (D-16). */
+export interface ProduktGruppe {
+  pb: string
+  name: string
+  produkte: readonly Produkt[]
+}
+
+// RED-Stand: leere Rümpfe, damit die Tests an Behauptungen scheitern, nicht am Import.
+export function produktGruppen(): readonly ProduktGruppe[] {
+  return []
+}
+
+export function glossarVerwendungen(_quelltext: string): string[] {
+  return []
 }
