@@ -121,7 +121,7 @@ const option = computed<EChartsOption>(() => {
 
 const beschreibung = computed(
   () =>
-    `Flächendiagramm: ${props.elternName}, aufgeteilt in ${props.eintraege.length} Einträge. Dieselben Werte stehen in der Tabelle darunter.`,
+    `Flächendiagramm der Ebene ${props.elternName}. Dieselben Werte stehen in der Tabelle darunter.`,
 )
 
 function beiKlick(params: unknown) {

@@ -345,9 +345,10 @@ describe('kachelBeschriftet (RESEARCH A3)', () => {
     expect(kachelBeschriftet(0.001, 900, 480)).toBe(false)
   })
 
-  it('verlangt mindestens die Fläche von 72 × 44 px', () => {
-    expect(kachelBeschriftet(72 * 44 - 1, 1, 1)).toBe(false)
-    expect(kachelBeschriftet(72 * 44, 1, 1)).toBe(true)
+  it('verlangt mehr als die Mindestfläche von 72 × 44 px (Sicherheitsfaktor)', () => {
+    expect(kachelBeschriftet(72 * 44, 1, 1)).toBe(false)
+    expect(kachelBeschriftet(72 * 44 * 2.5 - 1, 1, 1)).toBe(false)
+    expect(kachelBeschriftet(72 * 44 * 2.5, 1, 1)).toBe(true)
   })
 })
 

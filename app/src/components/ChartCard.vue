@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide, useId } from 'vue'
+import { computed, provide, ref, useId } from 'vue'
 import { CHART_KONTEXT } from '@/components/chartKontext'
 
 const props = defineProps<{
@@ -19,11 +19,21 @@ provide(CHART_KONTEXT, {
 })
 
 const hatQuelle = computed(() => Boolean(props.quelle || props.pdf))
+
+// Nach einem Ebenenwechsel setzt die Seite den Fokus auf die Überschrift der Karte (UI-SPEC
+// Interaction Contract „Fokusführung nach Drilldown“).
+const titelElement = ref<HTMLElement | null>(null)
+
+function fokussiereTitel() {
+  titelElement.value?.focus()
+}
+
+defineExpose({ fokussiereTitel })
 </script>
 
 <template>
   <section class="om-chart-card" :aria-labelledby="titelId">
-    <h2 :id="titelId">{{ titel }}</h2>
+    <h2 :id="titelId" ref="titelElement" tabindex="-1">{{ titel }}</h2>
     <p v-if="beschreibung" :id="beschreibungId">{{ beschreibung }}</p>
     <wa-callout v-if="beispieldaten" variant="warning" class="om-chart-card__beispieldaten">
       <wa-icon slot="icon" name="circle-info"></wa-icon>

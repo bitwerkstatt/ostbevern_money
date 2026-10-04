@@ -6,14 +6,15 @@
 
 import type { EChartsOption } from 'echarts'
 
-import { abstufung, farbeFuerPb, KL_DECAL, type Decal } from '@/charts/echartsTheme'
-import { euro, prozent } from '@/charts/format'
+import { abstufung, farbeFuerPb, KL_DECAL, PUNKT_DECAL, type Decal } from '@/charts/echartsTheme'
+import { euro, euroKurz, prozent } from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
 import { haushalt } from '@/data/daten'
 import type { Knoten } from '@/data/typen'
 import type { Modus } from '@/lib/ansicht'
 import { anteil as anteilVon } from '@/lib/berechnung'
 import { findeKlKnoten } from '@/lib/kreisumlage'
+import { findeText } from '@/lib/texte'
 
 const WURZEL = 'GESAMT'
 
@@ -230,27 +231,147 @@ const MIN_KACHEL_BREITE = 72
 const MIN_KACHEL_HOEHE = 44
 
 /**
+ * Sicherheitsfaktor der Flächenheuristik: Squarify legt auch langgestreckte Kacheln an, und
+ * ein Name braucht mehr als die Mindestbreite, um nicht zu „Natu…“ zu verkürzen. Gemessen am
+ * SVG-Lauf (900 × 480 px) bleiben damit Kacheln unter etwa 85 × 85 px unbeschriftet.
+ */
+const FLAECHENFAKTOR = 2.5
+
+/**
  * Flächenheuristik (RESEARCH A3): eine Kachel mit Flächenanteil `anteil` auf einer
- * Zeichenfläche `breite` × `hoehe` px wird nur beschriftet, wenn ihre Fläche für
- * 72 × 44 px reicht. Das Squarify-Layout liefert kein exaktes Rechteck vorab; der Name
- * bleibt bei unbeschrifteten Kacheln im Tooltip und in der Tabelle.
+ * Zeichenfläche `breite` × `hoehe` px wird nur beschriftet, wenn ihre Fläche das
+ * `FLAECHENFAKTOR`-fache von 72 × 44 px erreicht. Das Squarify-Layout liefert kein exaktes
+ * Rechteck vorab; der Name bleibt bei unbeschrifteten Kacheln im Tooltip und in der Tabelle.
  */
 export function kachelBeschriftet(anteil: number, breite: number, hoehe: number): boolean {
-  return anteil * breite * hoehe >= MIN_KACHEL_BREITE * MIN_KACHEL_HOEHE
+  return anteil * breite * hoehe >= MIN_KACHEL_BREITE * MIN_KACHEL_HOEHE * FLAECHENFAKTOR
 }
 
-// RED-Stub (Task 2): nur Signaturen, damit die Tests an Assertions statt am Import scheitern.
-export function ueberschussTextSchluessel(_code: string): string {
-  return ''
+const ALLGEMEINER_UEBERSCHUSS_TEXT = 'ueberschuss_allgemein'
+
+/**
+ * Schlüssel des Erklärtexts zu einem Überschussknoten (AUSG-03): `ueberschuss_pb_<PB>`, wenn
+ * es für den Aufgabenbereich des Knotens einen eigenen Text gibt, sonst der allgemeine Text.
+ * Die Wurzel und unbekannte Codes werfen.
+ */
+export function ueberschussTextSchluessel(code: string): string {
+  const eigener = `ueberschuss_pb_${bereichVon(code).code}`
+  return findeText(eigener) === undefined ? ALLGEMEINER_UEBERSCHUSS_TEXT : eigener
 }
 
-export function zuschussBalkenHoehe(_zeilen: number): number {
-  return 0
+/** Zeilenhöhe der Zuschuss-Balken in px (UI-SPEC Chart Contract). */
+const BALKEN_ZEILENHOEHE = 40
+/** Platz für Wertachse und Ränder in px. */
+const BALKEN_RAND = 48
+
+/** Diagrammhöhe der Zuschuss-Balken: `Zeilenzahl × 40 px + 48 px`. */
+export function zuschussBalkenHoehe(zeilen: number): number {
+  return zeilen * BALKEN_ZEILENHOEHE + BALKEN_RAND
 }
 
+/** Rundet einen Rohschritt auf 1, 2, 2,5, 5 oder 10 mal eine Zehnerpotenz. */
+function schoenerSchritt(roh: number): number {
+  const basis = 10 ** Math.floor(Math.log10(roh))
+  const rest = roh / basis
+  const faktor = [1, 2, 2.5, 5, 10].find((f) => rest <= f) ?? 10
+  return faktor * basis
+}
+
+/**
+ * Optionen der horizontalen Zuschuss-Balken (D-05, AUSG-03): ein Balken je Eintrag in PB-Farbe,
+ * absteigend von oben. Überschüsse sind negative Balken links der Nulllinie mit Punktmuster und
+ * der Beschriftung „Überschuss: {Betrag}“; die Werte kommen unverändert aus den Einträgen.
+ * Die Wertachse hat feste, „schöne“ Grenzen, die immer die 0 enthalten und rechts Platz für die
+ * Beschriftungen lassen (bei nur negativen Werten steht das Label rechts der Nulllinie).
+ */
 export function zuschussBalkenOption(
-  _eintraege: readonly EbenenEintrag[],
-  _optionen: { wertartText: string },
+  eintraege: readonly EbenenEintrag[],
+  optionen: { wertartText: string; schmal?: boolean },
 ): EChartsOption {
-  return {}
+  const schmal = optionen.schmal === true
+  const nachCode = new Map(eintraege.map((e) => [e.code, e] as const))
+  const codes = eintraege.map((e) => e.code)
+  const werte = eintraege.map((e) => e.wert)
+
+  const kleinster = Math.min(0, ...werte)
+  const groesster = Math.max(0, ...werte)
+  const spanne = groesster - kleinster || 1
+  const schritt = schoenerSchritt(spanne / (schmal ? 3 : 5))
+  const min = kleinster < 0 ? Math.floor(kleinster / schritt) * schritt : 0
+  const max = Math.ceil((groesster + spanne * (schmal ? 0.45 : 0.3)) / schritt) * schritt
+
+  const beschriftungsbreite = schmal ? 104 : 160
+
+  return {
+    tooltip: {
+      trigger: 'item',
+      confine: true,
+      formatter: (params: unknown) => {
+        const code = codeAusParams(params)
+        const eintrag = code === null ? undefined : nachCode.get(code)
+        return eintrag === undefined ? '' : eintragTooltip(eintrag, optionen.wertartText)
+      },
+    },
+    grid: { left: beschriftungsbreite + 16, right: 12, top: 8, bottom: 32 },
+    xAxis: {
+      type: 'value',
+      min,
+      max,
+      interval: schritt,
+      axisLabel: { formatter: (wert: number) => euroKurz(wert), hideOverlap: true },
+    },
+    yAxis: [
+      // Namen am linken Rand: die Achse liegt nicht auf der Nulllinie, sonst überdeckten
+      // die Namen die Überschussbalken.
+      {
+        type: 'category',
+        data: codes,
+        inverse: true,
+        axisLine: { show: false, onZero: false },
+        axisTick: { show: false },
+        splitLine: { show: false },
+        axisLabel: {
+          width: beschriftungsbreite,
+          overflow: 'break',
+          margin: 12,
+          formatter: (code: string) => nachCode.get(code)?.name ?? '',
+        },
+      },
+      // Die Nulllinie (1 px, Farbe aus dem Theme) trägt eine zweite, unbeschriftete Achse.
+      {
+        type: 'category',
+        data: codes,
+        inverse: true,
+        axisLine: { show: true, onZero: true, lineStyle: { width: 1 } },
+        axisTick: { show: false },
+        splitLine: { show: false },
+        axisLabel: { show: false },
+      },
+    ],
+    series: [
+      {
+        type: 'bar',
+        xAxisIndex: 0,
+        yAxisIndex: 0,
+        barWidth: 24,
+        data: eintraege.map((eintrag) => {
+          const decal = eintrag.wert < 0 ? PUNKT_DECAL : eintrag.decal
+          const betrag = eintrag.gerundet
+            ? `rd. ${euroKurz(Math.abs(eintrag.wert))}`
+            : euroKurz(Math.abs(eintrag.wert))
+          return {
+            value: eintrag.wert,
+            code: eintrag.code,
+            cursor: klickZiel(eintrag) === 'keins' ? 'default' : 'pointer',
+            itemStyle: { color: eintrag.farbe, ...(decal === undefined ? {} : { decal }) },
+            label: {
+              show: true,
+              position: 'right',
+              formatter: eintrag.wert < 0 ? `Überschuss: ${betrag}` : betrag,
+            },
+          }
+        }),
+      },
+    ],
+  }
 }
