@@ -22,11 +22,28 @@ export default defineConfigWithVueTs(
   {
     name: 'app/wa-page-native-slots',
     rules: {
-      // wa-page and wa-callout are native custom elements (Web Awesome); they use
-      // the native HTML `slot` attribute for light-DOM slotting, not Vue's
-      // v-slot/#name syntax, which only applies to Vue SFC components. Not a Vue 2
-      // deprecation here.
-      'vue/no-deprecated-slot-attribute': ['error', { ignoreParents: ['wa-page', 'wa-callout'] }],
+      // wa-page, wa-callout and the other Web Awesome hosts below are native custom
+      // elements; they use the native HTML `slot` attribute for light-DOM slotting, not
+      // Vue's v-slot/#name syntax, which only applies to Vue SFC components. Not a Vue 2
+      // deprecation here. Every Web Awesome host that receives a `slot="…"` child must be
+      // listed (Phase 5, Pitfall 10).
+      'vue/no-deprecated-slot-attribute': [
+        'error',
+        {
+          ignoreParents: [
+            'wa-page',
+            'wa-callout',
+            'wa-details',
+            'wa-drawer',
+            'wa-card',
+            'wa-select',
+            'wa-button',
+            'wa-radio-group',
+            'wa-tooltip',
+            'wa-tag',
+          ],
+        },
+      ],
     },
   },
 

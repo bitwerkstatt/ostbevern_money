@@ -7,7 +7,7 @@ defineProps<{
 
 <template>
   <header class="om-page-intro">
-    <h1>{{ titel }}</h1>
+    <h1 tabindex="-1">{{ titel }}</h1>
     <p>{{ beschreibung }}</p>
     <slot />
   </header>
