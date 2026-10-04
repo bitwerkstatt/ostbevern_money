@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
-import { euro, euroKurz, formatiere, jahr, prozent, type FormatKuerzel } from '@/charts/format'
+import {
+  datum,
+  euro,
+  euroKurz,
+  formatiere,
+  jahr,
+  prozent,
+  type FormatKuerzel,
+} from '@/charts/format'
 
 // Erwartete Strings stehen als Literale da (U+00A0 vor „€“ wie von Intl de-DE),
 // damit ein Locale-Drift den Test bricht.
@@ -69,4 +77,22 @@ describe('formatiere: sichtbarer Fallback (UI-05, WR-06/IN-01)', () => {
   it('wirft bei unbekanntem Formatkürzel und nennt das Kürzel', () => {
     expect(() => formatiere(1, 'unbekannt' as FormatKuerzel)).toThrow(/unbekannt/)
   })
+})
+
+describe('datum (UI-03, D-18)', () => {
+  it('formatiert ein ISO-Datum auf Deutsch mit ausgeschriebenem Monat', () => {
+    expect(datum('2026-03-03')).toBe('3. März 2026')
+  })
+
+  it('rechnet unabhängig von der Zeitzone (UTC)', () => {
+    expect(datum('2026-01-01')).toBe('1. Januar 2026')
+    expect(datum('2026-12-31')).toBe('31. Dezember 2026')
+  })
+
+  it.each(['kein-datum', '', '2026-13-01', '2026-02-30', '03.03.2026'])(
+    'zeigt den Gedankenstrich für %j',
+    (roh) => {
+      expect(datum(roh)).toBe('–')
+    },
+  )
 })

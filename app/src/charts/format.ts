@@ -59,6 +59,36 @@ export function vzae(wert: number): string {
   return VZAE_FORMAT.format(wert)
 }
 
+const DATUM_FORMAT = new Intl.DateTimeFormat(LOCALE, {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+})
+
+/**
+ * ISO-Datum (JJJJ-MM-TT) als deutsches Datum, z. B. "3. März 2026". Das Datum wird
+ * als UTC-Tag gelesen und formatiert, damit die Zeitzone des Geräts nie einen Tag
+ * verschiebt. Kein gültiges Datum erscheint als `KEIN_WERT`.
+ */
+export function datum(iso: string): string {
+  const treffer = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso)
+  if (treffer === null) {
+    return KEIN_WERT
+  }
+  const [jahrTeil, monatTeil, tagTeil] = [
+    Number(treffer[1]),
+    Number(treffer[2]),
+    Number(treffer[3]),
+  ]
+  const zeitpunkt = new Date(Date.UTC(jahrTeil, monatTeil - 1, tagTeil))
+  const unveraendert =
+    zeitpunkt.getUTCFullYear() === jahrTeil &&
+    zeitpunkt.getUTCMonth() === monatTeil - 1 &&
+    zeitpunkt.getUTCDate() === tagTeil
+  return unveraendert ? DATUM_FORMAT.format(zeitpunkt) : KEIN_WERT
+}
+
 /** Anteil (0–1) als Prozentsatz mit höchstens einer Nachkommastelle, z. B. "34,1 %". */
 export function prozent(anteil: number): string {
   return PROZENT_FORMAT.format(anteil)
