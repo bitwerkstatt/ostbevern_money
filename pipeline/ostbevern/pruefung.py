@@ -1364,7 +1364,8 @@ def _pruefe_regel5(
     Phase 5: Tabellen aus `REGEL5_GFP_ZEILEN` (investitionszuwendungen, S. 52) laufen in
     Stufe (b) gegen die Gesamtfinanzplan-Zeile (`zeile` `gfp_{nr}`, `planwerte_finanzplan`
     nötig) statt gegen den Gesamtergebnisplan; die Konzessionsabgaben-Aufteilung
-    (`_pruefe_regel5_konzessionsabgaben`) läuft, wenn `sonstige_ertraege` und `meta` da sind.
+    (`_pruefe_regel5_konzessionsabgaben`) läuft, sobald `sonstige_ertraege` da ist; fehlt dann
+    `meta`, bricht die Regel mit PruefungsFehler ab, statt die Prüfung still auszulassen.
     """
     geprueft = 0
     abweichungen: list[Pruefpunkt] = []
@@ -1441,7 +1442,11 @@ def _pruefe_regel5(
                 if abs(punkt_gfp.abweichung) > REGEL5_TOLERANZ_GEP_EURO:
                     abweichungen.append(punkt_gfp)
 
-    if "sonstige_ertraege" in vorbericht and meta is not None:
+    if "sonstige_ertraege" in vorbericht:
+        if meta is None:
+            raise PruefungsFehler(
+                "Regel 5: sonstige_ertraege braucht meta.json für die Konzessionsabgaben-Aufteilung"
+            )
         geprueft_konzession, abweichungen_konzession = _pruefe_regel5_konzessionsabgaben(
             meta=meta,
             sonstige_ertraege_df=vorbericht["sonstige_ertraege"],

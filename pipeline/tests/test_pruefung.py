@@ -2253,6 +2253,20 @@ def _setze_meta_wert(tmp_path: Path, schluessel: str, *, delta: int | None) -> N
     pfad.write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def test_regel5_sonstige_ertraege_ohne_meta_bricht_ab(monkeypatch: pytest.MonkeyPatch) -> None:
+    """WR-05: ohne meta darf die Konzessionsabgaben-Aufteilung nicht still entfallen."""
+    monkeypatch.setattr(pruefung, "REGEL5_TABELLEN_OHNE_GESAMT", ("sonstige_ertraege",))
+    leer = pl.DataFrame()
+    with pytest.raises(PruefungsFehler, match="sonstige_ertraege"):
+        pruefung._pruefe_regel5(
+            vorbericht={"sonstige_ertraege": leer},
+            planwerte_ergebnisplan=Planwerte(leer, datei="ergebnisplan"),
+            ergebnisplan=leer,
+            jahrgang=lade_jahrgang(STANDARD_JAHR),
+            meta=None,
+        )
+
+
 def test_regel5_konzessionsabgaben_split_gruen_auf_eingecheckten_daten() -> None:
     regel5 = _regel5_von(pruefe_alles(STANDARD_JAHR))
     assert not [p for p in regel5.abweichungen if p.plan == "vorbericht_konzessionsabgaben"]
