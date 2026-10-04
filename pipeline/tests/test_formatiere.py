@@ -360,6 +360,30 @@ def test_port_beispiele(wert: int | float, kuerzel: str, erwartet: str) -> None:
     assert formatiere_port(wert, kuerzel) == erwartet
 
 
+@pytest.mark.parametrize(
+    ("wert", "kuerzel"),
+    [
+        (None, "euro"),
+        (None, "mio"),
+        (float("nan"), "zahl"),
+        (float("inf"), "jahr"),
+        (float("-inf"), "prozent"),
+    ],
+)
+def test_port_fallback_fuer_fehlende_werte(wert: float | None, kuerzel: str) -> None:
+    assert formatiere_port(wert, kuerzel) == "–"
+
+
+def test_port_unbekanntes_kuerzel_wirft_value_error() -> None:
+    with pytest.raises(ValueError, match="unbekannt"):
+        formatiere_port(1, "unbekannt")
+
+
+def test_verstoesse_meldet_fehlenden_rohwert() -> None:
+    assert _verstoesse("meta.einwohner", None, "zahl")  # type: ignore[arg-type]
+    assert _verstoesse("meta.einwohner", float("nan"), "zahl")
+
+
 def test_erklaerungen_rendern_korrekt(
     echte_erklaerungen: list, werte: dict[str, int | float]
 ) -> None:
@@ -417,7 +441,9 @@ def test_port_wie_format_ts(werte: dict[str, int | float], texte_json: dict) -> 
         (125, "promille"),
         (12.75, "vzae"),
     ]
-    kanten: list[tuple[int | float, str]] = [
+    kanten: list[tuple[int | float | None, str]] = [
+        (None, "euro"),
+        (None, "mio"),
         (1005000, "mio"),
         (9995000, "mio"),
         (999500, "mio"),
@@ -428,7 +454,7 @@ def test_port_wie_format_ts(werte: dict[str, int | float], texte_json: dict) -> 
         (1554, "prozent"),
         (-3, "promille"),
     ]
-    paare: list[tuple[int | float, str]] = [*beispiele, *kanten]
+    paare: list[tuple[int | float | None, str]] = [*beispiele, *kanten]
     for text in texte_json["texte"]:
         for absatz in text["absaetze"]:
             for schluessel, format_kuerzel in PLATZHALTER_MUSTER.findall(absatz):

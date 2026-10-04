@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { euro, euroKurz, formatiere, jahr, prozent } from '@/charts/format'
+import { euro, euroKurz, formatiere, jahr, prozent, type FormatKuerzel } from '@/charts/format'
 
 // Erwartete Strings stehen als Literale da (U+00A0 vor „€“ wie von Intl de-DE),
 // damit ein Locale-Drift den Test bricht.
@@ -33,5 +33,40 @@ describe('formatiere', () => {
 
   it('formatiert Promillerohwerte über den Anteil', () => {
     expect(formatiere(363, 'promille')).toBe(prozent(0.363))
+  })
+
+  it('lässt bestehende Ausgaben unverändert', () => {
+    expect(formatiere(27502063, 'mio')).toBe('27,5 Mio. €')
+    expect(formatiere(2026, 'jahr')).toBe('2026')
+  })
+})
+
+describe('formatiere: sichtbarer Fallback (UI-05, WR-06/IN-01)', () => {
+  it('zeigt den Gedankenstrich für null', () => {
+    expect(formatiere(null, 'euro')).toBe('–')
+  })
+
+  it('zeigt den Gedankenstrich für undefined', () => {
+    expect(formatiere(undefined, 'mio')).toBe('–')
+  })
+
+  it('zeigt den Gedankenstrich für NaN', () => {
+    expect(formatiere(NaN, 'zahl')).toBe('–')
+  })
+
+  it('zeigt den Gedankenstrich für Infinity', () => {
+    expect(formatiere(Infinity, 'jahr')).toBe('–')
+  })
+
+  it('zeigt den Gedankenstrich für -Infinity', () => {
+    expect(formatiere(-Infinity, 'prozent')).toBe('–')
+  })
+
+  it('zeigt für 0 weiterhin 0 und nicht den Fallback', () => {
+    expect(formatiere(0, 'zahl')).toBe('0')
+  })
+
+  it('wirft bei unbekanntem Formatkürzel und nennt das Kürzel', () => {
+    expect(() => formatiere(1, 'unbekannt' as FormatKuerzel)).toThrow(/unbekannt/)
   })
 })
