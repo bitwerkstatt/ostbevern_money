@@ -165,6 +165,14 @@ describe('baueTransferaufwendungen (AUSG-04)', () => {
     },
   )
 
+  it.each(JAHRE)('Jahr %i: kein Verweis auf eine Fußnote, die nicht gezeigt wird', (_j, i) => {
+    for (const p of baueTransferaufwendungen(i)) {
+      if (p.anmerkung === null) {
+        expect(p.name, p.posten).not.toMatch(/Fußnote/)
+      }
+    }
+  })
+
   it('keine andere Zeile als die Kita-Zuschüsse hat Kinder', () => {
     for (const [, i] of JAHRE) {
       for (const p of baueTransferaufwendungen(i)) {

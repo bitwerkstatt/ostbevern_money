@@ -95,7 +95,14 @@ function tabelle(name: string) {
   return treffer
 }
 
-/** Posten der Tabelle mit Wert im Jahr; ein Posten ohne gedruckten Wert entfällt (nie als 0). */
+/** Verweis „(siehe Fußnote)“ am Ende eines gedruckten Postennamens. */
+const FUSSNOTEN_VERWEIS = /\s*\(siehe Fußnote\)$/
+
+/**
+ * Posten der Tabelle mit Wert im Jahr; ein Posten ohne gedruckten Wert entfällt (nie als 0).
+ * Trägt der Posten keine Anmerkung in den Daten, entfällt auch der Verweis „(siehe Fußnote)“ im
+ * Namen, damit die Tabelle nicht auf eine Fußnote verweist, die sie nicht zeigt.
+ */
 function postenMitWert(tabellenName: string, jahrIndex: number): TransferPosten[] {
   return tabelle(tabellenName).posten.flatMap((p) => {
     const wert = p.werte[jahrIndex]
@@ -105,7 +112,7 @@ function postenMitWert(tabellenName: string, jahrIndex: number): TransferPosten[
     return [
       {
         posten: p.posten,
-        name: p.name,
+        name: p.anmerkung === null ? p.name.replace(FUSSNOTEN_VERWEIS, '') : p.name,
         wert,
         gerundet: p.gerundet,
         quelle: p.quelle,
