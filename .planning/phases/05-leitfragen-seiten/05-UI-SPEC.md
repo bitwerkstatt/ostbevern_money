@@ -46,7 +46,7 @@ Die Tabelle ist eine **nicht erschöpfende** Liste bekannt geeigneter Komponente
 | `<wa-tooltip>` | `.../components/tooltip/tooltip.js` | `GlossarBegriff` (erster Definitionssatz), Kennzeichnung „berechnet“. |
 | `<wa-tag>` | `.../components/tag/tag.js` | Wertart-Etikett (Ist/Ansatz/Planung), „berechnet“, „kein Geldfluss“, Bindungsgrad. `size="small"`, nie entfernbar. |
 | `<wa-callout>` | importiert | Kreisumlage-Hinweis, Minderaufwand-Hinweis, Überschuss-Erklärung, Defizit-Erklärung, „investive Einnahmen“-Abgrenzung, Produkt-nicht-gefunden. |
-| `<wa-radio-group>` / `<wa-radio>` | `.../components/radio-group/radio-group.js`, `.../components/radio/radio.js` | Modus-Umschalter „Aufwand/Zuschussbedarf“ (`appearance="button"`), Jahr-Umschalter ab 700 px. |
+| `<wa-radio-group>` / `<wa-radio>` | `.../components/radio-group/radio-group.js`, `.../components/radio/radio.js` | Modus-Umschalter „Aufwand/Zuschussbedarf“ (`wa-radio-group` mit `wa-radio appearance="button"`), Jahr-Umschalter ab 700 px. *(geändert 2026-10-04: Research, Anti-Pattern — das Attribut `appearance` sitzt am `wa-radio`, nicht an der Gruppe.)* |
 | `<wa-select>` / `<wa-option>` | `.../components/select/select.js`, `.../components/option/option.js` | Jahr-Umschalter bis 699 px, Steuerart-Auswahl der Zeitreihe. |
 | `<wa-card>` | `.../components/card/card.js` | Einstiegskacheln auf der Startseite; `ChartCard` bleibt eine eigene `<section>`. |
 | `<wa-divider>` | `.../components/divider/divider.js` | Abgrenzung „Investive Einnahmen“, Fußzeile. |
@@ -65,7 +65,7 @@ Neue und erweiterte Vue-Komponenten. Basiskomponenten (`PageIntro`, `ChartCard`,
 | Component | File | Responsibility | Visual contract |
 |-----------|------|-----------------|------------------|
 | `App.vue` (Kopfmenü, Fußzeile) | `app/src/App.vue` | Skip-Link, Kopfzeile mit Nav, mobiler Drawer, Fußzeile (D-13, D-17, D-18). | Kopf- und Fußzeile auf Secondary-Fläche (`--wa-color-surface-lowered`). Aktiver Menüpunkt: `--wa-color-brand-40` Text, Gewicht 600, **zusätzlich Unterstreichung** (nicht nur Farbe), `aria-current="page"`. |
-| `JahrUmschalter` | `app/src/components/JahrUmschalter.vue` | Globaler Jahr-Umschalter (D-10). Liest `haushalt.jahre` und `haushalt.wertarten`, schreibt `?jahr=` per `router.replace`. | Beschriftung „Haushaltsjahr“ (Label 14/600) über dem Steuerelement. Ab 700 px `wa-radio-group appearance="button"`, bis 699 px `wa-select`. Mindesthöhe 44 px. Gewähltes Jahr: Brand-Fläche (Akzent). |
+| `JahrUmschalter` | `app/src/components/JahrUmschalter.vue` | Globaler Jahr-Umschalter (D-10). Liest `haushalt.jahre` und `haushalt.wertarten`, schreibt `?jahr=` per `router.replace`. | Beschriftung „Haushaltsjahr“ (Label 14/600) über dem Steuerelement. Ab 700 px `wa-radio-group` mit `wa-radio appearance="button"` (Attribut am `wa-radio`), bis 699 px `wa-select`. Mindesthöhe 44 px. Gewähltes Jahr: Brand-Fläche (Akzent). |
 | `useJahr()` | `app/src/lib/jahr.ts` | Composable: gültiges Jahr aus der Query, Fallback `haushalt.haushaltsjahr`, `jahrLink(to)` hängt `?jahr=` an interne Links. | Keine Optik. |
 | `WertartEtikett` | `app/src/components/WertartEtikett.vue` | `wa-tag size="small"` mit „Ist“, „Ansatz“ oder „Planung“ (Mapping `ergebnis→Ist`, `ansatz→Ansatz`, `planung→Planung`). | Neutrale Tag-Variante, **Text trägt die Information**, keine Farbcodierung je Wertart. |
 | `BerechnetEtikett` | `app/src/components/BerechnetEtikett.vue` | `wa-tag size="small"` „berechnet“ mit `wa-tooltip` „Dieser Wert steht nicht im PDF. Er wird aus den Planwerten berechnet.“ | Neutral, direkt hinter dem Wert. |
@@ -85,7 +85,7 @@ Neue und erweiterte Vue-Komponenten. Basiskomponenten (`PageIntro`, `ChartCard`,
 | `ProduktAkkordeon` | `app/src/components/ProduktAkkordeon.vue` | 63 Produkte, gruppiert nach Aufgabenbereich (D-16). | Äußere `wa-details` je PB (15 Stück, geschlossen), darin je Produkt eine `wa-details` (Summary: „{Code} {Name}“, Inhalt: Beschreibung, Link „Produkt öffnen“). |
 | `ProduktDetailSeite` | `app/src/pages/ProduktPage.vue` | Produktdetail (D-09). | Siehe „Page Layouts“. |
 | `FussZeile` | in `App.vue` oder `app/src/components/FussZeile.vue` | Datenstand, PDF-Link, Hinweis, Kontakt, Münster-Dank (D-17, D-18). | Caption 14/400, mittig bis 699 px linksbündig-umbrechend ab 700 px, Links unterstrichen. |
-| `echartsTheme.ts` (Erweiterung) | `app/src/charts/echartsTheme.ts` | Registriert zusätzlich `TreemapChart`, `SankeyChart`, `LineChart`, `LegendComponent`, `AriaComponent`. Exportiert `PB_FARBEN`, `KL_FARBE`, `abstufung(farbe, rang)`, `KL_DECAL`, `UEBERSCHUSS_DECAL`, `ERTRAG_FARBE`, `INVEST_FARBE`. | Alle Werte aus `--wa-*`-Tokens via `token()`, keine Hex-Literale außer dem bestehenden `ersatz`-Muster. |
+| `echartsTheme.ts` (Erweiterung) | `app/src/charts/echartsTheme.ts` | Registriert zusätzlich `TreemapChart`, `SankeyChart`, `LineChart`, `LegendComponent`, `AriaComponent`. Exportiert `PB_FARBEN`, `KL_FARBE`, `farbeFuerPb(code)`, `abstufung(farbe, rang)`, `KL_DECAL`, `PUNKT_DECAL` (Überschuss und Minderaufwand), `ERTRAG_FARBE`, `STEUER_FARBE`, `INVEST_FARBE`, `AUFWANDSART_FARBE`, `GEMEINDE_FARBE`, `ZINSEN_FARBE`, `MINDERAUFWAND_FARBE`. *(geändert 2026-10-04: Plan 05-05 — `UEBERSCHUSS_DECAL` heißt `PUNKT_DECAL`, weil dasselbe Punktmuster auch den Minderaufwand kennzeichnet.)* | Alle Werte aus `--wa-*`-Tokens via `token()`, keine Hex-Literale außer dem bestehenden `ersatz`-Muster. |
 | `charts/format.ts` (Erweiterung) | `app/src/charts/format.ts` | `formatiere()` bekommt einen sichtbaren Fallback (WR-06/IN-01): fehlender oder nicht endlicher Wert liefert „–“ statt „NaN“. | Kein Layout. Fehlende Zahlen erscheinen als „–“, Screenreader lesen „kein Wert“ (`DatenTabelle`-Muster aus Phase 1). |
 
 ---
@@ -198,7 +198,7 @@ Regeln:
 - **KL ist als einzige Kachel pink und trägt immer ein Decal** (diagonale Streifen, `KL_DECAL`, 45°, Linienfarbe `--wa-color-surface-default` bei 45 % Deckkraft), in Treemap, Balken, Sankey-Knoten und Mobil-Segment. KL bleibt damit auch ohne Farbwahrnehmung erkennbar. Für die Streifen gilt: sie dürfen weiße Kachelbeschriftung nicht unlesbar machen (Beschriftung liegt auf einem Pill-Hintergrund `KL`-Farbe, wenn Platz fehlt, sonst Tooltip).
 - **Abstufung der Kinder (D-08):** Innerhalb einer Ebene tragen Geschwisterkacheln die PB-Farbe in bis zu drei Stufen: Rang 0 unverändert, Rang 1 zu 10 % mit Schwarz gemischt, Rang 2 zu 20 % mit Schwarz gemischt, danach wiederholt (`abstufung(farbe, rang)`). Es wird nur abgedunkelt (Kontrast zu weißer Beschriftung wächst), nie aufgehellt. Ein Unit-Test prüft für alle 16 Farben × 3 Stufen Kontrast ≥ 4,5:1 gegen Weiß.
 - Die Kachelbeschriftung ist immer weiß (`--wa-color-surface-default`), nie dunkel.
-- Überschussbalken im Modus Zuschussbedarf behalten ihre PB-Farbe und erhalten zusätzlich `UEBERSCHUSS_DECAL` (Punkte). Überschuss wird über Richtung (links der Nulllinie), Decal und Beschriftung „Überschuss“ kommuniziert, **nicht über Rot/Grün**, weil die Farbe hier den Aufgabenbereich codiert.
+- Überschussbalken im Modus Zuschussbedarf behalten ihre PB-Farbe und erhalten zusätzlich `PUNKT_DECAL` (Punkte; vorher `UEBERSCHUSS_DECAL`, siehe Component-Tabelle). Überschuss wird über Richtung (links der Nulllinie), Decal und Beschriftung „Überschuss“ kommuniziert, **nicht über Rot/Grün**, weil die Farbe hier den Aufgabenbereich codiert.
 
 ### Weitere Chartfarben
 
@@ -244,13 +244,14 @@ Gilt für alle Diagramme dieser Phase. Jedes Diagramm steht in einer `ChartCard`
 - Die Treemap wird nicht für Zuschussbedarf verwendet (D-05): negative Werte haben in Kacheln keine Darstellung.
 
 **Sankey (FLUSS-01…03, D-11):**
-- Knotenspalten: links Ertragsarten (Steuern aufgeteilt in Gewerbesteuer, Einkommensteuer-Anteil, Grundsteuer, übrige Steuern; dazu Schlüsselzuweisung, sonstige Zuwendungen, Gebühren und Entgelte, Sonstige ordentliche Erträge, Finanzerträge) und bei Defizit „Defizit (Entnahme aus Rücklagen)“; Mitte „Gemeindehaushalt“; rechts „Weitergabe an Kreis und Land“, die Aufgabenbereiche ohne Umlagen, „Zinsen“ und bei Überschuss „Überschuss (Zuführung zur Rücklage)“ bzw. bei Minderaufwand ≠ 0 der Gegenposten „Globaler Minderaufwand“. Die Knotenliste ergibt sich aus den Daten, nicht aus Sonderfällen je Jahr.
+- Knotenspalten: links Ertragsarten (Steuern aufgeteilt in Gewerbesteuer, Einkommensteuer-Anteil, Grundsteuer, übrige Steuern; dazu Schlüsselzuweisung, sonstige Zuwendungen, Gebühren und Entgelte, Sonstige ordentliche Erträge, Finanzerträge) und bei Defizit „Defizit (Entnahme aus Rücklagen)“ sowie bei Minderaufwand ≠ 0 der Quellknoten „Globaler Minderaufwand“ (Punkt-Decal) direkt darunter; Mitte „Gemeindehaushalt“; rechts „Weitergabe an Kreis und Land“, die Aufgabenbereiche ohne Umlagen, „Zinsen“ und bei Überschuss „Überschuss (Zuführung zur Rücklage)“. Die Knotenliste ergibt sich aus den Daten, nicht aus Sonderfällen je Jahr. *(geändert 2026-10-04: D-19, Research Pitfall 1 — der Minderaufwand bilanziert nur als linke Quelle, weil `ergebnis_nach_minderaufwand` = `jahresergebnis` − `globaler_minderaufwand` gilt. Rechts platziert ergäbe 2026 29.855.569 € gegenüber 31.055.569 €.)* Der Ausgleichstest vergleicht die linke und die rechte Summe für alle Jahre mit ±2 € Toleranz (PDF-Rundung ΣPB gegenüber dem GEP verschiebt 2024 und 2028 um ±1 €). Die Farbzeile „Globaler Minderaufwand“ der Tabelle „Weitere Chartfarben“ bleibt unverändert.
 - Flussfarbe `source` mit 35 % Deckkraft, bei Hover `emphasis: { focus: 'adjacency' }` (Pfad und Nachbarn voll, Rest 15 %). Knotenbreite 16 px, Knotenabstand 8 px.
 - Knotenbeschriftung außerhalb, 14/400 in `--wa-color-text-normal`, Name und Betrag, `overflow: 'break'` mit Breite 160 px (kein Abschneiden).
 - Klick auf einen Aufgabenbereich navigiert zu `/ausgaben?jahr=…&pb=<code>`. Hover/Klick auf Ertragsknoten haben keine Navigation. Da die Canvas nicht fokussierbar ist, stehen die Navigationsziele auch als Links in der Tabelle darunter („Wohin“-Zeilen enthalten je einen Link „Im Detail ansehen“).
 - Erklärung unter dem Diagramm: `wa-callout variant="neutral"` „So liest du das Diagramm“ mit dem jahrpassenden Text (`defizit_ruecklagen` nur bei Defizit, Überschuss-Variante bei Überschuss).
 
 **Mobil (bis 699 px, `useSchmalerBildschirm()`; D-12):**
+- Der Balken „Woher“ enthält die Ertragsarten plus Defizit und Globalen Minderaufwand (bei Wert ≠ 0), der Balken „Wohin“ KL, Aufgabenbereiche, Zinsen plus Überschuss (bei Wert ≠ 0). *(geändert 2026-10-04: D-19, D-12 — der Minderaufwand wechselt von „Wohin“ nach „Woher“, damit beide Balken dieselbe Summe haben.)*
 - Statt des Sankeys zwei horizontale, gleich lange gestapelte Balken, Beschriftung „Woher“ und „Wohin“ je 24 px über dem Balken, 56 px Balkenhöhe, 2 px weiße Segmenttrenner. Segmente haben keine Beschriftung im Balken.
 - Darunter immer sichtbar die Legendentabelle (`DatenTabelle`) je Balken: Farbfeld 16 px (inkl. Decal für KL und Minderaufwand), Name, Betrag, Anteil. Aufgabenbereiche verlinken auf `/ausgaben`.
 
@@ -265,18 +266,18 @@ Gemeinsam: Seitenstruktur `PageIntro` (h1 + Lead) → Steuerelemente → Inhalt.
 ### Start (`/`)
 1. `PageIntro`.
 2. Abschnitt „Die wichtigsten Zahlen {jahr}“ (`h2`, Heading): Kennzahlenleiste mit sieben `KennzahlKachel`: Erträge, Aufwendungen, Defizit nach Minderaufwand, Investitionen, Neue Kredite, Aufwand pro Einwohner (berechnet), Steuern pro Einwohner (berechnet). Reihenfolge fest, wie genannt (START-01).
-3. Zwei `EinstiegsKachel` nebeneinander ab 700 px, untereinander bis 699 px (START-02): „Woher kommt das Geld?“ → `/einnahmen`, „Wofür wird es ausgegeben?“ → `/ausgaben`. Je ein datengestützter Satz aus den Daten.
+3. Zwei `EinstiegsKachel` nebeneinander ab 700 px, untereinander bis 699 px (START-02): „Woher kommt das Geld?“ → `/einnahmen`, „Wofür wird es ausgegeben?“ → `/ausgaben`. Je ein datengestützter Satz aus den Daten; der Satz der zweiten Kachel nennt den größten Produktbereich ohne „Weitergabe an Kreis und Land“ (D-20). *(geändert 2026-10-04: D-20)*
 4. `KreisumlageCallout`-Kurzform (`wa-callout variant="neutral"`) mit Link zur Ausgabenseite. Kein Spiel-Teaser (v2, deferred).
 
 ### `/einnahmen`
 1. `PageIntro`, `JahrUmschalter` + `WertartEtikett` + Erklär-Aufklapper.
-2. `ChartCard` „Ertragsarten {jahr}“: `ErtragsBalken` (7 Zeilen, absteigend), Tabelle in Aufklapper. Klick auf einen Balken öffnet die passende `wa-details` darunter und scrollt dorthin (nur Zusatz, kein Pflichtpfad).
+2. `ChartCard` „Ertragsarten {jahr}“: `ErtragsBalken` (eine Zeile je Ertragsart mit Wert im gewählten Jahr, absteigend; 2026: 7 Zeilen, 2024: 8), Tabelle in Aufklapper. *(geändert 2026-10-04: die Zeilenzahl ergibt sich aus den Daten, nicht aus einer festen 7.)* Klick auf einen Balken öffnet die passende `wa-details` darunter und scrollt dorthin (nur Zusatz, kein Pflichtpfad).
 3. Abschnitt „Woraus sich die Erträge zusammensetzen“: drei `wa-details` (Ebene 2): **Steuern** (standardmäßig offen: Tabelle der Steuerarten, Hebesätze, Erklärung „Diese Steuern legt die Gemeinde selbst fest: …“, `GlossarBegriff` Hebesatz), **Zuwendungen** (Schlüsselzuweisung, Zuweisungen für laufende Zwecke mit Beispielen, Sonderposten mit Etikett „kein Geldfluss“), **Sonstige ordentliche Erträge** (Konzessionsabgaben und weitere aus Vorbericht 2.1.7). Ertragsarten ohne Aufschlüsselung erscheinen nicht als Aufklapper.
 4. `ChartCard` „Entwicklung 2022–2029“: `SteuerZeitreihe` mit `wa-select` „Steuerart“ (alle Steuerarten plus Schlüsselzuweisung).
 5. `wa-divider`, dann Abschnitt „Investive Einnahmen“ (`h2`) mit `wa-callout variant="neutral"`: „Diese Einnahmen fließen nicht in den laufenden Haushalt. Sie bezahlen Investitionen wie Gebäude, Straßen oder Fahrzeuge.“ Darunter horizontale Balken in `INVEST_FARBE` (Investitionspauschale, Schulpauschale, Sportpauschale, Sonstige (berechnet), Grundstücksverkäufe, Beiträge, Kredite). Eigene `ChartCard`, nie im selben Diagramm wie die Erträge.
 
 ### `/ausgaben`
-1. `PageIntro`, Steuerzeile: `JahrUmschalter` und Modus-Umschalter (`wa-radio-group appearance="button"`, Optionen „Aufwand“ und „Zuschussbedarf“), beide in einer Zeile ab 700 px, untereinander bis 699 px. Darunter `WertartEtikett`.
+1. `PageIntro`, Steuerzeile: `JahrUmschalter` und Modus-Umschalter (`wa-radio-group` mit `wa-radio appearance="button"`, Optionen „Aufwand“ und „Zuschussbedarf“; *geändert 2026-10-04: Attribut am `wa-radio`*), beide in einer Zeile ab 700 px, untereinander bis 699 px. Darunter `WertartEtikett`.
 2. `ChartCard` „Aufwand nach Aufgabenbereich {jahr}“ bzw. „Zuschussbedarf nach Aufgabenbereich {jahr}“ (Titel wechselt mit dem Modus, Live-Ansage): `Brotkrumen`, Diagramm (`AufwandTreemap` oder `ZuschussBalken`), `EbenenTabelle` (immer sichtbar).
 3. Nur auf oberster Ebene und in KL: `KreisumlageCallout` (D-07).
 4. `wa-callout` „Globaler Minderaufwand“ unter dem Diagramm, nur bei Wert ≠ 0, Text `globaler_minderaufwand`.
@@ -285,7 +286,7 @@ Gemeinsam: Seitenstruktur `PageIntro` (h1 + Lead) → Steuerelemente → Inhalt.
 
 ### `/produkt/:code`
 1. `wa-button appearance="plain"` „← Zurück zu {PB-/PG-Name}“ (Link zu `ausgaben` mit gemerkten Query-Werten), `PageIntro` mit Produktname als `h1` und Zeile „{Produktcode} · {Aufgabenbereich} · {Produktgruppe}“.
-2. Abschnitte in dieser Reihenfolge, je als `<section>` mit `h2`: **Worum geht es?** (Beschreibung), **Leistungen** (Liste), **Auf einen Blick** (Definitionsliste `dl`: Bindungsgrad als `wa-tag`, Gremium, Fachbereich), **Teilergebnisplan 2024–2029** (`DatenTabelle` mit Jahreszeilen, Spaltenkopf je Jahr mit Wertart), **Erläuterungen** (Posten mit Betrag und Text), **Grundzahlen** (`DatenTabelle`; berechnete Pro-Kopf-Werte mit `BerechnetEtikett`), **Investitionen** (Liste oder Tabelle des Produkts), Quellenzeile „Quelle: Haushaltsplan, PDF-Seite {n}“ (Link zum PDF, falls Seitensprung möglich).
+2. Abschnitte in dieser Reihenfolge, je als `<section>` mit `h2`: **Worum geht es?** (Beschreibung), **Leistungen** (Liste), **Auf einen Blick** (Definitionsliste `dl`: Bindungsgrad als `wa-tag`, Gremium, Fachbereich), **Teilergebnisplan 2024–2029** (`DatenTabelle` mit Jahreszeilen, Spaltenkopf je Jahr mit Wertart), **Erläuterungen** (Posten mit Betrag und Text), **Grundzahlen** (`DatenTabelle`; berechnete Pro-Kopf-Werte mit `BerechnetEtikett`; „Zuschussbedarf je Einwohner (berechnet)“ für jedes Produkt, „Zuschussbedarf je {Bezugsgröße} (berechnet)“ nur für die in Plan 05-03 freigegebene Liste und nur für Jahre mit beiden Werten *(geändert 2026-10-04: Research Open Question 6)*), **Investitionen** (Liste oder Tabelle des Produkts), Quellenzeile „Quelle: Haushaltsplan, PDF-Seite {n}“ (Link zum PDF, falls Seitensprung möglich).
 3. Abschnitte ohne Daten werden nicht gerendert (Ausnahme: Investitionen, siehe Copywriting-Leerzustand), damit die Seite bei kleinen Produkten kurz bleibt.
 
 ### `/geldfluss`
@@ -301,8 +302,8 @@ Gemeinsam: Seitenstruktur `PageIntro` (h1 + Lead) → Steuerelemente → Inhalt.
 
 ### Kopfmenü und Fußzeile
 - **Kopfzeile:** links Wortmarke „Ostbevern Money“ (Link zu `start`, Heading 20/600), rechts die Menüpunkte „Start“, „Woher?“, „Wofür?“, „Geldfluss“, „Glossar“ (Reihenfolge D-13). Ab 700 px als horizontale Liste, bis 699 px stattdessen ein Menü-Schalter (Icon-Button 44 × 44 px, `aria-label="Menü öffnen"`, `aria-expanded`, `aria-controls`), der ein `wa-drawer` (`placement="end"`, Label „Menü“) mit der vertikalen Liste öffnet. Der Drawer schließt beim Routenwechsel und per Escape, der Fokus kehrt zum Schalter zurück. Phase 6 ergänzt die Gruppe „Mehr wissen“ als Dropdown: die Struktur muss ein weiteres Element ohne Neubau aufnehmen (Liste, kein fester Satz).
-- **Skip-Link** „Zum Inhalt springen“ als erstes fokussierbares Element, sichtbar nur bei Fokus.
-- **Fußzeile** (D-17, D-18): Zeile 1 „Datenstand: Haushalt {jahr}, beschlossen am {datum}.“ mit Link „Original-Haushaltsplan (PDF) der Gemeinde Ostbevern“ (URL aus Konfiguration). Zeile 2 „Inoffizielles Projekt, keine Veröffentlichung der Gemeinde Ostbevern.“ Zeile 3 „Kontakt: {E-Mail}“ als `mailto:`-Link (Wert aus der Konfiguration; solange der Platzhalter gilt, zeigt die Fußzeile den sichtbaren Wert „kontakt-noch-nicht-festgelegt@example.invalid“ und der Phase-7-Smoke-Test weist ihn zurück). Zeile 4 der bestehende Münster-Dank „Inspiriert von Münster Money (Code for Münster)“ (externer Link, `rel="noopener"`). Kein Build-Datum.
+- **Skip-Link** „Zum Inhalt springen“ als erstes fokussierbares Element, sichtbar nur bei Fokus. Umsetzung über den vorhandenen Skip-Link von `wa-page`: Der deutsche Text kommt über den Slot `skip-to-content`, ein abgefangener Klick (`preventDefault`) setzt den Fokus auf die `h1`. Es gibt keinen zweiten Skip-Link. *(geändert 2026-10-04: Research Pitfall 2 — der Standard-Link `#main-content` würde im Hash-Router auf den Pfad `/main-content` und damit zur Startseite führen.)*
+- **Fußzeile** (D-17, D-18): Zeile 1 „Datenstand: Haushalt {jahr}, beschlossen am {datum}.“ mit Link „Original-Haushaltsplan (PDF) der Gemeinde Ostbevern“ (URL aus Konfiguration). Zeile 2 „Inoffizielles Projekt, keine Veröffentlichung der Gemeinde Ostbevern.“ Zeile 3 „Kontakt: {E-Mail}“ als `mailto:`-Link (Wert aus der Konfiguration `app/src/config.ts`, ebenso die PDF-URL aus Zeile 1; *geändert 2026-10-04: Research Open Question 5, D-17 — beide Werte liegen in `app/src/config.ts` mit erkennbaren Platzhaltern, bis sie festgelegt sind*; solange der Platzhalter gilt, zeigt die Fußzeile den sichtbaren Wert „kontakt-noch-nicht-festgelegt@example.invalid“ und der Phase-7-Smoke-Test weist ihn zurück). Zeile 4 der bestehende Münster-Dank „Inspiriert von Münster Money (Code for Münster)“ (externer Link, `rel="noopener"`). Kein Build-Datum.
 
 ---
 
@@ -327,6 +328,8 @@ Gemeinsam: Seitenstruktur `PageIntro` (h1 + Lead) → Steuerelemente → Inhalt.
 
 Alle Texte deutsch, Du-Anrede. Zahlen in Texten nur als Platzhalter `{…}` aus den Daten (`formatiere()`), jeder erklärende Text mit Zahl zeigt die PDF-Seite. Texte ohne Zahlen (Oberflächentexte) dürfen im Komponentencode stehen, die fachlichen Erklärtexte stehen in `texte.json`.
 
+**Jahrbindung der Texte** *(geändert 2026-10-04: Research Pitfall 6)*: Kuratierte Texte mit Zahlen (`texte.json`, z. B. `kreisumlage`, `globaler_minderaufwand`, `defizit_ruecklagen`) erscheinen nur, wenn das gewählte Jahr das Haushaltsjahr ist. Jahrneutrale Texte (ohne Platzhalter) erscheinen für jedes Jahr. In allen anderen Fällen steht ein Satz, der aus den Daten des gewählten Jahres zusammengesetzt wird (Zahlen über `formatiere()`). Überschuss-Sätze stammen aus den Texten `ueberschuss_pb_<code>` bzw. `ueberschuss_allgemein`.
+
 | Element | Copy |
 |---------|------|
 | Primary CTA (Start, Einnahmen) | „Einnahmen ansehen“ |
@@ -334,14 +337,14 @@ Alle Texte deutsch, Du-Anrede. Zahlen in Texten nur als Platzhalter `{…}` aus 
 | Seitentitel `/` (`h1`) | „Der Haushalt {jahr} der Gemeinde Ostbevern“ |
 | Lead `/` | „Hier siehst du, woher das Geld der Gemeinde kommt und wofür sie es ausgibt. Alle Zahlen stammen direkt aus dem Haushaltsplan.“ |
 | Einstiegskachel 1 | Frage „Woher kommt das Geld?“, Satz „Den größten Teil der Erträge machen {Ertragsart} aus: {Betrag} ({Anteil}).“ |
-| Einstiegskachel 2 | Frage „Wofür wird das Geld ausgegeben?“, Satz „Den größten Anteil bekommt {Aufgabenbereich}: {Betrag}.“ |
+| Einstiegskachel 2 | Frage „Wofür wird das Geld ausgegeben?“, Satz „Den größten Anteil bekommt {Aufgabenbereich}: {Betrag}.“ — `{Aufgabenbereich}` ist der größte Produktbereich **ohne** „Weitergabe an Kreis und Land“, aus den Daten abgeleitet (2026: PB 01). *(geändert 2026-10-04: D-20 — KL ist kein Aufgabenbereich und steht schon im Kreisumlage-Hinweis.)* |
 | Kreisumlage-Hinweis (Start) | „Der größte Einzelposten ist die Weitergabe an Kreis und Land: {Betrag}. Diesen Betrag reicht Ostbevern weiter, die Gemeinde kann ihn nicht selbst steuern.“ Link „Mehr dazu bei den Ausgaben“ |
 | Seitentitel `/einnahmen` | „Woher kommt das Geld?“, Lead „Die Gemeinde finanziert sich aus Steuern, Zuweisungen und Gebühren. Hier siehst du, wie viel aus welcher Quelle kommt.“ |
 | Seitentitel `/ausgaben` | „Wofür wird das Geld ausgegeben?“, Lead „Hier siehst du, wohin das Geld der Gemeinde fließt. Klicke auf einen Bereich, um genauer hinzuschauen.“ |
 | Seitentitel `/geldfluss` | „Vom Ertrag zur Ausgabe“, Lead „Das Diagramm zeigt, woher das Geld kommt und wohin es fließt.“ |
 | Seitentitel `/glossar` | „Glossar und alle Produkte“, Lead „Hier findest du die wichtigsten Begriffe des Haushalts und alle Produkte der Gemeinde.“ |
 | Jahr-Umschalter | Beschriftung „Haushaltsjahr“, Optionen „{jahr} · Ist“, „{jahr} · Ansatz“, „{jahr} · Planung“ |
-| Wertart-Erklärung (Aufklapper) | Titel „Was bedeuten Ist, Ansatz und Planung?“, Text „Ist: das Ergebnis eines abgeschlossenen Jahres. Ansatz: der im Haushaltsplan beschlossene Wert. Planung: die mittelfristige Finanzplanung der folgenden Jahre.“ |
+| Wertart-Erklärung (Aufklapper) | Titel „Was bedeuten Ist, Ansatz und Planung?“, Text „Ist: das Ergebnis eines abgeschlossenen Jahres. Für das erste Jahr ist das noch das vorläufige Rechnungsergebnis. Ansatz: der im Haushaltsplan beschlossene Wert. Planung: die mittelfristige Finanzplanung der folgenden Jahre.“ *(geändert 2026-10-04: Research Open Question 3 — Ist des ersten Jahres ist das vorläufige Rechnungsergebnis, Genauigkeit vor Kürze.)* |
 | Modus-Umschalter | „Aufwand“ und „Zuschussbedarf“, darunter Hilfetext „Zuschussbedarf: Was ein Bereich mehr kostet, als er selbst einnimmt. Das bezahlt die Gemeinde aus Steuern.“ |
 | Brotkrumen-Wurzel | „Alle Bereiche“ |
 | Tabellenaufklapper | „Tabelle anzeigen“ |
@@ -376,7 +379,7 @@ Alle Texte deutsch, Du-Anrede. Zahlen in Texten nur als Platzhalter `{…}` aus 
 
 Probe: `ui-consideration-probe` über 16 Elemente (E1 Kennzahlenband, E2 Einstiegskacheln, E3 Ertragsbalken, E4 Steuern/Zuwendungen-Aufklapper, E5 Steuer-Zeitreihe, E6 Investive Einnahmen, E7 Treemap/Zuschuss-Balken mit Brotkrumen, E8 Jahr- und Modus-Umschalter, E9 Kreisumlage-Callout, E10 Sankey, E11 Mobil-Balken, E12 Produktdetail, E13 Glossar/`GlossarBegriff`, E14 Produktakkordeon, E15 Kopfmenü/Drawer, E16 Fußzeile). Elementarten (Heuristik): E1 static-content, E2 nav, E3 list-collection, E4 list-collection, E5 media+interactive-control, E6 list-collection, E7 list-collection+media+nav, E8 interactive-control, E9 static-content, E10 media, E11 media+list-collection, E12 list-collection+static-content, E13 list-collection+nav, E14 list-collection+nav, E15 nav, E16 static-content. Empty-/Error-**Texte** stehen im Copywriting Contract, dieser Abschnitt bildet nur die Zustandsabdeckung ab.
 
-Applicable state considerations resolved: 66 covered, 8 backstop, 2 unresolved, 9 dismissed mit Begründung (85 Zeilen; Zeilen mit mehreren Elementen zählen einmal). Abgleich nach der Checker-Freigabe gegen die Probe-Engine (86 anwendbare Element×Kategorie-Paare). Dabei kamen 28 fehlende Paare hinzu, jetzt gibt es keine Lücke mehr.
+Applicable state considerations resolved: 67 covered, 8 backstop, 1 unresolved, 9 dismissed mit Begründung (geändert 2026-10-04: E6 partial ist gelöst) (85 Zeilen; Zeilen mit mehreren Elementen zählen einmal). Abgleich nach der Checker-Freigabe gegen die Probe-Engine (86 anwendbare Element×Kategorie-Paare). Dabei kamen 28 fehlende Paare hinzu, jetzt gibt es keine Lücke mehr.
 
 | Category | Element(s) | Status | Resolution / Reason |
 |----------|------------|--------|---------------------|
@@ -397,7 +400,7 @@ Applicable state considerations resolved: 66 covered, 8 backstop, 2 unresolved, 
 | overflow | E5 Steuer-Zeitreihe | ✅ covered | Achsenbeschriftung zeigt alle acht Jahre bei 360 px (14 px, gedreht nur wenn nötig, nie ausgelassen). |
 | populated | E5 Steuer-Zeitreihe | 🧪 backstop | `{ statement: "Je Steuerart sind Ist, Ansatz und Planung über Linienstil und Tooltip unterscheidbar", verification: backstop }`. |
 | zero-one-many | E6 Investive Einnahmen | ✅ covered | Mit 0 Pauschalen entfällt der Balken und die Zeile „Sonstige (berechnet)“ trägt die ganze Summe; 1 oder viele Zeilen nutzen dasselbe Layout. |
-| partial | E6 Investive Einnahmen | ⚠ unresolved | Hat 2026 eine Pauschale ohne Wert in anderen Jahren, ist offen, ob andere Jahre den Leerzustand oder nur die GFP-Zeilen zeigen. Planner behandelt es als Annahme: Leerzustand je Zeile „–“. |
+| partial | E6 Investive Einnahmen | ✅ covered | Die Pauschalen stehen im PDF nur für das Haushaltsjahr (S. 52). Andere Jahre zeigen „–“ je Pauschale, und die gesamte GFP Z. 18 steht als „Sonstige (berechnet)“. *(geändert 2026-10-04: Research Pitfall 5 und Open Question 7 — vorher unresolved.)* |
 | empty | E7 Treemap/Balken | ✅ covered | Ebene ohne Kinder (Produktebene) zeigt keine Treemap, sondern den Link-Text „Produkt öffnen“ in der Tabelle. |
 | zero-one-many | E7 Treemap/Balken | ✅ covered | Bei einem einzigen Kind (synthetische PG mit einem Produkt) zeigt die Treemap eine volle Kachel, die Tabelle eine Zeile; kein Pluraltext. |
 | overflow | E7 Treemap | ✅ covered | Kachelbeschriftungen werden bei zu wenig Platz ausgeblendet (Tooltip und Tabelle tragen den Namen), nie abgeschnitten dargestellt. |
@@ -412,7 +415,7 @@ Applicable state considerations resolved: 66 covered, 8 backstop, 2 unresolved, 
 | overflow | E9 Kreisumlage-Callout | ✅ covered | Callout nimmt Containerbreite, Beträge in Liste mit `om-zahl`. |
 | partial | E9 Kreisumlage-Callout | ✅ covered | Fehlt ein Unterposten (Wert 0), wird er nicht als Zeile gezeigt, die Summe stimmt weiter mit KL überein. |
 | empty | E10 Sankey | ✅ covered | Ohne Flüsse zeigt `BaseChart` den Leerzustand, kein leerer Canvas. |
-| partial | E10 Sankey | ✅ covered | Defizit-, Überschuss- und Minderaufwand-Knoten erscheinen nur bei Wert ≠ 0; links und rechts sind je Jahr gleich groß (Test über alle 6 Jahre, D-11). |
+| partial | E10 Sankey | ✅ covered | Defizit-, Überschuss- und Minderaufwand-Knoten erscheinen nur bei Wert ≠ 0 (Defizit und Minderaufwand links, Überschuss rechts); links und rechts sind je Jahr gleich groß (Test über alle 6 Jahre mit ±2 € Toleranz, D-11, D-19). *(geändert 2026-10-04: D-19)* |
 | overflow | E10 Sankey | ✅ covered | Ab 700 px 640 px Höhe, 16 rechte Knoten mit 8 px Abstand; Beschriftungen brechen (160 px), nichts wird abgeschnitten. |
 | long-text | E10 Sankey | ✅ covered | PB-Namen wie „Räumliche Planung und Entwicklung, Geoinformationen“ umbrechen im Knotenlabel. |
 | zero-one-many | E10/E11 | ✅ covered | Mit 0 Minderaufwand und 0 Überschuss entfallen beide Knoten, die Legende zeigt nur vorhandene Segmente. |
@@ -447,9 +450,9 @@ Applicable state considerations resolved: 66 covered, 8 backstop, 2 unresolved, 
 | populated | E6 Investive Einnahmen | ✅ covered | Horizontale Balken in `INVEST_FARBE` (nicht Gold), Tabelle im Aufklapper, klar getrennt durch `wa-divider` und Callout. |
 | overflow | E6 Investive Einnahmen | ✅ covered | Gleiche Regeln wie E3: Höhe skaliert mit Zeilen, Achsenbeschriftung umbricht (160 px). |
 | error | E6 Investive Einnahmen | 🧪 backstop | `{ statement: "Auch das Diagramm der investiven Einnahmen zeigt bei Renderfehler den Fehlertext statt einer leeren Fläche", verification: backstop }`, gleicher Smoke-Test wie bei den übrigen Diagrammen. |
-| populated | E10 Sankey | ✅ covered | Links Ertragsknoten in Gold-Tönen (plus Defizit), rechts 15 PB plus KL in PB-Farben (plus Minderaufwand/Überschuss). Beide Seiten sind gleich groß. |
+| populated | E10 Sankey | ✅ covered | Links Ertragsknoten in Gold-Tönen (plus Defizit und Globaler Minderaufwand), rechts 15 PB plus KL in PB-Farben (plus Überschuss). Beide Seiten sind gleich groß (±2 €). *(geändert 2026-10-04: D-19, Minderaufwand links)* |
 | empty | E11 Mobil-Balken | ✅ covered | Ohne Flüsse zeigt `BaseChart` den Leerzustand, wie beim Sankey (E10). |
-| partial | E11 Mobil-Balken | ✅ covered | Gleiche Knotenlogik wie E10: Defizit-, Überschuss- und Minderaufwand-Segmente erscheinen nur bei Wert ≠ 0, beide Balken haben dieselbe Summe. |
+| partial | E11 Mobil-Balken | ✅ covered | Gleiche Knotenlogik wie E10: Defizit- und Minderaufwand-Segmente (Balken „Woher“) sowie das Überschuss-Segment (Balken „Wohin“) erscheinen nur bei Wert ≠ 0, beide Balken haben dieselbe Summe (±2 €). *(geändert 2026-10-04: D-19, D-12)* |
 | empty | E12 Investitionen | ✅ covered | Produkte ohne Investitionen zeigen den Copywriting-Leerzustand, alle anderen leeren Abschnitte entfallen. |
 | populated | E12 Produktdetail | ✅ covered | Abschnitte in der Reihenfolge aus Page Layouts: Worum geht es?, Leistungen, Auf einen Blick, Teilergebnisplan, Erläuterungen, Grundzahlen, Investitionen, Quelle. |
 | populated | E13 Glossar | ✅ covered | ≥ 22 Begriffe, alphabetisch (`localeCompare('de')`), je Begriff `h3`, Definition und Seitenverweis als Caption. |
