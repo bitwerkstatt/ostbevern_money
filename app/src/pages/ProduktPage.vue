@@ -5,6 +5,7 @@ import { RouterLink, useRoute } from 'vue-router'
 import { euro, jahr as formatiereJahr } from '@/charts/format'
 import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
+import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import { useJahr } from '@/lib/jahr'
 import {
@@ -56,7 +57,12 @@ const investitionen = computed(() => baueInvestitionenTabelle(baueProduktInvesti
       </wa-button>
     </RouterLink>
 
-    <PageIntro :titel="produkt.name" :beschreibung="kopfzeile" />
+    <PageIntro :titel="produkt.name" :beschreibung="kopfzeile">
+      <p>
+        Ein <GlossarBegriff schluessel="produkt">Produkt</GlossarBegriff> ist eine Leistung der
+        Gemeinde.
+      </p>
+    </PageIntro>
 
     <div class="om-produkt">
       <section
@@ -83,7 +89,7 @@ const investitionen = computed(() => baueInvestitionenTabelle(baueProduktInvesti
         <h2 id="om-produkt-blick">Auf einen Blick</h2>
         <dl class="om-produkt__blick">
           <div v-if="produkt.bindungsgrad">
-            <dt>Bindungsgrad</dt>
+            <dt><GlossarBegriff schluessel="bindungsgrad">Bindungsgrad</GlossarBegriff></dt>
             <dd>
               <wa-tag size="small" variant="neutral">{{ kopf.bindungsgrad }}</wa-tag>
               <span v-if="kopf.bindungsgradOriginal !== null" class="om-produkt__hinweis">
