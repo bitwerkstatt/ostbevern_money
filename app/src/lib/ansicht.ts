@@ -1,5 +1,5 @@
 import { computed, watch } from 'vue'
-import { useRoute, useRouter, type LocationQuery } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { haushalt, produkte } from '@/data/daten'
 import type { Knoten, Produkt } from '@/data/typen'
@@ -20,6 +20,8 @@ export interface Ansicht {
 
 const WURZEL = 'GESAMT'
 const ANSICHTS_SCHLUESSEL: ReadonlySet<string> = new Set(['modus', 'pb', 'pg'])
+const NUR_PG: ReadonlySet<string> = new Set(['pg'])
+const PB_UND_PG: ReadonlySet<string> = new Set(['pb', 'pg'])
 
 // Allowlists aus den Daten. URL-Werte werden nur über Map/Set nachgeschlagen, nie als
 // Schlüssel eines einfachen Objekts (Sicherheit V5, Prototyp-Schlüssel wie `__proto__`).
@@ -91,11 +93,12 @@ export function leseAnsicht(query: Readonly<Record<string, unknown>>): Ansicht {
   return { modus, pb, pg, bereinigt }
 }
 
-/** Query ohne die Ansichtsschlüssel `modus`, `pb`, `pg` (alle anderen Schlüssel bleiben). */
-function ohneAnsicht<W>(query: Readonly<Record<string, W>>): Record<string, W> {
-  return Object.fromEntries(
-    Object.entries(query).filter(([schluessel]) => !ANSICHTS_SCHLUESSEL.has(schluessel)),
-  )
+/** Query ohne die genannten Schlüssel (alle anderen bleiben). `fromEntries` legt die Schlüssel als Datenfelder an. */
+function ohne<W>(
+  query: Readonly<Record<string, W>>,
+  schluessel: ReadonlySet<string>,
+): Record<string, W> {
+  return Object.fromEntries(Object.entries(query).filter(([name]) => !schluessel.has(name)))
 }
 
 /**
@@ -106,7 +109,7 @@ export function bereinigteQuery<W>(
   query: Readonly<Record<string, W>>,
   ansicht: Ansicht,
 ): Record<string, W | string> {
-  const ergebnis: Record<string, W | string> = ohneAnsicht(query)
+  const ergebnis: Record<string, W | string> = ohne(query, ANSICHTS_SCHLUESSEL)
   if (istModus(erster(query.modus))) {
     ergebnis.modus = ansicht.modus
   }
@@ -156,12 +159,13 @@ export function useAnsicht() {
     if (knoten === undefined) {
       return
     }
-    const basis: LocationQuery = route.query
     if (knoten.eltern === WURZEL) {
-      const rest = Object.fromEntries(Object.entries(basis).filter(([s]) => s !== 'pg'))
-      void router.push({ query: { ...rest, pb: knoten.code }, hash: route.hash })
+      void router.push({
+        query: { ...ohne(route.query, NUR_PG), pb: knoten.code },
+        hash: route.hash,
+      })
     } else if (ansicht.value.pb !== null && knoten.eltern === ansicht.value.pb) {
-      void router.push({ query: { ...basis, pg: knoten.code }, hash: route.hash })
+      void router.push({ query: { ...route.query, pg: knoten.code }, hash: route.hash })
     }
   }
 
@@ -171,17 +175,9 @@ export function useAnsicht() {
    */
   function zurueck(ebene: string) {
     if (ebene === WURZEL) {
-      void router.push({
-        query: Object.fromEntries(
-          Object.entries(route.query).filter(([s]) => s !== 'pb' && s !== 'pg'),
-        ),
-        hash: route.hash,
-      })
+      void router.push({ query: ohne(route.query, PB_UND_PG), hash: route.hash })
     } else if (ansicht.value.pb !== null && ebene === ansicht.value.pb) {
-      void router.push({
-        query: Object.fromEntries(Object.entries(route.query).filter(([s]) => s !== 'pg')),
-        hash: route.hash,
-      })
+      void router.push({ query: ohne(route.query, NUR_PG), hash: route.hash })
     }
   }
 
