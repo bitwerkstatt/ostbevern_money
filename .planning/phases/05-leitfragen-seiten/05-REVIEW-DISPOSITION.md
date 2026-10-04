@@ -5,31 +5,31 @@ titles: json
 findings:
   - id: WR-01
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "Geldfluss shows Vorbericht-derived amounts as exact euros, without \"rd.\" or \"berechnet\""
   - id: WR-02
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "Start page says \"Den größten Anteil bekommt Innere Verwaltung\", but Weitergabe an Kreis und Land is more than twice as large"
   - id: WR-03
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "`mitDeckkraft` silently ignores every non-hex colour, so the decal opacity from the design never applies"
   - id: WR-04
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "`lies_erklaerungen` / `lies_glossar` silently drop page ranges in `Quelle:` lines"
   - id: WR-05
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "Konzessionsabgaben check is silently skipped when `meta` is absent; Regel 5 then reports a clean pass"
   - id: WR-06
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "Fixed-year shape in `texte.py` formulas: KeyError instead of `TexteFehler`, and every formula runs even when unused"
   - id: WR-07
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "`DatenTabelle` makes every captioned table a tab stop and duplicates its name for screen readers"
   - id: IN-01
     severity: info
@@ -75,22 +75,22 @@ findings:
     severity: info
     disposition: open
     title: "Documentation and tooling drift"
-open: 18
+open: 11
 total: 18
-recorded: 2026-10-04T14:32:11.380Z
+recorded: 2026-10-04T21:17:52.220Z
 ---
 
 # Phase 05: Code Review Disposition
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| WR-01 | warning | open | - |
-| WR-02 | warning | open | - |
-| WR-03 | warning | open | - |
-| WR-04 | warning | open | - |
-| WR-05 | warning | open | - |
-| WR-06 | warning | open | - |
-| WR-07 | warning | open | - |
+| WR-01 | warning | fixed | 05-REVIEW-FIX.md |
+| WR-02 | warning | fixed | 05-REVIEW-FIX.md |
+| WR-03 | warning | fixed | 05-REVIEW-FIX.md |
+| WR-04 | warning | fixed | 05-REVIEW-FIX.md |
+| WR-05 | warning | fixed | 05-REVIEW-FIX.md |
+| WR-06 | warning | fixed | 05-REVIEW-FIX.md |
+| WR-07 | warning | fixed | 05-REVIEW-FIX.md |
 | IN-01 | info | open | - |
 | IN-02 | info | open | - |
 | IN-03 | info | open | - |
