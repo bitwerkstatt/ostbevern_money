@@ -104,6 +104,27 @@
         "einheit": "euro",
         "quelle": 48,
         "anmerkung": "BBO-Wirtschaftsplan (Bäder- und Beteiligungsgesellschaft Ostbevern mbH): geplanter Verlustausgleich laut eigenem Wirtschaftsplan, außerhalb des Kernhaushalts (Spez. 3.7). Davon erscheint nur der Transferaufwendungen-Posten 'Verlustübernahme BBO' (transferaufwendungen.csv) im Kernhaushalt."
+      },
+      "konzessionsabgabe_strom": {
+        "wert": 315000,
+        "einheit": "euro",
+        "quelle": 33,
+        "gerundet": true,
+        "anmerkung": "Vorbericht 2.1.7, Text unter der Tabelle: 'Die Konzessionsabgaben betreffen die Sparten Strom- (315 T€), Gas- (40 T€) und Wasserversorgung (115 T€).' Aufteilung nur für das Haushaltsjahr gedruckt."
+      },
+      "konzessionsabgabe_gas": {
+        "wert": 40000,
+        "einheit": "euro",
+        "quelle": 33,
+        "gerundet": true,
+        "anmerkung": "Vorbericht 2.1.7, Text unter der Tabelle: 'Die Konzessionsabgaben betreffen die Sparten Strom- (315 T€), Gas- (40 T€) und Wasserversorgung (115 T€).' Aufteilung nur für das Haushaltsjahr gedruckt."
+      },
+      "konzessionsabgabe_wasser": {
+        "wert": 115000,
+        "einheit": "euro",
+        "quelle": 33,
+        "gerundet": true,
+        "anmerkung": "Vorbericht 2.1.7, Text unter der Tabelle: 'Die Konzessionsabgaben betreffen die Sparten Strom- (315 T€), Gas- (40 T€) und Wasserversorgung (115 T€).' Aufteilung nur für das Haushaltsjahr gedruckt."
       }
     }
   },
@@ -36822,6 +36843,186 @@
           "gerundet": true,
           "berechnet": false,
           "quelle": 46,
+          "anmerkung": null
+        }
+      ]
+    },
+    "investitionszuwendungen": {
+      "tabelle": "investitionszuwendungen",
+      "quelle_einheit": "teur",
+      "planzeile": null,
+      "gesamt_plan": null,
+      "gesamt_vorbericht": {
+        "werte": [
+          null,
+          null,
+          3742000,
+          null,
+          null,
+          null
+        ],
+        "gerundet": true,
+        "quelle": 52
+      },
+      "posten": [
+        {
+          "posten": "investitionspauschale",
+          "name": "Investitionspauschale",
+          "werte": [
+            null,
+            null,
+            1525000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "schulpauschale",
+          "name": "Schulpauschale",
+          "werte": [
+            null,
+            null,
+            406000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "sportpauschale",
+          "name": "Sportpauschale",
+          "werte": [
+            null,
+            null,
+            60000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "feuerschutzpauschale",
+          "name": "Feuerschutzpauschale",
+          "werte": [
+            null,
+            null,
+            68000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "foerderung_mobilstation_ot_brock_80",
+          "name": "Förderung Mobilstation OT Brock (80 %)",
+          "werte": [
+            null,
+            null,
+            510000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "foerderung_erweiterung_ogs_ambrosius_grundschule",
+          "name": "Förderung Erweiterung OGS Ambrosius-Grundschule",
+          "werte": [
+            null,
+            null,
+            467000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "foerderung_wirtschaftswege_70",
+          "name": "Förderung Wirtschaftswege (70 %)",
+          "werte": [
+            null,
+            null,
+            350000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "foerderung_austausch_leuchtkoepfe_25",
+          "name": "Förderung Austausch Leuchtköpfe (25 %)",
+          "werte": [
+            null,
+            null,
+            75000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "foerderung_barrierefreier_bahnhof_90",
+          "name": "Förderung barrierefreier Bahnhof (90 %)",
+          "werte": [
+            null,
+            null,
+            162000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "foerderung_fahrradabstellanlage_jas_75",
+          "name": "Förderung Fahrradabstellanlage JAS (75 %)",
+          "werte": [
+            null,
+            null,
+            119000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
           "anmerkung": null
         }
       ]

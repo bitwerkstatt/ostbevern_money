@@ -40,6 +40,13 @@ vergleicht die gedruckte Gesamtzeile × 1000 mit der zugeordneten Zeile NN des
 Gesamtergebnisplans (`plan` `vorbericht_{tabelle}`), Toleranz ±1.000 €. Für `kita_zuschuesse`
 prüft `zeile` `transfer_kita` zusätzlich die Kita-Gesamtzeile gegen den Transferaufwendungen-
 Posten „Zuschüsse an Kindertageseinr.“ desselben Jahres (strenge TOLERANZ_EURO = 1 €, D-07).
+Für `investitionszuwendungen` (Vorbericht S. 52, Phase 5 D-03) läuft Stufe (b) mit `zeile`
+`gfp_18` gegen die Zeile 18 „Zuwendungen für Investitionsmaßnahmen“ des Gesamtfinanzplans
+statt gegen den Gesamtergebnisplan (gleiche Toleranz ±1.000 €). Die Aufteilung der
+Konzessionsabgaben auf Strom, Gas und Wasser (`meta.json`, S. 33; `plan`
+`vorbericht_konzessionsabgaben`, `zeile` `summe_strom_gas_wasser`) vergleicht deren Summe exakt
+mit dem Posten `konzessionsabgaben` der Tabelle 2.1.7 im Haushaltsjahr (`soll` Posten × 1000,
+`ist` Summe der drei Werte). Beide Prüfungen sind auf den eingecheckten Daten ohne Abweichung.
 Die Weitergabe an Kreis und Land (D-01, `plan` `weitergabe_kreis_land`, `ebene` `P`, `code` der
 Produktcode aus `[layout.weitergabe_kreis_land]`, `zeile` `tp_15`) vergleicht die Summe der drei
 Transferaufwendungen-Posten Kreisumlage, Gewerbesteuerumlage und Krankenhausinvestitionsumlage

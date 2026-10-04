@@ -35,6 +35,7 @@ from ostbevern.schema import (
     GRUNDZAHLEN_CSV,
     HIERARCHIE_CSV,
     INVESTITIONEN_CSV,
+    INVESTITIONSZUWENDUNGEN_CSV,
     KITA_ZUSCHUESSE_CSV,
     META_JSON,
     PRODUKT_SCHLUESSEL,
@@ -914,7 +915,8 @@ def erzeuge_app_daten(
     gep_pdf_seite = ergebnisplan.filter(pl.col("ebene") == "GESAMT")["pdf_seite"][0]
 
     # Reihenfolge ist Teil des App-JSON-Vertrags (D-21): steuerarten, zuwendungen,
-    # transferaufwendungen, kita_zuschuesse, dann die sechs weiteren Tabellen
+    # transferaufwendungen, kita_zuschuesse, investitionszuwendungen (Phase 5 D-03, ohne
+    # GEP-Zeile: die App liest GFP Z. 18 aus `finanzplan`), dann die sechs weiteren Tabellen
     # (leistungsentgelte, kostenerstattungen, personal, sachaufwand, sonstige_aufwendungen,
     # zuletzt sonstige_ertraege, Phase 5 D-04) — dict-
     # Einfügereihenfolge bleibt beim Schreiben erhalten (schreibe_app_json/json.dumps,
@@ -925,6 +927,7 @@ def erzeuge_app_daten(
         "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
         "transferaufwendungen": transferaufwendungen_df,
         "kita_zuschuesse": lies_vorbericht_csv(daten_wurzel / KITA_ZUSCHUESSE_CSV),
+        "investitionszuwendungen": lies_vorbericht_csv(daten_wurzel / INVESTITIONSZUWENDUNGEN_CSV),
         **zerlege_weitere_vorberichtstabellen(
             lies_vorbericht_csv(daten_wurzel / WEITERE_VORBERICHTSTABELLEN_CSV)
         ),

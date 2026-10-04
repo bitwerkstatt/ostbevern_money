@@ -38,6 +38,7 @@ from ostbevern.schema import (
     HIERARCHIE_CSV,
     INVESTITIONEN_CSV,
     INVESTITIONEN_PB_CSV,
+    INVESTITIONSZUWENDUNGEN_CSV,
     KITA_ZUSCHUESSE_CSV,
     KONSISTENZ_MD,
     META_JSON,
@@ -1001,6 +1002,14 @@ REGEL5_GEP_ZEILEN: dict[str, str] = {
     "sonstige_aufwendungen": "16",
     "sonstige_ertraege": "07",
 }
+# Regel 5, Finanzplan-Zweig (Phase 5 D-03, EINN-06): manuelle Vorberichtstabelle -> Gesamt-
+# finanzplan-Zeile, gegen die die gedruckte Gesamtzeile in Stufe (b) geprüft wird. Eine
+# Tabelle steht entweder hier oder in REGEL5_GEP_ZEILEN, nie in beiden (Spez. 3.1: ein
+# Finanzplan-Betrag gehört nie in eine Ergebnisplan-Struktur). Die Zeile 18 „Zuwendungen
+# für Investitionsmaßnahmen“ ist die Summe der Pauschalen und Förderungen aus Vorbericht S. 52.
+REGEL5_GFP_ZEILEN: dict[str, str] = {
+    "investitionszuwendungen": "18",
+}
 # weitere_vorberichtstabellen.csv (D-08, MANU-05): die Tabellenmenge dieser Datei muss
 # exakt dieser Menge entsprechen; eine fehlende oder zusätzliche Tabelle bricht mit
 # PruefungsFehler ab. D-08 (Phase 4) war eine abgeschlossene Liste von fünf Tabellen;
@@ -1136,6 +1145,54 @@ def _pruefe_regel5_weitergabe(
         if abs(punkt.abweichung) > toleranz:
             abweichungen.append(punkt)
     return geprueft, abweichungen
+
+
+# Konzessionsabgaben nach Sparten (Phase 5 D-04, EINN-04, Vorbericht S. 33): die drei
+# `meta.json` -> `vorbericht_werte`-Schlüssel, deren Summe dem Posten REGEL5_KONZESSION_POSTEN
+# der Tabelle 2.1.7 im Haushaltsjahr entsprechen muss.
+REGEL5_KONZESSION_SPLIT: tuple[str, ...] = (
+    "konzessionsabgabe_strom",
+    "konzessionsabgabe_gas",
+    "konzessionsabgabe_wasser",
+)
+REGEL5_KONZESSION_POSTEN = "konzessionsabgaben"
+
+
+def _pruefe_regel5_konzessionsabgaben(
+    *, meta: Mapping, sonstige_ertraege_df: pl.DataFrame, haushaltsjahr: int
+) -> tuple[int, list[Pruefpunkt]]:
+    """Σ der Konzessionsabgaben nach Sparten (`meta.json`, S. 33 Text) == Posten
+    REGEL5_KONZESSION_POSTEN der Tabelle `sonstige_ertraege` im Haushaltsjahr × 1000, exakt
+    (TOLERANZ_EURO; beide Seiten sind gedruckte T€-Werte). Ein fehlender Split-Wert oder
+    Posten ist strukturell und bricht mit PruefungsFehler ab (`plan`
+    `vorbericht_konzessionsabgaben`, `zeile` `summe_strom_gas_wasser`)."""
+    split = meta.get("vorbericht_werte", {})
+    fehlend = [schluessel for schluessel in REGEL5_KONZESSION_SPLIT if schluessel not in split]
+    if fehlend:
+        raise PruefungsFehler(f"Regel 5: meta.json vorbericht_werte fehlt {fehlend}")
+
+    posten_zeile = sonstige_ertraege_df.filter(
+        (pl.col("posten") == REGEL5_KONZESSION_POSTEN) & (pl.col("jahr") == haushaltsjahr)
+    )
+    if posten_zeile.height != 1:
+        raise PruefungsFehler(
+            f"Regel 5: sonstige_ertraege hat keinen eindeutigen Posten "
+            f"{REGEL5_KONZESSION_POSTEN!r} für Jahr {haushaltsjahr}"
+        )
+    zeile = posten_zeile.row(0, named=True)
+    punkt = Pruefpunkt(
+        regel=5,
+        plan="vorbericht_konzessionsabgaben",
+        ebene="GESAMT",
+        code="",
+        zeile="summe_strom_gas_wasser",
+        jahr=haushaltsjahr,
+        wertart=zeile["wertart"],
+        soll=zeile["betrag_teur"] * 1000,
+        ist=sum(split[schluessel]["wert"] for schluessel in REGEL5_KONZESSION_SPLIT),
+        pdf_seite=split[REGEL5_KONZESSION_SPLIT[0]]["quelle"],
+    )
+    return 1, ([punkt] if abs(punkt.abweichung) > TOLERANZ_EURO else [])
 
 
 def zerlege_weitere_vorberichtstabellen(df: pl.DataFrame) -> dict[str, pl.DataFrame]:
@@ -1289,6 +1346,7 @@ def _pruefe_regel5(
     jahrgang: Jahrgang,
     meta: Mapping | None = None,
     eckwerte: Mapping[str, Mapping[str, int]] | None = None,
+    planwerte_finanzplan: Planwerte | None = None,
 ) -> Regelergebnis:
     """Regel 5 – manuelle Vorberichtstabellen → Planzeilen (PRUEF-05, D-01, D-07).
 
@@ -1302,6 +1360,11 @@ def _pruefe_regel5(
     schlüssel in `zeile` ("summe_posten" bzw. "gep_{nr}"). Zusätzlich, nur wenn vorhanden:
     der Kita/Transfer-Kreuzvergleich (`_pruefe_regel5_kita_gegen_transfer`) und die
     Weitergabe an Kreis und Land (`_pruefe_regel5_weitergabe`, D-01).
+
+    Phase 5: Tabellen aus `REGEL5_GFP_ZEILEN` (investitionszuwendungen, S. 52) laufen in
+    Stufe (b) gegen die Gesamtfinanzplan-Zeile (`zeile` `gfp_{nr}`, `planwerte_finanzplan`
+    nötig) statt gegen den Gesamtergebnisplan; die Konzessionsabgaben-Aufteilung
+    (`_pruefe_regel5_konzessionsabgaben`) läuft, wenn `sonstige_ertraege` und `meta` da sind.
     """
     geprueft = 0
     abweichungen: list[Pruefpunkt] = []
@@ -1309,6 +1372,12 @@ def _pruefe_regel5(
         if tabelle in REGEL5_TABELLEN_OHNE_GESAMT:
             continue
         gep_zeile = REGEL5_GEP_ZEILEN.get(tabelle)
+        gfp_zeile = REGEL5_GFP_ZEILEN.get(tabelle)
+        if gfp_zeile is not None and planwerte_finanzplan is None:
+            raise PruefungsFehler(
+                f"Regel 5: Tabelle {tabelle!r} wird gegen den Gesamtfinanzplan geprüft, "
+                "aber es wurden keine Finanzplan-Planwerte übergeben"
+            )
         for jahr in sorted(df["jahr"].unique().to_list()):
             jahr_df = df.filter(pl.col("jahr") == jahr)
             gesamt_zeilen = jahr_df.filter(pl.col("ist_gesamt"))
@@ -1354,6 +1423,32 @@ def _pruefe_regel5(
                 )
                 if abs(punkt_b.abweichung) > REGEL5_TOLERANZ_GEP_EURO:
                     abweichungen.append(punkt_b)
+
+            if gfp_zeile is not None and planwerte_finanzplan is not None:
+                geprueft += 1
+                punkt_gfp = Pruefpunkt(
+                    regel=5,
+                    plan=f"vorbericht_{tabelle}",
+                    ebene="GESAMT",
+                    code="",
+                    zeile=f"gfp_{gfp_zeile}",
+                    jahr=jahr,
+                    wertart=wertart,
+                    soll=planwerte_finanzplan.wert("GESAMT", "", gfp_zeile, jahr, wertart),
+                    ist=gesamt["betrag_teur"] * 1000,
+                    pdf_seite=pdf_seite,
+                )
+                if abs(punkt_gfp.abweichung) > REGEL5_TOLERANZ_GEP_EURO:
+                    abweichungen.append(punkt_gfp)
+
+    if "sonstige_ertraege" in vorbericht and meta is not None:
+        geprueft_konzession, abweichungen_konzession = _pruefe_regel5_konzessionsabgaben(
+            meta=meta,
+            sonstige_ertraege_df=vorbericht["sonstige_ertraege"],
+            haushaltsjahr=jahrgang.haushaltsjahr,
+        )
+        geprueft += geprueft_konzession
+        abweichungen += abweichungen_konzession
 
     if "kita_zuschuesse" in vorbericht and "transferaufwendungen" in vorbericht:
         geprueft_kita, abweichungen_kita = _pruefe_regel5_kita_gegen_transfer(
@@ -2440,6 +2535,7 @@ def pruefe_alles(
         "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
         "transferaufwendungen": lies_vorbericht_csv(daten_wurzel / TRANSFERAUFWENDUNGEN_CSV),
         "kita_zuschuesse": lies_vorbericht_csv(daten_wurzel / KITA_ZUSCHUESSE_CSV),
+        "investitionszuwendungen": lies_vorbericht_csv(daten_wurzel / INVESTITIONSZUWENDUNGEN_CSV),
         **zerlege_weitere_vorberichtstabellen(
             lies_vorbericht_csv(daten_wurzel / WEITERE_VORBERICHTSTABELLEN_CSV)
         ),
@@ -2481,6 +2577,7 @@ def pruefe_alles(
         jahrgang=jahrgang,
         meta=meta,
         eckwerte=eckwerte,
+        planwerte_finanzplan=Planwerte(finanzplan, datei="finanzplan"),
     )
     geprueft_d11, abweichungen_d11, luecken_d11 = pruefe_regel5_schulden_ruecklagen_ve(
         verbindlichkeiten=vorbericht["verbindlichkeiten"],
