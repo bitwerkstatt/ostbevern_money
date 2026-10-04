@@ -2,10 +2,19 @@ import { readFileSync } from 'node:fs'
 
 import { describe, expect, it } from 'vitest'
 
-import { haushalt } from '@/data/daten'
-import { baueGeldfluss, geldflussOption, zielCodeAusKlick } from '@/lib/geldfluss'
+import { euro, jahr as formatiereJahr } from '@/charts/format'
+import { haushalt, texte } from '@/data/daten'
+import {
+  baueGeldfluss,
+  baueGeldflussBalken,
+  geldflussOption,
+  lesehilfeSatz,
+  welcheLesetexte,
+  zielCodeAusKlick,
+} from '@/lib/geldfluss'
 import type { Geldfluss } from '@/lib/geldfluss'
 import { findeKlKnoten } from '@/lib/kreisumlage'
+import { findeText, textFuerJahr } from '@/lib/texte'
 
 const GESAMT = haushalt.ergebnisplan.GESAMT
 const ALLE_JAHRE = haushalt.jahre.map((jahr, index) => [jahr, index] as const)
@@ -266,4 +275,119 @@ describe.runIf(haushalt.haushaltsjahr === 2026)('Geldfluss Haushalt 2026 (D-11, 
     expect(fluss.knoten.find((k) => k.art === 'minderaufwand')).toBeUndefined()
     expect(fluss.knoten.find((k) => k.art === 'defizit')).toBeUndefined()
   })
+})
+
+describe('baueGeldflussBalken: Mobil-Alternative (D-12, D-19, FLUSS-04)', () => {
+  it.each(ALLE_JAHRE)(
+    'Jahr %i: beide Balken haben dieselbe Summe (±2 €), Segmente in den Knotenfarben',
+    (_jahr, index) => {
+      const fluss = baueGeldfluss(index)
+      const balken = baueGeldflussBalken(fluss)
+
+      expect(balken.woher.map((s) => s.id)).toEqual(
+        fluss.knoten.filter((k) => k.seite === 'links').map((k) => k.id),
+      )
+      expect(balken.wohin.map((s) => s.id)).toEqual(
+        fluss.knoten.filter((k) => k.seite === 'rechts').map((k) => k.id),
+      )
+      const summeWoher = balken.woher.reduce((s, x) => s + x.wert, 0)
+      const summeWohin = balken.wohin.reduce((s, x) => s + x.wert, 0)
+      expect(balken.summeWoher).toBe(summeWoher)
+      expect(balken.summeWohin).toBe(summeWohin)
+      expect(Math.abs(summeWoher - summeWohin)).toBeLessThanOrEqual(2)
+
+      const nachId = new Map(fluss.knoten.map((k) => [k.id, k] as const))
+      for (const segment of [...balken.woher, ...balken.wohin]) {
+        const knoten = nachId.get(segment.id)
+        expect(segment.farbe, segment.id).toBe(knoten?.farbe)
+        expect(segment.decal, segment.id).toBe(knoten?.decal)
+        expect(segment.code, segment.id).toBe(knoten?.code)
+        expect(segment.wert, segment.id).toBeGreaterThan(0)
+      }
+      expect(balken.woher.reduce((s, x) => s + (x.anteil ?? 0), 0)).toBeCloseTo(1, 6)
+      expect(balken.wohin.reduce((s, x) => s + (x.anteil ?? 0), 0)).toBeCloseTo(1, 6)
+    },
+  )
+
+  it.each(ALLE_JAHRE)(
+    'Jahr %i: Defizit und Minderaufwand stehen in „Woher“, der Überschuss in „Wohin“',
+    (_jahr, index) => {
+      const balken = baueGeldflussBalken(baueGeldfluss(index))
+      expect(balken.wohin.some((s) => s.art === 'defizit' || s.art === 'minderaufwand')).toBe(false)
+      expect(balken.woher.some((s) => s.art === 'ueberschuss')).toBe(false)
+      const nachAbzug = zeile('ergebnis_nach_minderaufwand', index)
+      expect(balken.wohin.some((s) => s.art === 'ueberschuss')).toBe(nachAbzug > 0)
+      expect(balken.woher.some((s) => s.art === 'defizit')).toBe(nachAbzug < 0)
+    },
+  )
+})
+
+describe('lesehilfeSatz: Satz aus den Daten des gewählten Jahres (D-11, T-05-34)', () => {
+  it.each(ALLE_JAHRE)('Jahr %i: nennt die Beträge des Jahres und die PDF-Seite', (jahr, index) => {
+    const fluss = baueGeldfluss(index)
+    const satz = lesehilfeSatz(fluss, jahr, 'Ansatz')
+    expect(satz).not.toMatch(/NaN|undefined|\{\{|Infinity|null/)
+    expect(satz).toContain(formatiereJahr(jahr))
+    expect(satz).toContain(`PDF-Seite ${String(fluss.pdfSeite)}`)
+
+    const defizit = fluss.knoten.find((k) => k.art === 'defizit')
+    const ueberschuss = fluss.knoten.find((k) => k.art === 'ueberschuss')
+    const minderaufwand = fluss.knoten.find((k) => k.art === 'minderaufwand')
+    if (defizit) {
+      expect(satz).toContain('Defizit')
+      expect(satz).toContain(euro(defizit.wert))
+    } else {
+      expect(satz).not.toContain('Defizit')
+    }
+    if (ueberschuss) {
+      expect(satz).toContain('Überschuss')
+      expect(satz).toContain(euro(ueberschuss.wert))
+    } else {
+      expect(satz).not.toContain('Überschuss')
+    }
+    if (minderaufwand) {
+      expect(satz).toContain('Minderaufwand')
+      expect(satz).toContain(euro(minderaufwand.wert))
+    } else {
+      expect(satz).not.toContain('Minderaufwand')
+    }
+  })
+
+  it('der Defizitbetrag eines Jahres erscheint nicht im Satz eines anderen Jahres', () => {
+    const fluesse = ALLE_JAHRE.map(([jahr, index]) => ({ jahr, fluss: baueGeldfluss(index) }))
+    for (const a of fluesse) {
+      const defizit = a.fluss.knoten.find((k) => k.art === 'defizit')
+      if (!defizit) {
+        continue
+      }
+      for (const b of fluesse) {
+        const andereDefizit = b.fluss.knoten.find((k) => k.art === 'defizit')?.wert
+        if (b.jahr !== a.jahr && andereDefizit !== defizit.wert) {
+          expect(lesehilfeSatz(b.fluss, b.jahr, 'Ansatz')).not.toContain(euro(defizit.wert))
+        }
+      }
+    }
+  })
+})
+
+describe('welcheLesetexte: jahrpassende Erklärtexte (D-11, Pitfall 6, T-05-34)', () => {
+  it.each(ALLE_JAHRE)(
+    'Jahr %i: wählt die Texte nach Defizit/Überschuss und Haushaltsjahr',
+    (jahr, index) => {
+      const fluss = baueGeldfluss(index)
+      const schluessel = welcheLesetexte(jahr, fluss)
+      const hatDefizit = fluss.knoten.some((k) => k.art === 'defizit')
+      const hatUeberschuss = fluss.knoten.some((k) => k.art === 'ueberschuss')
+
+      expect(schluessel[0]).toBe('geldfluss_lesehilfe')
+      expect(schluessel.includes('defizit_ruecklagen')).toBe(
+        hatDefizit && jahr === texte.haushaltsjahr,
+      )
+      expect(schluessel.includes('ueberschuss_ruecklage')).toBe(hatUeberschuss)
+      for (const eintrag of schluessel) {
+        expect(findeText(eintrag), eintrag).toBeDefined()
+        expect(textFuerJahr(eintrag, jahr), eintrag).not.toBeNull()
+      }
+    },
+  )
 })
