@@ -6,6 +6,7 @@ import { euro, jahr as formatiereJahr } from '@/charts/format'
 import { haushalt, texte } from '@/data/daten'
 import {
   baueGeldfluss,
+  betragMitHinweis,
   baueGeldflussBalken,
   geldflussOption,
   lesehilfeSatz,
@@ -157,6 +158,57 @@ describe('baueGeldfluss: Bilanz in jedem Jahr (D-11, D-19, FLUSS-02)', () => {
       }
     },
   )
+})
+
+describe('Vorbericht-Beträge im Geldfluss (WR-01: „rd.“ und „berechnet“)', () => {
+  const index = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
+  const fluss = baueGeldfluss(index)
+  const nachId = (id: string) => fluss.knoten.find((k) => k.id === id)
+
+  it('markiert die Vorbericht-Knoten als gerundet und die Reste zusätzlich als berechnet', () => {
+    for (const id of ['gewerbesteuer', 'einkommensteuer', 'grundsteuer', 'schluesselzuweisung']) {
+      const knoten = nachId(`ertrag:${id}`)
+      expect(knoten?.gerundet, id).toBe(true)
+      expect(knoten?.berechnet, id).toBe(false)
+    }
+    for (const id of ['uebrige_steuern', 'sonstige_zuwendungen']) {
+      const knoten = nachId(`ertrag:${id}`)
+      expect(knoten?.gerundet, id).toBe(true)
+      expect(knoten?.berechnet, id).toBe(true)
+    }
+  })
+
+  it('lässt Ergebnisplan-Knoten ohne Hinweis', () => {
+    for (const knoten of fluss.knoten) {
+      if (['entgelte', 'sonstige_ertraege', 'finanzertraege'].some((i) => knoten.id.endsWith(i))) {
+        expect(knoten.gerundet, knoten.id).toBe(false)
+      }
+      if (knoten.seite === 'rechts' || knoten.seite === 'mitte') {
+        expect(knoten.gerundet, knoten.id).toBe(false)
+      }
+    }
+  })
+
+  it('zeigt gerundete Beträge im Tooltip mit „rd.“', () => {
+    const option = geldflussOption(fluss, { wertartText: 'Ansatz 2026' })
+    const tooltip = option.tooltip as { formatter: (params: unknown) => string }
+    const knoten = nachId('ertrag:gewerbesteuer')
+    expect(tooltip.formatter({ dataType: 'node', name: knoten?.id })).toContain('rd. ')
+    const ziel = fluss.knoten.find((k) => k.art === 'kl')
+    expect(tooltip.formatter({ dataType: 'node', name: ziel?.id })).not.toContain('rd. ')
+  })
+
+  it('übernimmt die Flags in die Balkensegmente', () => {
+    const balken = baueGeldflussBalken(fluss)
+    const segment = balken.woher.find((s) => s.id === 'ertrag:uebrige_steuern')
+    expect(segment?.gerundet).toBe(true)
+    expect(segment?.berechnet).toBe(true)
+  })
+
+  it('betragMitHinweis setzt „rd.“ nur bei gerundeten Beträgen', () => {
+    expect(betragMitHinweis(7_800_000, true)).toBe(`rd. ${euro(7_800_000)}`)
+    expect(betragMitHinweis(7_800_000, false)).toBe(euro(7_800_000))
+  })
 })
 
 describe('zielCodeAusKlick', () => {

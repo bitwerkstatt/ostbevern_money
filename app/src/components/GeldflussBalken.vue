@@ -10,7 +10,8 @@ import {
   type BalkenSegment,
   type Geldfluss,
 } from '@/lib/geldfluss'
-import { euroKurz } from '@/charts/format'
+import { euro, euroKurz } from '@/charts/format'
+import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
 import { useJahr } from '@/lib/jahr'
 
 const props = defineProps<{
@@ -44,6 +45,8 @@ function zeilen(segmente: readonly BalkenSegment[]): DatenZeile[] {
     farbe: segment.farbe,
     muster: muster(segment),
     code: segment.code,
+    gerundet: segment.gerundet ? 1 : 0,
+    berechnet: segment.berechnet ? 1 : 0,
   }))
 }
 
@@ -75,8 +78,12 @@ const gruppen = computed(() => {
         :spalten="spalten"
         :zeilen="gruppe.zeilen"
       >
-        <template #zelle="{ zeile, spalte }">
-          <span v-if="spalte.schluessel === 'name'" class="om-geldfluss-balken__name">
+        <template #zelle="{ zeile, spalte, wert }">
+          <template v-if="spalte.schluessel === 'wert' && typeof wert === 'number'">
+            <span v-if="zeile['gerundet'] === 1">rd. </span>{{ euro(wert) }}
+            <BerechnetEtikett v-if="zeile['berechnet'] === 1" />
+          </template>
+          <span v-else-if="spalte.schluessel === 'name'" class="om-geldfluss-balken__name">
             <span
               class="om-farbfeld"
               :class="zeile.muster ? `om-farbfeld--${String(zeile.muster)}` : undefined"

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue'
 
-import { jahr as formatiereJahr } from '@/charts/format'
+import { euro, jahr as formatiereJahr } from '@/charts/format'
+import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
 import ChartCard from '@/components/ChartCard.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
@@ -35,6 +36,8 @@ function tabellenZeilen(seite: 'links' | 'rechts'): DatenZeile[] {
     wert: z.wert,
     anteil: z.anteil,
     code: z.code,
+    gerundet: z.gerundet ? 1 : 0,
+    berechnet: z.berechnet ? 1 : 0,
   }))
 }
 const zeilenWoher = computed(() => tabellenZeilen('links'))
@@ -70,7 +73,14 @@ const lesesatz = computed(() =>
               :beschriftung="`Woher kommt das Geld ${formatiereJahr(jahr)}`"
               :spalten="spalten"
               :zeilen="zeilenWoher"
-            />
+            >
+              <template #zelle="{ zeile, spalte, wert }">
+                <template v-if="spalte.schluessel === 'wert' && typeof wert === 'number'">
+                  <span v-if="zeile['gerundet'] === 1">rd. </span>{{ euro(wert) }}
+                  <BerechnetEtikett v-if="zeile['berechnet'] === 1" />
+                </template>
+              </template>
+            </DatenTabelle>
           </section>
           <section aria-labelledby="om-geldfluss-wohin">
             <h3 id="om-geldfluss-wohin">Wohin</h3>
@@ -79,8 +89,14 @@ const lesesatz = computed(() =>
               :spalten="spalten"
               :zeilen="zeilenWohin"
             >
-              <template #zelle="{ zeile, spalte }">
-                <template v-if="spalte.schluessel === 'name' && typeof zeile.code === 'string'">
+              <template #zelle="{ zeile, spalte, wert }">
+                <template v-if="spalte.schluessel === 'wert' && typeof wert === 'number'">
+                  <span v-if="zeile['gerundet'] === 1">rd. </span>{{ euro(wert) }}
+                  <BerechnetEtikett v-if="zeile['berechnet'] === 1" />
+                </template>
+                <template
+                  v-else-if="spalte.schluessel === 'name' && typeof zeile.code === 'string'"
+                >
                   {{ zeile.name }}
                   <RouterLink :to="jahrLink({ name: 'ausgaben', query: { pb: zeile.code } })">
                     Im Detail ansehen<span class="om-visually-hidden"> zu {{ zeile.name }}</span>

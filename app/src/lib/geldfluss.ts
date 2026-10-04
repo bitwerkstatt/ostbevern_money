@@ -55,6 +55,10 @@ export interface GeldflussKnoten {
   code: string | null
   farbe: string
   decal?: Decal
+  /** `true`, wenn der Betrag nur auf T€ genau ist (Vorbericht-Tabelle × 1000): Anzeige „rd.“. */
+  gerundet: boolean
+  /** `true` für einen Rest (Differenz aus genauem und gerundetem Wert): Anzeige „berechnet“. */
+  berechnet: boolean
 }
 
 export interface GeldflussKante {
@@ -107,6 +111,20 @@ function postenWert(tabelle: string, posten: string, jahrIndex: number): number 
   return eintrag.werte[jahrIndex] ?? 0
 }
 
+/** `true`, wenn der Vorbericht-Posten nur auf T€ genau ist (die Tabelle führt T€ × 1000). */
+function postenGerundet(tabelle: string, posten: string): boolean {
+  const eintrag = haushalt.vorbericht[tabelle]?.posten.find((p) => p.posten === posten)
+  if (eintrag === undefined) {
+    throw new Error(`Posten „${posten}“ fehlt in der Vorbericht-Tabelle „${tabelle}“`)
+  }
+  return eintrag.gerundet
+}
+
+/** Betrag mit „rd.“ davor, wenn er nur auf T€ genau ist; sonst der genaue Euro-Betrag. */
+export function betragMitHinweis(wert: number, gerundet: boolean): string {
+  return gerundet ? `rd. ${euro(wert)}` : euro(wert)
+}
+
 /** Z. 17 (ordentliche Aufwendungen) eines Knotens; ohne Eintrag 0. */
 function ordentlicherAufwand(code: string, jahrIndex: number): number {
   return haushalt.ergebnisplan[code]?.zeilen.ordentliche_aufwendungen?.[jahrIndex] ?? 0
@@ -127,38 +145,71 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
     planZeile('privatrechtliche_entgelte', jahrIndex)
   const ordentlicheErtraege = planZeile('ordentliche_ertraege', jahrIndex)
 
-  const steuerKnoten: { id: string; name: string; wert: number }[] = STEUER_GRUPPEN.map(
-    (gruppe) => ({
-      id: gruppe.id,
-      name: gruppe.name,
-      wert: gruppe.posten.reduce((s, p) => s + postenWert('steuerarten', p, jahrIndex), 0),
-    }),
-  )
+  interface ErtragEintrag {
+    id: string
+    name: string
+    wert: number
+    gerundet: boolean
+    berechnet: boolean
+  }
+  const steuerKnoten: ErtragEintrag[] = STEUER_GRUPPEN.map((gruppe) => ({
+    id: gruppe.id,
+    name: gruppe.name,
+    wert: gruppe.posten.reduce((s, p) => s + postenWert('steuerarten', p, jahrIndex), 0),
+    gerundet: gruppe.posten.some((p) => postenGerundet('steuerarten', p)),
+    berechnet: false,
+  }))
   const gruppenSumme = steuerKnoten.reduce((s, k) => s + k.wert, 0)
-  steuerKnoten.push({ id: 'uebrige_steuern', name: 'Übrige Steuern', wert: steuern - gruppenSumme })
+  // Rest aus genauer Plan-Zeile minus gerundeten Gruppen: weder genau noch gedruckt.
+  steuerKnoten.push({
+    id: 'uebrige_steuern',
+    name: 'Übrige Steuern',
+    wert: steuern - gruppenSumme,
+    gerundet: steuerKnoten.some((k) => k.gerundet),
+    berechnet: true,
+  })
 
   const schluesselzuweisung = postenWert('zuwendungen', 'schluesselzuweisung', jahrIndex)
-  const uebrigeErtraege: { id: string; name: string; wert: number }[] = [
-    { id: 'schluesselzuweisung', name: 'Schlüsselzuweisung', wert: schluesselzuweisung },
+  const schluesselGerundet = postenGerundet('zuwendungen', 'schluesselzuweisung')
+  const uebrigeErtraege: ErtragEintrag[] = [
+    {
+      id: 'schluesselzuweisung',
+      name: 'Schlüsselzuweisung',
+      wert: schluesselzuweisung,
+      gerundet: schluesselGerundet,
+      berechnet: false,
+    },
     {
       id: 'sonstige_zuwendungen',
       name: 'Sonstige Zuwendungen',
       wert: zuwendungen - schluesselzuweisung,
+      gerundet: schluesselGerundet,
+      berechnet: true,
     },
-    { id: 'entgelte', name: 'Gebühren und Entgelte', wert: entgelte },
+    {
+      id: 'entgelte',
+      name: 'Gebühren und Entgelte',
+      wert: entgelte,
+      gerundet: false,
+      berechnet: false,
+    },
     {
       id: 'sonstige_ertraege',
       name: 'Sonstige Erträge',
       wert: ordentlicheErtraege - steuern - zuwendungen - entgelte,
+      gerundet: false,
+      berechnet: false,
     },
-    { id: 'finanzertraege', name: 'Finanzerträge', wert: planZeile('finanzertraege', jahrIndex) },
+    {
+      id: 'finanzertraege',
+      name: 'Finanzerträge',
+      wert: planZeile('finanzertraege', jahrIndex),
+      gerundet: false,
+      berechnet: false,
+    },
   ]
 
-  function fuegeErtragHinzu(
-    art: 'steuer' | 'ertrag',
-    eintrag: { id: string; name: string; wert: number },
-    rang: number,
-  ) {
+  function fuegeErtragHinzu(art: 'steuer' | 'ertrag', eintrag: ErtragEintrag, rang: number) {
     if (eintrag.wert < 0) {
       // Ein negativer Rest würde den Ausgleich still verfälschen: Datenfehler, laut abbrechen.
       throw new Error(`Ertragsknoten „${eintrag.name}“ hat einen negativen Wert`)
@@ -174,6 +225,8 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
       art,
       code: null,
       farbe: abstufung(art === 'steuer' ? STEUER_FARBE : ERTRAG_FARBE, rang),
+      gerundet: eintrag.gerundet,
+      berechnet: eintrag.berechnet,
     })
   }
   steuerKnoten.forEach((eintrag, rang) => {
@@ -196,6 +249,8 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
       art: 'defizit',
       code: null,
       farbe: POL_FARBEN.negativ,
+      gerundet: false,
+      berechnet: false,
     })
   }
   if (minderaufwand !== 0) {
@@ -211,6 +266,8 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
       code: null,
       farbe: MINDERAUFWAND_FARBE,
       decal: PUNKT_DECAL,
+      gerundet: false,
+      berechnet: false,
     })
   }
 
@@ -224,6 +281,8 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
     art: 'gemeinde',
     code: null,
     farbe: GEMEINDE_FARBE,
+    gerundet: false,
+    berechnet: false,
   })
 
   // ---- rechts: Kreis und Land, Aufgabenbereiche, Zinsen, Überschuss ------------------
@@ -239,6 +298,8 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
       code: kl.code,
       farbe: KL_FARBE,
       decal: KL_DECAL,
+      gerundet: false,
+      berechnet: false,
     })
   }
   for (const pb of haushalt.knoten) {
@@ -255,6 +316,8 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
         art: 'pb',
         code: pb.code,
         farbe: farbeFuerPb(pb.code),
+        gerundet: false,
+        berechnet: false,
       })
     }
   }
@@ -268,6 +331,8 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
       art: 'zinsen',
       code: null,
       farbe: ZINSEN_FARBE,
+      gerundet: false,
+      berechnet: false,
     })
   }
   if (nachMinderaufwand > 0) {
@@ -279,6 +344,8 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
       art: 'ueberschuss',
       code: null,
       farbe: POL_FARBEN.positiv,
+      gerundet: false,
+      berechnet: false,
     })
   }
 
@@ -310,6 +377,10 @@ export interface GeldflussZeile {
   wert: number
   /** Anteil an der Summe der Seite (0–1). */
   anteil: number | null
+  /** `true`: Betrag nur auf T€ genau (Anzeige „rd.“). */
+  gerundet: boolean
+  /** `true`: Rest aus genauem und gerundetem Wert (Anzeige „berechnet“). */
+  berechnet: boolean
 }
 
 /** Zeilen der Tabelle „Woher“ (links) bzw. „Wohin“ (rechts) in Diagrammreihenfolge. */
@@ -323,6 +394,8 @@ export function geldflussZeilen(geldfluss: Geldfluss, seite: 'links' | 'rechts')
       code: k.code,
       wert: k.wert,
       anteil: anteil(k.wert, summe),
+      gerundet: k.gerundet,
+      berechnet: k.berechnet,
     }))
 }
 
@@ -361,7 +434,9 @@ function tooltipInhalt(
   }
   if (params.dataType === 'node' && typeof params.name === 'string') {
     const knoten = nachId.get(params.name)
-    return knoten === undefined ? null : [knoten.name, euro(knoten.wert), wertartText]
+    return knoten === undefined
+      ? null
+      : [knoten.name, betragMitHinweis(knoten.wert, knoten.gerundet), wertartText]
   }
   if (params.dataType === 'edge' && istObjekt(params.data)) {
     const { source, target, value } = params.data
@@ -373,7 +448,9 @@ function tooltipInhalt(
     if (von === undefined || nach === undefined) {
       return null
     }
-    return [`${von.name} → ${nach.name}`, euro(value), wertartText]
+    // Eine Kante hat den Betrag ihres Ertrags- bzw. Ziel-Knotens und erbt dessen Genauigkeit.
+    const gerundet = von.seite === 'links' ? von.gerundet : nach.gerundet
+    return [`${von.name} → ${nach.name}`, betragMitHinweis(value, gerundet), wertartText]
   }
   return null
 }
@@ -428,7 +505,11 @@ export function geldflussOption(
           formatter: (params: unknown) => {
             const knoten = istObjekt(params) ? params.name : undefined
             const eintrag = typeof knoten === 'string' ? nachId.get(knoten) : undefined
-            return eintrag === undefined ? '' : `${eintrag.name}\n${euroKurz(eintrag.wert)}`
+            if (eintrag === undefined) {
+              return ''
+            }
+            const betrag = euroKurz(eintrag.wert)
+            return `${eintrag.name}\n${eintrag.gerundet ? `rd. ${betrag}` : betrag}`
           },
         },
         labelLayout: { hideOverlap: false, moveOverlap: 'shiftY' },
@@ -458,6 +539,10 @@ export interface BalkenSegment {
   code: string | null
   farbe: string
   decal?: Decal
+  /** `true`: Betrag nur auf T€ genau (Anzeige „rd.“). */
+  gerundet: boolean
+  /** `true`: Rest aus genauem und gerundetem Wert (Anzeige „berechnet“). */
+  berechnet: boolean
 }
 
 export interface GeldflussBalken {
@@ -481,6 +566,8 @@ function segmente(geldfluss: Geldfluss, seite: 'links' | 'rechts', summe: number
       code: k.code,
       farbe: k.farbe,
       decal: k.decal,
+      gerundet: k.gerundet,
+      berechnet: k.berechnet,
     }))
 }
 
@@ -528,7 +615,11 @@ export function balkenOption(
         const segment = typeof id === 'string' ? nachId.get(id) : undefined
         return segment === undefined
           ? ''
-          : tooltipZeilen([segment.name, euro(segment.wert), wertartText])
+          : tooltipZeilen([
+              segment.name,
+              betragMitHinweis(segment.wert, segment.gerundet),
+              wertartText,
+            ])
       },
     },
     xAxis: { type: 'value', show: false, min: 0, max: summe },
