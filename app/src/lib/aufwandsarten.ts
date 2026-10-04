@@ -2,8 +2,13 @@
 // Gesamtergebnisplans. Werte werden gelesen, nie neu berechnet; nur der Anteil ist
 // `wert / berechnet.aufwand`. Die Namen kommen aus `zeilen_namen`.
 
+import { euro, jahr as formatiereJahr } from '@/charts/format'
 import { haushalt } from '@/data/daten'
+import { textFuerJahr } from '@/lib/texte'
 import { zeilenName } from '@/lib/zeilen'
+
+/** Schlüssel der GEP-Zeile 27 „Globaler Minderaufwand“. */
+const MINDERAUFWAND_ZEILE = 'globaler_minderaufwand'
 
 /** Die Zeile „Abschreibungen“: Wertverlust, kein Geldfluss (fachliche Regel, Spez. 3.6). */
 export const ABSCHREIBUNG_ZEILE = 'abschreibungen'
@@ -73,8 +78,60 @@ export interface TransferPosten {
   kinder?: TransferPosten[]
 }
 
-export function baueTransferaufwendungen(_jahrIndex: number): TransferPosten[] {
-  return []
+/** Der Posten der Kita-Zuschüsse, unter dem die einzelnen Einrichtungen stehen (MANU-04). */
+const KITA_ZEILE = 'zuschuesse_kindertageseinrichtungen'
+
+function pruefeJahrIndex(jahrIndex: number): void {
+  if (haushalt.jahre[jahrIndex] === undefined) {
+    throw new Error(`Jahresindex ${String(jahrIndex)} liegt außerhalb der Jahre`)
+  }
+}
+
+function tabelle(name: string) {
+  const treffer = haushalt.vorbericht[name]
+  if (treffer === undefined) {
+    throw new Error(`Vorberichtstabelle „${name}“ fehlt in haushalt.json`)
+  }
+  return treffer
+}
+
+/** Posten der Tabelle mit Wert im Jahr; ein Posten ohne gedruckten Wert entfällt (nie als 0). */
+function postenMitWert(tabellenName: string, jahrIndex: number): TransferPosten[] {
+  return tabelle(tabellenName).posten.flatMap((p) => {
+    const wert = p.werte[jahrIndex]
+    if (wert === null || wert === undefined) {
+      return []
+    }
+    return [
+      {
+        posten: p.posten,
+        name: p.name,
+        wert,
+        gerundet: p.gerundet,
+        quelle: p.quelle,
+        anmerkung: p.anmerkung,
+      },
+    ]
+  })
+}
+
+function absteigend(posten: TransferPosten[]): TransferPosten[] {
+  return posten.sort((a, b) => b.wert - a.wert)
+}
+
+/**
+ * Die Vorbericht-Tabelle „Transferaufwendungen“ des Jahres (absteigend). Die einzelnen
+ * Kita-Einrichtungen hängen an den Kita-Zuschüssen und erscheinen nur in Jahren, in denen der
+ * Vorbericht sie druckt (nur im Haushaltsjahr). Alle Werte sind T€ × 1000, also „rd.“.
+ */
+export function baueTransferaufwendungen(jahrIndex: number): TransferPosten[] {
+  pruefeJahrIndex(jahrIndex)
+  const kinder = absteigend(postenMitWert('kita_zuschuesse', jahrIndex))
+  return absteigend(
+    postenMitWert('transferaufwendungen', jahrIndex).map((p) =>
+      p.posten === KITA_ZEILE && kinder.length > 0 ? { ...p, kinder } : p,
+    ),
+  )
 }
 
 export interface MinderaufwandHinweis {
@@ -88,6 +145,30 @@ export interface MinderaufwandHinweis {
   pdfSeite: number | null
 }
 
-export function minderaufwandHinweis(_jahrIndex: number): MinderaufwandHinweis | null {
-  return null
+/** Schlüssel des geprüften Erklärtexts zum globalen Minderaufwand. */
+const MINDERAUFWAND_TEXT = 'globaler_minderaufwand'
+
+/**
+ * Der Hinweis „Globaler Minderaufwand“ des Jahres oder `null`, wenn der Gesamtergebnisplan
+ * für das Jahr keinen Minderaufwand führt (2024). Der geprüfte Erklärtext nennt Zahlen des
+ * Haushaltsjahrs und gilt nur dort (RESEARCH Pitfall 6); für andere Jahre entsteht ein Satz
+ * aus dem Betrag und dem Jahr der Daten, ohne Behauptungen über andere Jahre.
+ */
+export function minderaufwandHinweis(jahrIndex: number): MinderaufwandHinweis | null {
+  pruefeJahrIndex(jahrIndex)
+  const jahr = haushalt.jahre[jahrIndex]
+  const wert = haushalt.ergebnisplan.GESAMT?.zeilen[MINDERAUFWAND_ZEILE]?.[jahrIndex]
+  if (jahr === undefined || wert === undefined || wert === 0) {
+    return null
+  }
+  // Der Gesamtergebnisplan führt die Kürzung mit negativem Vorzeichen.
+  const betrag = -wert
+  const hatGepruefterText = textFuerJahr(MINDERAUFWAND_TEXT, jahr) !== null
+  return {
+    betrag,
+    jahr,
+    textSchluessel: hatGepruefterText ? MINDERAUFWAND_TEXT : null,
+    satz: `Für ${formatiereJahr(jahr)} setzt der Plan einen globalen Minderaufwand von ${euro(betrag)} an. Das ist ein pauschaler Kürzungsbetrag auf die geplanten Ausgaben.`,
+    pdfSeite: haushalt.knoten.find((k) => k.code === 'GESAMT')?.pdf_seite ?? null,
+  }
 }
