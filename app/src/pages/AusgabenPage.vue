@@ -3,7 +3,7 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import type { BalkenZeile } from '@/charts/balken'
-import { euroKurz, jahr as formatiereJahr, prozent, zahl } from '@/charts/format'
+import { euro, euroKurz, jahr as formatiereJahr, KEIN_WERT, prozent, zahl } from '@/charts/format'
 import AufwandsartBalken from '@/components/AufwandsartBalken.vue'
 import AufwandTreemap from '@/components/AufwandTreemap.vue'
 import Brotkrumen from '@/components/Brotkrumen.vue'
@@ -11,13 +11,20 @@ import ChartCard from '@/components/ChartCard.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import EbenenTabelle from '@/components/EbenenTabelle.vue'
+import ErklaerText from '@/components/ErklaerText.vue'
 import JahrUmschalter from '@/components/JahrUmschalter.vue'
+import KreisumlageCallout from '@/components/KreisumlageCallout.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import ZuschussBalken from '@/components/ZuschussBalken.vue'
 import { haushalt } from '@/data/daten'
 import { ansagen } from '@/lib/ansage'
 import { findeKnoten, useAnsicht, type Modus } from '@/lib/ansicht'
-import { baueAufwandsarten } from '@/lib/aufwandsarten'
+import {
+  baueAufwandsarten,
+  baueTransferaufwendungen,
+  minderaufwandHinweis,
+  type TransferPosten,
+} from '@/lib/aufwandsarten'
 import {
   baueBrotkrumen,
   baueEbene,
@@ -26,6 +33,7 @@ import {
   ueberschussTextSchluessel,
 } from '@/lib/drilldown'
 import { useJahr, wertartName } from '@/lib/jahr'
+import { findeKlKnoten } from '@/lib/kreisumlage'
 import { rendereAbsatz, textFuerJahr } from '@/lib/texte'
 
 const router = useRouter()
@@ -161,6 +169,47 @@ const artenTabelle = computed<DatenZeile[]>(() =>
   })),
 )
 
+// Transferaufwendungen im Einzelnen (AUSG-04): Tabelle des Vorberichts für das gewählte Jahr,
+// die Kita-Einrichtungen stehen eingerückt unter den Kita-Zuschüssen (nur im Haushaltsjahr).
+const transferSpalten = computed<DatenSpalte[]>(() => [
+  { schluessel: 'name', titel: 'Posten', art: 'text' },
+  { schluessel: 'wert', titel: wertartMitJahr.value, art: 'euro' },
+  { schluessel: 'quelle', titel: 'PDF-Seite', art: 'text' },
+])
+
+const transfer = computed(() => baueTransferaufwendungen(index.value))
+
+// Kennzeichen als 0/1 (`DatenZeile` kennt nur Text, Zahlen und `null`); die Seitenzahl als Text.
+function transferZeile(posten: TransferPosten, teil: boolean): DatenZeile {
+  return {
+    name: posten.name,
+    wert: posten.wert,
+    quelle: posten.quelle === null ? null : String(posten.quelle),
+    gerundet: posten.gerundet ? 1 : 0,
+    teil: teil ? 1 : 0,
+  }
+}
+
+const transferTabelle = computed<DatenZeile[]>(() =>
+  transfer.value.flatMap((posten) => [
+    transferZeile(posten, false),
+    ...(posten.kinder ?? []).map((kind) => transferZeile(kind, true)),
+  ]),
+)
+
+const transferFussnote = computed(() => {
+  const anmerkungen = new Set(
+    transfer.value.flatMap((p) => [p, ...(p.kinder ?? [])]).flatMap((p) => p.anmerkung ?? []),
+  )
+  return anmerkungen.size === 0 ? undefined : [...anmerkungen].join(' ')
+})
+
+// Erklärungen zur Ebene (D-07): die Kreisumlage steht oben und in KL, nicht in anderen Bereichen.
+const zeigeKlCallout = computed(
+  () => ansicht.value.pb === null || ansicht.value.pb === findeKlKnoten().code,
+)
+const minderaufwand = computed(() => minderaufwandHinweis(index.value))
+
 // Quelle der Aufwandsarten ist der Gesamtergebnisplan.
 const gesamtSeite = computed(() => {
   const seite = haushalt.knoten.find((k) => k.code === 'GESAMT')?.pdf_seite
@@ -215,6 +264,27 @@ const gesamtSeite = computed(() => {
       />
     </div>
   </ChartCard>
+  <!-- Weitergabe an Kreis und Land: nur auf der obersten Ebene und innerhalb von KL (D-07). -->
+  <div v-if="zeigeKlCallout" class="om-ausgaben-callout">
+    <KreisumlageCallout :jahr-index="index" :wertart="wertartText" />
+  </div>
+  <!-- Globaler Minderaufwand: Hinweis unter dem Diagramm, nur bei Wert ≠ 0, nie eine Kachel. -->
+  <wa-callout v-if="minderaufwand !== null" variant="neutral" class="om-ausgaben-callout">
+    <wa-icon slot="icon" name="circle-info"></wa-icon>
+    <strong>Globaler Minderaufwand</strong>
+    <ErklaerText
+      v-if="minderaufwand.textSchluessel !== null"
+      :schluessel="minderaufwand.textSchluessel"
+      :jahr="jahr"
+      :ueberschrift="false"
+    />
+    <template v-else>
+      <p>{{ minderaufwand.satz }}</p>
+      <p v-if="minderaufwand.pdfSeite !== null" class="om-ausgaben-quelle">
+        Quelle: PDF-Seite {{ minderaufwand.pdfSeite }}
+      </p>
+    </template>
+  </wa-callout>
   <wa-callout v-if="ueberschussZeilen.length > 0" variant="neutral" class="om-ausgaben-callout">
     <wa-icon slot="icon" name="circle-info"></wa-icon>
     <strong>Warum manche Bereiche im Plus liegen</strong>
@@ -235,6 +305,30 @@ const gesamtSeite = computed(() => {
       <wa-tag size="small" variant="neutral">kein Geldfluss</wa-tag>
       {{ ABSCHREIBUNG_SATZ }}
     </p>
+    <wa-details summary="Transferaufwendungen im Einzelnen" class="om-ausgaben-tabelle">
+      <DatenTabelle
+        :beschriftung="`Transferaufwendungen im Einzelnen ${jahrText}`"
+        :spalten="transferSpalten"
+        :zeilen="transferTabelle"
+        :fussnote="transferFussnote"
+        :leer-titel="leerTitel"
+        :leer-text="ARTEN_LEER_TEXT"
+      >
+        <template #zelle="{ zeile, spalte, wert }">
+          <template v-if="spalte.schluessel === 'name'">
+            <span :class="{ 'om-ausgaben-teil': zeile['teil'] === 1 }">{{ wert }}</span>
+          </template>
+          <template v-else-if="spalte.schluessel === 'wert' && typeof wert === 'number'">
+            <span v-if="zeile['gerundet'] === 1">rd. </span>{{ euro(wert) }}
+          </template>
+          <template v-else-if="wert === null">
+            <span aria-hidden="true">{{ KEIN_WERT }}</span>
+            <span class="om-visually-hidden">kein Wert</span>
+          </template>
+          <template v-else>{{ wert }}</template>
+        </template>
+      </DatenTabelle>
+    </wa-details>
     <wa-details summary="Tabelle anzeigen" class="om-ausgaben-tabelle">
       <DatenTabelle
         :beschriftung="artenTitel"
@@ -321,6 +415,11 @@ const gesamtSeite = computed(() => {
 
 .om-ausgaben-tabelle {
   margin-block-start: var(--wa-space-m);
+}
+
+.om-ausgaben-teil {
+  display: inline-block;
+  padding-inline-start: var(--wa-space-m);
 }
 
 .om-ausgaben-etikett {
