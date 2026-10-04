@@ -276,6 +276,12 @@ None — no external service configuration required.
   `REQUIREMENTS.md` and update `STATE.md`/`ROADMAP.md` centrally after this worktree merges (not
   done here per worktree-mode convention).
 
+## Self-Check: PASSED
+
+All eight files (five modified sources, the new test file, the disposition ledger, and this
+summary) verified present on disk with `[ -f ]`. All four commits (`52b3d3b` fix, `9a2af1b` test
+RED, `5e3292e` feat GREEN, `b799e99` docs summary) verified present via `git log --oneline --all`.
+
 ---
 *Phase: 04-manuelle-daten-und-app-daten*
 *Completed: 2026-10-04*
