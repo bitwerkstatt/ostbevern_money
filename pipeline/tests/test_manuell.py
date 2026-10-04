@@ -252,7 +252,7 @@ def test_schema_weitere_vorberichtstabellen_kanonisch(tmp_path: Path) -> None:
 
     assert (df["quelle"] >= 1).all()
 
-    # Exakt die fünf Tabellen aus D-08 (MANU-05), keine mehr, keine weniger.
+    # Exakt die Tabellen aus D-08 (MANU-05) plus 2.1.7 (Phase 5 D-04), keine mehr, keine weniger.
     assert set(df["tabelle"].unique().to_list()) == set(WEITERE_VORBERICHTSTABELLEN)
 
     # Genau eine Gesamtzeile je (tabelle, jahr); eindeutige posten-Schlüssel je tabelle.
@@ -278,12 +278,25 @@ def test_schema_weitere_vorberichtstabellen_kanonisch(tmp_path: Path) -> None:
     assert tatsaechliche_jahre_wertarten == erwartete_jahre_wertarten
 
 
+def test_sonstige_ertraege_gedruckter_druckfehler_bleibt_erhalten() -> None:
+    """Phase 5 D-04 / P4 D-05: Tabelle 2.1.7 (S. 33) steht wie gedruckt in der CSV. Die
+    gedruckte Gesamtzeile 2028 (2.396 T€) ist ein Druckfehler im Vorbericht (Σ Posten
+    2.345 T€) und wird NICHT korrigiert -- die Abweichung ist ein Befund."""
+    df = lies_vorbericht_csv(DATEN_WURZEL / WEITERE_VORBERICHTSTABELLEN_CSV)
+    teil = df.filter((pl.col("tabelle") == "sonstige_ertraege") & (pl.col("jahr") == 2028))
+    assert (teil["quelle"] == 33).all()
+    gesamt = teil.filter(pl.col("ist_gesamt"))["betrag_teur"].to_list()
+    posten_summe = teil.filter(~pl.col("ist_gesamt"))["betrag_teur"].sum()
+    assert gesamt == [2396]
+    assert posten_summe == 2345
+
+
 def test_regel5_weitere_tabellen_gegen_gep(tmp_path: Path) -> None:
     bericht = pruefe_alles(STANDARD_JAHR)
     regel5 = next(regel for regel in bericht.regeln if regel.regel == 5)
     assert regel5.status == "grün"
     assert regel5.abweichungen == ()
-    # Direkter Beleg, dass die fünf neuen Tabellen tatsächlich geprüft wurden (Plan
+    # Direkter Beleg, dass die weiteren Tabellen tatsächlich geprüft wurden (Plan
     # 04-02 Task 1 kam ohne sie auf weniger geprüfte Punkte).
     anzahl_vorher = next(
         regel.geprueft for regel in pruefe_alles(STANDARD_JAHR).regeln if regel.regel == 5

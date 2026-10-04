@@ -38128,6 +38128,129 @@
           "anmerkung": null
         }
       ]
+    },
+    "sonstige_ertraege": {
+      "tabelle": "sonstige_ertraege",
+      "quelle_einheit": "teur",
+      "planzeile": "sonstige_ordentliche_ertraege",
+      "gesamt_plan": [
+        2764446,
+        2106281,
+        1943386,
+        1689885,
+        2346161,
+        1182136
+      ],
+      "gesamt_vorbericht": {
+        "werte": [
+          2764000,
+          2106000,
+          1943000,
+          1689000,
+          2396000,
+          1182000
+        ],
+        "gerundet": true,
+        "quelle": 33
+      },
+      "posten": [
+        {
+          "posten": "konzessionsabgaben",
+          "name": "Konzessionsabgaben",
+          "werte": [
+            470000,
+            470000,
+            470000,
+            470000,
+            470000,
+            470000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 33,
+          "anmerkung": null
+        },
+        {
+          "posten": "verkauf_von_umlaufvermoegen",
+          "name": "Verkauf von Umlaufvermögen",
+          "werte": [
+            1180000,
+            1303000,
+            1096000,
+            866000,
+            1520000,
+            348000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 33,
+          "anmerkung": null
+        },
+        {
+          "posten": "bussgelder_saeumniszuschlaege",
+          "name": "Bußgelder / Säumniszuschläge",
+          "werte": [
+            37000,
+            21000,
+            33000,
+            33000,
+            33000,
+            33000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 33,
+          "anmerkung": null
+        },
+        {
+          "posten": "aufloesung_sonstiger_sonderposten",
+          "name": "Auflösung sonstiger Sonderposten",
+          "werte": [
+            284000,
+            273000,
+            271000,
+            245000,
+            245000,
+            245000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 33,
+          "anmerkung": null
+        },
+        {
+          "posten": "herabsetzung_rueckstellungen",
+          "name": "Herabsetzung Rückstellungen",
+          "werte": [
+            795000,
+            40000,
+            73000,
+            75000,
+            77000,
+            86000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 33,
+          "anmerkung": null
+        },
+        {
+          "posten": "sonstige",
+          "name": "Sonstige",
+          "werte": [
+            null,
+            null,
+            null,
+            null,
+            1161,
+            null
+          ],
+          "gerundet": false,
+          "berechnet": true,
+          "quelle": 33,
+          "anmerkung": "Differenz zwischen der eurogenauen Planzeile des Gesamtergebnisplans und der Summe der gedruckten Vorbericht-Posten (Spez. 3.8); die Planzeile ist maßgeblich."
+        }
+      ]
     }
   },
   "eigenkapital": {

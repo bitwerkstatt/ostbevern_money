@@ -999,16 +999,20 @@ REGEL5_GEP_ZEILEN: dict[str, str] = {
     "personal": "11",
     "sachaufwand": "13",
     "sonstige_aufwendungen": "16",
+    "sonstige_ertraege": "07",
 }
 # weitere_vorberichtstabellen.csv (D-08, MANU-05): die Tabellenmenge dieser Datei muss
-# exakt dieser Menge entsprechen; eine sechste oder fehlende Tabelle bricht mit
-# PruefungsFehler ab (D-08 ist eine abgeschlossene Liste, keine Erweiterung ohne Review).
+# exakt dieser Menge entsprechen; eine fehlende oder zusätzliche Tabelle bricht mit
+# PruefungsFehler ab. D-08 (Phase 4) war eine abgeschlossene Liste von fünf Tabellen;
+# Phase 5 D-04 ergänzt bewusst die sechste, 2.1.7 Sonstige ordentliche Erträge (EINN-04).
+# Jede weitere Tabelle braucht wieder einen eigenen Review-Beschluss.
 WEITERE_VORBERICHTSTABELLEN: tuple[str, ...] = (
     "leistungsentgelte",
     "kostenerstattungen",
     "personal",
     "sachaufwand",
     "sonstige_aufwendungen",
+    "sonstige_ertraege",
 )
 # Stufe (b) vergleicht die gedruckte, nur in T€ geführte Gesamtzeile (×1000) gegen die
 # eurogenaue GEP-Zeile; eine eigene, gröbere Toleranz als TOLERANZ_EURO (Stufe a bleibt

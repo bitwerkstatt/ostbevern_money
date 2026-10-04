@@ -188,7 +188,37 @@ def test_haushalt_json_vorbericht_reihenfolge(tmp_path: Path) -> None:
         "personal",
         "sachaufwand",
         "sonstige_aufwendungen",
+        "sonstige_ertraege",
     ]
+
+
+def test_sonstige_ertraege_ergibt_gep_zeile_07(tmp_path: Path) -> None:
+    """Tabelle 2.1.7 (Phase 5 D-04): wo der berechnete Posten "Sonstige" nicht null ist,
+    ergibt Σ Posten inkl. Sonstige exakt GEP Z. 07; in allen anderen Jahren liegt die
+    gedruckte Gesamtzeile innerhalb ±REGEL5_TOLERANZ_GEP_EURO an GEP Z. 07."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    tabelle = daten["vorbericht"]["sonstige_ertraege"]
+    gep_07 = daten["ergebnisplan"]["GESAMT"]["zeilen"]["sonstige_ordentliche_ertraege"]
+
+    assert tabelle["planzeile"] == "sonstige_ordentliche_ertraege"
+    assert tabelle["gesamt_plan"] == gep_07
+    sonstige = next(p for p in tabelle["posten"] if p["posten"] == "sonstige")
+    assert sonstige["berechnet"] is True
+    assert tabelle["posten"][-1] is sonstige
+    assert any(p["posten"] == "konzessionsabgaben" for p in tabelle["posten"])
+
+    mit_sonstige = 0
+    for index in range(len(daten["jahre"])):
+        if sonstige["werte"][index] is not None:
+            mit_sonstige += 1
+            summe = sum(p["werte"][index] or 0 for p in tabelle["posten"])
+            assert summe == gep_07[index]
+        else:
+            gesamt = tabelle["gesamt_vorbericht"]["werte"][index]
+            assert abs(gesamt - gep_07[index]) <= REGEL5_TOLERANZ_GEP_EURO
+    # Der gedruckte 2028-Fehler (S. 33) muss als "Sonstige" sichtbar sein, nicht verschwinden.
+    assert mit_sonstige >= 1
 
 
 def test_haushalt_json_weitere_vorberichtstabellen(tmp_path: Path) -> None:

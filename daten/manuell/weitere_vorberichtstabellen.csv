@@ -467,3 +467,39 @@ sonstige_aufwendungen,17,gesamt,Gesamt,true,2026,ansatz,1247,,48
 sonstige_aufwendungen,17,gesamt,Gesamt,true,2027,planung,1242,,48
 sonstige_aufwendungen,17,gesamt,Gesamt,true,2028,planung,1798,,48
 sonstige_aufwendungen,17,gesamt,Gesamt,true,2029,planung,2400,,48
+sonstige_ertraege,1,konzessionsabgaben,Konzessionsabgaben,false,2024,ergebnis,470,,33
+sonstige_ertraege,1,konzessionsabgaben,Konzessionsabgaben,false,2025,ansatz,470,,33
+sonstige_ertraege,1,konzessionsabgaben,Konzessionsabgaben,false,2026,ansatz,470,,33
+sonstige_ertraege,1,konzessionsabgaben,Konzessionsabgaben,false,2027,planung,470,,33
+sonstige_ertraege,1,konzessionsabgaben,Konzessionsabgaben,false,2028,planung,470,,33
+sonstige_ertraege,1,konzessionsabgaben,Konzessionsabgaben,false,2029,planung,470,,33
+sonstige_ertraege,2,verkauf_von_umlaufvermoegen,Verkauf von Umlaufvermögen,false,2024,ergebnis,1180,,33
+sonstige_ertraege,2,verkauf_von_umlaufvermoegen,Verkauf von Umlaufvermögen,false,2025,ansatz,1303,,33
+sonstige_ertraege,2,verkauf_von_umlaufvermoegen,Verkauf von Umlaufvermögen,false,2026,ansatz,1096,,33
+sonstige_ertraege,2,verkauf_von_umlaufvermoegen,Verkauf von Umlaufvermögen,false,2027,planung,866,,33
+sonstige_ertraege,2,verkauf_von_umlaufvermoegen,Verkauf von Umlaufvermögen,false,2028,planung,1520,,33
+sonstige_ertraege,2,verkauf_von_umlaufvermoegen,Verkauf von Umlaufvermögen,false,2029,planung,348,,33
+sonstige_ertraege,3,bussgelder_saeumniszuschlaege,Bußgelder / Säumniszuschläge,false,2024,ergebnis,37,,33
+sonstige_ertraege,3,bussgelder_saeumniszuschlaege,Bußgelder / Säumniszuschläge,false,2025,ansatz,21,,33
+sonstige_ertraege,3,bussgelder_saeumniszuschlaege,Bußgelder / Säumniszuschläge,false,2026,ansatz,33,,33
+sonstige_ertraege,3,bussgelder_saeumniszuschlaege,Bußgelder / Säumniszuschläge,false,2027,planung,33,,33
+sonstige_ertraege,3,bussgelder_saeumniszuschlaege,Bußgelder / Säumniszuschläge,false,2028,planung,33,,33
+sonstige_ertraege,3,bussgelder_saeumniszuschlaege,Bußgelder / Säumniszuschläge,false,2029,planung,33,,33
+sonstige_ertraege,4,aufloesung_sonstiger_sonderposten,Auflösung sonstiger Sonderposten,false,2024,ergebnis,284,,33
+sonstige_ertraege,4,aufloesung_sonstiger_sonderposten,Auflösung sonstiger Sonderposten,false,2025,ansatz,273,,33
+sonstige_ertraege,4,aufloesung_sonstiger_sonderposten,Auflösung sonstiger Sonderposten,false,2026,ansatz,271,,33
+sonstige_ertraege,4,aufloesung_sonstiger_sonderposten,Auflösung sonstiger Sonderposten,false,2027,planung,245,,33
+sonstige_ertraege,4,aufloesung_sonstiger_sonderposten,Auflösung sonstiger Sonderposten,false,2028,planung,245,,33
+sonstige_ertraege,4,aufloesung_sonstiger_sonderposten,Auflösung sonstiger Sonderposten,false,2029,planung,245,,33
+sonstige_ertraege,5,herabsetzung_rueckstellungen,Herabsetzung Rückstellungen,false,2024,ergebnis,795,,33
+sonstige_ertraege,5,herabsetzung_rueckstellungen,Herabsetzung Rückstellungen,false,2025,ansatz,40,,33
+sonstige_ertraege,5,herabsetzung_rueckstellungen,Herabsetzung Rückstellungen,false,2026,ansatz,73,,33
+sonstige_ertraege,5,herabsetzung_rueckstellungen,Herabsetzung Rückstellungen,false,2027,planung,75,,33
+sonstige_ertraege,5,herabsetzung_rueckstellungen,Herabsetzung Rückstellungen,false,2028,planung,77,,33
+sonstige_ertraege,5,herabsetzung_rueckstellungen,Herabsetzung Rückstellungen,false,2029,planung,86,,33
+sonstige_ertraege,6,gesamt,Gesamt,true,2024,ergebnis,2764,,33
+sonstige_ertraege,6,gesamt,Gesamt,true,2025,ansatz,2106,,33
+sonstige_ertraege,6,gesamt,Gesamt,true,2026,ansatz,1943,,33
+sonstige_ertraege,6,gesamt,Gesamt,true,2027,planung,1689,,33
+sonstige_ertraege,6,gesamt,Gesamt,true,2028,planung,2396,,33
+sonstige_ertraege,6,gesamt,Gesamt,true,2029,planung,1182,,33

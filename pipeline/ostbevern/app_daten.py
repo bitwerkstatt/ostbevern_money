@@ -85,6 +85,11 @@ KL_POSTEN_NAMEN: dict[str, str] = {
     "krankenhausinvestitionsumlage": "Krankenhausinvestitionsumlage",
 }
 
+# Vorbericht-Tabellen mit einem berechneten Posten "Sonstige" (Spez. 3.8): dort, wo die
+# gedruckte Gesamtzeile um mehr als REGEL5_TOLERANZ_GEP_EURO von der GEP-Zeile abweicht,
+# schließt "Sonstige" die Lücke, sodass Σ Posten exakt die (maßgebliche) GEP-Zeile ergibt.
+TABELLEN_MIT_SONSTIGE: frozenset[str] = frozenset({"zuwendungen", "sonstige_ertraege"})
+
 # App-Zeilenmenge des Ergebnisplans je Knoten (D-22, D-23): GEP-Zeilen 01-26 (gleiche
 # kanonische Schlüssel in GEP und TP), dann der Minderaufwand und das Ergebnis danach
 # (GEP 27/28, TP 30/31 -- Lookup über ZEILEN, nie hartkodierte Zeilennummern unten).
@@ -661,11 +666,11 @@ def baue_vorbericht_tabelle(
     die fehlenden Jahre in `gesamt_vorbericht.werte` ebenfalls `null` — fehlt die
     Gesamtzeile für JEDES Jahr, bricht die Funktion mit `AppDatenFehler` ab.
 
-    `sonstige=True` (nur zuwendungen, Spez. 3.8) hängt einen letzten, rein berechneten
-    Posten "Sonstige" an: nicht-`null` genau in den Jahren, in denen die gedruckte
-    Gesamtzeile um mehr als REGEL5_TOLERANZ_GEP_EURO von der GEP-Zeile abweicht, und dort
-    so bemessen, dass Σ Posten + Sonstige exakt die GEP-Zeile ergibt (die Planzeile bleibt
-    maßgeblich, D-07b).
+    `sonstige=True` (zuwendungen und sonstige_ertraege, Spez. 3.8, Phase 5 D-04) hängt
+    einen letzten, rein berechneten Posten "Sonstige" an: nicht-`null` genau in den
+    Jahren, in denen die gedruckte Gesamtzeile um mehr als REGEL5_TOLERANZ_GEP_EURO von
+    der GEP-Zeile abweicht, und dort so bemessen, dass Σ Posten + Sonstige exakt die
+    GEP-Zeile ergibt (die Planzeile bleibt maßgeblich, D-07b).
     """
     tabelle = df["tabelle"][0]
     gesamt_df = df.filter(pl.col("ist_gesamt"))
@@ -909,8 +914,9 @@ def erzeuge_app_daten(
     gep_pdf_seite = ergebnisplan.filter(pl.col("ebene") == "GESAMT")["pdf_seite"][0]
 
     # Reihenfolge ist Teil des App-JSON-Vertrags (D-21): steuerarten, zuwendungen,
-    # transferaufwendungen, kita_zuschuesse, dann die fünf D-08-Tabellen (leistungsentgelte,
-    # kostenerstattungen, personal, sachaufwand, sonstige_aufwendungen) — dict-
+    # transferaufwendungen, kita_zuschuesse, dann die sechs weiteren Tabellen
+    # (leistungsentgelte, kostenerstattungen, personal, sachaufwand, sonstige_aufwendungen,
+    # zuletzt sonstige_ertraege, Phase 5 D-04) — dict-
     # Einfügereihenfolge bleibt beim Schreiben erhalten (schreibe_app_json/json.dumps,
     # keine sort_keys).
     transferaufwendungen_df = lies_vorbericht_csv(daten_wurzel / TRANSFERAUFWENDUNGEN_CSV)
@@ -929,7 +935,7 @@ def erzeuge_app_daten(
             jahre=jahre,
             planwerte=planwerte,
             gep_zeile=REGEL5_GEP_ZEILEN.get(tabelle),
-            sonstige=(tabelle == "zuwendungen"),
+            sonstige=(tabelle in TABELLEN_MIT_SONSTIGE),
         )
         for tabelle, df in vorbericht_quellen.items()
     }

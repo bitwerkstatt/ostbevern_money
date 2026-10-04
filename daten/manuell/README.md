@@ -83,8 +83,9 @@ Kindertageseinr.“ desselben Jahres — beides prüft Regel 5.
 
 ### `weitere_vorberichtstabellen.csv`
 
-Die fünf weiteren Vorberichtstabellen aus Spez. 4.3 (D-08), jede mit Aufschlüsselung und
-Gesamtzeile für 2024–2029, Spalte `tabelle` unterscheidet sie:
+Die sechs weiteren Vorberichtstabellen (fünf aus Spez. 4.3, D-08, plus 2.1.7 seit Phase 5
+D-04), jede mit Aufschlüsselung und Gesamtzeile für 2024–2029, Spalte `tabelle`
+unterscheidet sie:
 
 | `tabelle` | Vorbericht-Ziffer | Seiten |
 |---|---|---|
@@ -93,6 +94,7 @@ Gesamtzeile für 2024–2029, Spalte `tabelle` unterscheidet sie:
 | `personal` | 2.2.1 Personalaufwendungen | 34 |
 | `sachaufwand` | 2.2.3 Aufwendungen für Sach- und Dienstleistungen | 36–37 |
 | `sonstige_aufwendungen` | 2.2.6 Sonstige ordentliche Aufwendungen | 48 |
+| `sonstige_ertraege` | 2.1.7 Sonstige ordentliche Erträge | 33 |
 
 Posten-Schlüssel folgen derselben Ableitungsregel wie in allen anderen manuellen
 Dateien: gedruckter Name klein geschrieben, Umlaute ausgeschrieben (ä→ae, ö→oe, ü→ue,
@@ -100,15 +102,28 @@ Dateien: gedruckter Name klein geschrieben, Umlaute ausgeschrieben (ä→ae, ö�
 abschließende `_` entfernt. Zwei Zeilen je Tabelle haben einen über zwei Textzeilen
 umgebrochenen Namen (S. 30 „Auflösung von Sonderposten aus Beiträgen und Gebühren“,
 S. 32 „Erst v. Gemeinden und sonst. öffentlicher Bereich“ und „Erst. für Essen in der
-Mensa und den OGS“); der Name ist mit einem Leerzeichen zusammengefügt.
+Mensa und den OGS“); der Name ist mit einem Leerzeichen zusammengefügt. Dasselbe gilt für
+„Auflösung sonstiger Sonderposten“ in Tabelle 2.1.7 (S. 33).
+
+**Tabelle 2.1.7 `sonstige_ertraege` (S. 33, EINN-04):** fünf Posten (Konzessionsabgaben,
+Verkauf von Umlaufvermögen, Bußgelder / Säumniszuschläge, Auflösung sonstiger Sonderposten,
+Herabsetzung Rückstellungen) plus Gesamtzeile, wie gedruckt. Die Tabelle wird gegen Zeile 07
+des Gesamtergebnisplans geprüft (Regel 5, Stufe b). Vier gedruckte Abweichungen sind in
+`../pruefberichte/befunde.md` dokumentiert: die Rundungsdifferenzen 2024 (Σ Posten 2.766 T€
+gegenüber gedruckten 2.764 T€) und 2025 (2.107 gegenüber 2.106 T€) sowie ein **Druckfehler
+2028**: die gedruckte Gesamtzeile nennt 2.396 T€, die Posten ergeben 2.345 T€, und die GEP-Zeile
+07 liegt bei 2.346.161 €. Die CSV hält den gedruckten Wert 2.396 fest (D-05: nie
+angepasst). Die App folgt der GEP-Zeile und weist die Differenz zwischen GEP-Zeile und
+Summe der Posten als eigenen, berechneten Posten „Sonstige“ aus, und zwar genau in den
+Jahren, in denen die gedruckte Gesamtzeile um mehr als 1.000 € von der GEP-Zeile abweicht
+(`ostbevern.app_daten.baue_vorbericht_tabelle`, `sonstige=True`, wie bei `zuwendungen`).
 
 Bewusst **nicht** abgeschrieben (D-08, MANU-05):
 
-- 2.1.5 Privatrechtliche Leistungsentgelte, 2.1.7 Sonstige ordentliche Erträge, 2.1.9
-  Erträge aus internen Leistungsbeziehungen, 2.2.2 Versorgungsaufwendungen und 2.2.5
-  Transferaufwendungen (separat in `transferaufwendungen.csv`, MANU-03) — Spez. 4.3
-  listet nur die fünf oben genannten Tabellen für Phase 4; 2.1.7 ist explizit auf
-  Phase 5 (EINN-04) verschoben.
+- 2.1.5 Privatrechtliche Leistungsentgelte, 2.1.9 Erträge aus internen Leistungsbeziehungen,
+  2.2.2 Versorgungsaufwendungen und 2.2.5 Transferaufwendungen (separat in
+  `transferaufwendungen.csv`, MANU-03) — Spez. 4.3 listet nur die fünf ursprünglichen
+  Tabellen für Phase 4; 2.1.7 wurde in Phase 5 (EINN-04) nachgeholt.
 - Die Objekt/Maßnahme-Detailtabelle „Gebäudeunterhaltung“ unter 2.2.3 (S. 37, unterhalb
   der Gesamtzeile): sie schlüsselt den Posten `gebaeudeunterhaltung` weiter auf,
   gehört aber nicht zur Haupttabelle (D-08) und wird nicht benötigt.
