@@ -317,6 +317,19 @@ export function baueInvestiveTabelle(jahrIndex: number): InvestiveZeile[] {
   return [...gedruckt, ...finanzplan]
 }
 
+/**
+ * Quellenzeile unter einer Tabelle aus den PDF-Seiten ihrer Zeilen, z. B. „Quelle: PDF-Seite 27“
+ * oder „Quelle: PDF-Seiten 28, 29“. Ohne eine Seite gibt es keine Zeile (`undefined`).
+ */
+export function quellenText(seiten: readonly (number | null)[]): string | undefined {
+  const einzeln = [...new Set(seiten.filter((seite): seite is number => seite !== null))]
+  if (einzeln.length === 0) {
+    return undefined
+  }
+  einzeln.sort((a, b) => a - b)
+  return `Quelle: PDF-${einzeln.length === 1 ? 'Seite' : 'Seiten'} ${einzeln.join(', ')}`
+}
+
 /** `true`, wenn mindestens eine Zeile einen Wert ungleich 0 hat; sonst gilt der Leerzustand. */
 export function hatInvestiveWerte(zeilen: readonly InvestiveZeile[]): boolean {
   return zeilen.some((zeile) => zeile.wert !== null && zeile.wert !== 0)

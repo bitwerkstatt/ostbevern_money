@@ -12,6 +12,7 @@ import {
   baueSteuern,
   baueZuwendungen,
   hatInvestiveWerte,
+  quellenText,
 } from '@/lib/einnahmen'
 
 const JAHRE = haushalt.jahre.map((jahr, index) => [jahr, index] as const)
@@ -320,6 +321,21 @@ describe.each(JAHRE)('investive Einnahmen Jahr %i (EINN-06, D-03)', (_jahr, inde
     const tabellenzeilen = baueInvestiveTabelle(index).filter((z) => z.gruppe === 'pauschale')
     expect(tabellenzeilen.map((z) => z.schluessel)).toEqual(gedruckt.map((p) => p.posten))
     expect(tabellenzeilen.every((z) => z.gerundet)).toBe(true)
+  })
+})
+
+describe('quellenText', () => {
+  it('nennt eine einzelne Seite im Singular', () => {
+    expect(quellenText([27, 27, null])).toBe('Quelle: PDF-Seite 27')
+  })
+
+  it('nennt mehrere Seiten aufsteigend und ohne Doppelte', () => {
+    expect(quellenText([29, 28, 28])).toBe('Quelle: PDF-Seiten 28, 29')
+  })
+
+  it('liefert ohne Seite keine Zeile', () => {
+    expect(quellenText([])).toBeUndefined()
+    expect(quellenText([null])).toBeUndefined()
   })
 })
 
