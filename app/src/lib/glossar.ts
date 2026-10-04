@@ -2,7 +2,7 @@
 // und der erste Definitionssatz für den Tooltip. Die Begriffe selbst stammen aus
 // `texte.json` (Pipeline); hier liegt nur, was die App daraus ableitet.
 
-import { texte } from '@/data/daten'
+import { haushalt, produkte, texte } from '@/data/daten'
 import type { Glossarbegriff, Produkt } from '@/data/typen'
 import { rendereAbsatz } from '@/lib/texte'
 
@@ -40,6 +40,9 @@ export const GLOSSAR_SCHLUESSEL = [
 ] as const
 
 export type GlossarSchluessel = (typeof GLOSSAR_SCHLUESSEL)[number]
+
+/** Code des Wurzelknotens; seine direkten Kinder sind die Aufgabenbereiche. */
+const WURZEL = 'GESAMT'
 
 // Nachschlagen nur über Map (URL-Fragmente und Prototyp-Schlüssel treffen nichts).
 const BEGRIFFE_NACH_SCHLUESSEL: ReadonlyMap<string, Glossarbegriff> = new Map(
@@ -94,11 +97,49 @@ export interface ProduktGruppe {
   produkte: readonly Produkt[]
 }
 
-// RED-Stand: leere Rümpfe, damit die Tests an Behauptungen scheitern, nicht am Import.
+/**
+ * Die Produkte, gruppiert nach Aufgabenbereich (`produkt.pb`), in der Reihenfolge der
+ * Produktbereiche der Hierarchie. Die Gruppen leiten sich aus den Daten ab: ein Bereich
+ * ohne Produkte (z. B. die Weitergabe an Kreis und Land) erscheint nicht, und die Zahl der
+ * Gruppen steht nirgends im Code (D-16, UI-SPEC E14). Ein Bereich, den die Hierarchie
+ * nicht kennt, behält seinen Code als Namen und steht am Ende, damit kein Produkt fehlt.
+ */
 export function produktGruppen(): readonly ProduktGruppe[] {
-  return []
+  const produkteJeBereich = new Map<string, Produkt[]>()
+  for (const produkt of produkte) {
+    const bisher = produkteJeBereich.get(produkt.pb)
+    if (bisher === undefined) {
+      produkteJeBereich.set(produkt.pb, [produkt])
+    } else {
+      bisher.push(produkt)
+    }
+  }
+
+  const gruppen: ProduktGruppe[] = []
+  for (const knoten of haushalt.knoten) {
+    const inBereich = knoten.eltern === WURZEL ? produkteJeBereich.get(knoten.code) : undefined
+    if (inBereich !== undefined) {
+      gruppen.push({ pb: knoten.code, name: knoten.name, produkte: inBereich })
+      produkteJeBereich.delete(knoten.code)
+    }
+  }
+  for (const [pb, inBereich] of produkteJeBereich) {
+    gruppen.push({ pb, name: pb, produkte: inBereich })
+  }
+  return gruppen
 }
 
-export function glossarVerwendungen(_quelltext: string): string[] {
-  return []
+/** Schlüssel-Attribut (`schluessel="…"` oder `:schluessel="…"`) im Tag einer Verwendung. */
+const VERWENDUNG_MUSTER = /<GlossarBegriff\b[^>]*?\bschluessel\s*=\s*(?:"([^"]*)"|'([^']*)')/g
+
+/**
+ * Die Schlüssel aller `<GlossarBegriff … schluessel="x">`-Verwendungen im Quelltext einer
+ * Vue-Datei, in Reihenfolge des Auftretens. `glossar.test.ts` prüft damit, dass keine Seite
+ * einen Begriff verlinkt, den es nicht gibt (D-16).
+ */
+export function glossarVerwendungen(quelltext: string): string[] {
+  return Array.from(
+    quelltext.matchAll(VERWENDUNG_MUSTER),
+    (treffer) => treffer[1] ?? treffer[2] ?? '',
+  )
 }
