@@ -172,7 +172,7 @@ Plans:
   4. `/geldfluss` zeigt einen Sankey 2026, der über „Defizit (Entnahme aus Rücklagen)“ und den Minderaufwand bilanziert. Hover hebt Pfade hervor, und ein Klick auf einen Aufgabenbereich öffnet die Ausgabenseite. Auf schmalen Bildschirmen erscheint stattdessen eine Tabelle oder ein gestapelter Balken. Einnahmen, Ausgaben und Geldfluss haben einen Jahr-Umschalter (2024 Ist … 2029 Planung, Standard 2026).
   5. `/glossar` erklärt mindestens die 22 Begriffe aus Spez. 6.14 und listet alle 63 Produkte als Akkordeon. `GlossarBegriff`-Links auf den Seiten führen zum jeweiligen Begriff. Zahlen in Erklärtexten werden aus den Daten erzeugt und verweisen auf eine PDF-Seite.
 
-**Plans**: 2/15 plans executed
+**Plans**: 6/15 plans executed
 **UI hint**: yes
 
 Plans:
@@ -181,10 +181,10 @@ Plans:
 - [x] 05-02-PLAN.md — Tracer Tabelle 2.1.7 → Regel 5 → haushalt.json; Pauschalen S. 52 mit GFP-Zweig, Konzessionsabgaben, Zeilennamen (Wave 1)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 05-03-PLAN.md — Glossar (≥ 22 Begriffe), neue Erklärtexte, D-02-Prüfung, fachliche Abnahme vor Commit (Wave 2, Checkpoint)
-- [ ] 05-04-PLAN.md — Routen, `?jahr=` mit Jahr-Umschalter, validierter Ansichtszustand, Fokus/Titel beim Routenwechsel (Wave 2)
-- [ ] 05-05-PLAN.md — Diagramm-Grundlagen: PB-Palette mit Kontrasttest, Decals, sichere Tooltips, BaseChart/DatenTabelle-Zustände, UI-SPEC an D-19/D-20 angepasst (Wave 2)
-- [ ] 05-06-PLAN.md — Platzhalter-Renderer mit Jahresbindung, ErklaerText, Pro-Kopf/Zeilennamen/Ertragsarten, Kreisumlage-Callout (Wave 2)
+- [x] 05-03-PLAN.md — Glossar (≥ 22 Begriffe), neue Erklärtexte, D-02-Prüfung, fachliche Abnahme vor Commit (Wave 2, Checkpoint)
+- [x] 05-04-PLAN.md — Routen, `?jahr=` mit Jahr-Umschalter, validierter Ansichtszustand, Fokus/Titel beim Routenwechsel (Wave 2)
+- [x] 05-05-PLAN.md — Diagramm-Grundlagen: PB-Palette mit Kontrasttest, Decals, sichere Tooltips, BaseChart/DatenTabelle-Zustände, UI-SPEC an D-19/D-20 angepasst (Wave 2)
+- [x] 05-06-PLAN.md — Platzhalter-Renderer mit Jahresbindung, ErklaerText, Pro-Kopf/Zeilennamen/Ertragsarten, Kreisumlage-Callout (Wave 2)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 05-07-PLAN.md — Kopfmenü mit Drawer, Skip-Link, Fußzeile mit Konfiguration (Wave 3)
@@ -245,6 +245,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 2. Kernzahlen | 5/5 | Complete    | 2026-10-01 |
 | 3. Details | 5/5 | Complete    | 2026-10-02 |
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
-| 5. Leitfragen-Seiten | 2/15 | In Progress|  |
+| 5. Leitfragen-Seiten | 6/15 | In Progress|  |
 | 6. Kontext-Seiten | 0/TBD | Not started | - |
 | 7. Feinschliff und Veröffentlichung | 0/TBD | Not started | - |
