@@ -2,16 +2,22 @@
 import { computed, nextTick, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { jahr as formatiereJahr, zahl } from '@/charts/format'
+import type { BalkenZeile } from '@/charts/balken'
+import { euroKurz, jahr as formatiereJahr, prozent, zahl } from '@/charts/format'
+import AufwandsartBalken from '@/components/AufwandsartBalken.vue'
 import AufwandTreemap from '@/components/AufwandTreemap.vue'
 import Brotkrumen from '@/components/Brotkrumen.vue'
 import ChartCard from '@/components/ChartCard.vue'
+import DatenTabelle from '@/components/DatenTabelle.vue'
+import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import EbenenTabelle from '@/components/EbenenTabelle.vue'
 import JahrUmschalter from '@/components/JahrUmschalter.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import ZuschussBalken from '@/components/ZuschussBalken.vue'
+import { haushalt } from '@/data/daten'
 import { ansagen } from '@/lib/ansage'
 import { findeKnoten, useAnsicht, type Modus } from '@/lib/ansicht'
+import { baueAufwandsarten } from '@/lib/aufwandsarten'
 import {
   baueBrotkrumen,
   baueEbene,
@@ -116,6 +122,50 @@ const ueberschussZeilen = computed(() =>
     ]
   }),
 )
+
+// Zweite Sicht (AUSG-04): Aufwand nach Aufwandsart. Dieselben Euro wie die Treemap, nur anders
+// gegliedert: die sieben Zeilen des Gesamtergebnisplans ergeben den Gesamtaufwand des Jahres.
+const jahrText = computed(() => formatiereJahr(jahr.value))
+const wertartMitJahr = computed(() => `${wertartText.value} ${jahrText.value}`)
+const leerTitel = computed(() => `Für ${jahrText.value} gibt es keine Einzelwerte`)
+const ARTEN_LEER_TEXT =
+  'Der Haushaltsplan nennt für dieses Jahr keine Aufschlüsselung. Wähle ein anderes Jahr oder öffne die Tabelle.'
+const ABSCHREIBUNG_SATZ = 'Wertverlust von Gebäuden und Straßen, kein Geldfluss'
+
+const aufwandsarten = computed(() => baueAufwandsarten(index.value))
+const artenTitel = computed(() => `Aufwand nach Aufwandsart ${jahrText.value}`)
+const hatAbschreibung = computed(() => aufwandsarten.value.some((art) => art.keinGeldfluss))
+
+const artenBalken = computed<BalkenZeile[]>(() =>
+  aufwandsarten.value.map((art) => ({
+    schluessel: art.schluessel,
+    name: art.name,
+    wert: art.wert,
+    label: `${euroKurz(art.wert)} · ${prozent(art.anteil)}`,
+  })),
+)
+
+const artenSpalten = computed<DatenSpalte[]>(() => [
+  { schluessel: 'name', titel: 'Aufwandsart', art: 'text' },
+  { schluessel: 'wert', titel: wertartMitJahr.value, art: 'euro' },
+  { schluessel: 'anteil', titel: 'Anteil', art: 'prozent' },
+])
+
+// Das Kennzeichen „kein Geldfluss“ als 0/1, weil `DatenZeile` nur Text, Zahlen und `null` kennt.
+const artenTabelle = computed<DatenZeile[]>(() =>
+  aufwandsarten.value.map((art) => ({
+    name: art.name,
+    wert: art.wert,
+    anteil: art.anteil,
+    keinGeldfluss: art.keinGeldfluss ? 1 : 0,
+  })),
+)
+
+// Quelle der Aufwandsarten ist der Gesamtergebnisplan.
+const gesamtSeite = computed(() => {
+  const seite = haushalt.knoten.find((k) => k.code === 'GESAMT')?.pdf_seite
+  return seite === null || seite === undefined ? undefined : { seite }
+})
 </script>
 
 <template>
@@ -175,6 +225,36 @@ const ueberschussZeilen = computed(() =>
       >
     </p>
   </wa-callout>
+  <ChartCard :titel="artenTitel" :pdf="gesamtSeite" class="om-ausgaben-arten">
+    <AufwandsartBalken
+      :zeilen="artenBalken"
+      :wertart-text="wertartMitJahr"
+      :leer-titel="leerTitel"
+    />
+    <p v-if="hatAbschreibung" class="om-ausgaben-abschreibung">
+      <wa-tag size="small" variant="neutral">kein Geldfluss</wa-tag>
+      {{ ABSCHREIBUNG_SATZ }}
+    </p>
+    <wa-details summary="Tabelle anzeigen" class="om-ausgaben-tabelle">
+      <DatenTabelle
+        :beschriftung="artenTitel"
+        :spalten="artenSpalten"
+        :zeilen="artenTabelle"
+        :leer-titel="leerTitel"
+        :leer-text="ARTEN_LEER_TEXT"
+      >
+        <template #zeilenzusatz="{ zeile }">
+          <wa-tag
+            v-if="zeile['keinGeldfluss'] === 1"
+            size="small"
+            variant="neutral"
+            class="om-ausgaben-etikett"
+            >kein Geldfluss</wa-tag
+          >
+        </template>
+      </DatenTabelle>
+    </wa-details>
+  </ChartCard>
 </template>
 
 <style scoped>
@@ -229,5 +309,21 @@ const ueberschussZeilen = computed(() =>
 
 .om-ausgaben-quelle {
   color: var(--wa-color-text-quiet);
+}
+
+.om-ausgaben-arten {
+  margin-block-start: var(--wa-space-xl);
+}
+
+.om-ausgaben-abschreibung {
+  margin: var(--wa-space-m) 0 0;
+}
+
+.om-ausgaben-tabelle {
+  margin-block-start: var(--wa-space-m);
+}
+
+.om-ausgaben-etikett {
+  margin-inline-start: var(--wa-space-2xs);
 }
 </style>
