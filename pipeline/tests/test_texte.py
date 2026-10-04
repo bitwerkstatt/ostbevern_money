@@ -22,7 +22,9 @@ from ostbevern.texte import (
     Erklaertext,
     TexteFehler,
     lies_erklaerungen,
+    lies_glossar,
     loese_auf,
+    pruefe_grundzahl_jahre,
     pruefe_text,
     textwerte,
     vorschau,
@@ -166,6 +168,143 @@ Quelle: S. 12
     pfad = _schreibe(tmp_path, inhalt)
     with pytest.raises(TexteFehler):
         lies_erklaerungen(pfad)
+
+
+# ---------------------------------------------------------------------------
+# lies_erklaerungen: Kopfzeile und Quelle-Pflicht parametrierbar (Plan 05-03)
+# ---------------------------------------------------------------------------
+
+
+def test_lies_erklaerungen_eigene_kopfzeile(tmp_path: Path) -> None:
+    pfad = _schreibe(tmp_path, _GUELTIGE_DATEI.replace("# Erklärtexte", "# Anderes"))
+    assert len(lies_erklaerungen(pfad, kopfzeile="# Anderes")) == 2
+    with pytest.raises(TexteFehler):
+        lies_erklaerungen(pfad)
+
+
+def test_lies_erklaerungen_quelle_optional_erlaubt_nur_titel(tmp_path: Path) -> None:
+    inhalt = """# Erklärtexte
+
+## nurtitel
+Titel: Ein Titel
+
+Ein Absatz ohne Zahl.
+"""
+    pfad = _schreibe(tmp_path, inhalt)
+    with pytest.raises(TexteFehler):
+        lies_erklaerungen(pfad)
+    texte = lies_erklaerungen(pfad, quelle_pflicht=False)
+    assert texte[0].quelle_seiten == ()
+    assert texte[0].titel == "Ein Titel"
+
+
+# ---------------------------------------------------------------------------
+# lies_glossar (D-14, GLOS-01)
+# ---------------------------------------------------------------------------
+
+_GUELTIGES_GLOSSAR = """# Glossar
+
+## begriff_a
+Titel: Begriff A
+
+Der Begriff A ist etwas Erklärtes. Er hat keine Zahl.
+
+## begriff_b
+Titel: Begriff B
+Quelle: S. 24, S. 25
+
+Begriff B betrifft {{meta.einwohner|zahl}} Menschen.
+"""
+
+
+def _glossar(tmp_path: Path, inhalt: str) -> Path:
+    pfad = tmp_path / "glossar.md"
+    pfad.write_text(inhalt, encoding="utf-8")
+    return pfad
+
+
+def test_lies_glossar_gueltige_datei(tmp_path: Path) -> None:
+    texte = lies_glossar(_glossar(tmp_path, _GUELTIGES_GLOSSAR))
+    assert [t.schluessel for t in texte] == ["begriff_a", "begriff_b"]
+    assert texte[0].titel == "Begriff A"
+    assert texte[0].quelle_seiten == ()
+    assert texte[1].quelle_seiten == (24, 25)
+    assert len(texte[0].absaetze) == 1
+
+
+def test_lies_glossar_verlangt_kopfzeile_glossar(tmp_path: Path) -> None:
+    with pytest.raises(TexteFehler):
+        lies_glossar(_glossar(tmp_path, _GUELTIGES_GLOSSAR.replace("# Glossar", "# Erklärtexte")))
+
+
+def test_lies_glossar_platzhalter_ohne_quelle_bricht_ab(tmp_path: Path) -> None:
+    inhalt = _GUELTIGES_GLOSSAR.replace("Quelle: S. 24, S. 25\n", "")
+    with pytest.raises(TexteFehler, match="begriff_b"):
+        lies_glossar(_glossar(tmp_path, inhalt))
+
+
+def test_lies_glossar_doppelter_schluessel_bricht_ab(tmp_path: Path) -> None:
+    with pytest.raises(TexteFehler):
+        lies_glossar(_glossar(tmp_path, _GUELTIGES_GLOSSAR.replace("begriff_b", "begriff_a")))
+
+
+def test_lies_glossar_ungueltiger_schluessel_bricht_ab(tmp_path: Path) -> None:
+    with pytest.raises(TexteFehler):
+        lies_glossar(_glossar(tmp_path, _GUELTIGES_GLOSSAR.replace("begriff_b", "Begriff-B")))
+
+
+def test_lies_glossar_ohne_titel_bricht_ab(tmp_path: Path) -> None:
+    inhalt = _GUELTIGES_GLOSSAR.replace("Titel: Begriff A\n", "")
+    with pytest.raises(TexteFehler):
+        lies_glossar(_glossar(tmp_path, inhalt))
+
+
+# ---------------------------------------------------------------------------
+# pruefe_grundzahl_jahre (D-02)
+# ---------------------------------------------------------------------------
+
+
+def _produkte_fuer_d02() -> list[dict]:
+    return [
+        {
+            "code": "999901",
+            "grundzahlen": [
+                {"position": 1, "einheit": "EUR"},
+                {"position": 2, "einheit": "Anz."},
+            ],
+        }
+    ]
+
+
+def _text_mit(absatz: str) -> list[Erklaertext]:
+    return [Erklaertext("t", "T", (1,), (absatz,))]
+
+
+def test_grundzahl_jahre_euro_ab_erstem_planjahr_bricht_ab() -> None:
+    texte = _text_mit("Es waren {{grundzahlen.999901.1.2024|mio}}.")
+    with pytest.raises(TexteFehler, match="grundzahlen.999901.1.2024"):
+        pruefe_grundzahl_jahre(texte, _produkte_fuer_d02(), 2024)
+
+
+def test_grundzahl_jahre_euro_spaeter_als_erstes_planjahr_bricht_ab() -> None:
+    texte = _text_mit("Es waren {{grundzahlen.999901.1.2025|euro}}.")
+    with pytest.raises(TexteFehler):
+        pruefe_grundzahl_jahre(texte, _produkte_fuer_d02(), 2024)
+
+
+def test_grundzahl_jahre_jahr_vor_erstem_planjahr_besteht() -> None:
+    texte = _text_mit("Es waren {{grundzahlen.999901.1.2023|mio}}.")
+    pruefe_grundzahl_jahre(texte, _produkte_fuer_d02(), 2024)
+
+
+def test_grundzahl_jahre_nicht_euro_besteht() -> None:
+    texte = _text_mit("Es waren {{grundzahlen.999901.2.2025|zahl}}.")
+    pruefe_grundzahl_jahre(texte, _produkte_fuer_d02(), 2024)
+
+
+def test_grundzahl_jahre_andere_platzhalter_bleiben_unberuehrt() -> None:
+    texte = _text_mit("Es waren {{vorbericht.steuerarten.gewerbesteuer.2024|mio}}.")
+    pruefe_grundzahl_jahre(texte, _produkte_fuer_d02(), 2024)
 
 
 # ---------------------------------------------------------------------------
