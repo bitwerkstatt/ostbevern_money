@@ -131,6 +131,18 @@ export interface FinanzplanWerte {
   ve: Record<string, number>
 }
 
+/** Gedruckter Name einer Plan-Zeile, erzeugt aus `pipeline/ostbevern/zeilen.py` (Phase 5). */
+export interface ZeilenName {
+  /** Kanonischer Zeilenschlüssel, identisch zum Schlüssel in `zeilen` (z. B. "steuern"). */
+  schluessel: string
+  /** Zweistellige Zeilennummer im Gesamtplan (z. B. "18"). */
+  nummer: string
+  /** Gedruckter Zeilenname (z. B. "Zuwendungen für Investitionsmaßnahmen"). */
+  name: string
+  /** `true` für eine im PDF gedruckte Summenzeile (z. B. "Ordentliche Erträge"). */
+  ist_summe: boolean
+}
+
 /** Gesamtstruktur von `haushalt.json` (D-21, D-24). */
 export interface Haushalt {
   /** Das aktuell dargestellte Haushaltsjahr. */
@@ -151,6 +163,12 @@ export interface Haushalt {
   vorbericht: Record<string, VorberichtTabelle>
   /** Entwicklung des Eigenkapitals (S. 311, int-Euro), D-11, D-12. */
   eigenkapital: VorberichtTabelle
+  /**
+   * Gedruckte Zeilennamen je Zeilenschlüssel, in der Reihenfolge von
+   * `ergebnisplan.GESAMT.zeilen` bzw. `finanzplan.GESAMT.zeilen`. Einzige Namensquelle der
+   * App: erzeugt aus `ostbevern/zeilen.py`, keine zweite Tabelle in der App.
+   */
+  zeilen_namen: { ergebnisplan: ZeilenName[]; finanzplan: ZeilenName[] }
 }
 
 /** Eine einzelne Stellenplan-Zeile (D-18 bis D-20, EXTR-10, D-21). */

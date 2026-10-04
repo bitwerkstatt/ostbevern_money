@@ -38569,5 +38569,425 @@
         "anmerkung": null
       }
     ]
+  },
+  "zeilen_namen": {
+    "ergebnisplan": [
+      {
+        "schluessel": "steuern",
+        "nummer": "01",
+        "name": "Steuern und ähnliche Abgaben",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "zuwendungen",
+        "nummer": "02",
+        "name": "Zuwendungen und allgemeine Umlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_transferertraege",
+        "nummer": "03",
+        "name": "Sonstige Transfererträge",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "oeffentlich_rechtliche_entgelte",
+        "nummer": "04",
+        "name": "Öffentlich-rechtliche Leistungsentgelte",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "privatrechtliche_entgelte",
+        "nummer": "05",
+        "name": "Privatrechtliche Leistungsentgelte",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "kostenerstattungen",
+        "nummer": "06",
+        "name": "Kostenerstattungen und Kostenumlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_ordentliche_ertraege",
+        "nummer": "07",
+        "name": "Sonstige ordentliche Erträge",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "aktivierte_eigenleistungen",
+        "nummer": "08",
+        "name": "Aktivierte Eigenleistungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "bestandsveraenderungen",
+        "nummer": "09",
+        "name": "Bestandsveränderungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "ordentliche_ertraege",
+        "nummer": "10",
+        "name": "Ordentliche Erträge",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "personalaufwendungen",
+        "nummer": "11",
+        "name": "Personalaufwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "versorgungsaufwendungen",
+        "nummer": "12",
+        "name": "Versorgungsaufwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sach_und_dienstleistungen",
+        "nummer": "13",
+        "name": "Aufwendungen für Sach- und Dienstleistungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "abschreibungen",
+        "nummer": "14",
+        "name": "Bilanzielle Abschreibungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "transferaufwendungen",
+        "nummer": "15",
+        "name": "Transferaufwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_ordentliche_aufwendungen",
+        "nummer": "16",
+        "name": "Sonstige ordentliche Aufwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "ordentliche_aufwendungen",
+        "nummer": "17",
+        "name": "Ordentliche Aufwendungen",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "ordentliches_ergebnis",
+        "nummer": "18",
+        "name": "Ordentliches Ergebnis",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "finanzertraege",
+        "nummer": "19",
+        "name": "Finanzerträge",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "zinsaufwendungen",
+        "nummer": "20",
+        "name": "Zinsen und ähnliche Aufwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "finanzergebnis",
+        "nummer": "21",
+        "name": "Finanzergebnis",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "ergebnis_laufende_verwaltung",
+        "nummer": "22",
+        "name": "Ergebnis der lfd. Verw.-tätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "ausserordentliche_ertraege",
+        "nummer": "23",
+        "name": "Außerordentliche Erträge",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "ausserordentliche_aufwendungen",
+        "nummer": "24",
+        "name": "Außerordentliche Aufwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "ausserordentliches_ergebnis",
+        "nummer": "25",
+        "name": "Außerordentliches Ergebnis",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "jahresergebnis",
+        "nummer": "26",
+        "name": "Jahresergebnis",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "globaler_minderaufwand",
+        "nummer": "27",
+        "name": "Globaler Minderaufwand",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "ergebnis_nach_minderaufwand",
+        "nummer": "28",
+        "name": "Jahresergebnis nach Abzug globaler Minderaufwand",
+        "ist_summe": true
+      }
+    ],
+    "finanzplan": [
+      {
+        "schluessel": "steuern",
+        "nummer": "01",
+        "name": "Steuern und ähnliche Abgaben",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "zuwendungen",
+        "nummer": "02",
+        "name": "Zuwendungen und allgemeine Umlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_transfereinzahlungen",
+        "nummer": "03",
+        "name": "Sonstige Transfereinzahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "oeffentlich_rechtliche_entgelte",
+        "nummer": "04",
+        "name": "Öffentlich-rechtliche Leistungsentgelte",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "privatrechtliche_entgelte",
+        "nummer": "05",
+        "name": "Privatrechtliche Leistungsentgelte",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "kostenerstattungen",
+        "nummer": "06",
+        "name": "Kostenerstattungen und Kostenumlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_einzahlungen",
+        "nummer": "07",
+        "name": "Sonstige Einzahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "finanzeinzahlungen",
+        "nummer": "08",
+        "name": "Zinsen und sonstige Finanzeinzahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "einzahlungen_laufende_verwaltung",
+        "nummer": "09",
+        "name": "Einzahlungen aus lfd. Verw.-tätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "personalauszahlungen",
+        "nummer": "10",
+        "name": "Personalauszahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "versorgungsauszahlungen",
+        "nummer": "11",
+        "name": "Versorgungsauszahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sach_und_dienstleistungen",
+        "nummer": "12",
+        "name": "Auszahlg. Sach- und Dienstleistungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "finanzauszahlungen",
+        "nummer": "13",
+        "name": "Zinsen und sonstige Finanzauszahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "transferauszahlungen",
+        "nummer": "14",
+        "name": "Transferauszahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_auszahlungen",
+        "nummer": "15",
+        "name": "Sonstige Auszahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "auszahlungen_laufende_verwaltung",
+        "nummer": "16",
+        "name": "Auszahlungen aus lfd. Verw.-tätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "saldo_laufende_verwaltung",
+        "nummer": "17",
+        "name": "Saldo aus lfd. Verw.-tätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "investitionszuwendungen",
+        "nummer": "18",
+        "name": "Zuwendungen für Investitionsmaßnahmen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "veraeusserung_sachanlagen",
+        "nummer": "19",
+        "name": "Einz. aus Veräußerung v. Sachanlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "veraeusserung_finanzanlagen",
+        "nummer": "20",
+        "name": "Einz. aus Veräußerung v. Finanzanlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "beitraege",
+        "nummer": "21",
+        "name": "Einz. aus Beiträgen u. ä. Entgelten",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_investitionseinzahlungen",
+        "nummer": "22",
+        "name": "Sonstige Investitionseinzahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "einzahlungen_investitionen",
+        "nummer": "23",
+        "name": "Einzahlungen aus Investitionstätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "erwerb_grundstuecke_gebaeude",
+        "nummer": "24",
+        "name": "Ausz. f. Erwerb von Grundst. u. Gebäuden",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "baumassnahmen",
+        "nummer": "25",
+        "name": "Ausz. f. Baumaßnahmen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "erwerb_bewegliches_anlagevermoegen",
+        "nummer": "26",
+        "name": "Ausz. f. Erwerb v. bewegl. Anlageverm.",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "erwerb_finanzanlagen",
+        "nummer": "27",
+        "name": "Ausz. f. Erwerb v. Finanzanlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "aktivierbare_zuwendungen",
+        "nummer": "28",
+        "name": "Ausz. v. aktivierbaren Zuwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_investitionsauszahlungen",
+        "nummer": "29",
+        "name": "Sonstige Investitionsauszahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "auszahlungen_investitionen",
+        "nummer": "30",
+        "name": "Auszahlungen aus Investitionstätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "saldo_investitionen",
+        "nummer": "31",
+        "name": "Saldo aus Investitionstätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "finanzmittelueberschuss",
+        "nummer": "32",
+        "name": "Überschuss/Fehlbetrag",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "kreditaufnahme",
+        "nummer": "33",
+        "name": "Aufnahme und Rückflüsse von Darlehen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "liquiditaetskredite_aufnahme",
+        "nummer": "34",
+        "name": "Aufn. v. Krediten z. Liquiditätssicherung",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "tilgung",
+        "nummer": "35",
+        "name": "Tilgung und Gewährung von Darlehen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "liquiditaetskredite_tilgung",
+        "nummer": "36",
+        "name": "Tilgung v. Krediten z. Liquiditätssicherung",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "saldo_finanzierung",
+        "nummer": "37",
+        "name": "Saldo aus Finanzierungstätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "aenderung_finanzbestand",
+        "nummer": "38",
+        "name": "Änd. des Finanzbestandes",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "anfangsbestand_finanzmittel",
+        "nummer": "39",
+        "name": "Anfangsbestand an Finanzmitteln",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "fremde_finanzmittel",
+        "nummer": "40",
+        "name": "Bestand an fremden Finanzmitteln",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "liquide_mittel",
+        "nummer": "41",
+        "name": "Liquide Mittel",
+        "ist_summe": true
+      }
+    ]
   }
 }

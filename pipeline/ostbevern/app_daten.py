@@ -12,7 +12,7 @@ from __future__ import annotations
 import json
 import os
 import tempfile
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 import polars as pl
@@ -365,6 +365,40 @@ def baue_finanzplan(
     }
 
     return {"GESAMT": {"zeilen": zeilen_werte, "ve": ve_werte}}
+
+
+def baue_zeilen_namen(finanzplan_zeilen: Sequence[str]) -> dict[str, list[dict[str, object]]]:
+    """Baut `zeilen_namen` von `haushalt.json` (Phase 5, RESEARCH Pitfall 9): der gedruckte
+    Zeilenname, die Zeilennummer und das Summenflag je Ergebnisplan-Zeile
+    (`ERGEBNISPLAN_APP_ZEILEN`, Reihenfolge wie dort) und je Zeile von `finanzplan_zeilen`
+    (die Schlüssel von `finanzplan.GESAMT.zeilen`, Reihenfolge wie dort). Liest nur `ZEILEN`
+    -- die App führt keine zweite Namenstabelle. Ein Schlüssel ohne Eintrag in `ZEILEN`
+    bricht mit `AppDatenFehler` ab."""
+
+    def _eintraege(plantyp: str, schluessel: Sequence[str]) -> list[dict[str, object]]:
+        nummer_je_schluessel = _zeile_fuer_kanonisch(plantyp)
+        eintraege: list[dict[str, object]] = []
+        for kanonisch in schluessel:
+            nummer = nummer_je_schluessel.get(kanonisch)
+            if nummer is None:
+                raise AppDatenFehler(
+                    f"zeilen_namen: {plantyp} kennt den Schlüssel {kanonisch!r} nicht"
+                )
+            definition = ZEILEN[plantyp][nummer]
+            eintraege.append(
+                {
+                    "schluessel": kanonisch,
+                    "nummer": nummer,
+                    "name": definition.name,
+                    "ist_summe": definition.ist_summe,
+                }
+            )
+        return eintraege
+
+    return {
+        "ergebnisplan": _eintraege("gesamtergebnisplan", ERGEBNISPLAN_APP_ZEILEN),
+        "finanzplan": _eintraege("gesamtfinanzplan", finanzplan_zeilen),
+    }
 
 
 # produkte.json / investitionen.json (D-13, D-14, D-21, Plan 04-04 Task 2).
@@ -980,6 +1014,7 @@ def erzeuge_app_daten(
         "finanzplan": finanzplan_app,
         "vorbericht": vorbericht,
         "eigenkapital": eigenkapital,
+        "zeilen_namen": baue_zeilen_namen(list(finanzplan_app["GESAMT"]["zeilen"])),
     }
 
     pfad = app_daten_wurzel / HAUSHALT_JSON

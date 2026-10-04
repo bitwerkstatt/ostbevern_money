@@ -609,6 +609,7 @@ def test_haushalt_json_knoten_und_ergebnisplan(tmp_path: Path) -> None:
         "finanzplan",
         "vorbericht",
         "eigenkapital",
+        "zeilen_namen",
     ]
     knoten_je_code = {k["code"]: k for k in daten["knoten"]}
     assert knoten_je_code["KL"]["eltern"] == "GESAMT"
