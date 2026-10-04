@@ -86,6 +86,27 @@
       "einheit": "euro",
       "quelle": 48,
       "anmerkung": "BBO-Wirtschaftsplan (Bäder- und Beteiligungsgesellschaft Ostbevern mbH): geplanter Verlustausgleich laut eigenem Wirtschaftsplan, außerhalb des Kernhaushalts (Spez. 3.7). Davon erscheint nur der Transferaufwendungen-Posten 'Verlustübernahme BBO' (transferaufwendungen.csv) im Kernhaushalt."
+    },
+    "konzessionsabgabe_strom": {
+      "wert": 315000,
+      "einheit": "euro",
+      "quelle": 33,
+      "gerundet": true,
+      "anmerkung": "Vorbericht 2.1.7, Text unter der Tabelle: 'Die Konzessionsabgaben betreffen die Sparten Strom- (315 T€), Gas- (40 T€) und Wasserversorgung (115 T€).' Aufteilung nur für das Haushaltsjahr gedruckt."
+    },
+    "konzessionsabgabe_gas": {
+      "wert": 40000,
+      "einheit": "euro",
+      "quelle": 33,
+      "gerundet": true,
+      "anmerkung": "Vorbericht 2.1.7, Text unter der Tabelle: 'Die Konzessionsabgaben betreffen die Sparten Strom- (315 T€), Gas- (40 T€) und Wasserversorgung (115 T€).' Aufteilung nur für das Haushaltsjahr gedruckt."
+    },
+    "konzessionsabgabe_wasser": {
+      "wert": 115000,
+      "einheit": "euro",
+      "quelle": 33,
+      "gerundet": true,
+      "anmerkung": "Vorbericht 2.1.7, Text unter der Tabelle: 'Die Konzessionsabgaben betreffen die Sparten Strom- (315 T€), Gas- (40 T€) und Wasserversorgung (115 T€).' Aufteilung nur für das Haushaltsjahr gedruckt."
     }
   }
 }

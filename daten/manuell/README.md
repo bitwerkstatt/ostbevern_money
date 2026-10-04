@@ -81,6 +81,21 @@ die Tabelle druckt nur diese eine Spalte, nicht den ganzen Finanzplanungszeitrau
 Gesamtzeile dieser Tabelle als auch dem Transferaufwendungen-Posten „Zuschüsse an
 Kindertageseinr.“ desselben Jahres — beides prüft Regel 5.
 
+### `investitionszuwendungen.csv`
+
+Vorbericht S. 52 „Bei den Zuweisungen und Zuschüssen für Investitionen handelt es sich um:“
+(EINN-06, Phase 5 D-03): die vier Pauschalen (Investitions-, Schul-, Sport- und
+Feuerschutzpauschale) und die sechs Förderungen für einzelne Maßnahmen mit der gedruckten
+Gesamtzeile 3.742 T€. Wie `kita_zuschuesse.csv` druckt die Tabelle nur **eine** Spalte, das
+Haushaltsjahr (Wertart `ansatz`); für die übrigen Jahre gibt es keine Aufschlüsselung, die App
+zeigt dort „–“ je Pauschale. Die Fördersätze stehen als Teil des gedruckten Namens im Posten
+(z. B. „Förderung Wirtschaftswege (70 %)“, Schlüssel `foerderung_wirtschaftswege_70`). Die
+Tabelle hat bewusst keine Ergebnisplan-Zeile (Spez. 3.1: Finanzplan-Betrag gehört nicht in
+eine Ergebnisplan-Struktur); Regel 5 prüft in Stufe (a) die Summe der zehn Posten gegen die
+gedruckte Gesamtzeile und in Stufe (b) die Gesamtzeile × 1000 gegen die Gesamtfinanzplan-Zeile
+18 „Zuwendungen für Investitionsmaßnahmen“ desselben Jahres (Toleranz ±1.000 €). Beides trifft
+auf den eingecheckten Daten exakt (Σ = 3.742 T€ = 3.742.000 €).
+
 ### `weitere_vorberichtstabellen.csv`
 
 Die sechs weiteren Vorberichtstabellen (fünf aus Spez. 4.3, D-08, plus 2.1.7 seit Phase 5
@@ -145,8 +160,16 @@ validiert über `ostbevern.manuell.lies_meta_json` gegen eine strikte Schlüssel
 | `kreisumlage.brutto` | 11.472.478 € = netto + Rückstellungsauflösung (berechnet, gerundet) | S. 46 |
 | `kreisumlage.hebesatz_kreisumlage` | 36,3 % (363 Promille, Vorjahr 33 % = 330) | S. 47 |
 | `kreisumlage.hebesatz_jugendamtsumlage` | 21 % (210 Promille, Vorjahr 20,3 % = 203) | S. 47 |
+| `vorbericht_werte.konzessionsabgabe_strom` / `_gas` / `_wasser` | 315.000 / 40.000 / 115.000 € (T€-Werte × 1000, gerundet) | S. 33 |
 | `satzung.beschluss` | 2026-03-03 (Ratsbeschluss) | S. 8 |
 | `satzung.ausfertigung` | 2026-03-04 (Unterschriftsdatum) | S. 9 |
+
+**Konzessionsabgaben nach Sparten (S. 33, EINN-04):** Der Text unter Tabelle 2.1.7 nennt die
+Aufteilung der Konzessionsabgaben des Haushaltsjahrs auf Strom (315 T€), Gas (40 T€) und
+Wasser (115 T€). Die Aufteilung ist nur für das Haushaltsjahr gedruckt, für andere Jahre wird
+nichts ergänzt. Regel 5 (`plan` `vorbericht_konzessionsabgaben`) prüft, dass die Summe der drei
+Werte exakt dem Posten `konzessionsabgaben` von Tabelle 2.1.7 des Haushaltsjahrs entspricht
+(470 T€).
 
 **Warum `kreisumlage.brutto` berechnet ist:** Der Vorbericht druckt auf S. 46 nur den
 **netto**-Betrag der Kreisumlage (10.1473 T€, mit angeklebter Fußnotenziffer 3 — siehe
