@@ -18,14 +18,15 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 - ✓ Extraktion von Gesamtergebnisplan, Gesamtfinanzplan, Teilergebnis- und Teilfinanzplänen (PB, PG und Produkt) im Langformat, Spalten über x-Koordinaten — Phase 2
 - ✓ Produktinformationen (inkl. Bindungsgrad, Grundzahlen, Erläuterungsposten) für alle 63 Produkte — `produkte.json` ohne Personennamen, `grundzahlen.csv`, `erlaeuterungen.csv` — Phase 3
 - ✓ Investitionsmaßnahmen (nur aus Produktseiten) und VE-Fälligkeiten — `investitionen.csv`, `ve_faelligkeiten.csv`, PB-Listen als Kontrollquelle — Phase 3
+- ✓ Stellenplan (Teil A Beamte, Teil B Tarif, Stellenübersicht nach PB) — `stellenplan.csv`, Regel 10, Beamte 2026 = 8 — Phase 4
+- ✓ Manuell gepflegte Vorberichtstabellen und `meta.json` mit Quelle je Wert, automatisch gegen Planzeilen geprüft (Regel 5, Eckwerte Regel 9) — Phase 4
+- ✓ Konsistenzprüfung (Prüfregeln 1–10) in pytest und als Markdown-Bericht; bekannte Abweichungen in `befunde.md` — Phase 4
+- ✓ App-JSON-Dateien (`haushalt.json`, `produkte.json`, `investitionen.json`, `stellenplan.json`, `texte.json`) reproduzierbar über `alle.py`, ohne Personennamen, CI-Diff-Prüfung — Phase 4
+- ✓ Erklärtexte mit Datenplatzhaltern und Seitenverweis; jede Zahl rendert über `formatiere()` korrekt (Jahreszahlen mit Kürzel `jahr`, CR-01) — Phase 4
 
 ### Active
 
 **Pipeline (Python, uv):**
-- [ ] Stellenplan (Teil A Beamte, Teil B Tarif, Stellenübersicht nach PB)
-- [ ] Manuell gepflegte Vorberichtstabellen (Steuerarten, Zuwendungen, Transferaufwendungen, Kita-Zuschüsse, weitere) und `meta.json`, automatisch gegen Planzeilen geprüft
-- [ ] Konsistenzprüfung (Prüfregeln 1–8 aus Spez. 5.5) in pytest und als Markdown-Bericht; bekannte Abweichungen in `befunde.md` (Regeln 1–4 grün seit Phase 2, 6–8 seit Phase 3; Regel 5 folgt)
-- [ ] Erzeugung der App-JSON-Dateien (ohne Personennamen)
 - [ ] Quellenbelege: Zeilenrechteck + gerenderte WebP-Seiten, `quellen.json`
 - [ ] Pipeline ist für das ProFIS-Layout generisch: Jahr, Spalten und Seitenbereiche konfigurierbar, sodass der Haushalt 2027 mit wenig Änderung verarbeitet werden kann
 
@@ -107,6 +108,9 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 | Strukturelle Lücken (Maßnahme nur in einer Quelle) sind keine Betragsabweichung und können nicht über `befunde.md` entschuldigt werden | Fehlende Daten dürfen nie als „bekannt“ durchrutschen | ✓ Good — Phase 3 (0 Lücken) |
 | Personennamen werden beim Parsen verworfen, bevor ein Datensatz entsteht; Schutz dreifach (Parse-Zeit, exakter Schlüsselsatz, Whole-Tree-Test) | Repo ist öffentlich (D-09) | ✓ Good — Phase 3 |
 | Historische Ergebnis-Spalten-Differenzen der Investitionstabellen werden als Befund belegt, interne Gegenproben vergleichen nur Budgetspalten | Ist-Werte auf heute nicht mehr geführten Konten sind im PDF so gedruckt | ✓ Good — Phase 3 (8 Befunde Regel 6, 18 Befunde Regel 7) |
+| Erklärtexte nutzen Platzhalter `{{schluessel\|kuerzel}}`; formatiert wird nur in `format.ts`, Jahreszahlen mit eigenem Kürzel `jahr` (ohne Tausendertrennung) | Pipeline formatiert nie (D-15); „2.026“ statt „2026“ war ein echter Fehler (CR-01) | ✓ Good — Phase 4 (Rendertest über `formatiere()`-Portierung mit Node-Gegenprobe) |
+| Manuelle Vorberichtswerte sind unabhängige Transkription mit Seitenbeleg; Fußnoten werden als korrigierter Wert mit Anmerkung gespeichert, Cent-Beträge kaufmännisch gerundet | Regel 5/9 treffen GEP und Satzung exakt | ✓ Good — Phase 4 |
+| „Weitergabe an Kreis und Land“ als eigener Knoten; Zuschussbedarf je Knoten als berechneter Wert gekennzeichnet | Fachlich korrekte Ausgabensicht für eine kreisangehörige Gemeinde | ✓ Good — Phase 4 |
 
 ## Evolution
 
@@ -126,4 +130,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-02 after Phase 3*
+*Last updated: 2026-10-04 after Phase 4*

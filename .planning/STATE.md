@@ -20,10 +20,10 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-10-02)
+See: .planning/PROJECT.md (updated 2026-10-04)
 
 **Core value:** Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch automatische Prüfungen belegt. Die Leitfragen „Woher?“ und „Wofür?“ sind für Laien verständlich beantwortet.
-**Current focus:** Phase 04 — Manuelle Daten und App-Daten
+**Current focus:** Phase 5 — Leitfragen-Seiten
 
 ## Current Position
 
@@ -76,17 +76,20 @@ Recent decisions affecting current work:
 - [Phase 3]: Schritte 03/04 und die Querschnitte laufen in `alle.py`; Regeln 1–4 und 6–8 grün (Regel 6: 1964, Regel 7: 1152, Regel 8: 820 Werte), 0 Lücken; 26 neue PDF-belegte Befunde (Regel 6: 8, Regel 7: 18).
 - [Phase 3]: `produkte.json` (63 Produkte) ohne Personennamen, dreifach abgesichert; `grundzahlen.csv` 827 Zeilen/48 Produkte, `erlaeuterungen.csv` 229 Zeilen/50 Produkte (Sollwert von 51 auf 50 korrigiert, S. 120101 druckt leere Kopfzeile).
 
+- [Phase 4]: Prüfregeln 1–10 grün; Vorberichtswerte, `meta.json`, Schuldenstand/Rücklagen/VE mit Quelle; Stellenplan (Beamte 2026 = 8); App-JSON reproduzierbar über `alle.py` ohne Personennamen (472 Tests).
+- [Phase 4]: Erklärtexte: Platzhalter `{{schluessel|kuerzel}}`, Jahreszahlen mit Kürzel `jahr` (CR-01 behoben in 04-06); `test_formatiere.py` rendert jede Zahl über eine `formatiere()`-Portierung mit Node-Gegenprobe.
+
 ### Pending Todos
 
 None yet.
 
 ### Blockers/Concerns
 
-- [Phase 4]: Für Schuldenstand, Rücklagen und VE-Übersicht (S. 24/25, 309–311) gibt es keine eigene Datenanforderung. Das ist als Erfolgskriterium in Phase 4 aufgefangen. Bei Bedarf wird daraus eine eigene Anforderung (z. B. MANU-09).
 - [Phase 1]: Die CI ist nur lokal nachgestellt; der erste Lauf auf GitHub steht aus, bis ein Remote angelegt ist.
 - [Phase 1]: `app/node_modules` im gemounteten Repo enthält macOS-Binaries; im Linux-Sandbox App-Checks in einer Scratch-Kopie ausführen.
 - [Phase 2]: Code-Review 02-REVIEW.md: 3 Warnungen offen (u. a. Vorzeichen-Beschreibung in `befunde.md`, Kommentar zu PB 09/15 sollte S. 296/299 zitieren).
-- [Phase 2/4]: Die Anhang-B-Eckwerte (B.6), die von `meta.json` oder vom Stellenplan abhängen, lassen sich erst in Phase 4 prüfen. Phase 2 deckt B.1–B.3 und Satzung § 1 ab.
+- [Phase 4]: Code-Review 04-REVIEW-DISPOSITION.md: 8 Befunde offen (WR-01…WR-06, IN-01, IN-02), alle ohne Auswirkung auf die heutigen Daten; per Nutzerentscheidung vom 2026-10-03 außerhalb der Lückenschließung. WR-06/IN-01 (kein Fallback in `formatiere()`) betreffen Phase 5, sobald `formatiere()` in die Seiten verdrahtet wird.
+- [Phase 4]: `/gsd-secure-phase 04` steht aus (Sicherheitsprüfung aktiviert, noch kein 04-SECURITY.md).
 
 ### Quick Tasks Completed
 
@@ -104,6 +107,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-02T12:49:51.420Z
-Stopped at: Phase 04 complete, ready to plan Phase 5
-Resume file: .planning/phases/04-manuelle-daten-und-app-daten/04-CONTEXT.md
+Last session: 2026-10-04T08:55:00Z
+Stopped at: Phase 4 complete, ready to plan Phase 5
+Resume file: None
