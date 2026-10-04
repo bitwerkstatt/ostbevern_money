@@ -29,6 +29,11 @@ defineSlots<{
    * (`th`/`td`) bleibt Eigentum der Tabelle, damit ihr Scoped-CSS greift.
    */
   zelle?(props: { zeile: DatenZeile; spalte: DatenSpalte; wert: string | number | null }): unknown
+  /**
+   * Zusatz hinter dem Inhalt der ersten Zelle einer Zeile (z. B. das Etikett „berechnet“),
+   * ohne den Standardinhalt der Zelle zu ersetzen.
+   */
+  zeilenzusatz?(props: { zeile: DatenZeile }): unknown
   default?(): unknown
 }>()
 
@@ -107,6 +112,7 @@ function alsZahl(wert: string | number | null | undefined): number {
                 </template>
                 <template v-else>{{ zeile[spalte.schluessel] }}</template>
               </slot>
+              <slot name="zeilenzusatz" :zeile="zeile" />
             </th>
             <td v-else :class="{ 'om-zahl': spalte.art !== 'text' }">
               <slot
@@ -135,6 +141,13 @@ function alsZahl(wert: string | number | null | undefined): number {
                   lang="de"
                   type="decimal"
                   maximum-fraction-digits="0"
+                  :value="alsZahl(zeile[spalte.schluessel])"
+                ></wa-format-number>
+                <wa-format-number
+                  v-else-if="spalte.art === 'dezimal'"
+                  lang="de"
+                  type="decimal"
+                  maximum-fraction-digits="2"
                   :value="alsZahl(zeile[spalte.schluessel])"
                 ></wa-format-number>
                 <wa-format-number

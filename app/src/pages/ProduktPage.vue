@@ -2,10 +2,19 @@
 import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 
-import { jahr as formatiereJahr } from '@/charts/format'
+import { euro, jahr as formatiereJahr } from '@/charts/format'
+import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
+import DatenTabelle from '@/components/DatenTabelle.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import { useJahr } from '@/lib/jahr'
-import { baueProduktKopf } from '@/lib/produkt'
+import {
+  baueErlaeuterungen,
+  baueGrundzahlen,
+  baueInvestitionenTabelle,
+  baueProduktInvestitionen,
+  baueProduktKopf,
+  baueTeilergebnisplan,
+} from '@/lib/produkt'
 
 const route = useRoute()
 const { jahr, jahrLink } = useJahr()
@@ -32,6 +41,11 @@ const zurueckZiel = computed(() => {
   const k = kopf.value
   return k === null ? null : jahrLink(k.zurueck)
 })
+
+const teilergebnisplan = computed(() => baueTeilergebnisplan(code.value))
+const erlaeuterungen = computed(() => baueErlaeuterungen(code.value))
+const grundzahlen = computed(() => baueGrundzahlen(code.value))
+const investitionen = computed(() => baueInvestitionenTabelle(baueProduktInvestitionen(code.value)))
 </script>
 
 <template>
@@ -86,6 +100,69 @@ const zurueckZiel = computed(() => {
             <dd>{{ produkt.fachbereich }}</dd>
           </div>
         </dl>
+      </section>
+
+      <section
+        v-if="teilergebnisplan !== null"
+        class="om-produkt__abschnitt"
+        aria-labelledby="om-produkt-plan"
+      >
+        <h2 id="om-produkt-plan">{{ teilergebnisplan.titel }}</h2>
+        <DatenTabelle
+          :beschriftung="teilergebnisplan.titel"
+          :spalten="teilergebnisplan.spalten"
+          :zeilen="teilergebnisplan.zeilen"
+        >
+          <template #zeilenzusatz="{ zeile }">
+            <BerechnetEtikett v-if="zeile.etikett === 'berechnet'" />
+          </template>
+        </DatenTabelle>
+      </section>
+
+      <section
+        v-if="erlaeuterungen.length > 0"
+        class="om-produkt__abschnitt"
+        aria-labelledby="om-produkt-erlaeuterungen"
+      >
+        <h2 id="om-produkt-erlaeuterungen">Erläuterungen</h2>
+        <ul class="om-produkt__erlaeuterungen">
+          <li v-for="(eintrag, index) in erlaeuterungen" :key="index">
+            <span v-if="eintrag.betrag !== null" class="om-zahl">{{ euro(eintrag.betrag) }}</span>
+            {{ eintrag.text }}
+            <span v-if="eintrag.zuAnzeigen" class="om-produkt__zu">
+              zu: {{ eintrag.zeilenNamen.join(', ') }}
+            </span>
+          </li>
+        </ul>
+      </section>
+
+      <section
+        v-if="grundzahlen !== null"
+        class="om-produkt__abschnitt"
+        aria-labelledby="om-produkt-grundzahlen"
+      >
+        <h2 id="om-produkt-grundzahlen">Grundzahlen</h2>
+        <DatenTabelle
+          beschriftung="Grundzahlen"
+          :spalten="grundzahlen.spalten"
+          :zeilen="grundzahlen.zeilen"
+          :fussnote="grundzahlen.fussnote ?? undefined"
+        >
+          <template #zeilenzusatz="{ zeile }">
+            <BerechnetEtikett v-if="zeile.etikett === 'berechnet'" />
+          </template>
+        </DatenTabelle>
+      </section>
+
+      <section class="om-produkt__abschnitt" aria-labelledby="om-produkt-investitionen">
+        <h2 id="om-produkt-investitionen">Investitionen</h2>
+        <DatenTabelle
+          v-if="investitionen.zeilen.length > 0"
+          beschriftung="Investitionen"
+          :spalten="investitionen.spalten"
+          :zeilen="investitionen.zeilen"
+        />
+        <p v-else>Für dieses Produkt sind keine Investitionen geplant.</p>
       </section>
 
       <p v-if="kopf.quelleSeite !== null" class="om-produkt__quelle">
@@ -156,6 +233,23 @@ const zurueckZiel = computed(() => {
   margin: 0;
 }
 
+.om-produkt__erlaeuterungen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xs);
+}
+
+.om-produkt__erlaeuterungen .om-zahl {
+  display: inline-block;
+  margin-inline-end: var(--wa-space-xs);
+  font-weight: var(--wa-font-weight-bold);
+}
+
+.om-produkt__zu {
+  display: block;
+}
+
+.om-produkt__zu,
 .om-produkt__hinweis,
 .om-produkt__quelle {
   font-size: var(--wa-font-size-s);
