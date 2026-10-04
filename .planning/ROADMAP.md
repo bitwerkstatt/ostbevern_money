@@ -172,7 +172,7 @@ Plans:
   4. `/geldfluss` zeigt einen Sankey 2026, der über „Defizit (Entnahme aus Rücklagen)“ und den Minderaufwand bilanziert. Hover hebt Pfade hervor, und ein Klick auf einen Aufgabenbereich öffnet die Ausgabenseite. Auf schmalen Bildschirmen erscheint stattdessen eine Tabelle oder ein gestapelter Balken. Einnahmen, Ausgaben und Geldfluss haben einen Jahr-Umschalter (2024 Ist … 2029 Planung, Standard 2026).
   5. `/glossar` erklärt mindestens die 22 Begriffe aus Spez. 6.14 und listet alle 63 Produkte als Akkordeon. `GlossarBegriff`-Links auf den Seiten führen zum jeweiligen Begriff. Zahlen in Erklärtexten werden aus den Daten erzeugt und verweisen auf eine PDF-Seite.
 
-**Plans**: 6/15 plans executed
+**Plans**: 13/15 plans executed
 **UI hint**: yes
 
 Plans:
@@ -187,13 +187,13 @@ Plans:
 - [x] 05-06-PLAN.md — Platzhalter-Renderer mit Jahresbindung, ErklaerText, Pro-Kopf/Zeilennamen/Ertragsarten, Kreisumlage-Callout (Wave 2)
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 05-07-PLAN.md — Kopfmenü mit Drawer, Skip-Link, Fußzeile mit Konfiguration (Wave 3)
-- [ ] 05-08-PLAN.md — Startseite: Kennzahlenband 2026, Einstiegskacheln (D-20), Kreisumlage-Hinweis (Wave 3)
-- [ ] 05-09-PLAN.md — Einnahmen: Ertragsarten, Aufschlüsselung, Zeitreihe je Steuerart (D-01), investive Einnahmen (Wave 3)
-- [ ] 05-10-PLAN.md — Ausgaben-Drilldown: Treemap/Zuschuss-Balken, Brotkrumen, Tabelle, Überschuss-Erklärung (Wave 3)
-- [ ] 05-11-PLAN.md — Produktdetail `/produkt/:code` mit Teilergebnisplan, Grundzahlen, Investitionen (Wave 3)
-- [ ] 05-12-PLAN.md — Geldfluss: bilanzierter Sankey (D-19), mobile Balken, Lesehilfe je Jahr (Wave 3)
-- [ ] 05-13-PLAN.md — Glossarseite, `GlossarBegriff`, Produktakkordeon (Wave 3)
+- [x] 05-07-PLAN.md — Kopfmenü mit Drawer, Skip-Link, Fußzeile mit Konfiguration (Wave 3)
+- [x] 05-08-PLAN.md — Startseite: Kennzahlenband 2026, Einstiegskacheln (D-20), Kreisumlage-Hinweis (Wave 3)
+- [x] 05-09-PLAN.md — Einnahmen: Ertragsarten, Aufschlüsselung, Zeitreihe je Steuerart (D-01), investive Einnahmen (Wave 3)
+- [x] 05-10-PLAN.md — Ausgaben-Drilldown: Treemap/Zuschuss-Balken, Brotkrumen, Tabelle, Überschuss-Erklärung (Wave 3)
+- [x] 05-11-PLAN.md — Produktdetail `/produkt/:code` mit Teilergebnisplan, Grundzahlen, Investitionen (Wave 3)
+- [x] 05-12-PLAN.md — Geldfluss: bilanzierter Sankey (D-19), mobile Balken, Lesehilfe je Jahr (Wave 3)
+- [x] 05-13-PLAN.md — Glossarseite, `GlossarBegriff`, Produktakkordeon (Wave 3)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 - [ ] 05-14-PLAN.md — Ausgaben: Kreisumlage-Callout, Minderaufwand-Hinweis, Aufwandsart mit Transferaufwendungen (Wave 4)
@@ -245,6 +245,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 2. Kernzahlen | 5/5 | Complete    | 2026-10-01 |
 | 3. Details | 5/5 | Complete    | 2026-10-02 |
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
-| 5. Leitfragen-Seiten | 6/15 | In Progress|  |
+| 5. Leitfragen-Seiten | 13/15 | In Progress|  |
 | 6. Kontext-Seiten | 0/TBD | Not started | - |
 | 7. Feinschliff und Veröffentlichung | 0/TBD | Not started | - |
