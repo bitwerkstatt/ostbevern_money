@@ -48,6 +48,7 @@ from ostbevern.schema import (
     lies_vorbericht_csv,
 )
 from ostbevern.texte import PLATZHALTER_MUSTER, TexteFehler
+from ostbevern.zeilen import ZEILEN
 
 
 @pytest.fixture(scope="module")
@@ -273,6 +274,52 @@ def test_haushalt_json_weitere_vorberichtstabellen(tmp_path: Path) -> None:
         assert eintrag["posten"], f"{tabelle}: keine Posten"
 
 
+def test_zeilen_namen_decken_ergebnisplan_ab(tmp_path: Path) -> None:
+    """Phase 5 (RESEARCH Pitfall 9): `zeilen_namen.ergebnisplan` hat genau einen Eintrag je
+    App-Zeile des Ergebnisplans, in derselben Reihenfolge, mit dem gedruckten Namen aus
+    `ZEILEN` -- keine zweite Namenstabelle."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    namen = daten["zeilen_namen"]["ergebnisplan"]
+
+    assert [eintrag["schluessel"] for eintrag in namen] == list(
+        daten["ergebnisplan"]["GESAMT"]["zeilen"]
+    )
+    assert [eintrag["schluessel"] for eintrag in namen] == list(app_daten.ERGEBNISPLAN_APP_ZEILEN)
+    for eintrag in namen:
+        definition = ZEILEN["gesamtergebnisplan"][eintrag["nummer"]]
+        assert eintrag["schluessel"] == definition.kanonisch
+        assert eintrag["name"] == definition.name
+        assert eintrag["ist_summe"] is definition.ist_summe
+    assert list(namen[0]) == ["schluessel", "nummer", "name", "ist_summe"]
+
+
+def test_zeilen_namen_decken_finanzplan_ab(tmp_path: Path) -> None:
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    namen = daten["zeilen_namen"]["finanzplan"]
+
+    assert [eintrag["schluessel"] for eintrag in namen] == list(
+        daten["finanzplan"]["GESAMT"]["zeilen"]
+    )
+    for eintrag in namen:
+        definition = ZEILEN["gesamtfinanzplan"][eintrag["nummer"]]
+        assert eintrag["schluessel"] == definition.kanonisch
+        assert eintrag["name"] == definition.name
+        assert eintrag["ist_summe"] is definition.ist_summe
+    investiv = next(e for e in namen if e["schluessel"] == "investitionszuwendungen")
+    assert investiv["nummer"] == "18"
+    assert investiv["name"] == "Zuwendungen für Investitionsmaßnahmen"
+
+
+def test_zeilen_namen_ist_letzter_schluessel_nach_eigenkapital(tmp_path: Path) -> None:
+    """Das neue Top-Level-Feld hängt hinten an: bestehende Schlüssel behalten ihre
+    Reihenfolge (D-21-Vertrag)."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    assert list(daten)[-2:] == ["eigenkapital", "zeilen_namen"]
+
+
 def test_haushalt_json_meta(tmp_path: Path) -> None:
     erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
     daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
@@ -286,7 +333,7 @@ def test_haushalt_json_meta(tmp_path: Path) -> None:
 def test_haushalt_json_eigenkapital(tmp_path: Path) -> None:
     erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
     daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
-    assert list(daten)[-1] == "eigenkapital"
+    assert list(daten)[-2] == "eigenkapital"
     eigenkapital = daten["eigenkapital"]
     assert eigenkapital["tabelle"] == "eigenkapital"
     assert eigenkapital["quelle_einheit"] == "euro"
