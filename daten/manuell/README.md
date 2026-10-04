@@ -276,10 +276,13 @@ Pfad in die kuratierte Werte-Namensraum, die `ostbevern.texte.textwerte` aus
 `schulden.pro_kopf.2025`, `ve.gesamt`, `abgeleitet.<name>` für benannte, in
 `ostbevern/texte.py::ABGELEITET` dokumentierte Formeln). `formatkuerzel` ist eines aus
 `ostbevern.texte.FORMATKUERZEL` = `app/src/charts/format.ts::FormatKuerzel`: `euro`,
-`mio`, `zahl`, `prozent`, `promille`, `vzae`. Die Pipeline löst den Schlüssel gegen den
-Rohwert auf und schreibt ihn unformatiert nach `app/src/data/texte.json` — **formatiert
-wird ausschließlich in der App** über `format.ts::formatiere` (D-15). Ein unbekannter
-Schlüssel oder ein unbekanntes Formatkürzel bricht Schritt 07 mit `TexteFehler` ab.
+`mio`, `zahl`, `jahr`, `prozent`, `promille`, `vzae`. `zahl` gruppiert Tausender (z. B.
+Einwohner), `jahr` gibt eine Jahreszahl ohne Tausendertrennung aus; Jahres-Platzhalter
+wie `jahr.haushaltsjahr` stehen deshalb immer mit `jahr` (CR-01). Die Pipeline löst den
+Schlüssel gegen den Rohwert auf und schreibt ihn unformatiert nach
+`app/src/data/texte.json` — **formatiert wird ausschließlich in der App** über
+`format.ts::formatiere` (D-15). Ein unbekannter Schlüssel oder ein unbekanntes
+Formatkürzel bricht Schritt 07 mit `TexteFehler` ab.
 
 **Ziffernregel:** Jede Zahl außerhalb eines Platzhalters ist ein Fehler, den
 `ostbevern.texte.pruefe_text` findet — mit drei Ausnahmen: eine vierstellige
