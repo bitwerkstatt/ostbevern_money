@@ -104,6 +104,27 @@
         "einheit": "euro",
         "quelle": 48,
         "anmerkung": "BBO-Wirtschaftsplan (Bäder- und Beteiligungsgesellschaft Ostbevern mbH): geplanter Verlustausgleich laut eigenem Wirtschaftsplan, außerhalb des Kernhaushalts (Spez. 3.7). Davon erscheint nur der Transferaufwendungen-Posten 'Verlustübernahme BBO' (transferaufwendungen.csv) im Kernhaushalt."
+      },
+      "konzessionsabgabe_strom": {
+        "wert": 315000,
+        "einheit": "euro",
+        "quelle": 33,
+        "gerundet": true,
+        "anmerkung": "Vorbericht 2.1.7, Text unter der Tabelle: 'Die Konzessionsabgaben betreffen die Sparten Strom- (315 T€), Gas- (40 T€) und Wasserversorgung (115 T€).' Aufteilung nur für das Haushaltsjahr gedruckt."
+      },
+      "konzessionsabgabe_gas": {
+        "wert": 40000,
+        "einheit": "euro",
+        "quelle": 33,
+        "gerundet": true,
+        "anmerkung": "Vorbericht 2.1.7, Text unter der Tabelle: 'Die Konzessionsabgaben betreffen die Sparten Strom- (315 T€), Gas- (40 T€) und Wasserversorgung (115 T€).' Aufteilung nur für das Haushaltsjahr gedruckt."
+      },
+      "konzessionsabgabe_wasser": {
+        "wert": 115000,
+        "einheit": "euro",
+        "quelle": 33,
+        "gerundet": true,
+        "anmerkung": "Vorbericht 2.1.7, Text unter der Tabelle: 'Die Konzessionsabgaben betreffen die Sparten Strom- (315 T€), Gas- (40 T€) und Wasserversorgung (115 T€).' Aufteilung nur für das Haushaltsjahr gedruckt."
       }
     }
   },
@@ -36826,6 +36847,186 @@
         }
       ]
     },
+    "investitionszuwendungen": {
+      "tabelle": "investitionszuwendungen",
+      "quelle_einheit": "teur",
+      "planzeile": null,
+      "gesamt_plan": null,
+      "gesamt_vorbericht": {
+        "werte": [
+          null,
+          null,
+          3742000,
+          null,
+          null,
+          null
+        ],
+        "gerundet": true,
+        "quelle": 52
+      },
+      "posten": [
+        {
+          "posten": "investitionspauschale",
+          "name": "Investitionspauschale",
+          "werte": [
+            null,
+            null,
+            1525000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "schulpauschale",
+          "name": "Schulpauschale",
+          "werte": [
+            null,
+            null,
+            406000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "sportpauschale",
+          "name": "Sportpauschale",
+          "werte": [
+            null,
+            null,
+            60000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "feuerschutzpauschale",
+          "name": "Feuerschutzpauschale",
+          "werte": [
+            null,
+            null,
+            68000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "foerderung_mobilstation_ot_brock_80",
+          "name": "Förderung Mobilstation OT Brock (80 %)",
+          "werte": [
+            null,
+            null,
+            510000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "foerderung_erweiterung_ogs_ambrosius_grundschule",
+          "name": "Förderung Erweiterung OGS Ambrosius-Grundschule",
+          "werte": [
+            null,
+            null,
+            467000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "foerderung_wirtschaftswege_70",
+          "name": "Förderung Wirtschaftswege (70 %)",
+          "werte": [
+            null,
+            null,
+            350000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "foerderung_austausch_leuchtkoepfe_25",
+          "name": "Förderung Austausch Leuchtköpfe (25 %)",
+          "werte": [
+            null,
+            null,
+            75000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "foerderung_barrierefreier_bahnhof_90",
+          "name": "Förderung barrierefreier Bahnhof (90 %)",
+          "werte": [
+            null,
+            null,
+            162000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        },
+        {
+          "posten": "foerderung_fahrradabstellanlage_jas_75",
+          "name": "Förderung Fahrradabstellanlage JAS (75 %)",
+          "werte": [
+            null,
+            null,
+            119000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 52,
+          "anmerkung": null
+        }
+      ]
+    },
     "leistungsentgelte": {
       "tabelle": "leistungsentgelte",
       "quelle_einheit": "teur",
@@ -38128,6 +38329,129 @@
           "anmerkung": null
         }
       ]
+    },
+    "sonstige_ertraege": {
+      "tabelle": "sonstige_ertraege",
+      "quelle_einheit": "teur",
+      "planzeile": "sonstige_ordentliche_ertraege",
+      "gesamt_plan": [
+        2764446,
+        2106281,
+        1943386,
+        1689885,
+        2346161,
+        1182136
+      ],
+      "gesamt_vorbericht": {
+        "werte": [
+          2764000,
+          2106000,
+          1943000,
+          1689000,
+          2396000,
+          1182000
+        ],
+        "gerundet": true,
+        "quelle": 33
+      },
+      "posten": [
+        {
+          "posten": "konzessionsabgaben",
+          "name": "Konzessionsabgaben",
+          "werte": [
+            470000,
+            470000,
+            470000,
+            470000,
+            470000,
+            470000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 33,
+          "anmerkung": null
+        },
+        {
+          "posten": "verkauf_von_umlaufvermoegen",
+          "name": "Verkauf von Umlaufvermögen",
+          "werte": [
+            1180000,
+            1303000,
+            1096000,
+            866000,
+            1520000,
+            348000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 33,
+          "anmerkung": null
+        },
+        {
+          "posten": "bussgelder_saeumniszuschlaege",
+          "name": "Bußgelder / Säumniszuschläge",
+          "werte": [
+            37000,
+            21000,
+            33000,
+            33000,
+            33000,
+            33000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 33,
+          "anmerkung": null
+        },
+        {
+          "posten": "aufloesung_sonstiger_sonderposten",
+          "name": "Auflösung sonstiger Sonderposten",
+          "werte": [
+            284000,
+            273000,
+            271000,
+            245000,
+            245000,
+            245000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 33,
+          "anmerkung": null
+        },
+        {
+          "posten": "herabsetzung_rueckstellungen",
+          "name": "Herabsetzung Rückstellungen",
+          "werte": [
+            795000,
+            40000,
+            73000,
+            75000,
+            77000,
+            86000
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 33,
+          "anmerkung": null
+        },
+        {
+          "posten": "sonstige",
+          "name": "Sonstige",
+          "werte": [
+            null,
+            null,
+            null,
+            null,
+            1161,
+            null
+          ],
+          "gerundet": false,
+          "berechnet": true,
+          "quelle": 33,
+          "anmerkung": "Differenz zwischen der eurogenauen Planzeile des Gesamtergebnisplans und der Summe der gedruckten Vorbericht-Posten (Spez. 3.8); die Planzeile ist maßgeblich."
+        }
+      ]
     }
   },
   "eigenkapital": {
@@ -38243,6 +38567,426 @@
         "berechnet": false,
         "quelle": 311,
         "anmerkung": null
+      }
+    ]
+  },
+  "zeilen_namen": {
+    "ergebnisplan": [
+      {
+        "schluessel": "steuern",
+        "nummer": "01",
+        "name": "Steuern und ähnliche Abgaben",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "zuwendungen",
+        "nummer": "02",
+        "name": "Zuwendungen und allgemeine Umlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_transferertraege",
+        "nummer": "03",
+        "name": "Sonstige Transfererträge",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "oeffentlich_rechtliche_entgelte",
+        "nummer": "04",
+        "name": "Öffentlich-rechtliche Leistungsentgelte",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "privatrechtliche_entgelte",
+        "nummer": "05",
+        "name": "Privatrechtliche Leistungsentgelte",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "kostenerstattungen",
+        "nummer": "06",
+        "name": "Kostenerstattungen und Kostenumlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_ordentliche_ertraege",
+        "nummer": "07",
+        "name": "Sonstige ordentliche Erträge",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "aktivierte_eigenleistungen",
+        "nummer": "08",
+        "name": "Aktivierte Eigenleistungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "bestandsveraenderungen",
+        "nummer": "09",
+        "name": "Bestandsveränderungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "ordentliche_ertraege",
+        "nummer": "10",
+        "name": "Ordentliche Erträge",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "personalaufwendungen",
+        "nummer": "11",
+        "name": "Personalaufwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "versorgungsaufwendungen",
+        "nummer": "12",
+        "name": "Versorgungsaufwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sach_und_dienstleistungen",
+        "nummer": "13",
+        "name": "Aufwendungen für Sach- und Dienstleistungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "abschreibungen",
+        "nummer": "14",
+        "name": "Bilanzielle Abschreibungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "transferaufwendungen",
+        "nummer": "15",
+        "name": "Transferaufwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_ordentliche_aufwendungen",
+        "nummer": "16",
+        "name": "Sonstige ordentliche Aufwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "ordentliche_aufwendungen",
+        "nummer": "17",
+        "name": "Ordentliche Aufwendungen",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "ordentliches_ergebnis",
+        "nummer": "18",
+        "name": "Ordentliches Ergebnis",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "finanzertraege",
+        "nummer": "19",
+        "name": "Finanzerträge",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "zinsaufwendungen",
+        "nummer": "20",
+        "name": "Zinsen und ähnliche Aufwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "finanzergebnis",
+        "nummer": "21",
+        "name": "Finanzergebnis",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "ergebnis_laufende_verwaltung",
+        "nummer": "22",
+        "name": "Ergebnis der lfd. Verw.-tätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "ausserordentliche_ertraege",
+        "nummer": "23",
+        "name": "Außerordentliche Erträge",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "ausserordentliche_aufwendungen",
+        "nummer": "24",
+        "name": "Außerordentliche Aufwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "ausserordentliches_ergebnis",
+        "nummer": "25",
+        "name": "Außerordentliches Ergebnis",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "jahresergebnis",
+        "nummer": "26",
+        "name": "Jahresergebnis",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "globaler_minderaufwand",
+        "nummer": "27",
+        "name": "Globaler Minderaufwand",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "ergebnis_nach_minderaufwand",
+        "nummer": "28",
+        "name": "Jahresergebnis nach Abzug globaler Minderaufwand",
+        "ist_summe": true
+      }
+    ],
+    "finanzplan": [
+      {
+        "schluessel": "steuern",
+        "nummer": "01",
+        "name": "Steuern und ähnliche Abgaben",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "zuwendungen",
+        "nummer": "02",
+        "name": "Zuwendungen und allgemeine Umlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_transfereinzahlungen",
+        "nummer": "03",
+        "name": "Sonstige Transfereinzahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "oeffentlich_rechtliche_entgelte",
+        "nummer": "04",
+        "name": "Öffentlich-rechtliche Leistungsentgelte",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "privatrechtliche_entgelte",
+        "nummer": "05",
+        "name": "Privatrechtliche Leistungsentgelte",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "kostenerstattungen",
+        "nummer": "06",
+        "name": "Kostenerstattungen und Kostenumlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_einzahlungen",
+        "nummer": "07",
+        "name": "Sonstige Einzahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "finanzeinzahlungen",
+        "nummer": "08",
+        "name": "Zinsen und sonstige Finanzeinzahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "einzahlungen_laufende_verwaltung",
+        "nummer": "09",
+        "name": "Einzahlungen aus lfd. Verw.-tätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "personalauszahlungen",
+        "nummer": "10",
+        "name": "Personalauszahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "versorgungsauszahlungen",
+        "nummer": "11",
+        "name": "Versorgungsauszahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sach_und_dienstleistungen",
+        "nummer": "12",
+        "name": "Auszahlg. Sach- und Dienstleistungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "finanzauszahlungen",
+        "nummer": "13",
+        "name": "Zinsen und sonstige Finanzauszahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "transferauszahlungen",
+        "nummer": "14",
+        "name": "Transferauszahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_auszahlungen",
+        "nummer": "15",
+        "name": "Sonstige Auszahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "auszahlungen_laufende_verwaltung",
+        "nummer": "16",
+        "name": "Auszahlungen aus lfd. Verw.-tätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "saldo_laufende_verwaltung",
+        "nummer": "17",
+        "name": "Saldo aus lfd. Verw.-tätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "investitionszuwendungen",
+        "nummer": "18",
+        "name": "Zuwendungen für Investitionsmaßnahmen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "veraeusserung_sachanlagen",
+        "nummer": "19",
+        "name": "Einz. aus Veräußerung v. Sachanlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "veraeusserung_finanzanlagen",
+        "nummer": "20",
+        "name": "Einz. aus Veräußerung v. Finanzanlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "beitraege",
+        "nummer": "21",
+        "name": "Einz. aus Beiträgen u. ä. Entgelten",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_investitionseinzahlungen",
+        "nummer": "22",
+        "name": "Sonstige Investitionseinzahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "einzahlungen_investitionen",
+        "nummer": "23",
+        "name": "Einzahlungen aus Investitionstätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "erwerb_grundstuecke_gebaeude",
+        "nummer": "24",
+        "name": "Ausz. f. Erwerb von Grundst. u. Gebäuden",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "baumassnahmen",
+        "nummer": "25",
+        "name": "Ausz. f. Baumaßnahmen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "erwerb_bewegliches_anlagevermoegen",
+        "nummer": "26",
+        "name": "Ausz. f. Erwerb v. bewegl. Anlageverm.",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "erwerb_finanzanlagen",
+        "nummer": "27",
+        "name": "Ausz. f. Erwerb v. Finanzanlagen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "aktivierbare_zuwendungen",
+        "nummer": "28",
+        "name": "Ausz. v. aktivierbaren Zuwendungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "sonstige_investitionsauszahlungen",
+        "nummer": "29",
+        "name": "Sonstige Investitionsauszahlungen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "auszahlungen_investitionen",
+        "nummer": "30",
+        "name": "Auszahlungen aus Investitionstätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "saldo_investitionen",
+        "nummer": "31",
+        "name": "Saldo aus Investitionstätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "finanzmittelueberschuss",
+        "nummer": "32",
+        "name": "Überschuss/Fehlbetrag",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "kreditaufnahme",
+        "nummer": "33",
+        "name": "Aufnahme und Rückflüsse von Darlehen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "liquiditaetskredite_aufnahme",
+        "nummer": "34",
+        "name": "Aufn. v. Krediten z. Liquiditätssicherung",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "tilgung",
+        "nummer": "35",
+        "name": "Tilgung und Gewährung von Darlehen",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "liquiditaetskredite_tilgung",
+        "nummer": "36",
+        "name": "Tilgung v. Krediten z. Liquiditätssicherung",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "saldo_finanzierung",
+        "nummer": "37",
+        "name": "Saldo aus Finanzierungstätigkeit",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "aenderung_finanzbestand",
+        "nummer": "38",
+        "name": "Änd. des Finanzbestandes",
+        "ist_summe": true
+      },
+      {
+        "schluessel": "anfangsbestand_finanzmittel",
+        "nummer": "39",
+        "name": "Anfangsbestand an Finanzmitteln",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "fremde_finanzmittel",
+        "nummer": "40",
+        "name": "Bestand an fremden Finanzmitteln",
+        "ist_summe": false
+      },
+      {
+        "schluessel": "liquide_mittel",
+        "nummer": "41",
+        "name": "Liquide Mittel",
+        "ist_summe": true
       }
     ]
   }

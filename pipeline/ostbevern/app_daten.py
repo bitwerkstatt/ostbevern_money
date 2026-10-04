@@ -12,7 +12,7 @@ from __future__ import annotations
 import json
 import os
 import tempfile
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 import polars as pl
@@ -35,6 +35,7 @@ from ostbevern.schema import (
     GRUNDZAHLEN_CSV,
     HIERARCHIE_CSV,
     INVESTITIONEN_CSV,
+    INVESTITIONSZUWENDUNGEN_CSV,
     KITA_ZUSCHUESSE_CSV,
     META_JSON,
     PRODUKT_SCHLUESSEL,
@@ -84,6 +85,11 @@ KL_POSTEN_NAMEN: dict[str, str] = {
     "gewerbesteuerumlage": "Gewerbesteuerumlage",
     "krankenhausinvestitionsumlage": "Krankenhausinvestitionsumlage",
 }
+
+# Vorbericht-Tabellen mit einem berechneten Posten "Sonstige" (Spez. 3.8): dort, wo die
+# gedruckte Gesamtzeile um mehr als REGEL5_TOLERANZ_GEP_EURO von der GEP-Zeile abweicht,
+# schließt "Sonstige" die Lücke, sodass Σ Posten exakt die (maßgebliche) GEP-Zeile ergibt.
+TABELLEN_MIT_SONSTIGE: frozenset[str] = frozenset({"zuwendungen", "sonstige_ertraege"})
 
 # App-Zeilenmenge des Ergebnisplans je Knoten (D-22, D-23): GEP-Zeilen 01-26 (gleiche
 # kanonische Schlüssel in GEP und TP), dann der Minderaufwand und das Ergebnis danach
@@ -359,6 +365,40 @@ def baue_finanzplan(
     }
 
     return {"GESAMT": {"zeilen": zeilen_werte, "ve": ve_werte}}
+
+
+def baue_zeilen_namen(finanzplan_zeilen: Sequence[str]) -> dict[str, list[dict[str, object]]]:
+    """Baut `zeilen_namen` von `haushalt.json` (Phase 5, RESEARCH Pitfall 9): der gedruckte
+    Zeilenname, die Zeilennummer und das Summenflag je Ergebnisplan-Zeile
+    (`ERGEBNISPLAN_APP_ZEILEN`, Reihenfolge wie dort) und je Zeile von `finanzplan_zeilen`
+    (die Schlüssel von `finanzplan.GESAMT.zeilen`, Reihenfolge wie dort). Liest nur `ZEILEN`
+    -- die App führt keine zweite Namenstabelle. Ein Schlüssel ohne Eintrag in `ZEILEN`
+    bricht mit `AppDatenFehler` ab."""
+
+    def _eintraege(plantyp: str, schluessel: Sequence[str]) -> list[dict[str, object]]:
+        nummer_je_schluessel = _zeile_fuer_kanonisch(plantyp)
+        eintraege: list[dict[str, object]] = []
+        for kanonisch in schluessel:
+            nummer = nummer_je_schluessel.get(kanonisch)
+            if nummer is None:
+                raise AppDatenFehler(
+                    f"zeilen_namen: {plantyp} kennt den Schlüssel {kanonisch!r} nicht"
+                )
+            definition = ZEILEN[plantyp][nummer]
+            eintraege.append(
+                {
+                    "schluessel": kanonisch,
+                    "nummer": nummer,
+                    "name": definition.name,
+                    "ist_summe": definition.ist_summe,
+                }
+            )
+        return eintraege
+
+    return {
+        "ergebnisplan": _eintraege("gesamtergebnisplan", ERGEBNISPLAN_APP_ZEILEN),
+        "finanzplan": _eintraege("gesamtfinanzplan", finanzplan_zeilen),
+    }
 
 
 # produkte.json / investitionen.json (D-13, D-14, D-21, Plan 04-04 Task 2).
@@ -661,11 +701,11 @@ def baue_vorbericht_tabelle(
     die fehlenden Jahre in `gesamt_vorbericht.werte` ebenfalls `null` — fehlt die
     Gesamtzeile für JEDES Jahr, bricht die Funktion mit `AppDatenFehler` ab.
 
-    `sonstige=True` (nur zuwendungen, Spez. 3.8) hängt einen letzten, rein berechneten
-    Posten "Sonstige" an: nicht-`null` genau in den Jahren, in denen die gedruckte
-    Gesamtzeile um mehr als REGEL5_TOLERANZ_GEP_EURO von der GEP-Zeile abweicht, und dort
-    so bemessen, dass Σ Posten + Sonstige exakt die GEP-Zeile ergibt (die Planzeile bleibt
-    maßgeblich, D-07b).
+    `sonstige=True` (zuwendungen und sonstige_ertraege, Spez. 3.8, Phase 5 D-04) hängt
+    einen letzten, rein berechneten Posten "Sonstige" an: nicht-`null` genau in den
+    Jahren, in denen die gedruckte Gesamtzeile um mehr als REGEL5_TOLERANZ_GEP_EURO von
+    der GEP-Zeile abweicht, und dort so bemessen, dass Σ Posten + Sonstige exakt die
+    GEP-Zeile ergibt (die Planzeile bleibt maßgeblich, D-07b).
     """
     tabelle = df["tabelle"][0]
     gesamt_df = df.filter(pl.col("ist_gesamt"))
@@ -909,8 +949,10 @@ def erzeuge_app_daten(
     gep_pdf_seite = ergebnisplan.filter(pl.col("ebene") == "GESAMT")["pdf_seite"][0]
 
     # Reihenfolge ist Teil des App-JSON-Vertrags (D-21): steuerarten, zuwendungen,
-    # transferaufwendungen, kita_zuschuesse, dann die fünf D-08-Tabellen (leistungsentgelte,
-    # kostenerstattungen, personal, sachaufwand, sonstige_aufwendungen) — dict-
+    # transferaufwendungen, kita_zuschuesse, investitionszuwendungen (Phase 5 D-03, ohne
+    # GEP-Zeile: die App liest GFP Z. 18 aus `finanzplan`), dann die sechs weiteren Tabellen
+    # (leistungsentgelte, kostenerstattungen, personal, sachaufwand, sonstige_aufwendungen,
+    # zuletzt sonstige_ertraege, Phase 5 D-04) — dict-
     # Einfügereihenfolge bleibt beim Schreiben erhalten (schreibe_app_json/json.dumps,
     # keine sort_keys).
     transferaufwendungen_df = lies_vorbericht_csv(daten_wurzel / TRANSFERAUFWENDUNGEN_CSV)
@@ -919,6 +961,7 @@ def erzeuge_app_daten(
         "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
         "transferaufwendungen": transferaufwendungen_df,
         "kita_zuschuesse": lies_vorbericht_csv(daten_wurzel / KITA_ZUSCHUESSE_CSV),
+        "investitionszuwendungen": lies_vorbericht_csv(daten_wurzel / INVESTITIONSZUWENDUNGEN_CSV),
         **zerlege_weitere_vorberichtstabellen(
             lies_vorbericht_csv(daten_wurzel / WEITERE_VORBERICHTSTABELLEN_CSV)
         ),
@@ -929,7 +972,7 @@ def erzeuge_app_daten(
             jahre=jahre,
             planwerte=planwerte,
             gep_zeile=REGEL5_GEP_ZEILEN.get(tabelle),
-            sonstige=(tabelle == "zuwendungen"),
+            sonstige=(tabelle in TABELLEN_MIT_SONSTIGE),
         )
         for tabelle, df in vorbericht_quellen.items()
     }
@@ -971,6 +1014,7 @@ def erzeuge_app_daten(
         "finanzplan": finanzplan_app,
         "vorbericht": vorbericht,
         "eigenkapital": eigenkapital,
+        "zeilen_namen": baue_zeilen_namen(list(finanzplan_app["GESAMT"]["zeilen"])),
     }
 
     pfad = app_daten_wurzel / HAUSHALT_JSON

@@ -1,0 +1,12 @@
+tabelle,position,posten,posten_name,ist_gesamt,jahr,wertart,betrag_teur,anmerkung,quelle
+investitionszuwendungen,1,investitionspauschale,Investitionspauschale,false,2026,ansatz,1525,,52
+investitionszuwendungen,2,schulpauschale,Schulpauschale,false,2026,ansatz,406,,52
+investitionszuwendungen,3,sportpauschale,Sportpauschale,false,2026,ansatz,60,,52
+investitionszuwendungen,4,feuerschutzpauschale,Feuerschutzpauschale,false,2026,ansatz,68,,52
+investitionszuwendungen,5,foerderung_mobilstation_ot_brock_80,Förderung Mobilstation OT Brock (80 %),false,2026,ansatz,510,,52
+investitionszuwendungen,6,foerderung_erweiterung_ogs_ambrosius_grundschule,Förderung Erweiterung OGS Ambrosius-Grundschule,false,2026,ansatz,467,,52
+investitionszuwendungen,7,foerderung_wirtschaftswege_70,Förderung Wirtschaftswege (70 %),false,2026,ansatz,350,,52
+investitionszuwendungen,8,foerderung_austausch_leuchtkoepfe_25,Förderung Austausch Leuchtköpfe (25 %),false,2026,ansatz,75,,52
+investitionszuwendungen,9,foerderung_barrierefreier_bahnhof_90,Förderung barrierefreier Bahnhof (90 %),false,2026,ansatz,162,,52
+investitionszuwendungen,10,foerderung_fahrradabstellanlage_jas_75,Förderung Fahrradabstellanlage JAS (75 %),false,2026,ansatz,119,,52
+investitionszuwendungen,11,gesamt,Zuweisungen und Zuschüsse für Investitionen,true,2026,ansatz,3742,,52

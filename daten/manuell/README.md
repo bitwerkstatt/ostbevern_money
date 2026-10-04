@@ -81,10 +81,26 @@ die Tabelle druckt nur diese eine Spalte, nicht den ganzen Finanzplanungszeitrau
 Gesamtzeile dieser Tabelle als auch dem Transferaufwendungen-Posten „Zuschüsse an
 Kindertageseinr.“ desselben Jahres — beides prüft Regel 5.
 
+### `investitionszuwendungen.csv`
+
+Vorbericht S. 52 „Bei den Zuweisungen und Zuschüssen für Investitionen handelt es sich um:“
+(EINN-06, Phase 5 D-03): die vier Pauschalen (Investitions-, Schul-, Sport- und
+Feuerschutzpauschale) und die sechs Förderungen für einzelne Maßnahmen mit der gedruckten
+Gesamtzeile 3.742 T€. Wie `kita_zuschuesse.csv` druckt die Tabelle nur **eine** Spalte, das
+Haushaltsjahr (Wertart `ansatz`); für die übrigen Jahre gibt es keine Aufschlüsselung, die App
+zeigt dort „–“ je Pauschale. Die Fördersätze stehen als Teil des gedruckten Namens im Posten
+(z. B. „Förderung Wirtschaftswege (70 %)“, Schlüssel `foerderung_wirtschaftswege_70`). Die
+Tabelle hat bewusst keine Ergebnisplan-Zeile (Spez. 3.1: Finanzplan-Betrag gehört nicht in
+eine Ergebnisplan-Struktur); Regel 5 prüft in Stufe (a) die Summe der zehn Posten gegen die
+gedruckte Gesamtzeile und in Stufe (b) die Gesamtzeile × 1000 gegen die Gesamtfinanzplan-Zeile
+18 „Zuwendungen für Investitionsmaßnahmen“ desselben Jahres (Toleranz ±1.000 €). Beides trifft
+auf den eingecheckten Daten exakt (Σ = 3.742 T€ = 3.742.000 €).
+
 ### `weitere_vorberichtstabellen.csv`
 
-Die fünf weiteren Vorberichtstabellen aus Spez. 4.3 (D-08), jede mit Aufschlüsselung und
-Gesamtzeile für 2024–2029, Spalte `tabelle` unterscheidet sie:
+Die sechs weiteren Vorberichtstabellen (fünf aus Spez. 4.3, D-08, plus 2.1.7 seit Phase 5
+D-04), jede mit Aufschlüsselung und Gesamtzeile für 2024–2029, Spalte `tabelle`
+unterscheidet sie:
 
 | `tabelle` | Vorbericht-Ziffer | Seiten |
 |---|---|---|
@@ -93,6 +109,7 @@ Gesamtzeile für 2024–2029, Spalte `tabelle` unterscheidet sie:
 | `personal` | 2.2.1 Personalaufwendungen | 34 |
 | `sachaufwand` | 2.2.3 Aufwendungen für Sach- und Dienstleistungen | 36–37 |
 | `sonstige_aufwendungen` | 2.2.6 Sonstige ordentliche Aufwendungen | 48 |
+| `sonstige_ertraege` | 2.1.7 Sonstige ordentliche Erträge | 33 |
 
 Posten-Schlüssel folgen derselben Ableitungsregel wie in allen anderen manuellen
 Dateien: gedruckter Name klein geschrieben, Umlaute ausgeschrieben (ä→ae, ö→oe, ü→ue,
@@ -100,15 +117,28 @@ Dateien: gedruckter Name klein geschrieben, Umlaute ausgeschrieben (ä→ae, ö�
 abschließende `_` entfernt. Zwei Zeilen je Tabelle haben einen über zwei Textzeilen
 umgebrochenen Namen (S. 30 „Auflösung von Sonderposten aus Beiträgen und Gebühren“,
 S. 32 „Erst v. Gemeinden und sonst. öffentlicher Bereich“ und „Erst. für Essen in der
-Mensa und den OGS“); der Name ist mit einem Leerzeichen zusammengefügt.
+Mensa und den OGS“); der Name ist mit einem Leerzeichen zusammengefügt. Dasselbe gilt für
+„Auflösung sonstiger Sonderposten“ in Tabelle 2.1.7 (S. 33).
+
+**Tabelle 2.1.7 `sonstige_ertraege` (S. 33, EINN-04):** fünf Posten (Konzessionsabgaben,
+Verkauf von Umlaufvermögen, Bußgelder / Säumniszuschläge, Auflösung sonstiger Sonderposten,
+Herabsetzung Rückstellungen) plus Gesamtzeile, wie gedruckt. Die Tabelle wird gegen Zeile 07
+des Gesamtergebnisplans geprüft (Regel 5, Stufe b). Vier gedruckte Abweichungen sind in
+`../pruefberichte/befunde.md` dokumentiert: die Rundungsdifferenzen 2024 (Σ Posten 2.766 T€
+gegenüber gedruckten 2.764 T€) und 2025 (2.107 gegenüber 2.106 T€) sowie ein **Druckfehler
+2028**: die gedruckte Gesamtzeile nennt 2.396 T€, die Posten ergeben 2.345 T€, und die GEP-Zeile
+07 liegt bei 2.346.161 €. Die CSV hält den gedruckten Wert 2.396 fest (D-05: nie
+angepasst). Die App folgt der GEP-Zeile und weist die Differenz zwischen GEP-Zeile und
+Summe der Posten als eigenen, berechneten Posten „Sonstige“ aus, und zwar genau in den
+Jahren, in denen die gedruckte Gesamtzeile um mehr als 1.000 € von der GEP-Zeile abweicht
+(`ostbevern.app_daten.baue_vorbericht_tabelle`, `sonstige=True`, wie bei `zuwendungen`).
 
 Bewusst **nicht** abgeschrieben (D-08, MANU-05):
 
-- 2.1.5 Privatrechtliche Leistungsentgelte, 2.1.7 Sonstige ordentliche Erträge, 2.1.9
-  Erträge aus internen Leistungsbeziehungen, 2.2.2 Versorgungsaufwendungen und 2.2.5
-  Transferaufwendungen (separat in `transferaufwendungen.csv`, MANU-03) — Spez. 4.3
-  listet nur die fünf oben genannten Tabellen für Phase 4; 2.1.7 ist explizit auf
-  Phase 5 (EINN-04) verschoben.
+- 2.1.5 Privatrechtliche Leistungsentgelte, 2.1.9 Erträge aus internen Leistungsbeziehungen,
+  2.2.2 Versorgungsaufwendungen und 2.2.5 Transferaufwendungen (separat in
+  `transferaufwendungen.csv`, MANU-03) — Spez. 4.3 listet nur die fünf ursprünglichen
+  Tabellen für Phase 4; 2.1.7 wurde in Phase 5 (EINN-04) nachgeholt.
 - Die Objekt/Maßnahme-Detailtabelle „Gebäudeunterhaltung“ unter 2.2.3 (S. 37, unterhalb
   der Gesamtzeile): sie schlüsselt den Posten `gebaeudeunterhaltung` weiter auf,
   gehört aber nicht zur Haupttabelle (D-08) und wird nicht benötigt.
@@ -130,8 +160,16 @@ validiert über `ostbevern.manuell.lies_meta_json` gegen eine strikte Schlüssel
 | `kreisumlage.brutto` | 11.472.478 € = netto + Rückstellungsauflösung (berechnet, gerundet) | S. 46 |
 | `kreisumlage.hebesatz_kreisumlage` | 36,3 % (363 Promille, Vorjahr 33 % = 330) | S. 47 |
 | `kreisumlage.hebesatz_jugendamtsumlage` | 21 % (210 Promille, Vorjahr 20,3 % = 203) | S. 47 |
+| `vorbericht_werte.konzessionsabgabe_strom` / `_gas` / `_wasser` | 315.000 / 40.000 / 115.000 € (T€-Werte × 1000, gerundet) | S. 33 |
 | `satzung.beschluss` | 2026-03-03 (Ratsbeschluss) | S. 8 |
 | `satzung.ausfertigung` | 2026-03-04 (Unterschriftsdatum) | S. 9 |
+
+**Konzessionsabgaben nach Sparten (S. 33, EINN-04):** Der Text unter Tabelle 2.1.7 nennt die
+Aufteilung der Konzessionsabgaben des Haushaltsjahrs auf Strom (315 T€), Gas (40 T€) und
+Wasser (115 T€). Die Aufteilung ist nur für das Haushaltsjahr gedruckt, für andere Jahre wird
+nichts ergänzt. Regel 5 (`plan` `vorbericht_konzessionsabgaben`) prüft, dass die Summe der drei
+Werte exakt dem Posten `konzessionsabgaben` von Tabelle 2.1.7 des Haushaltsjahrs entspricht
+(470 T€).
 
 **Warum `kreisumlage.brutto` berechnet ist:** Der Vorbericht druckt auf S. 46 nur den
 **netto**-Betrag der Kreisumlage (10.1473 T€, mit angeklebter Fußnotenziffer 3 — siehe

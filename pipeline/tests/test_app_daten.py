@@ -48,6 +48,7 @@ from ostbevern.schema import (
     lies_vorbericht_csv,
 )
 from ostbevern.texte import PLATZHALTER_MUSTER, TexteFehler
+from ostbevern.zeilen import ZEILEN
 
 
 @pytest.fixture(scope="module")
@@ -183,12 +184,67 @@ def test_haushalt_json_vorbericht_reihenfolge(tmp_path: Path) -> None:
         "zuwendungen",
         "transferaufwendungen",
         "kita_zuschuesse",
+        "investitionszuwendungen",
         "leistungsentgelte",
         "kostenerstattungen",
         "personal",
         "sachaufwand",
         "sonstige_aufwendungen",
+        "sonstige_ertraege",
     ]
+
+
+def test_sonstige_ertraege_ergibt_gep_zeile_07(tmp_path: Path) -> None:
+    """Tabelle 2.1.7 (Phase 5 D-04): wo der berechnete Posten "Sonstige" nicht null ist,
+    ergibt Σ Posten inkl. Sonstige exakt GEP Z. 07; in allen anderen Jahren liegt die
+    gedruckte Gesamtzeile innerhalb ±REGEL5_TOLERANZ_GEP_EURO an GEP Z. 07."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    tabelle = daten["vorbericht"]["sonstige_ertraege"]
+    gep_07 = daten["ergebnisplan"]["GESAMT"]["zeilen"]["sonstige_ordentliche_ertraege"]
+
+    assert tabelle["planzeile"] == "sonstige_ordentliche_ertraege"
+    assert tabelle["gesamt_plan"] == gep_07
+    sonstige = next(p for p in tabelle["posten"] if p["posten"] == "sonstige")
+    assert sonstige["berechnet"] is True
+    assert tabelle["posten"][-1] is sonstige
+    assert any(p["posten"] == "konzessionsabgaben" for p in tabelle["posten"])
+
+    mit_sonstige = 0
+    for index in range(len(daten["jahre"])):
+        if sonstige["werte"][index] is not None:
+            mit_sonstige += 1
+            summe = sum(p["werte"][index] or 0 for p in tabelle["posten"])
+            assert summe == gep_07[index]
+        else:
+            gesamt = tabelle["gesamt_vorbericht"]["werte"][index]
+            assert abs(gesamt - gep_07[index]) <= REGEL5_TOLERANZ_GEP_EURO
+    # Der gedruckte 2028-Fehler (S. 33) muss als "Sonstige" sichtbar sein, nicht verschwinden.
+    assert mit_sonstige >= 1
+
+
+def test_investitionszuwendungen_gleich_gfp_18_im_haushaltsjahr(tmp_path: Path) -> None:
+    """Vorbericht S. 52 (Phase 5 D-03): Σ Pauschalen und Förderungen == GFP Z. 18 im
+    Haushaltsjahr, alle anderen Jahre ohne Wert; keine Ergebnisplan-Zeile (Spez. 3.1)."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    tabelle = daten["vorbericht"]["investitionszuwendungen"]
+    index = daten["jahre"].index(daten["haushaltsjahr"])
+    gfp_18 = daten["finanzplan"]["GESAMT"]["zeilen"]["investitionszuwendungen"]
+
+    assert tabelle["tabelle"] == "investitionszuwendungen"
+    assert tabelle["planzeile"] is None
+    assert tabelle["gesamt_plan"] is None
+    assert tabelle["posten"], "investitionszuwendungen: keine Posten"
+    assert all(not posten["berechnet"] for posten in tabelle["posten"])
+
+    summe = sum(p["werte"][index] for p in tabelle["posten"] if p["werte"][index] is not None)
+    assert summe == gfp_18[index]
+    assert tabelle["gesamt_vorbericht"]["werte"][index] == gfp_18[index]
+    for andere, wert in enumerate(tabelle["gesamt_vorbericht"]["werte"]):
+        if andere != index:
+            assert wert is None
+            assert all(posten["werte"][andere] is None for posten in tabelle["posten"])
 
 
 def test_haushalt_json_weitere_vorberichtstabellen(tmp_path: Path) -> None:
@@ -218,6 +274,52 @@ def test_haushalt_json_weitere_vorberichtstabellen(tmp_path: Path) -> None:
         assert eintrag["posten"], f"{tabelle}: keine Posten"
 
 
+def test_zeilen_namen_decken_ergebnisplan_ab(tmp_path: Path) -> None:
+    """Phase 5 (RESEARCH Pitfall 9): `zeilen_namen.ergebnisplan` hat genau einen Eintrag je
+    App-Zeile des Ergebnisplans, in derselben Reihenfolge, mit dem gedruckten Namen aus
+    `ZEILEN` -- keine zweite Namenstabelle."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    namen = daten["zeilen_namen"]["ergebnisplan"]
+
+    assert [eintrag["schluessel"] for eintrag in namen] == list(
+        daten["ergebnisplan"]["GESAMT"]["zeilen"]
+    )
+    assert [eintrag["schluessel"] for eintrag in namen] == list(app_daten.ERGEBNISPLAN_APP_ZEILEN)
+    for eintrag in namen:
+        definition = ZEILEN["gesamtergebnisplan"][eintrag["nummer"]]
+        assert eintrag["schluessel"] == definition.kanonisch
+        assert eintrag["name"] == definition.name
+        assert eintrag["ist_summe"] is definition.ist_summe
+    assert list(namen[0]) == ["schluessel", "nummer", "name", "ist_summe"]
+
+
+def test_zeilen_namen_decken_finanzplan_ab(tmp_path: Path) -> None:
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    namen = daten["zeilen_namen"]["finanzplan"]
+
+    assert [eintrag["schluessel"] for eintrag in namen] == list(
+        daten["finanzplan"]["GESAMT"]["zeilen"]
+    )
+    for eintrag in namen:
+        definition = ZEILEN["gesamtfinanzplan"][eintrag["nummer"]]
+        assert eintrag["schluessel"] == definition.kanonisch
+        assert eintrag["name"] == definition.name
+        assert eintrag["ist_summe"] is definition.ist_summe
+    investiv = next(e for e in namen if e["schluessel"] == "investitionszuwendungen")
+    assert investiv["nummer"] == "18"
+    assert investiv["name"] == "Zuwendungen für Investitionsmaßnahmen"
+
+
+def test_zeilen_namen_ist_letzter_schluessel_nach_eigenkapital(tmp_path: Path) -> None:
+    """Das neue Top-Level-Feld hängt hinten an: bestehende Schlüssel behalten ihre
+    Reihenfolge (D-21-Vertrag)."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    assert list(daten)[-2:] == ["eigenkapital", "zeilen_namen"]
+
+
 def test_haushalt_json_meta(tmp_path: Path) -> None:
     erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
     daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
@@ -231,7 +333,7 @@ def test_haushalt_json_meta(tmp_path: Path) -> None:
 def test_haushalt_json_eigenkapital(tmp_path: Path) -> None:
     erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
     daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
-    assert list(daten)[-1] == "eigenkapital"
+    assert list(daten)[-2] == "eigenkapital"
     eigenkapital = daten["eigenkapital"]
     assert eigenkapital["tabelle"] == "eigenkapital"
     assert eigenkapital["quelle_einheit"] == "euro"
@@ -507,6 +609,7 @@ def test_haushalt_json_knoten_und_ergebnisplan(tmp_path: Path) -> None:
         "finanzplan",
         "vorbericht",
         "eigenkapital",
+        "zeilen_namen",
     ]
     knoten_je_code = {k["code"]: k for k in daten["knoten"]}
     assert knoten_je_code["KL"]["eltern"] == "GESAMT"

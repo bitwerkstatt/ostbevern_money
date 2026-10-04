@@ -28,9 +28,10 @@ Teilfinanzplan-Zeile) als Lücke. Eine Lücke ist, wie bei Regel 6, nie über di
 abdeckbar — ein fehlendes Produkt oder eine leere Produktbeschreibung ist kein Rundungsfehler.
 
 Regel 5 (manuelle Vorberichtstabellen → Planzeilen, PRUEF-05, D-07) prüft vier Tabellen unter
-`daten/manuell/` sowie die fünf weiteren Vorberichtstabellen in
+`daten/manuell/` sowie die sechs weiteren Vorberichtstabellen in
 `daten/manuell/weitere_vorberichtstabellen.csv` (Leistungsentgelte, Kostenerstattungen,
-Personal, Sachaufwand, Sonstige Aufwendungen, D-08) zweistufig: Stufe (a) `zeile`
+Personal, Sachaufwand, Sonstige Aufwendungen, D-08, und seit Phase 5 Sonstige ordentliche
+Erträge, Tabelle 2.1.7, gegen Zeile 07, D-04) zweistufig: Stufe (a) `zeile`
 `summe_posten` vergleicht die Summe der Posten
 mit der mit abgeschriebenen, gedruckten Gesamtzeile derselben Tabelle und desselben Jahres
 (beide in T€, × 1000 in Euro umgerechnet; jede Differenz ab 1 T€ = 1.000 € überschreitet die
@@ -39,6 +40,13 @@ vergleicht die gedruckte Gesamtzeile × 1000 mit der zugeordneten Zeile NN des
 Gesamtergebnisplans (`plan` `vorbericht_{tabelle}`), Toleranz ±1.000 €. Für `kita_zuschuesse`
 prüft `zeile` `transfer_kita` zusätzlich die Kita-Gesamtzeile gegen den Transferaufwendungen-
 Posten „Zuschüsse an Kindertageseinr.“ desselben Jahres (strenge TOLERANZ_EURO = 1 €, D-07).
+Für `investitionszuwendungen` (Vorbericht S. 52, Phase 5 D-03) läuft Stufe (b) mit `zeile`
+`gfp_18` gegen die Zeile 18 „Zuwendungen für Investitionsmaßnahmen“ des Gesamtfinanzplans
+statt gegen den Gesamtergebnisplan (gleiche Toleranz ±1.000 €). Die Aufteilung der
+Konzessionsabgaben auf Strom, Gas und Wasser (`meta.json`, S. 33; `plan`
+`vorbericht_konzessionsabgaben`, `zeile` `summe_strom_gas_wasser`) vergleicht deren Summe exakt
+mit dem Posten `konzessionsabgaben` der Tabelle 2.1.7 im Haushaltsjahr (`soll` Posten × 1000,
+`ist` Summe der drei Werte). Beide Prüfungen sind auf den eingecheckten Daten ohne Abweichung.
 Die Weitergabe an Kreis und Land (D-01, `plan` `weitergabe_kreis_land`, `ebene` `P`, `code` der
 Produktcode aus `[layout.weitergabe_kreis_land]`, `zeile` `tp_15`) vergleicht die Summe der drei
 Transferaufwendungen-Posten Kreisumlage, Gewerbesteuerumlage und Krankenhausinvestitionsumlage
@@ -173,6 +181,10 @@ Parsing-Fehlern.
 | 5 | vorbericht_sonstige_aufwendungen | GESAMT |  | summe_posten | 2027 | planung | 2000 | 48 | Sonstige ordentliche Aufwendungen, Spalte Planung 2027 (S. 48): Summe der 16 Posten ergibt 1.244 T€, gedruckt ist die Gesamtzeile mit 1.242 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 2 T€ im Vorbericht selbst. |
 | 5 | vorbericht_sonstige_aufwendungen | GESAMT |  | summe_posten | 2028 | planung | -1000 | 48 | Sonstige ordentliche Aufwendungen, Spalte Planung 2028 (S. 48): Summe der 16 Posten ergibt 1.797 T€, gedruckt ist die Gesamtzeile mit 1.798 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
 | 5 | vorbericht_sonstige_aufwendungen | GESAMT |  | summe_posten | 2029 | planung | 1000 | 48 | Sonstige ordentliche Aufwendungen, Spalte Planung 2029 (S. 48): Summe der 16 Posten ergibt 2.401 T€, gedruckt ist die Gesamtzeile mit 2.400 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. |
+| 5 | vorbericht_sonstige_ertraege | GESAMT |  | summe_posten | 2024 | ergebnis | 2000 | 33 | Sonstige ordentliche Erträge (Tabelle 2.1.7), Spalte Ergebnis 2024 (S. 33): Summe der fünf Posten (470+1.180+37+284+795) ergibt 2.766 T€, gedruckt ist die Gesamtzeile mit 2.764 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 2 T€ im Vorbericht selbst. Die Gesamtzeile trifft die Zeile 07 des Gesamtergebnisplans (2.764.446 €, S. 62) innerhalb der Toleranz. |
+| 5 | vorbericht_sonstige_ertraege | GESAMT |  | summe_posten | 2025 | ansatz | 1000 | 33 | Sonstige ordentliche Erträge (Tabelle 2.1.7), Spalte Ansatz 2025 (S. 33): Summe der fünf Posten (470+1.303+21+273+40) ergibt 2.107 T€, gedruckt ist die Gesamtzeile mit 2.106 T€. Wortweise gegen das PDF verifiziert; kein Extraktionsfehler, sondern eine Rundungsdifferenz von 1 T€ im Vorbericht selbst. Die Gesamtzeile trifft die Zeile 07 des Gesamtergebnisplans (2.106.281 €, S. 62) innerhalb der Toleranz. |
+| 5 | vorbericht_sonstige_ertraege | GESAMT |  | summe_posten | 2028 | planung | -51000 | 33 | Sonstige ordentliche Erträge (Tabelle 2.1.7), Spalte Ansatz 2028 (S. 33): Summe der fünf Posten (470+1.520+33+245+77) ergibt 2.345 T€, gedruckt ist die Gesamtzeile mit 2.396 T€. Wortweise gegen das PDF und das gerenderte Seitenbild verifiziert: Die gedruckte Gesamtzeile entspricht nicht der Summe der Posten, ein Druckfehler im Vorbericht selbst (kein Extraktionsfehler). Die Zeile 07 des Gesamtergebnisplans (2.346.161 €, S. 62) bestätigt die Summe der Posten; die App folgt der GEP-Zeile (siehe die folgende Zeile gep_07). |
+| 5 | vorbericht_sonstige_ertraege | GESAMT |  | gep_07 | 2028 | planung | 49839 | 33 | Sonstige ordentliche Erträge (Tabelle 2.1.7), Spalte Ansatz 2028 (S. 33): Die gedruckte Gesamtzeile von 2.396 T€ (= 2.396.000 €) weicht um 49.839 € von Zeile 07 des Gesamtergebnisplans ab (2.346.161 €, S. 62). Wortweise gegen beide PDF-Seiten verifiziert; die Abweichung ist der Druckfehler der gedruckten Gesamtzeile im Vorbericht selbst (Summe der Posten 2.345 T€). Die App zeigt die Posten und weist die Differenz zur GEP-Zeile als eigenen, berechneten Posten „Sonstige“ aus; die GEP-Zeile bleibt maßgeblich. |
 | 5 | eigenkapital | GESAMT |  | jahresergebnis_gep_28 | 2025 | ansatz | 1331520 | 311 | Entwicklung des Eigenkapitals, Spalte 2025/Plan (S. 311): Jahresergebnis ist mit "0,00 €" gedruckt. Zeile 28 des Gesamtergebnisplans (Anhang B.1, S. 62) weist für 2025 −1.331.520 € aus. Wortweise gegen das PDF verifiziert; die Eigenkapitalübersicht druckt für dieses eine Jahr einen von der Planzeile abweichenden, offenbar vor der letzten Planfortschreibung eingefrorenen Wert — kein Extraktionsfehler (D-11, D-12). |
 
 ## Beobachtungen ohne Prüfregel
