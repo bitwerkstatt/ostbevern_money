@@ -133,7 +133,7 @@ describe('horizontaleBalkenOption', () => {
   it('bricht die Beschriftung auf schmalen Bildschirmen in zwei Zeilen und verkleinert den Namensbereich', () => {
     const schmal = horizontaleBalkenOption(ZEILEN, { ...OPTIONEN, schmal: true })
     const y = Array.isArray(schmal.yAxis) ? schmal.yAxis[0] : schmal.yAxis
-    expect(y?.axisLabel).toMatchObject({ width: 120, overflow: 'break' })
+    expect(y?.axisLabel).toMatchObject({ width: 140, overflow: 'break' })
     const formatter = ersteSerie(schmal).label?.formatter
     expect(typeof formatter).toBe('function')
     if (typeof formatter === 'function') {

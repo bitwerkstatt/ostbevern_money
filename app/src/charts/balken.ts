@@ -38,11 +38,11 @@ const RAHMENHOEHE = 48
 /** Breite der Kategoriebeschriftung in px; längere Namen brechen um (UI-SPEC E3 long-text). */
 const NAMEN_BREITE = 160
 /** Schmalere Kategoriebeschriftung bis 699 px, damit neben der Beschriftung noch Balken bleiben. */
-const NAMEN_BREITE_SCHMAL = 120
+const NAMEN_BREITE_SCHMAL = 140
 /** Geschätzte Zeichenbreite der 14-px-Beschriftung in px. */
-const ZEICHENBREITE = 8
+const ZEICHENBREITE = 7.5
 /** Abstand zwischen Balkenende und Beschriftung plus Sicherheitsrand in px. */
-const BESCHRIFTUNGS_RAND = 16
+const BESCHRIFTUNGS_RAND = 12
 
 /** Höhe des Diagramms für `anzahl` Zeilen: `anzahl × 40 px + 48 px`. */
 export function balkenHoehe(anzahl: number): string {
