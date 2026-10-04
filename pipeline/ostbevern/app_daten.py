@@ -1067,7 +1067,9 @@ def erzeuge_app_daten(
     for abschnitt in (*erklaerungen, *glossar):
         for absatz in abschnitt.absaetze:
             pruefe_text(absatz)
-    alle_werte = textwerte(daten, investitionen_daten, produkte_daten)
+    alle_werte = textwerte(
+        daten, investitionen_daten, produkte_daten, texte=[*erklaerungen, *glossar]
+    )
     # D-02: kein Euro-Grundzahl-Platzhalter ab dem ersten Planjahr (Quelle der Zeitreihe).
     pruefe_grundzahl_jahre([*erklaerungen, *glossar], produkte_daten, jahre[0])
     verwendet = loese_auf([*erklaerungen, *glossar], alle_werte)

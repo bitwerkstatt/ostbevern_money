@@ -8,6 +8,7 @@ die Jahre kommen aus `haushalt.json` selbst (`haushaltsjahr`/`jahre`), nie als L
 
 from __future__ import annotations
 
+import copy
 import json
 import re
 from pathlib import Path
@@ -431,6 +432,42 @@ def test_textwerte_enthaelt_erwartete_schluessel(
     assert "ve.gesamt" in werte
     for name in ABGELEITET:
         assert f"abgeleitet.{name}" in werte
+
+
+def _ohne_folgejahr_ausgleichsruecklage(haushalt: dict) -> dict:
+    """Kopie von `haushalt`, in der die Ausgleichsrücklage des Folgejahrs fehlt (WR-06)."""
+    kopie = copy.deepcopy(haushalt)
+    folgejahr_index = kopie["jahre"].index(kopie["haushaltsjahr"] + 1)
+    for posten in kopie["eigenkapital"]["posten"]:
+        if posten["posten"] == "ausgleichsruecklage":
+            posten["werte"][folgejahr_index] = None
+    return kopie
+
+
+def test_textwerte_fehlender_formeleingang_ist_texte_fehler_kein_key_error(
+    app_daten: tuple[dict, dict, list[dict]],
+) -> None:
+    haushalt, investitionen, produkte = app_daten
+    with pytest.raises(TexteFehler, match="ausgleichsruecklage_minderung_haushaltsjahr"):
+        textwerte(_ohne_folgejahr_ausgleichsruecklage(haushalt), investitionen, produkte)
+
+
+def test_textwerte_wertet_nur_verwendete_formeln_aus(
+    app_daten: tuple[dict, dict, list[dict]],
+) -> None:
+    haushalt, investitionen, produkte = app_daten
+    kaputt = _ohne_folgejahr_ausgleichsruecklage(haushalt)
+    ohne_formel = Erklaertext("a", "A", (1,), ("Einwohner: {{meta.einwohner|zahl}}.",))
+    werte = textwerte(kaputt, investitionen, produkte, texte=[ohne_formel])
+    assert "abgeleitet.ausgleichsruecklage_minderung_haushaltsjahr" not in werte
+    mit_formel = Erklaertext(
+        "b",
+        "B",
+        (1,),
+        ("Minderung: {{abgeleitet.ausgleichsruecklage_minderung_haushaltsjahr|euro}}.",),
+    )
+    with pytest.raises(TexteFehler, match="ausgleichsruecklage_minderung_haushaltsjahr"):
+        textwerte(kaputt, investitionen, produkte, texte=[mit_formel])
 
 
 def test_textwerte_vorjahr_schluesselzuweisung_groesser_als_haushaltsjahr(

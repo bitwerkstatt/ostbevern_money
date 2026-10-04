@@ -298,9 +298,14 @@ def textwerte(
     haushalt: Mapping[str, object],
     investitionen: Mapping[str, object],
     produkte: Sequence[Mapping[str, object]],
+    texte: Sequence[Erklaertext] | None = None,
 ) -> dict[str, int | float]:
     """Baut die kuratierte Werte-Namensraum für die Erklärtexte (D-15) aus den bereits
     gebauten App-Dictionaries (`haushalt.json`, `investitionen.json`, `produkte.json`).
+
+    Mit `texte` werden nur die `abgeleitet.*`-Formeln ausgewertet, die ein Text tatsächlich
+    verwendet; ohne `texte` alle. Fehlt einer Formel ein Eingabewert (z. B. eine Folgejahr-
+    Reihe in einem anderen Jahrgang), bricht das mit `TexteFehler` ab, nie mit `KeyError`.
 
     Liest nie das PDF und nie eine CSV direkt (D-06) — die Eingaben sind dieselben
     Dictionaries, die `app_daten.erzeuge_app_daten` bereits aufgebaut hat, bevor sie
@@ -396,8 +401,23 @@ def textwerte(
                     werte[schluessel] = eintrag["wert"]
 
     # abgeleitet.<name> -- benannte Formeln, zuletzt ausgewertet (lesen die Werte oben).
+    verwendete = (
+        None
+        if texte is None
+        else {
+            treffer.group(1)
+            for text in texte
+            for absatz in text.absaetze
+            for treffer in PLATZHALTER_MUSTER.finditer(absatz)
+        }
+    )
     for name, formel in ABGELEITET.items():
-        werte[f"abgeleitet.{name}"] = formel(werte)
+        if verwendete is not None and f"abgeleitet.{name}" not in verwendete:
+            continue
+        try:
+            werte[f"abgeleitet.{name}"] = formel(werte)
+        except KeyError as fehler:
+            raise TexteFehler(f"Formel {name!r}: Eingabewert {fehler} fehlt") from fehler
 
     return werte
 
