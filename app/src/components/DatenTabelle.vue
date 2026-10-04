@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watchEffect } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue'
 import { EURO_OPTIONEN, KEIN_WERT } from '@/charts/format'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 
@@ -52,6 +52,37 @@ if (import.meta.env.DEV) {
   })
 }
 
+// Ein waagerecht scrollbarer Bereich muss per Tastatur erreichbar und benannt sein; eine
+// Tabelle, die in die Breite passt, braucht das nicht (kein überflüssiger Tabstopp, keine
+// doppelte Namensansage neben der unsichtbaren Caption). Daher gelten Fokus und Region nur,
+// solange der Inhalt breiter ist als der Rahmen.
+const rahmen = ref<HTMLElement | null>(null)
+const ueberlaeuft = ref(false)
+let beobachter: ResizeObserver | undefined
+
+function pruefeUeberlauf() {
+  const element = rahmen.value
+  ueberlaeuft.value = element !== null && element.scrollWidth > element.clientWidth
+}
+
+onMounted(() => {
+  pruefeUeberlauf()
+  if (typeof ResizeObserver === 'undefined' || rahmen.value === null) {
+    return
+  }
+  beobachter = new ResizeObserver(pruefeUeberlauf)
+  beobachter.observe(rahmen.value)
+  for (const kind of Array.from(rahmen.value.children)) {
+    beobachter.observe(kind)
+  }
+})
+
+onBeforeUnmount(() => {
+  beobachter?.disconnect()
+})
+
+const scrollbarBenannt = computed(() => ueberlaeuft.value && !!props.beschriftung)
+
 /**
  * Prüft zur Laufzeit, dass ein Zellwert tatsächlich eine Zahl ist, bevor er
  * an `<wa-format-number>` übergeben wird. `DatenZeile` erlaubt
@@ -69,10 +100,11 @@ function alsZahl(wert: string | number | null | undefined): number {
 
 <template>
   <div
+    ref="rahmen"
     class="om-tabelle-rahmen"
-    :role="beschriftung ? 'region' : undefined"
-    :aria-label="beschriftung"
-    :tabindex="beschriftung ? 0 : undefined"
+    :role="scrollbarBenannt ? 'region' : undefined"
+    :aria-label="scrollbarBenannt ? beschriftung : undefined"
+    :tabindex="scrollbarBenannt ? 0 : undefined"
   >
     <div v-if="laedt" class="om-tabelle-skeleton">
       <wa-skeleton effect="sheen"></wa-skeleton>
