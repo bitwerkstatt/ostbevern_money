@@ -52,6 +52,9 @@ _ABSCHNITT_MUSTER = re.compile(r"^## (.+)$", re.MULTILINE)
 _TITEL_MUSTER = re.compile(r"^Titel:\s*(.+)$")
 _QUELLE_MUSTER = re.compile(r"^Quelle:\s*(.+)$")
 _SEITENZAHL_MUSTER = re.compile(r"S\.\s*(\d+)")
+# Eine Seitenspanne in der Quelle-Zeile ("S. 309-311", "S. 24/25") würde von
+# _SEITENZAHL_MUSTER auf die erste Seite verkürzt; sie ist daher nicht erlaubt.
+_SEITENSPANNE_MUSTER = re.compile(r"S\.\s*\d+\s*[-–/]\s*\d+")
 _SCHLUESSEL_MUSTER = re.compile(r"^[a-z][a-z0-9_]*$")
 _KOPFZEILE = "# Erklärtexte"
 _KOPFZEILE_GLOSSAR = "# Glossar"
@@ -119,6 +122,11 @@ def _lies_abschnitte(pfad: Path, *, kopfzeile: str, quelle_pflicht: bool) -> lis
             quelle_treffer = _QUELLE_MUSTER.match(kopf_zeilen[1])
             if quelle_treffer is None:
                 raise TexteFehler(f"{pfad}: Abschnitt {schluessel!r} hat keine 'Quelle:'-Zeile")
+            if _SEITENSPANNE_MUSTER.search(quelle_treffer.group(1)):
+                raise TexteFehler(
+                    f"{pfad}: Abschnitt {schluessel!r}: Seitenspannen in der Quelle sind nicht "
+                    "erlaubt, jede Seite einzeln auflisten (z. B. 'S. 309, S. 310')"
+                )
             seiten = tuple(int(s) for s in _SEITENZAHL_MUSTER.findall(quelle_treffer.group(1)))
             if not seiten:
                 raise TexteFehler(f"{pfad}: Abschnitt {schluessel!r}: Quelle ohne Seitenzahl")

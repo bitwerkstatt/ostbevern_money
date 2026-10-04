@@ -221,6 +221,15 @@ def test_lies_erklaerungen_eigene_kopfzeile(tmp_path: Path) -> None:
         lies_erklaerungen(pfad)
 
 
+@pytest.mark.parametrize("spanne", ["S. 309-311", "S. 24/25", "S. 5, S. 8 - 9"])
+def test_lies_erklaerungen_lehnt_seitenspannen_in_der_quelle_ab(
+    tmp_path: Path, spanne: str
+) -> None:
+    pfad = _schreibe(tmp_path, _GUELTIGE_DATEI.replace("Quelle: S. 12", f"Quelle: {spanne}"))
+    with pytest.raises(TexteFehler, match="Seitenspannen"):
+        lies_erklaerungen(pfad)
+
+
 def test_lies_erklaerungen_quelle_optional_erlaubt_nur_titel(tmp_path: Path) -> None:
     inhalt = """# Erklärtexte
 
