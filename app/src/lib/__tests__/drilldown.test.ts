@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { abstufung, farbeFuerPb, KL_DECAL, KL_FARBE } from '@/charts/echartsTheme'
+import { abstufung, farbeFuerPb, KL_DECAL, KL_FARBE, PUNKT_DECAL } from '@/charts/echartsTheme'
+import { euroKurz } from '@/charts/format'
 import { haushalt } from '@/data/daten'
 import {
   baueBrotkrumen,
@@ -11,8 +12,13 @@ import {
   kachelBeschriftet,
   kinderVon,
   klickZiel,
+  ueberschussTextSchluessel,
+  zuschussBalkenHoehe,
+  zuschussBalkenOption,
+  type EbenenEintrag,
 } from '@/lib/drilldown'
 import { findeProdukt } from '@/lib/ansicht'
+import { findeText, rendereAbsatz } from '@/lib/texte'
 
 const JAHRE = haushalt.jahre.map((j, i) => [j, i] as const)
 const MIT_KINDERN = haushalt.knoten.filter((k) => haushalt.knoten.some((c) => c.eltern === k.code))
@@ -342,5 +348,205 @@ describe('kachelBeschriftet (RESEARCH A3)', () => {
   it('verlangt mindestens die Fläche von 72 × 44 px', () => {
     expect(kachelBeschriftet(72 * 44 - 1, 1, 1)).toBe(false)
     expect(kachelBeschriftet(72 * 44, 1, 1)).toBe(true)
+  })
+})
+
+describe('ueberschussTextSchluessel (AUSG-03)', () => {
+  it('nimmt den Text des Aufgabenbereichs, wenn es ihn gibt, sonst den allgemeinen', () => {
+    expect(ueberschussTextSchluessel('11')).toBe('ueberschuss_pb_11')
+    expect(ueberschussTextSchluessel('16')).toBe('ueberschuss_pb_16')
+    // Produktgruppen und Produkte erben den Text ihres Aufgabenbereichs.
+    expect(ueberschussTextSchluessel('1101')).toBe('ueberschuss_pb_11')
+    expect(ueberschussTextSchluessel('110101')).toBe('ueberschuss_pb_11')
+    // Aufgabenbereich 01 hat keinen eigenen Text.
+    expect(ueberschussTextSchluessel('0112')).toBe('ueberschuss_allgemein')
+    expect(ueberschussTextSchluessel('KL')).toBe('ueberschuss_allgemein')
+  })
+
+  it('findet für jeden Überschussknoten in jedem Jahr einen vorhandenen, platzhalterfreien Text', () => {
+    let geprueft = 0
+    for (const [, i] of JAHRE) {
+      for (const k of haushalt.knoten.filter((n) => n.eltern !== null)) {
+        if (haushalt.ergebnisplan[k.code]?.berechnet.ueberschuss[i] !== true) {
+          continue
+        }
+        const schluessel = ueberschussTextSchluessel(k.code)
+        const text = findeText(schluessel)
+        expect(text, `${k.code} -> ${schluessel}`).toBeDefined()
+        const absatz = text?.absaetze[0] ?? ''
+        expect(absatz.length, schluessel).toBeGreaterThan(0)
+        expect(rendereAbsatz(absatz), schluessel).not.toContain('{{')
+        geprueft += 1
+      }
+    }
+    expect(geprueft).toBeGreaterThan(0)
+  })
+
+  it('wirft für unbekannte Codes und für die Wurzel', () => {
+    expect(() => ueberschussTextSchluessel('__proto__')).toThrow()
+    expect(() => ueberschussTextSchluessel('GESAMT')).toThrow()
+  })
+})
+
+function synthetisch(code: string, name: string, wert: number, extra?: Partial<EbenenEintrag>) {
+  const eintrag: EbenenEintrag = {
+    code,
+    name,
+    wert,
+    anteil: wert > 0 ? 0.5 : null,
+    gerundet: false,
+    ueberschuss: wert < 0,
+    istKl: false,
+    hatKinder: true,
+    istProdukt: false,
+    farbe: '#123456',
+    ...extra,
+  }
+  return eintrag
+}
+
+interface Achse {
+  min: number
+  max: number
+  interval: number
+}
+
+function xAchse(option: ReturnType<typeof zuschussBalkenOption>): Achse {
+  const x = option.xAxis
+  if (typeof x !== 'object' || x === null || Array.isArray(x)) {
+    throw new Error('xAxis ist kein einzelnes Objekt')
+  }
+  const { min, max, interval } = x as Record<string, unknown>
+  if (typeof min !== 'number' || typeof max !== 'number' || typeof interval !== 'number') {
+    throw new Error('xAxis trägt keine festen Grenzen')
+  }
+  return { min, max, interval }
+}
+
+function balkenDaten(option: ReturnType<typeof zuschussBalkenOption>) {
+  const serie = Array.isArray(option.series) ? option.series[0] : option.series
+  const daten = (serie as { data?: unknown }).data
+  if (!Array.isArray(daten)) {
+    throw new Error('Serie ohne Daten')
+  }
+  return daten as {
+    value: number
+    code: string
+    itemStyle: { color: string; decal?: unknown }
+    label: { formatter: string; show: boolean }
+  }[]
+}
+
+describe('zuschussBalkenHoehe', () => {
+  it('beträgt Zeilen × 40 px + 48 px (UI-SPEC)', () => {
+    expect(zuschussBalkenHoehe(1)).toBe(88)
+    expect(zuschussBalkenHoehe(16)).toBe(688)
+  })
+})
+
+describe('zuschussBalkenOption (AUSG-03, D-05)', () => {
+  const i = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
+  const ebene = baueEbene('GESAMT', i, 'zuschussbedarf')
+  const option = zuschussBalkenOption(ebene, { wertartText: 'Ansatz' })
+
+  it('zeichnet einen horizontalen Balken je Eintrag in der Reihenfolge der Ebene', () => {
+    const daten = balkenDaten(option)
+    expect(daten.map((d) => d.code)).toEqual(ebene.map((e) => e.code))
+    expect(daten.map((d) => d.value)).toEqual(ebene.map((e) => e.wert))
+  })
+
+  it('behält die PB-Farbe aller Balken', () => {
+    balkenDaten(option).forEach((d, n) => {
+      expect(d.itemStyle.color).toBe(ebene[n]?.farbe)
+    })
+  })
+
+  it('gibt Überschussbalken ein Punktmuster und die Beschriftung „Überschuss: {Betrag}“', () => {
+    const daten = balkenDaten(option)
+    const negativ = daten.filter((d) => d.value < 0)
+    expect(negativ.length).toBeGreaterThan(0)
+    for (const d of negativ) {
+      expect(d.itemStyle.decal, d.code).toBe(PUNKT_DECAL)
+      expect(d.label.formatter, d.code).toBe(`Überschuss: ${euroKurz(Math.abs(d.value))}`)
+      expect(d.label.show).toBe(true)
+    }
+  })
+
+  it('beschriftet positive Balken mit dem Betrag und ohne Punktmuster', () => {
+    for (const d of balkenDaten(option).filter((n) => n.value > 0)) {
+      expect(d.label.formatter, d.code).toBe(euroKurz(d.value))
+      expect(d.itemStyle.decal, d.code).not.toBe(PUNKT_DECAL)
+    }
+  })
+
+  it('kennzeichnet KL mit dem Streifenmuster', () => {
+    const kl = balkenDaten(option).find((d) => d.code === 'KL')
+    expect(kl?.itemStyle.decal).toBe(KL_DECAL)
+  })
+
+  it('zeigt die Nulllinie: eine Achse trägt die Namen am linken Rand, eine zweite die Linie bei 0', () => {
+    const y = option.yAxis
+    expect(Array.isArray(y)).toBe(true)
+    const achsen = (Array.isArray(y) ? y : []) as {
+      axisLine?: { onZero?: boolean; show?: boolean }
+      axisLabel?: { show?: boolean; formatter?: (code: string) => string }
+    }[]
+    expect(achsen).toHaveLength(2)
+    expect(achsen[0]?.axisLine?.onZero).toBe(false)
+    expect(achsen[1]?.axisLine?.onZero).toBe(true)
+    expect(achsen[1]?.axisLabel?.show).toBe(false)
+    const erster = ebene[0]
+    expect(achsen[0]?.axisLabel?.formatter?.(erster?.code ?? '')).toBe(erster?.name)
+  })
+
+  it('enthält die 0 auf der Wertachse (gemischte Vorzeichen)', () => {
+    const { min, max } = xAchse(option)
+    expect(min).toBeLessThan(0)
+    expect(max).toBeGreaterThan(0)
+    const werte = ebene.map((e) => e.wert)
+    expect(min).toBeLessThanOrEqual(Math.min(...werte))
+    expect(max).toBeGreaterThanOrEqual(Math.max(...werte))
+  })
+
+  it('enthält die 0 und Platz für Beschriftungen, wenn alle Werte positiv sind', () => {
+    const nurPositiv = zuschussBalkenOption(
+      [synthetisch('a', 'A', 5_000_000), synthetisch('b', 'B', 1_200_000)],
+      { wertartText: 'Ansatz' },
+    )
+    const { min, max } = xAchse(nurPositiv)
+    expect(min).toBe(0)
+    expect(max).toBeGreaterThan(5_000_000)
+  })
+
+  it('lässt rechts der Nulllinie Platz für das Überschuss-Label, wenn alle Werte negativ sind', () => {
+    const nurNegativ = zuschussBalkenOption([synthetisch('a', 'A', -60_540)], {
+      wertartText: 'Ansatz',
+    })
+    const { min, max } = xAchse(nurNegativ)
+    expect(min).toBeLessThanOrEqual(-60_540)
+    expect(max).toBeGreaterThan(0)
+  })
+
+  it('wählt gleichmäßige Schritte, die die Grenzen treffen', () => {
+    const { min, max, interval } = xAchse(option)
+    expect(interval).toBeGreaterThan(0)
+    expect(min / interval).toBeCloseTo(Math.round(min / interval), 6)
+    expect(max / interval).toBeCloseTo(Math.round(max / interval), 6)
+  })
+
+  it('maskiert Namen im Tooltip (T-05-27)', () => {
+    const boese = zuschussBalkenOption([synthetisch('x', '<b onmouseover=1>', 1000)], {
+      wertartText: 'Ansatz',
+    })
+    const tooltip = boese.tooltip as { formatter?: (params: unknown) => string }
+    const html = tooltip.formatter?.({ data: { code: 'x' } }) ?? ''
+    expect(html).toContain('&lt;b')
+    expect(html).not.toContain('<b ')
+  })
+
+  it('übernimmt das Zuschussbedarf-Jahr unverändert (keine Neuberechnung)', () => {
+    for (const d of balkenDaten(option)) {
+      expect(d.value).toBe(haushalt.ergebnisplan[d.code]?.berechnet.zuschussbedarf[i])
+    }
   })
 })

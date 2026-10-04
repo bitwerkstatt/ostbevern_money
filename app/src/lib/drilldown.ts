@@ -4,6 +4,8 @@
 // Modul wird weder Aufwand noch Zuschussbedarf neu gerechnet (D-05). URL-Werte kommen
 // nur als validierte Codes hierher und werden ausschließlich über Map-Lookups aufgelöst.
 
+import type { EChartsOption } from 'echarts'
+
 import { abstufung, farbeFuerPb, KL_DECAL, type Decal } from '@/charts/echartsTheme'
 import { euro, prozent } from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
@@ -235,4 +237,20 @@ const MIN_KACHEL_HOEHE = 44
  */
 export function kachelBeschriftet(anteil: number, breite: number, hoehe: number): boolean {
   return anteil * breite * hoehe >= MIN_KACHEL_BREITE * MIN_KACHEL_HOEHE
+}
+
+// RED-Stub (Task 2): nur Signaturen, damit die Tests an Assertions statt am Import scheitern.
+export function ueberschussTextSchluessel(_code: string): string {
+  return ''
+}
+
+export function zuschussBalkenHoehe(_zeilen: number): number {
+  return 0
+}
+
+export function zuschussBalkenOption(
+  _eintraege: readonly EbenenEintrag[],
+  _optionen: { wertartText: string },
+): EChartsOption {
+  return {}
 }
