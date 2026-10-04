@@ -6,10 +6,29 @@
 
 import { registerTheme, use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { BarChart } from 'echarts/charts'
-import { GridComponent, TooltipComponent } from 'echarts/components'
+import { BarChart, LineChart, SankeyChart, TreemapChart } from 'echarts/charts'
+import { AriaComponent, GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
+import type { TreemapSeriesOption } from 'echarts'
 
-use([CanvasRenderer, BarChart, GridComponent, TooltipComponent])
+/** Decal-Muster eines Datenpunkts (ECharts exportiert den Typ nicht unter eigenem Namen). */
+export type Decal = Exclude<
+  NonNullable<NonNullable<TreemapSeriesOption['itemStyle']>['decal']>,
+  'none'
+>
+
+// Einzige Stelle, die `use()` aufruft: nur hier registrierte Module stehen den
+// Diagrammen zur Verfügung (Treemap/Balken/Sankey/Linie, Legende, Aria).
+use([
+  CanvasRenderer,
+  BarChart,
+  LineChart,
+  SankeyChart,
+  TreemapChart,
+  GridComponent,
+  TooltipComponent,
+  LegendComponent,
+  AriaComponent,
+])
 
 /**
  * Liest einen Web-Awesome-Token zur Laufzeit; fällt auf `ersatz` zurück,
@@ -57,20 +76,141 @@ export const POL_FARBEN = {
   neutral: token('--wa-color-neutral-50', '#717584'),
 }
 
+/**
+ * Aufgabenbereich-Palette (D-08): eine feste Farbe je PB-Code (15 Produktbereiche
+ * plus KL), identisch in Treemap, Balken, Sankey und Mobil-Balken. Nur die Töne
+ * 30/40/50 der WA-Hues; kein Gold (Akzent), kein Rot/Grün (Datensemantik).
+ * Jede Farbe erreicht gegen Weiß mindestens 4,5:1 (siehe farben.test.ts).
+ */
+export const PB_FARBEN: Readonly<Record<string, string>> = {
+  '01': token('--wa-color-gray-30', '#424554'),
+  '02': token('--wa-color-gray-40', '#545868'),
+  '16': token('--wa-color-gray-50', '#717584'),
+  '03': token('--wa-color-indigo-30', '#3933a7'),
+  '04': token('--wa-color-indigo-40', '#4945cb'),
+  '08': token('--wa-color-indigo-50', '#6163f2'),
+  '05': token('--wa-color-blue-30', '#003f9c'),
+  '06': token('--wa-color-blue-40', '#0053c0'),
+  '12': token('--wa-color-blue-50', '#0071ec'),
+  '09': token('--wa-color-cyan-30', '#014c5b'),
+  '10': token('--wa-color-cyan-40', '#026274'),
+  '11': token('--wa-color-cyan-50', '#078098'),
+  '13': token('--wa-color-purple-30', '#612692'),
+  '14': token('--wa-color-purple-40', '#7936b3'),
+  '15': token('--wa-color-purple-50', '#9951db'),
+  KL: token('--wa-color-pink-40', '#9e2a6c'),
+}
+
+/** Farbe der Kachel „Weitergabe an Kreis und Land“ (immer mit `KL_DECAL`). */
+export const KL_FARBE = PB_FARBEN['KL'] ?? token('--wa-color-pink-40', '#9e2a6c')
+
+/** Farbe eines Produktbereichs; wirft bei unbekanntem Code, statt still eine Ersatzfarbe zu liefern. */
+export function farbeFuerPb(code: string): string {
+  const farbe = PB_FARBEN[code]
+  if (farbe === undefined) {
+    throw new Error(`Keine Aufgabenbereich-Farbe für den Code „${code}“`)
+  }
+  return farbe
+}
+
+const ABSTUFUNG_ANTEILE = [0, 0.1, 0.2] as const
+
+/**
+ * Dunkelt eine Hex-Farbe (#rrggbb) für Geschwisterkacheln ab (D-08): Rang 0
+ * unverändert, Rang 1 zu 10 %, Rang 2 zu 20 % mit Schwarz gemischt, danach
+ * wiederholt. Es wird nur abgedunkelt, nie aufgehellt (Kontrast zu weißer
+ * Beschriftung wächst). Andere Farbformate kommen unverändert zurück.
+ */
+export function abstufung(farbe: string, rang: number): string {
+  if (!/^#[0-9a-f]{6}$/i.test(farbe)) {
+    return farbe
+  }
+  const anteil = ABSTUFUNG_ANTEILE[((rang % 3) + 3) % 3] ?? 0
+  const kanaele = [1, 3, 5].map((start) => {
+    const kanal = Math.round(parseInt(farbe.slice(start, start + 2), 16) * (1 - anteil))
+    return kanal.toString(16).padStart(2, '0')
+  })
+  return `#${kanaele.join('')}`
+}
+
+/** Hex-Farbe mit Deckkraft als rgba(); Nicht-Hex-Werte bleiben unverändert. */
+function mitDeckkraft(farbe: string, deckkraft: number): string {
+  if (!/^#[0-9a-f]{6}$/i.test(farbe)) {
+    return farbe
+  }
+  const [r, g, b] = [1, 3, 5].map((start) => parseInt(farbe.slice(start, start + 2), 16))
+  return `rgba(${r}, ${g}, ${b}, ${deckkraft})`
+}
+
+/** Diagonale Streifen (45°) für KL: KL bleibt auch ohne Farbwahrnehmung erkennbar. */
+export const KL_DECAL: Decal = {
+  symbol: 'rect',
+  symbolSize: 1,
+  rotation: Math.PI / 4,
+  dashArrayX: [1, 0],
+  dashArrayY: [3, 5],
+  color: mitDeckkraft(token('--wa-color-surface-default', '#ffffff'), 0.45),
+}
+
+/** Punktmuster für Überschuss und Minderaufwand (nie Farbe allein). */
+export const PUNKT_DECAL: Decal = {
+  symbol: 'circle',
+  symbolSize: 1,
+  dashArrayX: [1, 0],
+  dashArrayY: [2, 6],
+  color: mitDeckkraft(token('--wa-color-surface-default', '#ffffff'), 0.55),
+}
+
+/** Erträge: Ertragsbalken, linke Sankey-Knoten, Zeitreihe (Akzent „Geld kommt herein“). */
+export const ERTRAG_FARBE = token('--wa-color-brand-60', '#da7e00')
+/** Gruppe „Steuern“ im Sankey. */
+export const STEUER_FARBE = token('--wa-color-brand-50', '#b45f04')
+/** Investive Einnahmen: bewusst nicht Gold, damit sie nicht wie Erträge wirken. */
+export const INVEST_FARBE = token('--wa-color-neutral-40', '#545868')
+/** Aufwandsarten: neutral, nie PB-Farben. */
+export const AUFWANDSART_FARBE = token('--wa-color-neutral-40', '#545868')
+/** Knoten „Gemeindehaushalt“ (Sankey Mitte). */
+export const GEMEINDE_FARBE = token('--wa-color-gray-40', '#545868')
+/** Knoten „Zinsen“ (Sankey rechts). */
+export const ZINSEN_FARBE = token('--wa-color-gray-60', '#9194a2')
+/** Knoten „Globaler Minderaufwand“ (mit `PUNKT_DECAL`). */
+export const MINDERAUFWAND_FARBE = token('--wa-color-neutral-50', '#717584')
+
+/**
+ * Diagrammschriftgröße in px: mindestens 14 (UI-SPEC Typography). Nur ein
+ * aufgelöster px-Wert des Tokens zählt; WA liefert `round(calc(...))` als
+ * unaufgelösten Text, dann gilt der Ersatz 14.
+ */
+function schriftgroesse(): number {
+  const roh = token('--wa-font-size-s', '14px')
+  const treffer = /^(\d+(?:\.\d+)?)px$/.exec(roh)
+  const px = treffer ? Number(treffer[1]) : 14
+  return Math.max(14, px)
+}
+
+const SCHRIFTGROESSE = schriftgroesse()
+
 registerTheme(CHART_THEME, {
   color: KATEGORIE_FARBEN,
   textStyle: {
     fontFamily: token('--wa-font-family-body', 'ui-sans-serif, system-ui, sans-serif'),
     color: token('--wa-color-text-normal', '#1a1d29'),
+    fontSize: SCHRIFTGROESSE,
+  },
+  tooltip: {
+    textStyle: { fontSize: SCHRIFTGROESSE },
+  },
+  legend: {
+    textStyle: { fontSize: SCHRIFTGROESSE },
   },
   categoryAxis: {
     axisLine: { lineStyle: { color: token('--wa-color-text-quiet', '#545868') } },
-    axisLabel: { color: token('--wa-color-text-quiet', '#545868') },
+    axisLabel: { color: token('--wa-color-text-quiet', '#545868'), fontSize: SCHRIFTGROESSE },
     splitLine: { lineStyle: { color: token('--wa-color-surface-border', '#dcdfe4') } },
   },
   valueAxis: {
     axisLine: { lineStyle: { color: token('--wa-color-text-quiet', '#545868') } },
-    axisLabel: { color: token('--wa-color-text-quiet', '#545868') },
+    axisLabel: { color: token('--wa-color-text-quiet', '#545868'), fontSize: SCHRIFTGROESSE },
     splitLine: { lineStyle: { color: token('--wa-color-surface-border', '#dcdfe4') } },
   },
 })

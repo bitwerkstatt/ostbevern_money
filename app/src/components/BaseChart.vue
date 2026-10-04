@@ -4,6 +4,7 @@ import type { EChartsOption } from 'echarts'
 import VChart from 'vue-echarts'
 import { CHART_THEME } from '@/charts/echartsTheme'
 import { CHART_KONTEXT } from '@/components/chartKontext'
+import { ohneAnimation, useReducedMotion } from '@/lib/bewegung'
 
 const props = withDefaults(
   defineProps<{
@@ -12,9 +13,16 @@ const props = withDefaults(
     beschreibung?: string
     laedt?: boolean
     fehler?: boolean
+    /** Überschrift des Leerzustands (UI-SPEC Copywriting). */
+    leerTitel?: string
+    /** Erklärtext des Leerzustands (UI-SPEC Copywriting). */
+    leerText?: string
   }>(),
   {
     hoehe: '320px',
+    leerTitel: 'Keine Einzelwerte',
+    leerText:
+      'Der Haushaltsplan nennt hier keine Aufschlüsselung. Wähle ein anderes Jahr oder öffne die Tabelle.',
   },
 )
 
@@ -23,6 +31,11 @@ const emit = defineEmits<{
 }>()
 
 const kontext = inject(CHART_KONTEXT, undefined)
+const reduzierteBewegung = useReducedMotion()
+
+// Bei `prefers-reduced-motion: reduce` läuft jedes Diagramm ohne Animation
+// (UI-SPEC Chart Contract „Bewegung“).
+const chartOption = computed(() => ohneAnimation(props.option, reduzierteBewegung.value))
 
 const ariaLabelledby = computed(() => {
   if (props.beschreibung || !kontext) {
@@ -41,9 +54,14 @@ const istLeer = computed(() => {
   if (serienListe.length === 0) {
     return true
   }
+  // Eine Serie ist leer, wenn weder `data` noch (Sankey) `links`/`edges` Einträge haben.
   return serienListe.every((eintrag) => {
-    const daten = (eintrag as { data?: unknown[] }).data
-    return !daten || daten.length === 0
+    const { data, links, edges } = eintrag as {
+      data?: unknown[]
+      links?: unknown[]
+      edges?: unknown[]
+    }
+    return !data?.length && !links?.length && !edges?.length
   })
 })
 
@@ -60,16 +78,13 @@ function onClick(params: unknown) {
       <p>
         <slot name="fehler">
           Diagramm kann nicht angezeigt werden. Bitte lade die Seite neu. Besteht das Problem
-          weiter, melde das Problem über GitHub Issues im Quell-Repository.
+          weiter, nutze den Kontakt in der Fußzeile.
         </slot>
       </p>
     </div>
     <div v-else-if="istLeer" class="om-base-chart__zustand">
-      <h3>Noch keine Daten</h3>
-      <p>
-        Die Haushaltsdaten werden ab Phase 2 automatisch aus dem PDF erzeugt und erscheinen hier,
-        sobald die Pipeline gelaufen ist.
-      </p>
+      <h3>{{ props.leerTitel }}</h3>
+      <p>{{ props.leerText }}</p>
     </div>
     <div
       v-else
@@ -78,7 +93,7 @@ function onClick(params: unknown) {
       :aria-label="props.beschreibung"
       :aria-labelledby="ariaLabelledby"
     >
-      <VChart :option="props.option" :theme="CHART_THEME" autoresize @click="onClick" />
+      <VChart :option="chartOption" :theme="CHART_THEME" autoresize @click="onClick" />
     </div>
   </div>
 </template>
