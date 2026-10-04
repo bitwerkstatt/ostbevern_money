@@ -26,8 +26,9 @@ class TexteFehler(ValueError):
 
 
 # Formatkürzel der Platzhalter (D-15); muss exakt der FormatKuerzel-Union in
-# app/src/charts/format.ts entsprechen (test_formatkuerzel_wie_format_ts).
-FORMATKUERZEL: tuple[str, ...] = ("euro", "mio", "zahl", "prozent", "promille", "vzae")
+# app/src/charts/format.ts entsprechen (test_formatkuerzel_wie_format_ts). "jahr" ist
+# eine Jahreszahl ohne Tausendertrennung (z. B. Haushaltsjahr), anders als "zahl" (CR-01).
+FORMATKUERZEL: tuple[str, ...] = ("euro", "mio", "zahl", "jahr", "prozent", "promille", "vzae")
 
 # Ein vollständiger Platzhalter `{{schluessel|format}}`; Schlüsselzeichen sind
 # Kleinbuchstaben, Ziffern, Unterstrich und Punkt (Namensraum-Trenner).
