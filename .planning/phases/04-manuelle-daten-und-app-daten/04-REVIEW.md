@@ -1,259 +1,110 @@
 ---
 phase: 04-manuelle-daten-und-app-daten
-reviewed: 2026-10-03T20:06:13Z
+reviewed: 2026-10-04T08:39:37Z
 depth: standard
-files_reviewed: 41
+files_reviewed: 6
 files_reviewed_list:
-  - .github/workflows/ci.yml
-  - app/.prettierignore
   - app/src/charts/format.ts
-  - app/src/data/daten.ts
-  - app/src/data/haushalt.json
-  - app/src/data/investitionen.json
-  - app/src/data/produkte.json
-  - app/src/data/stellenplan.json
   - app/src/data/texte.json
-  - app/src/data/typen.ts
-  - daten/aufbereitet/stellenplan.csv
   - daten/manuell/README.md
-  - daten/manuell/eigenkapital.csv
-  - daten/manuell/kita_zuschuesse.csv
-  - daten/manuell/meta.json
-  - daten/manuell/steuerarten.csv
   - daten/manuell/texte/erklaerungen.md
-  - daten/manuell/transferaufwendungen.csv
-  - daten/manuell/ve_uebersicht.csv
-  - daten/manuell/verbindlichkeiten.csv
-  - daten/manuell/weitere_vorberichtstabellen.csv
-  - daten/manuell/zuwendungen.csv
-  - daten/pruefberichte/befunde.md
-  - daten/pruefberichte/konsistenz.md
-  - pipeline/05_stellenplan.py
-  - pipeline/07_app_daten.py
-  - pipeline/alle.py
-  - pipeline/jahrgaenge/2026.toml
-  - pipeline/jahrgaenge/2026_sollwerte.toml
-  - pipeline/ostbevern/app_daten.py
-  - pipeline/ostbevern/konfiguration.py
-  - pipeline/ostbevern/manuell.py
-  - pipeline/ostbevern/pruefung.py
-  - pipeline/ostbevern/schema.py
-  - pipeline/ostbevern/stellenplan.py
   - pipeline/ostbevern/texte.py
-  - pipeline/tests/test_alle.py
-  - pipeline/tests/test_app_daten.py
-  - pipeline/tests/test_konfiguration.py
-  - pipeline/tests/test_manuell.py
-  - pipeline/tests/test_pruefung.py
-  - pipeline/tests/test_stellenplan.py
-  - pipeline/tests/test_texte.py
+  - pipeline/tests/test_formatiere.py
 findings:
-  critical: 1
+  critical: 0
   warning: 3
   info: 1
-  total: 5
+  total: 4
 status: issues_found
 ---
 
 # Phase 04: Code Review Report
 
-**Reviewed:** 2026-10-03T20:06:13Z
+**Reviewed:** 2026-10-04T08:39:37Z
 **Depth:** standard
-**Files Reviewed:** 41
+**Files Reviewed:** 6
 **Status:** issues_found
+
+
+> **ID-Hinweis (Orchestrator):** Inkrementeller Review nach Plan 04-06 (Diff-Basis 1485175). Die Befund-IDs wurden mechanisch auf WR-04…WR-06 und IN-02 umnummeriert, damit sie nicht mit CR-01, WR-01…WR-03 und IN-01 des vorherigen Reviews (Commit 1485175, Stand in 04-REVIEW-DISPOSITION.md) kollidieren. WR-06 überschneidet sich inhaltlich mit dem früheren IN-01 (kein Fallback in `formatiere()`), das per Nutzerentscheidung vom 2026-10-03 offen bleibt.
 
 ## Summary
 
-Phase 4 (manuelle Vorberichtstabellen, `meta.json`, Stellenplan-Extraktion, Regel 5/9/10
-und die App-JSON-Erzeugung in `app_daten.py`/`texte.py`) is an unusually well-tested
-slice of the pipeline: every new CSV/JSON shape has a round-trip ("read → rewrite →
-byte-identical") test, the KL-Herauslösung (D-01 bis D-04) and Schuldenstand-Fortschreibung
-(D-14) each have dedicated mutation tests, and `test_keine_personennamen_in_app_daten`
-actively greps the generated JSON for personnel names extracted elsewhere in the pipeline.
-No hardcoded secrets, `eval`, shell/SQL injection, or empty `except`/`catch` blocks were
-found, and no person names leak into the generated `app/src/data/*.json` or
-`daten/aufbereitet/stellenplan.csv` (job titles only, e.g. `amtsbezeichnung`).
+Reviewed the format/text-placeholder subsystem (`format.ts`, `texte.py`, `test_formatiere.py`) plus the shipped text content (`texte.json`, `erklaerungen.md`, `README.md`). I independently re-derived every placeholder resolution in `erklaerungen.md` against `texte.json["werte"]` (no missing keys, no unknown format kürzel, no CR-01-style jahr-namespace violations), ran `pruefe_text` from the real pipeline module against every paragraph (no violations), and ran `pipeline/tests/test_formatiere.py` (16/16 pass). The currently-shipped data is internally consistent and correctly formatted — I did not find a currently-manifesting data-correctness bug.
 
-The one critical defect found is a genuine, reproducible number-formatting bug: all ten
-uses of `{{jahr.haushaltsjahr|zahl}}` in `erklaerungen.md` will render the haushaltsjahr
-with German thousands-grouping ("2.026" instead of "2026") once the app renders
-`texte.json` through `format.ts::formatiere`, because the `zahl` format kuerzel is (by
-design, and correctly for `meta.einwohner`) always grouped, and `FORMATKUERZEL` has no
-ungrouped/"year" variant. This directly contradicts the project's core value ("Jede Zahl
-in der App ist korrekt... Bürgerinformation muss stimmen") and is not caught by any test
-in this phase, because the test suite only validates the placeholder *contract*
-(key exists, format kuerzel is in the vocabulary), never the rendered output.
-
-Three further warnings concern verification/robustness gaps that are consistent with, but
-slightly undercut, this project's "every number is backed by an automatic check" guarantee
-(the VE-Übersicht per-year summary rows are never cross-checked) and defensive coding gaps
-that would surface as unclear `IndexError`/`KeyError` instead of domain errors if a future
-jahrgang's data shape deviates slightly from 2026's.
-
-## Critical Issues
-
-### CR-01: `zahl` format kuerzel mis-renders the Haushaltsjahr with thousands-grouping
-
-**File:** `app/src/charts/format.ts:39-42`, `pipeline/ostbevern/texte.py:28-30`, `daten/manuell/texte/erklaerungen.md` (10 occurrences, e.g. lines 7, 13, 19, 25, 31, 37, 43, 49, 55, 61)
-
-**Issue:** `zahl()` in `format.ts` is `Intl.NumberFormat('de-DE', { maximumFractionDigits: 0 })`,
-which uses grouping by default — correct for `meta.einwohner` ("11.741"), but wrong for a
-bare 4-digit year. All ten uses of `{{jahr.haushaltsjahr|zahl}}` in
-`daten/manuell/texte/erklaerungen.md` (and therefore in the committed
-`app/src/data/texte.json`) will render the Haushaltsjahr as **"2.026"** instead of
-**"2026"** once a future phase wires `formatiere()` into the Vue templates — e.g. "Für
-2.026 rechnet die Gemeinde nur noch mit 3,11 Mio. €" instead of "Für 2026…". Verified
-directly:
-
-```
-$ node -e "console.log(new Intl.NumberFormat('de-DE',{maximumFractionDigits:0}).format(2026))"
-2.026
-```
-
-`FORMATKUERZEL` (`euro`, `mio`, `zahl`, `prozent`, `promille`, `vzae`) has no ungrouped
-integer/year variant, so there is currently no correct way to express "render this raw
-int as a bare year" through the existing placeholder vocabulary — the content author had
-to misuse `zahl`. Neither `ostbevern.texte.pruefe_text` (which only checks the
-*syntactic* placeholder contract) nor any test in `test_texte.py`/`test_app_daten.py`
-renders the resolved value through `formatiere()`, so this ships silently.
-
-**Fix:** Add a dedicated ungrouped kuerzel (e.g. `jahr`) to both
-`app/src/charts/format.ts::FormatKuerzel`/`formatiere()` and
-`pipeline/ostbevern/texte.py::FORMATKUERZEL`, and switch all ten
-`{{jahr.haushaltsjahr|zahl}}` placeholders in `erklaerungen.md` to the new kuerzel:
-
-```ts
-// format.ts
-export type FormatKuerzel = 'euro' | 'mio' | 'zahl' | 'jahr' | 'prozent' | 'promille' | 'vzae'
-const JAHR_FORMAT = new Intl.NumberFormat(LOCALE, { useGrouping: false })
-...
-case 'jahr':
-  return JAHR_FORMAT.format(wert)
-```
-```python
-# texte.py
-FORMATKUERZEL: tuple[str, ...] = ("euro", "mio", "zahl", "jahr", "prozent", "promille", "vzae")
-```
-At minimum, add a test that renders every resolved `(wert, format)` pair from
-`loese_auf()` through a reimplementation/port of `formatiere()` (or snapshot-tests the
-expected rendered string) so a future regression is caught mechanically, not by eyeballing
-the PDF.
+What I did find are three design/robustness gaps that are "latent" in the sense that they don't trip on today's data but will silently produce wrong output or masked failures the next time someone edits `erklaerungen.md` or extends `format.ts`'s call sites — exactly the kind of regression this phase's own CR-01 fix was trying to prevent. I also flagged one data-duplication risk. No critical/blocking issues found.
 
 ## Warnings
 
-### WR-01: `ve_uebersicht.csv` per-year summary rows are never cross-checked
+### WR-04: `_SEITENZAHL_MUSTER` silently drops page numbers from range-style `Quelle:` lines
 
-**File:** `pipeline/ostbevern/pruefung.py:1555-1656` (`_pruefe_regel5_ve_uebersicht`), `daten/manuell/ve_uebersicht.csv`
-
-**Issue:** `ve_uebersicht.csv` carries three `ist_gesamt=true` rows: the VE-Gesamtbetrag
-(`faellig_jahr` null, 11.600 T€) and two per-year summary rows, "Summe (fällig 2027)"
-(9.400 T€) and "Summe (fällig 2028)" (2.200 T€). `_pruefe_regel5_ve_uebersicht` only
-selects `ist_gesamt & faellig_jahr.is_null()` for the Regel-5 `summe_gfp_ve` check and
-filters `~ist_gesamt` for the per-(produkt, jahr) comparison against
-`ve_faelligkeiten.csv` — the two per-year summary rows are excluded from *both* checks and
-are never compared against anything (not even against the sum of the non-summary rows of
-the same `faellig_jahr`). On the currently checked-in data they happen to be arithmetically
-correct (2.000+2.000+1.700+1.000+1.700=9.400 for 2027; 1.200+1.000=2.200 for 2028), but a
-future transcription typo in either cell would pass Regel 5, `pruefe_alles`, and every test
-in `test_manuell.py`/`test_pruefung.py` silently — contradicting the project's stated
-"jede Zahl … ist durch automatische Prüfungen … belegt" guarantee.
-
-**Fix:** Add a check (either inside `_pruefe_regel5_ve_uebersicht` or as a dedicated
-`Pruefpunkt`) that each `ist_gesamt` row with a non-null `faellig_jahr` equals the sum of
-the `~ist_gesamt` rows for that same `faellig_jahr`:
-
-```python
-for jahr, betrag in (
-    (z["faellig_jahr"], z["betrag_teur"])
-    for z in ve_uebersicht.filter(
-        pl.col("ist_gesamt") & pl.col("faellig_jahr").is_not_null()
-    ).iter_rows(named=True)
-):
-    soll = einzel.filter(pl.col("faellig_jahr") == jahr)["betrag_teur"].sum()
-    # ... Pruefpunkt soll vs. betrag*1000 ...
+**File:** `pipeline/ostbevern/texte.py:54, 122`
+**Issue:** `_SEITENZAHL_MUSTER = re.compile(r"S\.\s*(\d+)")` is used in `lies_erklaerungen` to extract `quelle_seiten` from a section's `Quelle:` line (line 122: `_SEITENZAHL_MUSTER.findall(quelle_treffer.group(1))`). This regex only captures the digits immediately following a single `S.` marker. The project's own documented convention for page references — used by the sibling `_SEITE_MUSTER` regex inside `pruefe_text` (line 46: `r"S\.\s*\d+(?:[-/]\d+)*"`) and explicitly called out in `daten/manuell/README.md:289` ("ein Seitenverweis (`S. n`, auch als Spanne wie `S. 24/25`)") — allows a compact range form like `S. 24/25` or `S. 309-311`. If an author ever writes a `Quelle:` line using that compact range form (instead of repeating `S.` per page, as all ten current sections do), `_SEITENZAHL_MUSTER.findall` only returns the first page and silently drops the rest — no error, no warning, just an incomplete `quelle_seiten` tuple. I confirmed this directly:
 ```
-
-### WR-02: Fragile negative-index fallback in Schuldenstand-Fortschreibung
-
-**File:** `pipeline/ostbevern/app_daten.py:570-586` (`baue_investitionen_json`)
-
-**Issue:**
-
-```python
-for index, jahr in enumerate(jahre):
-    if jahr in investitionskredite_gedruckt:
-        ...
-    else:
-        vorjahr_euro = investitionskredite[index - 1]
+>>> _SEITENZAHL_MUSTER.findall("S. 24/25")
+['24']
+>>> _SEITENZAHL_MUSTER.findall("S. 309-311")
+['309']
 ```
-
-If `jahre[0]` were ever *not* present in `investitionskredite_gedruckt` (e.g. a future
-jahrgang where `verbindlichkeiten.csv` starts one year later than the Ergebnisplan
-column range), `index == 0` would evaluate `investitionskredite[-1]` on a still-empty
-list, raising a raw `IndexError` instead of a clear `AppDatenFehler`. This holds only by
-coincidence of the current 2026 configuration (jahre[0]=2024 is always printed), and is
-not guarded by any validation or `KonfigurationsFehler`/`AppDatenFehler`.
-
-**Fix:** Validate the precondition explicitly before the loop:
-
+This violates the module's own stated fail-fast philosophy ("Pipeline formatiert nie... bricht Schritt 07 ab" / D-08) and the project's core value that every number is traceably sourced to a PDF page — a missing citation page would ship silently. It does not currently trigger because every existing `Quelle:` line in `erklaerungen.md` repeats `S.` per page (e.g. `S. 46, S. 47`), but nothing prevents the next editor from using the shorter, equally-valid-looking range form documented elsewhere in the same project.
+**Fix:** Reuse the range-aware pattern for the `Quelle:` line too, e.g.:
 ```python
-if jahre[0] not in investitionskredite_gedruckt:
-    raise AppDatenFehler(
-        "investitionen.json: erstes Jahr hat keinen gedruckten Schuldenstand "
-        f"({jahre[0]!r})"
-    )
+_SEITENZAHL_MUSTER = re.compile(r"S\.\s*(\d+(?:[-/]\d+)*)")
+...
+seiten = tuple(
+    int(n)
+    for gruppe in _SEITENZAHL_MUSTER.findall(quelle_treffer.group(1))
+    for n in re.split(r"[-/]", gruppe)
+)
 ```
+or simply document/enforce (with a `TexteFehler`) that `Quelle:` lines must repeat `S.` per page and reject `/`/`-` ranges there.
 
-### WR-03: `ABGELEITET`-Formeln in `texte.py` nehmen Nachbarjahre ungeprüft an
+### WR-05: CR-01 regression guard (jahr-namespace vs. `jahr` kürzel) exists only in the test suite, not in the pipeline's own validation
 
-**File:** `pipeline/ostbevern/texte.py:218-227` (`_ausgleichsruecklage_minderung_haushaltsjahr`), `:204-210`, `:213-215`
-
-**Issue:** `_ausgleichsruecklage_minderung_haushaltsjahr` reads
-`w[f"eigenkapital.ausgleichsruecklage.{hh + 1}"]`, and
-`_schluesselzuweisung_rueckgang_haushaltsjahr` reads `...{vj}` where `vj = hh - 1` — both
-assume the neighbouring year is present in the computed `werte` dict (i.e. is one of the
-configured Ergebnisplan columns). For the 2026 jahrgang this holds (`jahre` spans
-2024–2029, haushaltsjahr=2026), but nothing enforces it structurally: a future jahrgang
-whose `haushaltsjahr` is the *last* configured year would make `hh + 1` raise a raw
-`KeyError` deep inside `textwerte()`'s `ABGELEITET` loop, rather than the domain-specific
-`TexteFehler` every other failure mode in this module produces.
-
-**Fix:** Either validate in `textwerte()`/`erzeuge_app_daten()` that `haushaltsjahr - 1`
-and `haushaltsjahr + 1` are both in `jahre` before evaluating `ABGELEITET`, or wrap the
-per-formula evaluation to re-raise `KeyError` as `TexteFehler` with the formula name, e.g.:
-
+**File:** `pipeline/ostbevern/texte.py:138-176` (`pruefe_text`); guard logic actually lives in `pipeline/tests/test_formatiere.py:201-211` (`_verstoesse`)
+**Issue:** The whole point of CR-01 (per the comments threaded through `format.ts`, `texte.py`, and `erklaerungen.md`) is that a value under the `jahr.*` namespace (e.g. `jahr.haushaltsjahr`) must always be rendered with the `jahr` format kürzel, never `zahl`, because `zahl` would wrongly group it as `"2.026"`. The only place that actually checks this invariant is `_verstoesse` in the test file (`ist_jahresnamensraum` check at line 201-211), which is test-only code. The production validation function `pruefe_text` in `texte.py` — the one that actually runs during the real pipeline step and is documented as failing fast on unknown kürzel/schema issues — has no equivalent check. It verifies the kürzel is a member of `FORMATKUERZEL` and that digits are only inside valid placeholders, but never checks the kürzel is semantically correct for the given schlüssel's namespace. If a future edit to `erklaerungen.md` introduces `{{jahr.irgendwas|zahl}}`, the pipeline will happily resolve and ship it (since `loese_auf` only checks the key exists in `werte`, not that the kürzel matches); the regression would only be caught if someone remembers to run `pytest`, not by the pipeline's own `TexteFehler` fail-fast gate that the rest of this module relies on for every other invariant.
+**Fix:** Move the jahr-namespace-vs-kürzel check into `pruefe_text` (or a new `pruefe_platzhalter_kuerzel` called from `lies_erklaerungen`/the step-07 entry point), e.g.:
 ```python
-for name, formel in ABGELEITET.items():
-    try:
-        werte[f"abgeleitet.{name}"] = formel(werte)
-    except KeyError as fehler:
-        raise TexteFehler(f"abgeleitet.{name}: fehlender Schlüssel {fehler}") from fehler
+if (schluessel == "jahr" or schluessel.startswith("jahr.")) and format_kuerzel != "jahr":
+    raise TexteFehler(f"Jahresschlüssel {schluessel!r} muss Kürzel 'jahr' verwenden, nicht {format_kuerzel!r}")
+if format_kuerzel == "jahr" and not (schluessel == "jahr" or schluessel.startswith("jahr.")):
+    raise TexteFehler(f"Kürzel 'jahr' nur für 'jahr.*'-Schlüssel erlaubt, nicht {schluessel!r}")
+```
+so the invariant is enforced by the same fail-fast mechanism as every other rule in this file, not only by a test someone has to remember to run.
+
+### WR-06: `formatiere()` has no default/exhaustiveness guard — an unexpected kürzel value silently returns `undefined` instead of failing loudly
+
+**File:** `app/src/charts/format.ts:80-97`
+**Issue:** `formatiere(wert, kuerzel)` switches over all seven `FormatKuerzel` members with no `default` branch. This type-checks today because TypeScript can prove exhaustiveness over the literal union when every member has a `case`. But the actual `kuerzel` value reaching this function at runtime does not originate as a `FormatKuerzel` — it is parsed out of a markdown-style placeholder string (`{{schluessel|kuerzel}}`) by a renderer that isn't in this review's scope, almost certainly via a regex match whose captured group is typed `string` and then narrowed/cast to `FormatKuerzel` (possibly with `as FormatKuerzel`, or no cast check at all). The pipeline side (`pruefe_text` in `texte.py`) explicitly fails fast (`TexteFehler`) on an unknown format kürzel before anything is written to `texte.json` — but there is no equivalent defensive fallback on the app side. If `texte.json` is ever hand-edited, generated by a future pipeline version with a kürzel typo, or if the renderer's cast is wrong, `formatiere()` silently falls through all cases and returns `undefined` (not a thrown error, not an empty string) — which would then typically get rendered into the DOM as the literal text `"undefined"` next to a budget figure, directly visible to end users of a municipal-finance transparency site. This is exactly the failure mode `test_formatiere.py`'s `_verstoesse` function treats as a hard violation (`"undefined" in gerendert`) — but only in the Python test, not as a runtime guard in the shipped TS code.
+**Fix:** Add an exhaustiveness-enforcing default that throws, so a future change that adds a kürzel without updating the switch (or a corrupted runtime value) fails loudly instead of rendering `"undefined"`:
+```typescript
+export function formatiere(wert: number, kuerzel: FormatKuerzel): string {
+  switch (kuerzel) {
+    case 'euro': return euro(wert)
+    case 'mio': return euroKurz(wert)
+    case 'zahl': return zahl(wert)
+    case 'jahr': return jahr(wert)
+    case 'prozent': return prozent(wert / 100)
+    case 'promille': return prozent(wert / 1000)
+    case 'vzae': return vzae(wert)
+    default: {
+      const _exhaustive: never = kuerzel
+      throw new Error(`Unbekanntes Formatkürzel: ${_exhaustive}`)
+    }
+  }
+}
 ```
 
 ## Info
 
-### IN-01: `formatiere()` has no runtime fallback for an unknown kuerzel
+### IN-02: Haushaltsjahr is duplicated across two independent locations in `texte.json`
 
-**File:** `app/src/charts/format.ts:68-83`
-
-**Issue:** The `switch` in `formatiere()` has no `default` branch. TypeScript accepts this
-because `FormatKuerzel` is an exhaustive literal union, but if a value ever reaches this
-function at runtime that isn't one of the six literals (e.g. a stale `texte.json` built by
-an older pipeline version, or a manual edit), the function silently falls through and
-returns `undefined`, which would render as the literal string `"undefined"` in the UI
-rather than failing loudly.
-
-**Fix:** Add an exhaustive-check fallback for defense in depth:
-
-```ts
-default: {
-  const _unreachable: never = kuerzel
-  throw new Error(`Unbekanntes Formatkürzel: ${_unreachable}`)
-}
-```
+**File:** `app/src/data/texte.json:2, 118`
+**Issue:** The budget year is stored both as the top-level `"haushaltsjahr": 2026` (line 2) and as `"werte"."jahr.haushaltsjahr": 2026` (line 118). Both are presumably derived from the same pipeline source today (values match), but having the same fact encoded twice in the same generated artifact is a drift risk: a future pipeline change that updates one derivation path but not the other (e.g. a refactor that changes how the top-level field is populated) would silently desynchronize the two without any structural signal that something is wrong, since nothing in this file cross-checks them.
+**Fix:** Either derive the top-level `haushaltsjahr` field from `werte["jahr.haushaltsjahr"]` at write time (single source of truth), or add a pipeline-side assertion (in the step that writes `texte.json`) that the two values are equal before writing.
 
 ---
 
-_Reviewed: 2026-10-03T20:06:13Z_
+_Reviewed: 2026-10-04T08:39:37Z_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
