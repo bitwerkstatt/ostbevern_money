@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { euro, euroKurz, jahr as formatJahr } from '@/charts/format'
+import { euro, euroKurz, jahr as formatJahr, prozent } from '@/charts/format'
+import EinstiegsKachel from '@/components/EinstiegsKachel.vue'
 import KennzahlKachel from '@/components/KennzahlKachel.vue'
+import KreisumlageCallout from '@/components/KreisumlageCallout.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import { haushalt } from '@/data/daten'
-import { baueKennzahlen, quellenZeile, type Kennzahl } from '@/lib/kennzahlen'
+import { baueEinstiege, baueKennzahlen, quellenZeile, type Kennzahl } from '@/lib/kennzahlen'
 
+// Die Startseite zeigt immer das Haushaltsjahr, ohne Jahr-Umschalter (UI-SPEC Routes).
 const jahrText = formatJahr(haushalt.haushaltsjahr)
+const jahrIndex = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
+
+function wertText(kennzahl: Kennzahl): string {
+  return kennzahl.anzeige === 'kurz' ? euroKurz(kennzahl.wert) : euro(kennzahl.wert)
+}
 
 const kennzahlen = computed(() =>
   baueKennzahlen().map((k) => ({
@@ -17,9 +25,23 @@ const kennzahlen = computed(() =>
   })),
 )
 
-function wertText(kennzahl: Kennzahl): string {
-  return kennzahl.anzeige === 'kurz' ? euroKurz(kennzahl.wert) : euro(kennzahl.wert)
-}
+const einstiege = computed(() => {
+  const e = baueEinstiege()
+  return {
+    wertart: e.wertart,
+    einnahmen: {
+      ...e.einnahmen,
+      betrag: euroKurz(e.einnahmen.wert),
+      anteilText: prozent(e.einnahmen.anteil),
+      zeile: quellenZeile(e.wertart, e.jahr, [e.einnahmen.pdfSeite]),
+    },
+    ausgaben: {
+      ...e.ausgaben,
+      betrag: euroKurz(e.ausgaben.wert),
+      zeile: quellenZeile(e.wertart, e.jahr, [e.ausgaben.pdfSeite]),
+    },
+  }
+})
 </script>
 
 <template>
@@ -41,6 +63,34 @@ function wertText(kennzahl: Kennzahl): string {
       </li>
     </ul>
   </section>
+
+  <section class="om-start__einstiege" aria-label="Die beiden Leitfragen">
+    <EinstiegsKachel
+      frage="Woher kommt das Geld?"
+      :zeile="einstiege.einnahmen.zeile"
+      :ziel="{ name: 'einnahmen' }"
+      cta="Einnahmen ansehen"
+    >
+      Den größten Teil der Erträge machen {{ einstiege.einnahmen.name }} aus:
+      <span class="om-zahl">{{ einstiege.einnahmen.betrag }}</span> ({{
+        einstiege.einnahmen.anteilText
+      }}).
+    </EinstiegsKachel>
+    <EinstiegsKachel
+      frage="Wofür wird das Geld ausgegeben?"
+      :zeile="einstiege.ausgaben.zeile"
+      :ziel="{ name: 'ausgaben' }"
+      cta="Ausgaben ansehen"
+    >
+      Den größten Anteil bekommt {{ einstiege.ausgaben.name }}:
+      <span class="om-zahl">{{ einstiege.ausgaben.betrag }}</span
+      >.
+    </EinstiegsKachel>
+  </section>
+
+  <div class="om-start__kreisumlage">
+    <KreisumlageCallout kurz :jahr-index="jahrIndex" :wertart="einstiege.wertart" />
+  </div>
 </template>
 
 <style scoped>
@@ -62,9 +112,25 @@ function wertText(kennzahl: Kennzahl): string {
   list-style: none;
 }
 
+.om-start__einstiege {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--wa-space-m);
+  margin-top: var(--wa-space-xl);
+}
+
+.om-start__kreisumlage {
+  margin-top: var(--wa-space-xl);
+}
+
 @media (min-width: 700px) {
-  .om-start__raster {
+  .om-start__raster,
+  .om-start__einstiege {
     gap: var(--wa-space-l);
+  }
+
+  .om-start__einstiege {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 </style>
