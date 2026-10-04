@@ -11,6 +11,7 @@ verfügbar sind, gegen die echte `formatiere()` gegengeprüft.
 from __future__ import annotations
 
 import json
+import math
 import re
 import shutil
 import subprocess
@@ -32,6 +33,9 @@ from ostbevern.texte import (
 APP_DATEN_WURZEL = PROJEKT_WURZEL / "app" / "src" / "data"
 
 _NBSP = "\u00a0"
+
+# Spiegel von `KEIN_WERT` in format.ts: sichtbarer Ersatz f\u00fcr fehlende Zahlenwerte.
+_KEIN_WERT = "\u2013"
 
 
 # ---------------------------------------------------------------------------
@@ -148,8 +152,16 @@ _PORT: dict[str, Callable[[int | float], str]] = {
 }
 
 
-def formatiere_port(wert: int | float, kuerzel: str) -> str:
-    """Portierte Entsprechung von `app/src/charts/format.ts::formatiere` (CR-01)."""
+def formatiere_port(wert: int | float | None, kuerzel: str) -> str:
+    """Portierte Entsprechung von `app/src/charts/format.ts::formatiere` (CR-01).
+
+    Wie die App: fehlende oder nicht endliche Werte (None, NaN, ±inf) ergeben den
+    sichtbaren Fallback `KEIN_WERT`, ein unbekanntes Formatkürzel einen Fehler (WR-06).
+    """
+    if wert is None or (isinstance(wert, float) and not math.isfinite(wert)):
+        return _KEIN_WERT
+    if kuerzel not in _PORT:
+        raise ValueError(f"Unbekanntes Formatkürzel: {kuerzel}")
     return _PORT[kuerzel](wert)
 
 
@@ -180,7 +192,7 @@ def _rundung_halb_aufwaerts(wert: int | float) -> Decimal:
     return -betrag if negativ else betrag
 
 
-def _verstoesse(schluessel: str, wert: int | float, kuerzel: str) -> list[str]:
+def _verstoesse(schluessel: str, wert: int | float | None, kuerzel: str) -> list[str]:
     """Prüft ein (Rohwert, Formatkürzel)-Paar gegen die CR-01-/Rundtrip-Regeln (D-15).
 
     (a) ein Schlüssel im Namensraum "jahr." mit einem anderen Kürzel als "jahr" (CR-01);
@@ -191,6 +203,14 @@ def _verstoesse(schluessel: str, wert: int | float, kuerzel: str) -> list[str]:
     """
     verstoesse: list[str] = []
     gerendert = formatiere_port(wert, kuerzel)
+
+    if gerendert == _KEIN_WERT:
+        # Ein Rohwert aus den echten Daten darf nie auf den Fallback laufen, sonst
+        # zeigte ein Text statt einer Zahl einen Gedankenstrich (UI-05).
+        verstoesse.append(
+            f"{schluessel}|{kuerzel}: fehlender oder nicht endlicher Rohwert {wert!r}"
+        )
+        return verstoesse
 
     if gerendert == "" or "undefined" in gerendert or "NaN" in gerendert or "Infinity" in gerendert:
         verstoesse.append(
@@ -360,6 +380,30 @@ def test_port_beispiele(wert: int | float, kuerzel: str, erwartet: str) -> None:
     assert formatiere_port(wert, kuerzel) == erwartet
 
 
+@pytest.mark.parametrize(
+    ("wert", "kuerzel"),
+    [
+        (None, "euro"),
+        (None, "mio"),
+        (float("nan"), "zahl"),
+        (float("inf"), "jahr"),
+        (float("-inf"), "prozent"),
+    ],
+)
+def test_port_fallback_fuer_fehlende_werte(wert: float | None, kuerzel: str) -> None:
+    assert formatiere_port(wert, kuerzel) == "–"
+
+
+def test_port_unbekanntes_kuerzel_wirft_value_error() -> None:
+    with pytest.raises(ValueError, match="unbekannt"):
+        formatiere_port(1, "unbekannt")
+
+
+def test_verstoesse_meldet_fehlenden_rohwert() -> None:
+    assert _verstoesse("meta.einwohner", None, "zahl")
+    assert _verstoesse("meta.einwohner", float("nan"), "zahl")
+
+
 def test_erklaerungen_rendern_korrekt(
     echte_erklaerungen: list, werte: dict[str, int | float]
 ) -> None:
@@ -417,7 +461,9 @@ def test_port_wie_format_ts(werte: dict[str, int | float], texte_json: dict) -> 
         (125, "promille"),
         (12.75, "vzae"),
     ]
-    kanten: list[tuple[int | float, str]] = [
+    kanten: list[tuple[int | float | None, str]] = [
+        (None, "euro"),
+        (None, "mio"),
         (1005000, "mio"),
         (9995000, "mio"),
         (999500, "mio"),
@@ -428,7 +474,7 @@ def test_port_wie_format_ts(werte: dict[str, int | float], texte_json: dict) -> 
         (1554, "prozent"),
         (-3, "promille"),
     ]
-    paare: list[tuple[int | float, str]] = [*beispiele, *kanten]
+    paare: list[tuple[int | float | None, str]] = [*beispiele, *kanten]
     for text in texte_json["texte"]:
         for absatz in text["absaetze"]:
             for schluessel, format_kuerzel in PLATZHALTER_MUSTER.findall(absatz):

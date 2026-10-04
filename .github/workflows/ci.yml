@@ -68,5 +68,7 @@ jobs:
         run: npm run lint
       - name: Prettier-Prüfung
         run: npm run format:check
+      - name: Tests (vitest)
+        run: npm run test
       - name: Build
         run: npm run build

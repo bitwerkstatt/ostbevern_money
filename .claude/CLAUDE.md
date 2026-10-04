@@ -51,11 +51,12 @@ App (vom Repo-Root aus):
 - `npm --prefix app run type-check`
 - `npm --prefix app run lint` (und `lint:fix`)
 - `npm --prefix app run format` und `format:check`
+- `npm --prefix app run test`
 
 CI lokal nachstellen (identisch zu `.github/workflows/ci.yml`):
 ```
 (cd pipeline && uv sync --locked && uv run ruff check . && uv run ruff format --check . && uv run pytest)
-(cd app && npm ci && npm run type-check && npm run lint && npm run format:check && npm run build)
+(cd app && npm ci && npm run type-check && npm run lint && npm run format:check && npm run test && npm run build)
 ```
 <!-- GSD:stack-end -->
 
