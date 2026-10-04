@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
+import { euro } from '@/charts/format'
 import { haushalt, produkte } from '@/data/daten'
 import type { Produkt } from '@/data/typen'
 import {
   STANDARD_ZEITREIHE,
   ZEITREIHEN_POSTEN,
   baueZeitreihe,
+  betragText,
   findeGrundzahl,
   quellenFussnote,
   zeitreihenOptionen,
@@ -220,6 +222,20 @@ describe('zeitreihenSerien', () => {
     for (const serie of serien) {
       expect(serie.werte).toHaveLength(echte.length)
     }
+  })
+})
+
+describe('betragText', () => {
+  it('setzt „rd.“ vor einen in T€ gerundeten Betrag', () => {
+    expect(betragText({ wert: 9_511_000, gerundet: true })).toBe(`rd. ${euro(9_511_000)}`)
+  })
+
+  it('lässt einen eurogenauen Betrag ohne „rd.“', () => {
+    expect(betragText({ wert: 4_771_497, gerundet: false })).toBe(euro(4_771_497))
+  })
+
+  it('zeigt „–“ statt 0 ohne Wert, auch bei gerundeter Quelle', () => {
+    expect(betragText({ wert: null, gerundet: true })).toBe('–')
   })
 })
 
