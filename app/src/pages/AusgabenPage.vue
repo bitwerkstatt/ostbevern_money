@@ -2,16 +2,29 @@
 import { computed, nextTick, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { jahr as formatiereJahr, zahl } from '@/charts/format'
+import type { BalkenZeile } from '@/charts/balken'
+import { euro, euroKurz, jahr as formatiereJahr, KEIN_WERT, prozent, zahl } from '@/charts/format'
+import AufwandsartBalken from '@/components/AufwandsartBalken.vue'
 import AufwandTreemap from '@/components/AufwandTreemap.vue'
 import Brotkrumen from '@/components/Brotkrumen.vue'
 import ChartCard from '@/components/ChartCard.vue'
+import DatenTabelle from '@/components/DatenTabelle.vue'
+import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import EbenenTabelle from '@/components/EbenenTabelle.vue'
+import ErklaerText from '@/components/ErklaerText.vue'
 import JahrUmschalter from '@/components/JahrUmschalter.vue'
+import KreisumlageCallout from '@/components/KreisumlageCallout.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import ZuschussBalken from '@/components/ZuschussBalken.vue'
+import { haushalt } from '@/data/daten'
 import { ansagen } from '@/lib/ansage'
 import { findeKnoten, useAnsicht, type Modus } from '@/lib/ansicht'
+import {
+  baueAufwandsarten,
+  baueTransferaufwendungen,
+  minderaufwandHinweis,
+  type TransferPosten,
+} from '@/lib/aufwandsarten'
 import {
   baueBrotkrumen,
   baueEbene,
@@ -20,6 +33,7 @@ import {
   ueberschussTextSchluessel,
 } from '@/lib/drilldown'
 import { useJahr, wertartName } from '@/lib/jahr'
+import { findeKlKnoten } from '@/lib/kreisumlage'
 import { rendereAbsatz, textFuerJahr } from '@/lib/texte'
 
 const router = useRouter()
@@ -116,6 +130,91 @@ const ueberschussZeilen = computed(() =>
     ]
   }),
 )
+
+// Zweite Sicht (AUSG-04): Aufwand nach Aufwandsart. Dieselben Euro wie die Treemap, nur anders
+// gegliedert: die sieben Zeilen des Gesamtergebnisplans ergeben den Gesamtaufwand des Jahres.
+const jahrText = computed(() => formatiereJahr(jahr.value))
+const wertartMitJahr = computed(() => `${wertartText.value} ${jahrText.value}`)
+const leerTitel = computed(() => `Für ${jahrText.value} gibt es keine Einzelwerte`)
+const ARTEN_LEER_TEXT =
+  'Der Haushaltsplan nennt für dieses Jahr keine Aufschlüsselung. Wähle ein anderes Jahr oder öffne die Tabelle.'
+const ABSCHREIBUNG_SATZ = 'Wertverlust von Gebäuden und Straßen, kein Geldfluss'
+
+const aufwandsarten = computed(() => baueAufwandsarten(index.value))
+const artenTitel = computed(() => `Aufwand nach Aufwandsart ${jahrText.value}`)
+const hatAbschreibung = computed(() => aufwandsarten.value.some((art) => art.keinGeldfluss))
+
+const artenBalken = computed<BalkenZeile[]>(() =>
+  aufwandsarten.value.map((art) => ({
+    schluessel: art.schluessel,
+    name: art.name,
+    wert: art.wert,
+    label: `${euroKurz(art.wert)} · ${prozent(art.anteil)}`,
+  })),
+)
+
+const artenSpalten = computed<DatenSpalte[]>(() => [
+  { schluessel: 'name', titel: 'Aufwandsart', art: 'text' },
+  { schluessel: 'wert', titel: wertartMitJahr.value, art: 'euro' },
+  { schluessel: 'anteil', titel: 'Anteil', art: 'prozent' },
+])
+
+// Das Kennzeichen „kein Geldfluss“ als 0/1, weil `DatenZeile` nur Text, Zahlen und `null` kennt.
+const artenTabelle = computed<DatenZeile[]>(() =>
+  aufwandsarten.value.map((art) => ({
+    name: art.name,
+    wert: art.wert,
+    anteil: art.anteil,
+    keinGeldfluss: art.keinGeldfluss ? 1 : 0,
+  })),
+)
+
+// Transferaufwendungen im Einzelnen (AUSG-04): Tabelle des Vorberichts für das gewählte Jahr,
+// die Kita-Einrichtungen stehen eingerückt unter den Kita-Zuschüssen (nur im Haushaltsjahr).
+const transferSpalten = computed<DatenSpalte[]>(() => [
+  { schluessel: 'name', titel: 'Posten', art: 'text' },
+  { schluessel: 'wert', titel: wertartMitJahr.value, art: 'euro' },
+  { schluessel: 'quelle', titel: 'PDF-Seite', art: 'text' },
+])
+
+const transfer = computed(() => baueTransferaufwendungen(index.value))
+
+// Kennzeichen als 0/1 (`DatenZeile` kennt nur Text, Zahlen und `null`); die Seitenzahl als Text.
+function transferZeile(posten: TransferPosten, teil: boolean): DatenZeile {
+  return {
+    name: posten.name,
+    wert: posten.wert,
+    quelle: posten.quelle === null ? null : String(posten.quelle),
+    gerundet: posten.gerundet ? 1 : 0,
+    teil: teil ? 1 : 0,
+  }
+}
+
+const transferTabelle = computed<DatenZeile[]>(() =>
+  transfer.value.flatMap((posten) => [
+    transferZeile(posten, false),
+    ...(posten.kinder ?? []).map((kind) => transferZeile(kind, true)),
+  ]),
+)
+
+const transferFussnote = computed(() => {
+  const anmerkungen = new Set(
+    transfer.value.flatMap((p) => [p, ...(p.kinder ?? [])]).flatMap((p) => p.anmerkung ?? []),
+  )
+  return anmerkungen.size === 0 ? undefined : [...anmerkungen].join(' ')
+})
+
+// Erklärungen zur Ebene (D-07): die Kreisumlage steht oben und in KL, nicht in anderen Bereichen.
+const zeigeKlCallout = computed(
+  () => ansicht.value.pb === null || ansicht.value.pb === findeKlKnoten().code,
+)
+const minderaufwand = computed(() => minderaufwandHinweis(index.value))
+
+// Quelle der Aufwandsarten ist der Gesamtergebnisplan.
+const gesamtSeite = computed(() => {
+  const seite = haushalt.knoten.find((k) => k.code === 'GESAMT')?.pdf_seite
+  return seite === null || seite === undefined ? undefined : { seite }
+})
 </script>
 
 <template>
@@ -165,6 +264,27 @@ const ueberschussZeilen = computed(() =>
       />
     </div>
   </ChartCard>
+  <!-- Weitergabe an Kreis und Land: nur auf der obersten Ebene und innerhalb von KL (D-07). -->
+  <div v-if="zeigeKlCallout" class="om-ausgaben-callout">
+    <KreisumlageCallout :jahr-index="index" :wertart="wertartText" />
+  </div>
+  <!-- Globaler Minderaufwand: Hinweis unter dem Diagramm, nur bei Wert ≠ 0, nie eine Kachel. -->
+  <wa-callout v-if="minderaufwand !== null" variant="neutral" class="om-ausgaben-callout">
+    <wa-icon slot="icon" name="circle-info"></wa-icon>
+    <strong>Globaler Minderaufwand</strong>
+    <ErklaerText
+      v-if="minderaufwand.textSchluessel !== null"
+      :schluessel="minderaufwand.textSchluessel"
+      :jahr="jahr"
+      :ueberschrift="false"
+    />
+    <template v-else>
+      <p>{{ minderaufwand.satz }}</p>
+      <p v-if="minderaufwand.pdfSeite !== null" class="om-ausgaben-quelle">
+        Quelle: PDF-Seite {{ minderaufwand.pdfSeite }}
+      </p>
+    </template>
+  </wa-callout>
   <wa-callout v-if="ueberschussZeilen.length > 0" variant="neutral" class="om-ausgaben-callout">
     <wa-icon slot="icon" name="circle-info"></wa-icon>
     <strong>Warum manche Bereiche im Plus liegen</strong>
@@ -175,6 +295,60 @@ const ueberschussZeilen = computed(() =>
       >
     </p>
   </wa-callout>
+  <ChartCard :titel="artenTitel" :pdf="gesamtSeite" class="om-ausgaben-arten">
+    <AufwandsartBalken
+      :zeilen="artenBalken"
+      :wertart-text="wertartMitJahr"
+      :leer-titel="leerTitel"
+    />
+    <p v-if="hatAbschreibung" class="om-ausgaben-abschreibung">
+      <wa-tag size="small" variant="neutral">kein Geldfluss</wa-tag>
+      {{ ABSCHREIBUNG_SATZ }}
+    </p>
+    <wa-details summary="Transferaufwendungen im Einzelnen" class="om-ausgaben-tabelle">
+      <DatenTabelle
+        :beschriftung="`Transferaufwendungen im Einzelnen ${jahrText}`"
+        :spalten="transferSpalten"
+        :zeilen="transferTabelle"
+        :fussnote="transferFussnote"
+        :leer-titel="leerTitel"
+        :leer-text="ARTEN_LEER_TEXT"
+      >
+        <template #zelle="{ zeile, spalte, wert }">
+          <template v-if="spalte.schluessel === 'name'">
+            <span :class="{ 'om-ausgaben-teil': zeile['teil'] === 1 }">{{ wert }}</span>
+          </template>
+          <template v-else-if="spalte.schluessel === 'wert' && typeof wert === 'number'">
+            <span v-if="zeile['gerundet'] === 1">rd. </span>{{ euro(wert) }}
+          </template>
+          <template v-else-if="wert === null">
+            <span aria-hidden="true">{{ KEIN_WERT }}</span>
+            <span class="om-visually-hidden">kein Wert</span>
+          </template>
+          <template v-else>{{ wert }}</template>
+        </template>
+      </DatenTabelle>
+    </wa-details>
+    <wa-details summary="Tabelle anzeigen" class="om-ausgaben-tabelle">
+      <DatenTabelle
+        :beschriftung="artenTitel"
+        :spalten="artenSpalten"
+        :zeilen="artenTabelle"
+        :leer-titel="leerTitel"
+        :leer-text="ARTEN_LEER_TEXT"
+      >
+        <template #zeilenzusatz="{ zeile }">
+          <wa-tag
+            v-if="zeile['keinGeldfluss'] === 1"
+            size="small"
+            variant="neutral"
+            class="om-ausgaben-etikett"
+            >kein Geldfluss</wa-tag
+          >
+        </template>
+      </DatenTabelle>
+    </wa-details>
+  </ChartCard>
 </template>
 
 <style scoped>
@@ -229,5 +403,26 @@ const ueberschussZeilen = computed(() =>
 
 .om-ausgaben-quelle {
   color: var(--wa-color-text-quiet);
+}
+
+.om-ausgaben-arten {
+  margin-block-start: var(--wa-space-xl);
+}
+
+.om-ausgaben-abschreibung {
+  margin: var(--wa-space-m) 0 0;
+}
+
+.om-ausgaben-tabelle {
+  margin-block-start: var(--wa-space-m);
+}
+
+.om-ausgaben-teil {
+  display: inline-block;
+  padding-inline-start: var(--wa-space-m);
+}
+
+.om-ausgaben-etikett {
+  margin-inline-start: var(--wa-space-2xs);
 }
 </style>
