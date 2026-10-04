@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 import type { BalkenZeile } from '@/charts/balken'
 import { INVEST_FARBE } from '@/charts/echartsTheme'
@@ -19,6 +19,7 @@ import ErklaerText from '@/components/ErklaerText.vue'
 import ErtragsBalken from '@/components/ErtragsBalken.vue'
 import JahrUmschalter from '@/components/JahrUmschalter.vue'
 import PageIntro from '@/components/PageIntro.vue'
+import SteuerZeitreihe from '@/components/SteuerZeitreihe.vue'
 import { haushalt } from '@/data/daten'
 import { useReducedMotion } from '@/lib/bewegung'
 import {
@@ -35,6 +36,7 @@ import {
 } from '@/lib/einnahmen'
 import { baueErtragsarten } from '@/lib/ertragsarten'
 import { useJahr, wertartName } from '@/lib/jahr'
+import { STANDARD_ZEITREIHE, baueZeitreihe, zeitreihenSeite } from '@/lib/zeitreihen'
 import { zeilenName } from '@/lib/zeilen'
 
 const { jahr, index, wertart } = useJahr()
@@ -202,6 +204,23 @@ function oeffneAufschluesselung(ertragsart: string) {
   element.scrollIntoView({ behavior: reduzierteBewegung.value ? 'auto' : 'smooth', block: 'start' })
 }
 
+// Zeitreihe (EINN-05): hängt nicht am Jahr-Umschalter, sie zeigt immer alle Jahre (D-01).
+const steuerart = ref(STANDARD_ZEITREIHE)
+
+const entwicklungTitel = computed(() => {
+  const punkte = baueZeitreihe(steuerart.value)
+  const erster = punkte[0]
+  const letzter = punkte.at(-1)
+  return erster === undefined || letzter === undefined
+    ? 'Entwicklung'
+    : `Entwicklung ${formatiereJahr(erster.jahr)}–${formatiereJahr(letzter.jahr)}`
+})
+
+const entwicklungSeite = computed(() => {
+  const seite = zeitreihenSeite(steuerart.value)
+  return seite === null ? undefined : { seite }
+})
+
 // Investive Einnahmen (EINN-06, D-03): Finanzplan, nie im selben Diagramm wie die Erträge.
 const investiv = computed(() => baueInvestiveEinnahmen(index.value))
 const investivTabelleZeilen = computed(() => baueInvestiveTabelle(index.value))
@@ -338,6 +357,10 @@ const investivSeite = computed(() => {
         </wa-details>
       </div>
     </section>
+
+    <ChartCard :titel="entwicklungTitel" :pdf="entwicklungSeite">
+      <SteuerZeitreihe v-model="steuerart" />
+    </ChartCard>
 
     <wa-divider></wa-divider>
 
