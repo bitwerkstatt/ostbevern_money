@@ -11,10 +11,11 @@ verfügbar sind, gegen die echte `formatiere()` gegengeprüft.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import subprocess
 from collections.abc import Callable, Mapping, Sequence
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 
 import pytest
 
@@ -34,30 +35,269 @@ _NBSP = "\u00a0"
 
 
 # ---------------------------------------------------------------------------
-# Portierung von format.ts (RED: noch nicht implementiert)
+# Portierung von format.ts (GREEN)
 # ---------------------------------------------------------------------------
+
+_JAHR_MUSTER = re.compile(r"^(19|20)\d{2}$")
+
+
+def _zu_decimal(wert: int | float | Decimal) -> Decimal:
+    """Wandelt einen Rohwert in ein Decimal, ohne Float-Binärrauschen einzuführen.
+
+    `float -> Decimal(repr(wert))` nutzt die kürzeste rundtrip-fähige Dezimaldarstellung
+    (dieselbe, die auch JS' `Number.prototype.toString()` für denselben Double-Wert
+    liefert), damit die Portierung dieselbe Dezimalkette rundet wie ICU in format.ts.
+    """
+    if isinstance(wert, Decimal):
+        return wert
+    if isinstance(wert, bool):
+        raise TypeError(f"bool ist kein gültiger Zahlenwert: {wert!r}")
+    if isinstance(wert, int):
+        return Decimal(wert)
+    if isinstance(wert, float):
+        return Decimal(repr(wert))
+    raise TypeError(f"Unerwarteter Typ für Zahlenwert: {type(wert)!r}")
+
+
+def _gruppiere(ziffern: str) -> str:
+    """Gruppiert eine Ziffernfolge in Dreiergruppen von rechts, getrennt durch '.'."""
+    gruppen: list[str] = []
+    rest = ziffern
+    while len(rest) > 3:
+        gruppen.insert(0, rest[-3:])
+        rest = rest[:-3]
+    gruppen.insert(0, rest)
+    return ".".join(gruppen)
+
+
+def _dezimal(
+    wert: int | float | Decimal,
+    *,
+    max_nachkommastellen: int | None = None,
+    max_signifikante_stellen: int | None = None,
+    gruppieren: bool = True,
+) -> str:
+    """Portiert `new Intl.NumberFormat('de-DE', optionen).format(wert)` für exakt die
+    Options-Kombinationen, die format.ts verwendet (maximumFractionDigits XOR
+    maximumSignificantDigits, dezimal ',', Tausendertrennzeichen '.', Rundung
+    ROUND_HALF_UP wie Intl 'halfExpand')."""
+    roh = _zu_decimal(wert)
+    negativ = roh.is_signed()  # erfasst auch "-0" (Intl zeigt "-0", nie "0")
+    betrag = roh.copy_abs()
+
+    if max_signifikante_stellen is not None:
+        if betrag != 0:
+            exponent = betrag.adjusted() - max_signifikante_stellen + 1
+            quantum = Decimal(1).scaleb(exponent)
+            betrag = betrag.quantize(quantum, rounding=ROUND_HALF_UP)
+    elif max_nachkommastellen is not None:
+        quantum = Decimal(1).scaleb(-max_nachkommastellen)
+        betrag = betrag.quantize(quantum, rounding=ROUND_HALF_UP)
+
+    text = format(betrag, "f")
+    if "." in text:
+        ganzzahl, nachkomma = text.split(".", 1)
+        nachkomma = nachkomma.rstrip("0")
+    else:
+        ganzzahl, nachkomma = text, ""
+
+    if gruppieren:
+        ganzzahl = _gruppiere(ganzzahl)
+
+    ergebnis = ganzzahl + ("," + nachkomma if nachkomma else "")
+    return ("-" if negativ else "") + ergebnis
+
+
+def _euro(wert: int | float) -> str:
+    return _dezimal(wert, max_nachkommastellen=0) + _NBSP + "€"
+
+
+def _euro_kurz(wert: int | float) -> str:
+    if abs(_zu_decimal(wert)) >= 1_000_000:
+        skaliert = wert / 1_000_000
+        return _dezimal(skaliert, max_signifikante_stellen=3) + " Mio. €"
+    return _euro(wert)
+
+
+def _zahl(wert: int | float) -> str:
+    return _dezimal(wert, max_nachkommastellen=0, gruppieren=True)
+
+
+def _jahr(wert: int | float) -> str:
+    return _dezimal(wert, max_nachkommastellen=0, gruppieren=False)
+
+
+def _vzae(wert: int | float) -> str:
+    return _dezimal(wert, max_nachkommastellen=2, gruppieren=True)
+
+
+def _prozent(anteil: int | float) -> str:
+    wert = Decimal(repr(float(anteil))) * 100
+    return _dezimal(wert, max_nachkommastellen=1, gruppieren=True) + _NBSP + "%"
+
+
+# In FORMATKUERZEL-Reihenfolge (test_port_deckt_alle_formatkuerzel_ab).
+_PORT: dict[str, Callable[[int | float], str]] = {
+    "euro": _euro,
+    "mio": _euro_kurz,
+    "zahl": _zahl,
+    "jahr": _jahr,
+    "prozent": lambda w: _prozent(w / 100),
+    "promille": lambda w: _prozent(w / 1000),
+    "vzae": _vzae,
+}
 
 
 def formatiere_port(wert: int | float, kuerzel: str) -> str:
-    raise NotImplementedError
-
-
-_PORT: dict[str, Callable[[int | float], str]] = {}
+    """Portierte Entsprechung von `app/src/charts/format.ts::formatiere` (CR-01)."""
+    return _PORT[kuerzel](wert)
 
 
 def _lies_gerendert(text: str, kuerzel: str) -> Decimal:
-    raise NotImplementedError
+    """Parst einen gerenderten String zurück in ein Decimal für den Rundtrip-Vergleich.
+
+    Für `mio` ist der Maßstab 1_000_000, wenn die " Mio. €"-Form gewählt wurde (sonst
+    fällt euroKurz() auf euro() zurück und es gilt derselbe Maßstab 1 wie bei `euro`).
+    """
+    rest = text
+    skala = Decimal(1)
+    if rest.endswith(" Mio. €"):
+        rest = rest[: -len(" Mio. €")]
+        skala = Decimal(1_000_000)
+    elif rest.endswith(_NBSP + "€"):
+        rest = rest[: -len(_NBSP + "€")]
+    elif rest.endswith(_NBSP + "%"):
+        rest = rest[: -len(_NBSP + "%")]
+    rest = rest.replace(".", "").replace(",", ".")
+    return Decimal(rest) * skala
+
+
+def _rundung_halb_aufwaerts(wert: int | float) -> Decimal:
+    """Rundet `wert` kaufmännisch (ROUND_HALF_UP) auf eine Ganzzahl, Vorzeichen erhalten."""
+    roh = _zu_decimal(wert)
+    negativ = roh.is_signed()
+    betrag = roh.copy_abs().quantize(Decimal(1), rounding=ROUND_HALF_UP)
+    return -betrag if negativ else betrag
 
 
 def _verstoesse(schluessel: str, wert: int | float, kuerzel: str) -> list[str]:
-    raise NotImplementedError
+    """Prüft ein (Rohwert, Formatkürzel)-Paar gegen die CR-01-/Rundtrip-Regeln (D-15).
+
+    (a) ein Schlüssel im Namensraum "jahr." mit einem anderen Kürzel als "jahr" (CR-01);
+    (b) Kürzel "jahr", dessen Rendering keine vierstellige Jahreszahl ist oder vom
+        Rohwert abweicht; dasselbe Kürzel außerhalb des "jahr."-Namensraums;
+    (c) kein Rundtrip auf den Rohwert innerhalb der kürzel-eigenen Genauigkeit;
+    (d) eine leere Darstellung oder eine, die "undefined", "NaN" oder "Infinity" enthält.
+    """
+    verstoesse: list[str] = []
+    gerendert = formatiere_port(wert, kuerzel)
+
+    if gerendert == "" or "undefined" in gerendert or "NaN" in gerendert or "Infinity" in gerendert:
+        verstoesse.append(
+            f"{schluessel}|{kuerzel}: ungültige Darstellung {gerendert!r} für Rohwert {wert!r}"
+        )
+        return verstoesse
+
+    ist_jahresnamensraum = schluessel == "jahr" or schluessel.startswith("jahr.")
+    if ist_jahresnamensraum and kuerzel != "jahr":
+        verstoesse.append(
+            f"{schluessel}|{kuerzel}: Jahresschlüssel ohne Formatkürzel 'jahr' "
+            f"(gerendert {gerendert!r})"
+        )
+    if kuerzel == "jahr" and not ist_jahresnamensraum:
+        verstoesse.append(
+            f"{schluessel}|{kuerzel}: Formatkürzel 'jahr' außerhalb des 'jahr.'-Namensraums "
+            f"(gerendert {gerendert!r})"
+        )
+
+    if kuerzel == "jahr":
+        if not _JAHR_MUSTER.fullmatch(gerendert) or Decimal(gerendert) != _zu_decimal(wert):
+            verstoesse.append(
+                f"{schluessel}|{kuerzel}: {gerendert!r} ist keine vierstellige Jahreszahl "
+                f"oder weicht vom Rohwert {wert!r} ab"
+            )
+        return verstoesse
+
+    geparst = _lies_gerendert(gerendert, kuerzel)
+    if kuerzel in ("euro", "zahl"):
+        erwartet = _rundung_halb_aufwaerts(wert)
+        if geparst != erwartet:
+            verstoesse.append(
+                f"{schluessel}|{kuerzel}: {gerendert!r} rundet nicht auf den Rohwert {wert!r} "
+                f"(erwartet {erwartet})"
+            )
+    elif kuerzel == "mio":
+        roh_abs = abs(_zu_decimal(wert))
+        if roh_abs >= 1_000_000:
+            toleranz = roh_abs * Decimal("0.005")
+            if abs(geparst - _zu_decimal(wert)) > toleranz:
+                verstoesse.append(
+                    f"{schluessel}|{kuerzel}: {gerendert!r} weicht mehr als 0,5% von {wert!r} ab"
+                )
+        else:
+            erwartet = _rundung_halb_aufwaerts(wert)
+            if geparst != erwartet:
+                verstoesse.append(
+                    f"{schluessel}|{kuerzel}: {gerendert!r} rundet nicht auf den Rohwert "
+                    f"{wert!r} (erwartet {erwartet})"
+                )
+    elif kuerzel == "prozent":
+        if abs(geparst - _zu_decimal(wert)) > Decimal("0.05"):
+            verstoesse.append(
+                f"{schluessel}|{kuerzel}: {gerendert!r} weicht mehr als 0,05 von {wert!r} ab"
+            )
+    elif kuerzel == "promille":
+        if abs(geparst * 10 - _zu_decimal(wert)) > Decimal("0.5"):
+            verstoesse.append(
+                f"{schluessel}|{kuerzel}: {gerendert!r} (×10) weicht mehr als 0,5 von {wert!r} ab"
+            )
+    elif kuerzel == "vzae":
+        if abs(geparst - _zu_decimal(wert)) > Decimal("0.005"):
+            verstoesse.append(
+                f"{schluessel}|{kuerzel}: {gerendert!r} weicht mehr als 0,005 von {wert!r} ab"
+            )
+
+    return verstoesse
 
 
 def _pruefe_absaetze(absaetze: Sequence[str], werte: Mapping[str, int | float]) -> list[str]:
-    raise NotImplementedError
+    """Rendert jeden Platzhalter jedes Absatzes über `formatiere_port` und sammelt
+    `_verstoesse` je Vorkommen; meldet zusätzlich einen Absatz, dessen Rendering noch
+    "{{" oder "}}" enthält (unaufgelöster Platzhalter)."""
+    verstoesse: list[str] = []
+
+    def _ersetze(treffer: re.Match[str]) -> str:
+        schluessel, format_kuerzel = treffer.groups()
+        wert = werte[schluessel]
+        for eintrag in _verstoesse(schluessel, wert, format_kuerzel):
+            verstoesse.append(f"{treffer.group(0)}: {eintrag}")
+        return formatiere_port(wert, format_kuerzel)
+
+    for absatz in absaetze:
+        gerendert = PLATZHALTER_MUSTER.sub(_ersetze, absatz)
+        if "{{" in gerendert or "}}" in gerendert:
+            verstoesse.append(f"Unaufgelöster Platzhalter im gerenderten Absatz: {absatz!r}")
+
+    return verstoesse
 
 
-_NODE_SKRIPT = ""
+# Node-Teilskript (D-15, test_port_wie_format_ts): transpiliert format.ts mit dem
+# App-eigenen typescript-devDependency (keine neue Abhängigkeit), importiert das
+# Ergebnis über eine base64-data:-URL und rendert die über stdin übergebenen Paare
+# mit der echten formatiere(). Kein Shell-Aufruf (Argumentliste), keine Netzwerknutzung.
+_NODE_SKRIPT = (
+    'import {createRequire} from "node:module";'
+    'import {readFileSync} from "node:fs";'
+    "const wurzel=process.argv[1];"
+    'const ts=createRequire(wurzel+"/package.json")("typescript");'
+    "const quelle=readFileSync(wurzel+\"/src/charts/format.ts\",'utf8');"
+    "const js=ts.transpileModule(quelle,"
+    "{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;"
+    'const modul=await import("data:text/javascript;base64,"+Buffer.from(js).toString("base64"));'
+    'const paare=JSON.parse(readFileSync(0,"utf8"));'
+    "const ergebnisse=paare.map(([w,k])=>modul.formatiere(w,k));"
+    "console.log(JSON.stringify(ergebnisse));"
+)
 
 
 # ---------------------------------------------------------------------------
