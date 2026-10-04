@@ -132,7 +132,7 @@ Plans:
   4. `app/src/data/` enthält `haushalt.json`, `produkte.json`, `investitionen.json` und `stellenplan.json`. Ein Test bestätigt, dass keine Personennamen enthalten sind. „Weitergabe an Kreis und Land“ (Kreisumlage, Gewerbesteuerumlage, Krankenhausinvestitionsumlage) ist eine eigene Kategorie, und der Rest von PB 16 heißt „Allgemeine Finanzwirtschaft“. Der Zuschussbedarf ist je Knoten und Jahr als berechneter Wert gekennzeichnet.
   5. `uv run pipeline/alle.py` führt alle Schritte in Reihenfolge aus. Die CI schlägt fehl, wenn danach eingecheckte Daten einen Diff zeigen.
 
-**Plans**: 5/6 plans executed
+**Plans**: 6/6 plans executed
 
 Plans:
 **Wave 1**
@@ -151,7 +151,7 @@ Plans:
 - [x] 04-05-PLAN.md — Erklärtexte mit Platzhaltern (D-15/D-16), Abnahme-Checkpoint vor Commit (D-17), texte.json, Abschluss-Gate alle.py ohne Diff (Wave 5, Checkpoint)
 
 **Wave 6** *(gap closure, blocked on Wave 5 completion)*
-- [ ] 04-06-PLAN.md — CR-01: ungruppiertes Formatkürzel `jahr` in format.ts und FORMATKUERZEL, zehn Haushaltsjahr-Platzhalter umgestellt, texte.json neu erzeugt; Rendertest über eine formatiere()-Portierung mit CR-01-Mutationstest, Abschluss-Gate (Wave 6)
+- [x] 04-06-PLAN.md — CR-01: ungruppiertes Formatkürzel `jahr` in format.ts und FORMATKUERZEL, zehn Haushaltsjahr-Platzhalter umgestellt, texte.json neu erzeugt; Rendertest über eine formatiere()-Portierung mit CR-01-Mutationstest, Abschluss-Gate (Wave 6)
 
 ### Phase 5: Leitfragen-Seiten
 
@@ -218,7 +218,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 1. Setup | 5/5 | Complete    | 2026-10-01 |
 | 2. Kernzahlen | 5/5 | Complete    | 2026-10-01 |
 | 3. Details | 5/5 | Complete    | 2026-10-02 |
-| 4. Manuelle Daten und App-Daten | 5/5 | In Progress|  |
+| 4. Manuelle Daten und App-Daten | 6/6 | In Progress|  |
 | 5. Leitfragen-Seiten | 0/TBD | Not started | - |
 | 6. Kontext-Seiten | 0/TBD | Not started | - |
 | 7. Feinschliff und Veröffentlichung | 0/TBD | Not started | - |
