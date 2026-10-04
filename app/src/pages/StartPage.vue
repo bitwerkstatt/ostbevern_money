@@ -92,8 +92,8 @@ const einstiege = computed(() => {
       :ziel="{ name: 'ausgaben' }"
       cta="Ausgaben ansehen"
     >
-      Den größten Anteil bekommt {{ einstiege.ausgaben.name }}:
-      <span class="om-zahl">{{ einstiege.ausgaben.betrag }}</span
+      Ohne die Weitergabe an Kreis und Land bekommt {{ einstiege.ausgaben.name }} den größten
+      Anteil: <span class="om-zahl">{{ einstiege.ausgaben.betrag }}</span
       >.
     </EinstiegsKachel>
   </section>
