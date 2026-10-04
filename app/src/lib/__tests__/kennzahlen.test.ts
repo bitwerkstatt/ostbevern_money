@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest'
 import { euroKurz } from '@/charts/format'
 import kennzahlKachelQuelle from '@/components/KennzahlKachel.vue?raw'
 import { haushalt, investitionen } from '@/data/daten'
-import { baueKennzahlen, quellenZeile } from '@/lib/kennzahlen'
+import { baueErtragsarten } from '@/lib/ertragsarten'
+import { baueEinstiege, baueKennzahlen, quellenZeile } from '@/lib/kennzahlen'
+import { findeKlKnoten } from '@/lib/kreisumlage'
 import startSeiteQuelle from '@/pages/StartPage.vue?raw'
 
 const GESAMT = haushalt.ergebnisplan.GESAMT
@@ -132,5 +134,59 @@ describe('Vorlagen ohne eingetippte Beträge (Probe: Kennzahlwert nie im Templat
     ['KennzahlKachel.vue', kennzahlKachelQuelle],
   ])('%s enthält keinen Betrag wie „27,5 Mio.“', (_name, quelle) => {
     expect(quelle).not.toMatch(/\d+,\d+ Mio/)
+  })
+})
+
+describe('baueEinstiege (D-20)', () => {
+  it('die Einnahmen-Kachel zeigt die größte Ertragsart mit Betrag und Anteil', () => {
+    const erste = baueErtragsarten(INDEX)[0]
+    expect(erste).toBeDefined()
+    const einstiege = baueEinstiege()
+    expect(einstiege.einnahmen.name).toBe(erste?.name)
+    expect(einstiege.einnahmen.wert).toBe(erste?.wert)
+    expect(einstiege.einnahmen.anteil).toBe(erste?.anteil)
+  })
+
+  it('die Ausgaben-Kachel zeigt den größten echten Aufgabenbereich, nie einen synthetischen Knoten (Probe START-02)', () => {
+    const ausgaben = baueEinstiege().ausgaben
+    const knoten = haushalt.knoten.find((k) => k.code === ausgaben.code)
+    expect(knoten?.ebene).toBe('PB')
+    expect(knoten?.eltern).toBe('GESAMT')
+    expect(knoten?.synthetisch).toBe(false)
+    expect(ausgaben.name).not.toBe(findeKlKnoten().name)
+  })
+
+  it('der Aufgabenbereich hat den größten Aufwand aller nicht synthetischen Produktbereiche', () => {
+    const aufwaende = haushalt.knoten
+      .filter((k) => k.ebene === 'PB' && k.eltern === 'GESAMT' && !k.synthetisch)
+      .map(
+        (k) => haushalt.ergebnisplan[k.code]?.berechnet.aufwand[INDEX] ?? Number.NEGATIVE_INFINITY,
+      )
+    expect(baueEinstiege().ausgaben.wert).toBe(Math.max(...aufwaende))
+  })
+
+  it('Wertart, Jahr und Seiten stammen aus den Daten', () => {
+    const einstiege = baueEinstiege()
+    expect(einstiege.jahr).toBe(haushalt.haushaltsjahr)
+    expect(einstiege.wertart.length).toBeGreaterThan(0)
+    expect(einstiege.einnahmen.pdfSeite).toBe(
+      haushalt.knoten.find((k) => k.code === 'GESAMT')?.pdf_seite,
+    )
+    expect(einstiege.ausgaben.pdfSeite).toBe(
+      haushalt.knoten.find((k) => k.code === einstiege.ausgaben.code)?.pdf_seite,
+    )
+  })
+})
+
+describe.runIf(haushalt.haushaltsjahr === 2026)('Einstiege Haushalt 2026', () => {
+  it('der größte Aufgabenbereich ist Innere Verwaltung mit 4.519.223 €', () => {
+    const ausgaben = baueEinstiege().ausgaben
+    expect(ausgaben.name).toBe('Innere Verwaltung')
+    expect(ausgaben.wert).toBe(4519223)
+  })
+
+  it('die größte Ertragsart sind die Steuern mit 18.443.000 €', () => {
+    const einnahmen = baueEinstiege().einnahmen
+    expect(einnahmen.wert).toBe(18443000)
   })
 })
