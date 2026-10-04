@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import ast
 import dataclasses
+import json
 import shutil
 from collections.abc import Sequence
 from pathlib import Path
@@ -15,6 +16,7 @@ from pathlib import Path
 import polars as pl
 import pytest
 
+from ostbevern import pruefung
 from ostbevern.konfiguration import (
     JAHRGAENGE_VERZEICHNIS,
     STANDARD_JAHR,
@@ -23,6 +25,7 @@ from ostbevern.konfiguration import (
 )
 from ostbevern.pruefung import (
     REGEL3_ZEILEN,
+    REGEL5_GEP_ZEILEN,
     REGEL7_KENNZAHLEN,
     REGEL8_MERKMALE,
     REGEL8_PFLICHTFELDER,
@@ -53,8 +56,10 @@ from ostbevern.schema import (
     HIERARCHIE_CSV,
     INVESTITIONEN_CSV,
     INVESTITIONEN_PB_CSV,
+    INVESTITIONSZUWENDUNGEN_CSV,
     KONSISTENZ_MD,
     MANUELL_WURZEL,
+    META_JSON,
     PLAN_SPALTEN,
     PRODUKT_SCHLUESSEL,
     PRODUKTE_JSON,
@@ -2168,3 +2173,107 @@ def test_regel10_gruen_auf_eingecheckten_daten() -> None:
     assert regel10.status == "grün"
     assert regel10.geprueft > 0
     assert regel10.abweichungen == ()
+
+
+# --- Phase 5 Plan 02: Regel 5 mit Finanzplan-Zweig und Konzessionsabgaben-Aufteilung ---
+
+
+def _kopiere_daten_baum(tmp_path: Path) -> None:
+    shutil.copytree(DATEN_WURZEL, tmp_path, dirs_exist_ok=True)
+
+
+def _regel5_von(bericht: Bericht) -> Regelergebnis:
+    return next(regel for regel in bericht.regeln if regel.regel == 5)
+
+
+def _verschiebe_investitionszuwendungen(
+    tmp_path: Path, *, posten: tuple[str, ...], delta_teur: int
+) -> None:
+    pfad = tmp_path / INVESTITIONSZUWENDUNGEN_CSV
+    haushaltsjahr = lade_jahrgang(STANDARD_JAHR).haushaltsjahr
+    df = lies_vorbericht_csv(pfad)
+    bedingung = pl.col("posten").is_in(posten) & (pl.col("jahr") == haushaltsjahr)
+    mutiert = df.with_columns(
+        pl.when(bedingung)
+        .then(pl.col("betrag_teur") + delta_teur)
+        .otherwise(pl.col("betrag_teur"))
+        .alias("betrag_teur")
+    )
+    assert mutiert["betrag_teur"].sum() != df["betrag_teur"].sum()
+    schreibe_vorbericht_csv(mutiert, pfad)
+
+
+def test_regel5_gfp_investitionszuwendungen_gruen_auf_eingecheckten_daten() -> None:
+    regel5 = _regel5_von(pruefe_alles(STANDARD_JAHR))
+    assert regel5.status == "grün"
+    assert not [p for p in regel5.abweichungen if p.plan == "vorbericht_investitionszuwendungen"]
+
+
+def test_regel5_gfp_gesamtzeile_gegen_gfp_18_rot(tmp_path: Path) -> None:
+    """Posten UND Gesamtzeile +2 T€: Stufe (a) bleibt grün, Stufe (b) gegen GFP Z. 18
+    (nicht gegen eine Ergebnisplan-Zeile) überschreitet ±1.000 €."""
+    _kopiere_daten_baum(tmp_path)
+    _verschiebe_investitionszuwendungen(
+        tmp_path, posten=("investitionspauschale", "gesamt"), delta_teur=2
+    )
+
+    regel5 = _regel5_von(pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path))
+    assert regel5.status == "rot"
+    treffer = [p for p in regel5.abweichungen if p.plan == "vorbericht_investitionszuwendungen"]
+    assert [p.zeile for p in treffer] == ["gfp_18"]
+    assert treffer[0].abweichung == 2000
+    assert treffer[0].pdf_seite == 52
+
+
+def test_regel5_gfp_stufe_a_summe_posten_rot(tmp_path: Path) -> None:
+    """Nur die Gesamtzeile +1 T€: Σ Posten ≠ gedruckte Gesamtzeile (Stufe a), Stufe (b)
+    bleibt mit genau 1.000 € innerhalb der Toleranz."""
+    _kopiere_daten_baum(tmp_path)
+    _verschiebe_investitionszuwendungen(tmp_path, posten=("gesamt",), delta_teur=1)
+
+    regel5 = _regel5_von(pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path))
+    treffer = [p for p in regel5.abweichungen if p.plan == "vorbericht_investitionszuwendungen"]
+    assert [p.zeile for p in treffer] == ["summe_posten"]
+    assert treffer[0].abweichung == -1000
+
+
+def test_regel5_gfp_zeilen_ohne_ergebnisplan_zeile() -> None:
+    """Spez. 3.1: Finanzplan-Beträge gehören nie in eine Ergebnisplan-Zuordnung."""
+    assert pruefung.REGEL5_GFP_ZEILEN == {"investitionszuwendungen": "18"}
+    assert "investitionszuwendungen" not in REGEL5_GEP_ZEILEN
+
+
+def _setze_meta_wert(tmp_path: Path, schluessel: str, *, delta: int | None) -> None:
+    pfad = tmp_path / META_JSON
+    meta = json.loads(pfad.read_text(encoding="utf-8"))
+    if delta is None:
+        del meta["vorbericht_werte"][schluessel]
+    else:
+        meta["vorbericht_werte"][schluessel]["wert"] += delta
+    pfad.write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def test_regel5_konzessionsabgaben_split_gruen_auf_eingecheckten_daten() -> None:
+    regel5 = _regel5_von(pruefe_alles(STANDARD_JAHR))
+    assert not [p for p in regel5.abweichungen if p.plan == "vorbericht_konzessionsabgaben"]
+
+
+def test_regel5_konzessionsabgaben_split_abweichung_rot(tmp_path: Path) -> None:
+    _kopiere_daten_baum(tmp_path)
+    _setze_meta_wert(tmp_path, "konzessionsabgabe_gas", delta=1000)
+
+    regel5 = _regel5_von(pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path))
+    assert regel5.status == "rot"
+    treffer = [p for p in regel5.abweichungen if p.plan == "vorbericht_konzessionsabgaben"]
+    assert len(treffer) == 1
+    assert treffer[0].abweichung == 1000
+    assert treffer[0].jahr == lade_jahrgang(STANDARD_JAHR).haushaltsjahr
+    assert treffer[0].pdf_seite == 33
+
+
+def test_regel5_konzessionsabgaben_fehlender_split_wert_bricht_ab(tmp_path: Path) -> None:
+    _kopiere_daten_baum(tmp_path)
+    _setze_meta_wert(tmp_path, "konzessionsabgabe_wasser", delta=None)
+
+    with pytest.raises(PruefungsFehler):
+        pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)

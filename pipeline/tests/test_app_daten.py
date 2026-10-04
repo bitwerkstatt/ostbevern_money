@@ -183,6 +183,7 @@ def test_haushalt_json_vorbericht_reihenfolge(tmp_path: Path) -> None:
         "zuwendungen",
         "transferaufwendungen",
         "kita_zuschuesse",
+        "investitionszuwendungen",
         "leistungsentgelte",
         "kostenerstattungen",
         "personal",
@@ -219,6 +220,30 @@ def test_sonstige_ertraege_ergibt_gep_zeile_07(tmp_path: Path) -> None:
             assert abs(gesamt - gep_07[index]) <= REGEL5_TOLERANZ_GEP_EURO
     # Der gedruckte 2028-Fehler (S. 33) muss als "Sonstige" sichtbar sein, nicht verschwinden.
     assert mit_sonstige >= 1
+
+
+def test_investitionszuwendungen_gleich_gfp_18_im_haushaltsjahr(tmp_path: Path) -> None:
+    """Vorbericht S. 52 (Phase 5 D-03): Σ Pauschalen und Förderungen == GFP Z. 18 im
+    Haushaltsjahr, alle anderen Jahre ohne Wert; keine Ergebnisplan-Zeile (Spez. 3.1)."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    tabelle = daten["vorbericht"]["investitionszuwendungen"]
+    index = daten["jahre"].index(daten["haushaltsjahr"])
+    gfp_18 = daten["finanzplan"]["GESAMT"]["zeilen"]["investitionszuwendungen"]
+
+    assert tabelle["tabelle"] == "investitionszuwendungen"
+    assert tabelle["planzeile"] is None
+    assert tabelle["gesamt_plan"] is None
+    assert tabelle["posten"], "investitionszuwendungen: keine Posten"
+    assert all(not posten["berechnet"] for posten in tabelle["posten"])
+
+    summe = sum(p["werte"][index] for p in tabelle["posten"] if p["werte"][index] is not None)
+    assert summe == gfp_18[index]
+    assert tabelle["gesamt_vorbericht"]["werte"][index] == gfp_18[index]
+    for andere, wert in enumerate(tabelle["gesamt_vorbericht"]["werte"]):
+        if andere != index:
+            assert wert is None
+            assert all(posten["werte"][andere] is None for posten in tabelle["posten"])
 
 
 def test_haushalt_json_weitere_vorberichtstabellen(tmp_path: Path) -> None:
