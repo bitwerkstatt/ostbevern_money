@@ -3,6 +3,7 @@ import { computed } from 'vue'
 
 import { euro, euroKurz, jahr as formatJahr, prozent } from '@/charts/format'
 import EinstiegsKachel from '@/components/EinstiegsKachel.vue'
+import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import KennzahlKachel from '@/components/KennzahlKachel.vue'
 import KreisumlageCallout from '@/components/KreisumlageCallout.vue'
 import PageIntro from '@/components/PageIntro.vue'
@@ -52,6 +53,15 @@ const einstiege = computed(() => {
 
   <section class="om-start__kennzahlen" aria-labelledby="om-start-kennzahlen">
     <h2 id="om-start-kennzahlen">Die wichtigsten Zahlen {{ jahrText }}</h2>
+    <p class="om-start__hinweis">
+      Der
+      <GlossarBegriff schluessel="ergebnisplan">Ergebnisplan</GlossarBegriff>
+      stellt
+      <GlossarBegriff schluessel="ertrag_aufwand">Erträge und Aufwendungen</GlossarBegriff>
+      gegenüber, der
+      <GlossarBegriff schluessel="finanzplan">Finanzplan</GlossarBegriff>
+      erfasst die geplanten Zahlungen.
+    </p>
     <ul class="om-start__raster" role="list">
       <li v-for="k in kennzahlen" :key="k.schluessel">
         <KennzahlKachel
@@ -99,6 +109,14 @@ const einstiege = computed(() => {
   font-size: var(--wa-font-size-l);
   font-weight: var(--wa-font-weight-bold);
   line-height: var(--wa-line-height-condensed);
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.om-start__hinweis {
+  margin: 0 0 var(--wa-space-m);
+  font-size: var(--wa-font-size-m);
+  line-height: var(--wa-line-height-normal);
   hyphens: auto;
   overflow-wrap: break-word;
 }

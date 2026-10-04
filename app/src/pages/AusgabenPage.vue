@@ -12,6 +12,7 @@ import DatenTabelle from '@/components/DatenTabelle.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import EbenenTabelle from '@/components/EbenenTabelle.vue'
 import ErklaerText from '@/components/ErklaerText.vue'
+import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import JahrUmschalter from '@/components/JahrUmschalter.vue'
 import KreisumlageCallout from '@/components/KreisumlageCallout.vue'
 import PageIntro from '@/components/PageIntro.vue'
@@ -227,17 +228,26 @@ const gesamtSeite = computed(() => {
     <wa-radio-group
       class="om-ausgaben-modus"
       label="Ansicht"
-      hint="Zuschussbedarf: Was ein Bereich mehr kostet, als er selbst einnimmt. Das bezahlt die Gemeinde aus Steuern."
+      with-hint
       orientation="horizontal"
       :value="modus"
       @change="beiModus"
     >
+      <span slot="hint">
+        <GlossarBegriff schluessel="zuschussbedarf">Zuschussbedarf</GlossarBegriff>: Was ein Bereich
+        mehr kostet, als er selbst einnimmt. Das bezahlt die Gemeinde aus Steuern.
+      </span>
       <wa-radio appearance="button" value="aufwand">Aufwand</wa-radio>
       <wa-radio appearance="button" value="zuschussbedarf">Zuschussbedarf</wa-radio>
     </wa-radio-group>
   </div>
   <ChartCard ref="karte" :titel="kartenTitel" :pdf="quelle">
     <div class="om-ausgaben-ebene">
+      <p class="om-ausgaben-hinweis">
+        Die obersten Bereiche heißen
+        <GlossarBegriff schluessel="produktbereich">Produktbereiche</GlossarBegriff>. Darunter
+        folgen Produktgruppen und Produkte.
+      </p>
       <Brotkrumen :eintraege="brotkrumen" @gehe-zu="zurueck" />
       <AufwandTreemap
         v-if="modus === 'aufwand'"
@@ -267,11 +277,19 @@ const gesamtSeite = computed(() => {
   <!-- Weitergabe an Kreis und Land: nur auf der obersten Ebene und innerhalb von KL (D-07). -->
   <div v-if="zeigeKlCallout" class="om-ausgaben-callout">
     <KreisumlageCallout :jahr-index="index" :wertart="wertartText" />
+    <p class="om-ausgaben-hinweis">
+      Was die <GlossarBegriff schluessel="kreisumlage">Kreisumlage</GlossarBegriff> ist, erklärt das
+      Glossar.
+    </p>
   </div>
   <!-- Globaler Minderaufwand: Hinweis unter dem Diagramm, nur bei Wert ≠ 0, nie eine Kachel. -->
   <wa-callout v-if="minderaufwand !== null" variant="neutral" class="om-ausgaben-callout">
     <wa-icon slot="icon" name="circle-info"></wa-icon>
-    <strong>Globaler Minderaufwand</strong>
+    <strong
+      ><GlossarBegriff schluessel="globaler_minderaufwand"
+        >Globaler Minderaufwand</GlossarBegriff
+      ></strong
+    >
     <ErklaerText
       v-if="minderaufwand.textSchluessel !== null"
       :schluessel="minderaufwand.textSchluessel"
@@ -301,6 +319,12 @@ const gesamtSeite = computed(() => {
       :wertart-text="wertartMitJahr"
       :leer-titel="leerTitel"
     />
+    <p class="om-ausgaben-hinweis">
+      Was
+      <GlossarBegriff schluessel="transferaufwendungen">Transferaufwendungen</GlossarBegriff> und
+      <GlossarBegriff schluessel="abschreibungen">Abschreibungen</GlossarBegriff> sind, erklärt das
+      Glossar.
+    </p>
     <p v-if="hatAbschreibung" class="om-ausgaben-abschreibung">
       <wa-tag size="small" variant="neutral">kein Geldfluss</wa-tag>
       {{ ABSCHREIBUNG_SATZ }}
@@ -395,6 +419,20 @@ const gesamtSeite = computed(() => {
 
 .om-ausgaben-callout {
   margin-block-start: var(--wa-space-l);
+}
+
+.om-ausgaben-hinweis {
+  margin: 0;
+  font-size: var(--wa-font-size-m);
+  line-height: var(--wa-line-height-normal);
+}
+
+.om-ausgaben-callout .om-ausgaben-hinweis {
+  margin-block-start: var(--wa-space-s);
+}
+
+.om-ausgaben-arten .om-ausgaben-hinweis {
+  margin-block-start: var(--wa-space-m);
 }
 
 .om-ausgaben-callout p {

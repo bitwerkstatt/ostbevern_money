@@ -17,6 +17,7 @@ import DatenTabelle from '@/components/DatenTabelle.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import ErklaerText from '@/components/ErklaerText.vue'
 import ErtragsBalken from '@/components/ErtragsBalken.vue'
+import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import JahrUmschalter from '@/components/JahrUmschalter.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import SteuerZeitreihe from '@/components/SteuerZeitreihe.vue'
@@ -338,13 +339,23 @@ const investivSeite = computed(() => {
 
             <template v-if="gruppe.id === 'steuern'">
               <p v-if="hebesaetze.length > 0" class="om-einnahmen__hebesaetze">
-                Hebesätze {{ haushaltsjahrText }}: {{ hebesatzText }}.
+                <GlossarBegriff schluessel="hebesatz">Hebesätze</GlossarBegriff>
+                {{ haushaltsjahrText }}: {{ hebesatzText }}.
                 <span v-if="hebesatzQuelle" class="om-einnahmen__quelle">{{ hebesatzQuelle }}</span>
               </p>
               <ErklaerText schluessel="grundsteuer_hebesaetze" :jahr="jahr" />
               <ErklaerText schluessel="steuern_selbst_festgelegt" />
             </template>
             <template v-else-if="gruppe.id === 'zuwendungen'">
+              <p class="om-einnahmen__glossar">
+                Was
+                <GlossarBegriff schluessel="schluesselzuweisung"
+                  >Schlüsselzuweisungen</GlossarBegriff
+                >
+                und
+                <GlossarBegriff schluessel="sonderposten">Sonderposten</GlossarBegriff>
+                sind, erklärt das Glossar.
+              </p>
               <ErklaerText schluessel="zuwendungen_laufende_zwecke" />
               <ErklaerText schluessel="sonderposten" :jahr="jahr" />
             </template>
@@ -459,7 +470,8 @@ const investivSeite = computed(() => {
   min-width: 0;
 }
 
-.om-einnahmen__hebesaetze {
+.om-einnahmen__hebesaetze,
+.om-einnahmen__glossar {
   margin: 0;
 }
 

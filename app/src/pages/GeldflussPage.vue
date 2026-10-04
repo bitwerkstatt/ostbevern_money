@@ -7,6 +7,7 @@ import DatenTabelle from '@/components/DatenTabelle.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import ErklaerText from '@/components/ErklaerText.vue'
 import GeldflussBalken from '@/components/GeldflussBalken.vue'
+import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import JahrUmschalter from '@/components/JahrUmschalter.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import SankeyDiagramm from '@/components/SankeyDiagramm.vue'
@@ -106,6 +107,12 @@ const lesesatz = computed(() =>
           :ueberschrift="schluessel !== 'geldfluss_lesehilfe'"
         />
         <p>{{ lesesatz }}</p>
+        <p>
+          Die Werte stammen aus dem
+          <GlossarBegriff schluessel="ergebnisplan">Ergebnisplan</GlossarBegriff>. Was der
+          <GlossarBegriff schluessel="globaler_minderaufwand">globale Minderaufwand</GlossarBegriff>
+          ist, erklärt das Glossar.
+        </p>
       </div>
     </wa-callout>
   </section>
