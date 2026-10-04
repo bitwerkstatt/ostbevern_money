@@ -1,13 +1,35 @@
 <script setup lang="ts">
 import { computed, watchEffect } from 'vue'
-import { EURO_OPTIONEN } from '@/charts/format'
+import { EURO_OPTIONEN, KEIN_WERT } from '@/charts/format'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 
-const props = defineProps<{
-  beschriftung?: string
-  spalten?: readonly DatenSpalte[]
-  zeilen?: readonly DatenZeile[]
-  laedt?: boolean
+const props = withDefaults(
+  defineProps<{
+    beschriftung?: string
+    spalten?: readonly DatenSpalte[]
+    zeilen?: readonly DatenZeile[]
+    laedt?: boolean
+    /** Überschrift des Leerzustands (UI-SPEC Copywriting). */
+    leerTitel?: string
+    /** Erklärtext des Leerzustands (UI-SPEC Copywriting). */
+    leerText?: string
+    /** Quellen-/Hinweiszeile unter der Tabelle (Caption-Stil). */
+    fussnote?: string
+  }>(),
+  {
+    leerTitel: 'Keine Einzelwerte',
+    leerText:
+      'Der Haushaltsplan nennt hier keine Aufschlüsselung. Wähle ein anderes Jahr oder öffne die Tabelle.',
+  },
+)
+
+defineSlots<{
+  /**
+   * Eigener Zelleninhalt (Schaltflächen, Links, Etiketten). Die Zelle selbst
+   * (`th`/`td`) bleibt Eigentum der Tabelle, damit ihr Scoped-CSS greift.
+   */
+  zelle?(props: { zeile: DatenZeile; spalte: DatenSpalte; wert: string | number | null }): unknown
+  default?(): unknown
 }>()
 
 const istDatenModus = computed(() => props.zeilen !== undefined)
@@ -53,11 +75,8 @@ function alsZahl(wert: string | number | null | undefined): number {
       <wa-skeleton effect="sheen"></wa-skeleton>
     </div>
     <div v-else-if="istLeer" class="om-tabelle-zustand">
-      <h3>Noch keine Daten</h3>
-      <p>
-        Die Haushaltsdaten werden ab Phase 2 automatisch aus dem PDF erzeugt und erscheinen hier,
-        sobald die Pipeline gelaufen ist.
-      </p>
+      <h3>{{ leerTitel }}</h3>
+      <p>{{ leerText }}</p>
     </div>
     <table v-else-if="istDatenModus" class="om-tabelle">
       <caption v-if="beschriftung" class="om-visually-hidden">
@@ -76,35 +95,56 @@ function alsZahl(wert: string | number | null | undefined): number {
         <tr v-for="(zeile, index) in zeilen" :key="index">
           <template v-for="(spalte, spaltenIndex) in spalten" :key="spalte.schluessel">
             <th v-if="spaltenIndex === 0" scope="row" class="om-tabelle__label">
-              {{ zeile[spalte.schluessel] }}
+              <slot
+                name="zelle"
+                :zeile="zeile"
+                :spalte="spalte"
+                :wert="zeile[spalte.schluessel] ?? null"
+              >
+                <template v-if="zeile[spalte.schluessel] === null">
+                  <span aria-hidden="true">{{ KEIN_WERT }}</span>
+                  <span class="om-visually-hidden">kein Wert</span>
+                </template>
+                <template v-else>{{ zeile[spalte.schluessel] }}</template>
+              </slot>
             </th>
             <td v-else :class="{ 'om-zahl': spalte.art !== 'text' }">
-              <span v-if="zeile[spalte.schluessel] === null" class="om-visually-hidden"
-                >kein Wert</span
+              <slot
+                name="zelle"
+                :zeile="zeile"
+                :spalte="spalte"
+                :wert="zeile[spalte.schluessel] ?? null"
               >
-              <template v-else-if="spalte.art === 'text'">{{ zeile[spalte.schluessel] }}</template>
-              <wa-format-number
-                v-else-if="spalte.art === 'euro'"
-                lang="de"
-                type="currency"
-                :currency="EURO_OPTIONEN.currency"
-                :maximum-fraction-digits="EURO_OPTIONEN.maximumFractionDigits"
-                :value="alsZahl(zeile[spalte.schluessel])"
-              ></wa-format-number>
-              <wa-format-number
-                v-else-if="spalte.art === 'zahl'"
-                lang="de"
-                type="decimal"
-                maximum-fraction-digits="0"
-                :value="alsZahl(zeile[spalte.schluessel])"
-              ></wa-format-number>
-              <wa-format-number
-                v-else-if="spalte.art === 'prozent'"
-                lang="de"
-                type="percent"
-                maximum-fraction-digits="1"
-                :value="alsZahl(zeile[spalte.schluessel])"
-              ></wa-format-number>
+                <template v-if="zeile[spalte.schluessel] === null">
+                  <span aria-hidden="true">{{ KEIN_WERT }}</span>
+                  <span class="om-visually-hidden">kein Wert</span>
+                </template>
+                <template v-else-if="spalte.art === 'text'">{{
+                  zeile[spalte.schluessel]
+                }}</template>
+                <wa-format-number
+                  v-else-if="spalte.art === 'euro'"
+                  lang="de"
+                  type="currency"
+                  :currency="EURO_OPTIONEN.currency"
+                  :maximum-fraction-digits="EURO_OPTIONEN.maximumFractionDigits"
+                  :value="alsZahl(zeile[spalte.schluessel])"
+                ></wa-format-number>
+                <wa-format-number
+                  v-else-if="spalte.art === 'zahl'"
+                  lang="de"
+                  type="decimal"
+                  maximum-fraction-digits="0"
+                  :value="alsZahl(zeile[spalte.schluessel])"
+                ></wa-format-number>
+                <wa-format-number
+                  v-else-if="spalte.art === 'prozent'"
+                  lang="de"
+                  type="percent"
+                  maximum-fraction-digits="1"
+                  :value="alsZahl(zeile[spalte.schluessel])"
+                ></wa-format-number>
+              </slot>
             </td>
           </template>
         </tr>
@@ -118,6 +158,7 @@ function alsZahl(wert: string | number | null | undefined): number {
       </caption>
       <slot />
     </table>
+    <p v-if="fussnote && !laedt && !istLeer" class="om-tabelle__fussnote">{{ fussnote }}</p>
   </div>
 </template>
 
@@ -172,6 +213,14 @@ function alsZahl(wert: string | number | null | undefined): number {
 
 .om-tabelle tbody tr:nth-child(even) {
   background: var(--wa-color-surface-lowered);
+}
+
+.om-tabelle__fussnote {
+  margin: var(--wa-space-xs) 0 0;
+  font-size: var(--wa-font-size-s);
+  font-weight: var(--wa-font-weight-normal);
+  line-height: 1.5;
+  color: var(--wa-color-text-quiet);
 }
 
 .om-tabelle__label {
