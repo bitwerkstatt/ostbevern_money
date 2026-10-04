@@ -58,3 +58,36 @@ export function baueAufwandsarten(jahrIndex: number): Aufwandsart[] {
   }
   return reihen.sort((a, b) => b.wert - a.wert)
 }
+
+/** Eine Zeile der Vorbericht-Tabelle „Transferaufwendungen“ (T€-Werte × 1000, daher gerundet). */
+export interface TransferPosten {
+  posten: string
+  name: string
+  wert: number
+  /** Immer `true` für Vorbericht-Werte: die App zeigt „rd.“. */
+  gerundet: boolean
+  /** 1-basierte PDF-Seite; `null`, falls die Daten keine Seite nennen. */
+  quelle: number | null
+  anmerkung: string | null
+  /** Einzelne Kita-Einrichtungen, nur bei der Zeile der Kita-Zuschüsse und nur in Jahren mit Werten. */
+  kinder?: TransferPosten[]
+}
+
+export function baueTransferaufwendungen(_jahrIndex: number): TransferPosten[] {
+  return []
+}
+
+export interface MinderaufwandHinweis {
+  /** Positiver Betrag: der Aufwand sinkt um diese Summe. */
+  betrag: number
+  jahr: number
+  /** Schlüssel des geprüften Erklärtexts, nur im Haushaltsjahr (Pitfall 6), sonst `null`. */
+  textSchluessel: string | null
+  /** Aus den Daten des Jahres zusammengesetzter Satz (für Jahre ohne geprüften Text). */
+  satz: string
+  pdfSeite: number | null
+}
+
+export function minderaufwandHinweis(_jahrIndex: number): MinderaufwandHinweis | null {
+  return null
+}
