@@ -32,6 +32,7 @@ from ostbevern.schema import (
     ERGEBNISPLAN_CSV,
     ERKLAERUNGEN_MD,
     FINANZPLAN_CSV,
+    GLOSSAR_MD,
     GRUNDZAHLEN_CSV,
     HIERARCHIE_CSV,
     INVESTITIONEN_CSV,
@@ -58,7 +59,14 @@ from ostbevern.schema import (
     lies_vorbericht_csv,
     zerlege_spaltenkopf,
 )
-from ostbevern.texte import lies_erklaerungen, loese_auf, pruefe_text, textwerte
+from ostbevern.texte import (
+    lies_erklaerungen,
+    lies_glossar,
+    loese_auf,
+    pruefe_grundzahl_jahre,
+    pruefe_text,
+    textwerte,
+)
 from ostbevern.zeilen import ZEILEN
 
 
@@ -1054,11 +1062,15 @@ def erzeuge_app_daten(
     # Formatkürzel bricht Schritt 07 mit TexteFehler ab (fail-fast, D-08-Stil). Die
     # Pipeline formatiert nie (D-15): texte.json trägt nur Rohtexte und Rohwerte.
     erklaerungen = lies_erklaerungen(daten_wurzel / ERKLAERUNGEN_MD)
-    for erklaertext in erklaerungen:
-        for absatz in erklaertext.absaetze:
+    # Glossar (Plan 05-03, D-14, GLOS-01): gleicher Textvertrag, gemeinsame Auflösung.
+    glossar = lies_glossar(daten_wurzel / GLOSSAR_MD)
+    for abschnitt in (*erklaerungen, *glossar):
+        for absatz in abschnitt.absaetze:
             pruefe_text(absatz)
     alle_werte = textwerte(daten, investitionen_daten, produkte_daten)
-    verwendet = loese_auf(erklaerungen, alle_werte)
+    # D-02: kein Euro-Grundzahl-Platzhalter ab dem ersten Planjahr (Quelle der Zeitreihe).
+    pruefe_grundzahl_jahre([*erklaerungen, *glossar], produkte_daten, jahre[0])
+    verwendet = loese_auf([*erklaerungen, *glossar], alle_werte)
     texte_daten = {
         "haushaltsjahr": jahrgang.haushaltsjahr,
         "texte": [
@@ -1069,6 +1081,15 @@ def erzeuge_app_daten(
                 "absaetze": list(erklaertext.absaetze),
             }
             for erklaertext in erklaerungen
+        ],
+        "glossar": [
+            {
+                "schluessel": begriff.schluessel,
+                "begriff": begriff.titel,
+                "quelle_seiten": list(begriff.quelle_seiten),
+                "absaetze": list(begriff.absaetze),
+            }
+            for begriff in glossar
         ],
         "werte": {schluessel: wert for schluessel, (wert, _format) in verwendet.items()},
     }

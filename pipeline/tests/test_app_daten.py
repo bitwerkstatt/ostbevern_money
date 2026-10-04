@@ -36,6 +36,7 @@ from ostbevern.schema import (
     ERGEBNISPLAN_CSV,
     ERKLAERUNGEN_MD,
     FINANZPLAN_CSV,
+    GLOSSAR_MD,
     HIERARCHIE_CSV,
     SEITEN_CSV,
     STELLENPLAN_CSV,
@@ -735,11 +736,12 @@ def test_texte_json_nur_verwendete_werte(tmp_path: Path) -> None:
     ungenutzte Schlüssel hat)."""
     erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
     daten = json.loads((tmp_path / app_daten.TEXTE_JSON).read_text(encoding="utf-8"))
-    assert list(daten) == ["haushaltsjahr", "texte", "werte"]
+    assert list(daten) == ["haushaltsjahr", "texte", "glossar", "werte"]
 
     verwendete_schluessel: set[str] = set()
     for text in daten["texte"]:
         assert text["quelle_seiten"]
+    for text in [*daten["texte"], *daten["glossar"]]:
         for absatz in text["absaetze"]:
             for treffer in PLATZHALTER_MUSTER.finditer(absatz):
                 verwendete_schluessel.add(treffer.group(1))
@@ -747,6 +749,67 @@ def test_texte_json_nur_verwendete_werte(tmp_path: Path) -> None:
     assert set(daten["werte"]) == verwendete_schluessel
     # Deutlich weniger als die vollständige textwerte-Namensraum (hunderte Schlüssel).
     assert len(daten["werte"]) < 100
+
+
+def test_texte_json_enthaelt_glossar(tmp_path: Path) -> None:
+    """GLOS-01, D-14: `glossar` hat mindestens die 22 Pflichtbegriffe mit eindeutigem
+    Schlüssel; Begriffe mit Platzhalter tragen eine Quelle."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / app_daten.TEXTE_JSON).read_text(encoding="utf-8"))
+    glossar = daten["glossar"]
+    assert len(glossar) >= 22
+    schluessel = [eintrag["schluessel"] for eintrag in glossar]
+    assert len(schluessel) == len(set(schluessel))
+    for eintrag in glossar:
+        assert list(eintrag) == ["schluessel", "begriff", "quelle_seiten", "absaetze"]
+        assert eintrag["begriff"]
+        if any("{{" in absatz for absatz in eintrag["absaetze"]):
+            assert eintrag["quelle_seiten"]
+    # Jeder in einem Glossartext verwendete Wert steht in `werte` (und nichts darüber hinaus,
+    # siehe test_texte_json_nur_verwendete_werte).
+    for eintrag in glossar:
+        for absatz in eintrag["absaetze"]:
+            for treffer in PLATZHALTER_MUSTER.finditer(absatz):
+                assert treffer.group(1) in daten["werte"]
+
+
+def test_unbekannter_platzhalter_im_glossar_bricht_schritt_07_ab(tmp_path: Path) -> None:
+    daten_kopie = tmp_path / "daten"
+    shutil.copytree(DATEN_WURZEL, daten_kopie)
+    (daten_kopie / GLOSSAR_MD).write_text(
+        "# Glossar\n\n"
+        "## testbegriff\n"
+        "Titel: Test\n"
+        "Quelle: S. 1\n\n"
+        "Ein Satz.\n\n"
+        "Ein Text mit {{nicht.vorhandener.schluessel|euro}}.\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(TexteFehler, match="nicht.vorhandener.schluessel"):
+        erzeuge_app_daten(
+            STANDARD_JAHR, daten_wurzel=daten_kopie, app_daten_wurzel=tmp_path / "app"
+        )
+
+
+def test_euro_grundzahl_fuer_planjahr_bricht_schritt_07_ab(tmp_path: Path) -> None:
+    """D-02: ein Euro-Grundzahl-Platzhalter für das erste Planjahr bricht Schritt 07 ab."""
+    haushalt = json.loads((APP_DATEN_WURZEL / "haushalt.json").read_text(encoding="utf-8"))
+    erstes_jahr = haushalt["jahre"][0]
+    daten_kopie = tmp_path / "daten"
+    shutil.copytree(DATEN_WURZEL, daten_kopie)
+    ziel = daten_kopie / ERKLAERUNGEN_MD
+    ziel.write_text(
+        "# Erklärtexte\n\n"
+        "## testschluessel\n"
+        "Titel: Test\n"
+        "Quelle: S. 1\n\n"
+        f"Ein Text mit {{{{grundzahlen.160101.1.{erstes_jahr}|mio}}}}.\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(TexteFehler, match=f"grundzahlen.160101.1.{erstes_jahr}"):
+        erzeuge_app_daten(
+            STANDARD_JAHR, daten_wurzel=daten_kopie, app_daten_wurzel=tmp_path / "app"
+        )
 
 
 def test_unbekannter_platzhalter_bricht_schritt_07_ab(tmp_path: Path) -> None:

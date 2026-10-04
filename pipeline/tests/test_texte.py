@@ -15,7 +15,7 @@ from pathlib import Path
 import pytest
 
 from ostbevern.konfiguration import PROJEKT_WURZEL, STANDARD_JAHR, lade_jahrgang
-from ostbevern.schema import DATEN_WURZEL, ERKLAERUNGEN_MD
+from ostbevern.schema import DATEN_WURZEL, ERKLAERUNGEN_MD, GLOSSAR_MD
 from ostbevern.texte import (
     ABGELEITET,
     FORMATKUERZEL,
@@ -34,7 +34,7 @@ APP_DATEN_WURZEL = PROJEKT_WURZEL / "app" / "src" / "data"
 
 # Die zehn Erklärtexte des Phase-4-Umfangs (D-16); gleicher Vollständigkeits-Check wie
 # die Task-1-Acceptance-Kriterien, aber als dauerhafter Regressionstest.
-_D16_SCHLUESSEL = {
+_PHASE4_SCHLUESSEL = {
     "schluesselzuweisung",
     "gewerbesteuer",
     "kreisumlage",
@@ -45,6 +45,45 @@ _D16_SCHLUESSEL = {
     "schulden",
     "verpflichtungsermaechtigungen",
     "nicht_im_haushalt",
+}
+
+# Phase 5 (Plan 05-03, D-19, AUSG-03, EINN-02/03): sieben jahrneutrale Erklärtexte ohne
+# jeden Platzhalter -- gültig für jedes wählbare Jahr (Pitfall 6).
+_JAHRNEUTRAL_SCHLUESSEL = {
+    "steuern_selbst_festgelegt",
+    "zuwendungen_laufende_zwecke",
+    "ueberschuss_pb_16",
+    "ueberschuss_pb_11",
+    "ueberschuss_allgemein",
+    "ueberschuss_ruecklage",
+    "geldfluss_lesehilfe",
+}
+_ERKLAERUNGEN_SCHLUESSEL = _PHASE4_SCHLUESSEL | _JAHRNEUTRAL_SCHLUESSEL
+
+# GLOS-01 / Spez. 6.14: die 22 Pflichtbegriffe des Glossars unter stabilen Schlüsseln.
+_GLOSSAR_PFLICHT = {
+    "ergebnisplan",
+    "finanzplan",
+    "ertrag_aufwand",
+    "einzahlung_auszahlung",
+    "produkt",
+    "produktbereich",
+    "transferaufwendungen",
+    "kreisumlage",
+    "jugendamtsumlage",
+    "gewerbesteuerumlage",
+    "schluesselzuweisung",
+    "hebesatz",
+    "sonderposten",
+    "abschreibungen",
+    "globaler_minderaufwand",
+    "ausgleichsruecklage",
+    "allgemeine_ruecklage",
+    "verpflichtungsermaechtigung",
+    "bindungsgrad",
+    "zuschussbedarf",
+    "nkf",
+    "haushaltssicherung",
 }
 
 
@@ -483,7 +522,7 @@ def echte_erklaerungen() -> list[Erklaertext]:
 
 
 def test_erklaerungen_umfang_d16(echte_erklaerungen: list[Erklaertext]) -> None:
-    assert {text.schluessel for text in echte_erklaerungen} == _D16_SCHLUESSEL
+    assert {text.schluessel for text in echte_erklaerungen} >= _ERKLAERUNGEN_SCHLUESSEL
 
 
 def test_erklaerungen_keine_nackten_ziffern(echte_erklaerungen: list[Erklaertext]) -> None:
@@ -504,6 +543,75 @@ def test_erklaerungen_jeder_text_hat_quelle(echte_erklaerungen: list[Erklaertext
         assert text.quelle_seiten
         for seite in text.quelle_seiten:
             assert 1 <= seite <= jahrgang.anzahlen.pdf_seiten
+
+
+def test_jahrneutrale_erklaerungen_ohne_platzhalter(
+    echte_erklaerungen: list[Erklaertext],
+) -> None:
+    """Pitfall 6: die sieben neuen Texte gelten für jedes wählbare Jahr, enthalten also
+    keinen Platzhalter (und damit keinen Wert, der nur für ein Jahr stimmt)."""
+    je_schluessel = {text.schluessel: text for text in echte_erklaerungen}
+    for schluessel in _JAHRNEUTRAL_SCHLUESSEL:
+        for absatz in je_schluessel[schluessel].absaetze:
+            assert "{{" not in absatz, f"{schluessel}: Platzhalter in jahrneutralem Text"
+
+
+def test_d02_keine_euro_grundzahl_ab_erstem_planjahr(
+    echte_erklaerungen: list[Erklaertext],
+    echtes_glossar: list[Erklaertext],
+    app_daten: tuple[dict, dict, list[dict]],
+) -> None:
+    """D-02: Text und Steuer-Zeitreihe nutzen für dasselbe Jahr dieselbe Quelle -- kein
+    Euro-Grundzahl-Platzhalter für ein Jahr ab dem ersten Planjahr (D-01)."""
+    haushalt, _investitionen, produkte = app_daten
+    pruefe_grundzahl_jahre(echte_erklaerungen + echtes_glossar, produkte, haushalt["jahre"][0])
+
+
+# ---------------------------------------------------------------------------
+# Echte Datei: daten/manuell/texte/glossar.md (D-14, D-16, GLOS-01)
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def echtes_glossar() -> list[Erklaertext]:
+    return lies_glossar(DATEN_WURZEL / GLOSSAR_MD)
+
+
+def test_glossar_pflichtbegriffe(echtes_glossar: list[Erklaertext]) -> None:
+    """GLOS-01 (Probe, explizit aufgelöst): alle 22 Pflichtschlüssel sind da, kein Schlüssel
+    kommt doppelt vor."""
+    schluessel = [text.schluessel for text in echtes_glossar]
+    assert len(schluessel) == len(set(schluessel)), "doppelter Glossarschlüssel"
+    fehlend = _GLOSSAR_PFLICHT - set(schluessel)
+    assert not fehlend, f"Pflichtbegriffe fehlen: {sorted(fehlend)}"
+
+
+def test_glossar_keine_nackten_ziffern(echtes_glossar: list[Erklaertext]) -> None:
+    for text in echtes_glossar:
+        for absatz in text.absaetze:
+            pruefe_text(absatz)  # darf nicht werfen (Ziffernregel, HTML-Verbot)
+
+
+def test_glossar_alle_schluessel_existieren(
+    echtes_glossar: list[Erklaertext], werte: dict[str, int | float]
+) -> None:
+    loese_auf(echtes_glossar, werte)  # darf nicht werfen
+
+
+def test_glossar_quelle_bei_platzhalter(echtes_glossar: list[Erklaertext]) -> None:
+    jahrgang = lade_jahrgang(STANDARD_JAHR)
+    for text in echtes_glossar:
+        if any("{{" in absatz for absatz in text.absaetze):
+            assert text.quelle_seiten, f"{text.schluessel}: Platzhalter ohne Quelle"
+        for seite in text.quelle_seiten:
+            assert 1 <= seite <= jahrgang.anzahlen.pdf_seiten
+
+
+def test_glossar_erster_satz_ohne_platzhalter(echtes_glossar: list[Erklaertext]) -> None:
+    """D-16: der erste Absatz steht allein als Tooltip und enthält nie einen Platzhalter."""
+    for text in echtes_glossar:
+        assert "{{" not in text.absaetze[0], f"{text.schluessel}: Platzhalter im Tooltip-Text"
+        assert text.titel
 
 
 # ---------------------------------------------------------------------------
