@@ -90,3 +90,48 @@ export function baueProduktKopf(
     bindungsgradOriginal: abweichend ? produkt.bindungsgrad_original : null,
   }
 }
+
+// --- RED-Gerüst (wird im GREEN-Schritt ersetzt) ---
+import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
+import type { Massnahme } from '@/data/typen'
+
+export interface Tabelle {
+  spalten: DatenSpalte[]
+  zeilen: DatenZeile[]
+}
+export interface Teilergebnisplan extends Tabelle {
+  titel: string
+}
+export interface GrundzahlenTabelle extends Tabelle {
+  fussnote: string | null
+}
+export interface Bezugsgroesse {
+  produkt: string
+  bezeichnungen: readonly string[]
+  einheitText: string
+}
+export interface ErlaeuterungEintrag {
+  betrag: number | null
+  text: string
+  zeilenNamen: string[]
+  zuAnzeigen: boolean
+}
+export const BEZUGSGROESSEN: readonly Bezugsgroesse[] = []
+export function jahrSchluessel(jahr: number): string {
+  return String(jahr)
+}
+export function baueTeilergebnisplan(_code: unknown): Teilergebnisplan | null {
+  return null
+}
+export function baueErlaeuterungen(_code: unknown): ErlaeuterungEintrag[] {
+  return []
+}
+export function baueGrundzahlen(_code: unknown): GrundzahlenTabelle | null {
+  return null
+}
+export function baueProduktInvestitionen(_code: unknown): Massnahme[] {
+  return []
+}
+export function baueInvestitionenTabelle(_liste: readonly Massnahme[]): Tabelle {
+  return { spalten: [], zeilen: [] }
+}
