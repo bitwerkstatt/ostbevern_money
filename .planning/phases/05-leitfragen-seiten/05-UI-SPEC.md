@@ -376,7 +376,7 @@ Alle Texte deutsch, Du-Anrede. Zahlen in Texten nur als Platzhalter `{…}` aus 
 
 Probe: `ui-consideration-probe` über 16 Elemente (E1 Kennzahlenband, E2 Einstiegskacheln, E3 Ertragsbalken, E4 Steuern/Zuwendungen-Aufklapper, E5 Steuer-Zeitreihe, E6 Investive Einnahmen, E7 Treemap/Zuschuss-Balken mit Brotkrumen, E8 Jahr- und Modus-Umschalter, E9 Kreisumlage-Callout, E10 Sankey, E11 Mobil-Balken, E12 Produktdetail, E13 Glossar/`GlossarBegriff`, E14 Produktakkordeon, E15 Kopfmenü/Drawer, E16 Fußzeile). Elementarten (Heuristik): E1 static-content, E2 nav, E3 list-collection, E4 list-collection, E5 media+interactive-control, E6 list-collection, E7 list-collection+media+nav, E8 interactive-control, E9 static-content, E10 media, E11 media+list-collection, E12 list-collection+static-content, E13 list-collection+nav, E14 list-collection+nav, E15 nav, E16 static-content. Empty-/Error-**Texte** stehen im Copywriting Contract, dieser Abschnitt bildet nur die Zustandsabdeckung ab.
 
-Applicable state considerations resolved: 46 covered, 6 backstop, 2 unresolved, 3 dismissed mit Begründung (57 Zeilen; Zeilen mit mehreren Elementen zählen einmal).
+Applicable state considerations resolved: 66 covered, 8 backstop, 2 unresolved, 9 dismissed mit Begründung (85 Zeilen; Zeilen mit mehreren Elementen zählen einmal). Abgleich nach der Checker-Freigabe gegen die Probe-Engine (86 anwendbare Element×Kategorie-Paare). Dabei kamen 28 fehlende Paare hinzu, jetzt gibt es keine Lücke mehr.
 
 | Category | Element(s) | Status | Resolution / Reason |
 |----------|------------|--------|---------------------|
@@ -435,6 +435,34 @@ Applicable state considerations resolved: 46 covered, 6 backstop, 2 unresolved, 
 | overflow | E16 Fußzeile | ✅ covered | Fußzeilen-Zeilen brechen um, lange URLs werden nie als Text ausgeschrieben, sondern als Linktext. |
 | long-text | E16 Fußzeile | ✅ covered | Linktexte umbrechen (`overflow-wrap`); die E-Mail-Adresse darf in eine neue Zeile wandern. |
 | empty | E16 Fußzeile (Kontakt) | 🧪 backstop | `{ statement: "Der Platzhalter-Kontakt wird im Deployment (Phase 7) vom Smoke-Test zurückgewiesen", verification: backstop }` (D-17). |
+| partial | E3 Ertragsbalken | ✅ covered | Fehlt der Wert einer Ertragsart, bleibt die Zeile stehen und zeigt „–“ (Fallback in `formatiere()`), nicht 0. |
+| overflow | E3 Ertragsbalken | ✅ covered | Höhe wächst mit der Zeilenzahl (`Zeilenzahl × 40 px + 48 px`), die Direktbeschriftung steht am Balkenende und läuft nie aus der Karte. |
+| zero-one-many | E3 Ertragsbalken | ✅ covered | Null Zeilen → Leerzustand (siehe E3 empty), eine oder viele Zeilen → gleiches Layout, die Höhe skaliert. |
+| empty | E4 Aufklapper | ✅ covered | Eine Ertragsart ohne Aufschlüsselung bekommt keinen Aufklapper (siehe E4 zero-one-many). Leere `wa-details` gibt es nicht. |
+| populated | E4 Aufklapper | ✅ covered | „Steuern“ standardmäßig offen (Tabelle der Steuerarten, Hebesätze, Hinweis zu selbst festgelegten Steuern), „Zuwendungen“ und „Sonstige“ geschlossen. |
+| overflow | E4 Aufklapper | ✅ covered | Tabellen im Aufklapper scrollen horizontal im eigenen `DatenTabelle`-Container, die Seite scrollt nicht. |
+| error | E4 Aufklapper | ⬜ dismissed | Reason: Statischer JSON-Import, kein Laufzeit-Ladefehler. Schemafehler werden zur Build-Zeit über `typen.ts` abgefangen. |
+| long-text | E5 Steuerart-Auswahl | ✅ covered | `wa-select` ist bis 699 px vollbreit, lange Steuerartnamen werden in der Option vollständig angezeigt und nicht gekürzt. |
+| empty | E6 Investive Einnahmen | ✅ covered | Ein Jahr ganz ohne investive Einnahmen zeigt den Leerzustand „Für {jahr} gibt es keine Einzelwerte“, Abschnitt und Callout bleiben stehen. |
+| populated | E6 Investive Einnahmen | ✅ covered | Horizontale Balken in `INVEST_FARBE` (nicht Gold), Tabelle im Aufklapper, klar getrennt durch `wa-divider` und Callout. |
+| overflow | E6 Investive Einnahmen | ✅ covered | Gleiche Regeln wie E3: Höhe skaliert mit Zeilen, Achsenbeschriftung umbricht (160 px). |
+| error | E6 Investive Einnahmen | 🧪 backstop | `{ statement: "Auch das Diagramm der investiven Einnahmen zeigt bei Renderfehler den Fehlertext statt einer leeren Fläche", verification: backstop }`, gleicher Smoke-Test wie bei den übrigen Diagrammen. |
+| populated | E10 Sankey | ✅ covered | Links Ertragsknoten in Gold-Tönen (plus Defizit), rechts 15 PB plus KL in PB-Farben (plus Minderaufwand/Überschuss). Beide Seiten sind gleich groß. |
+| empty | E11 Mobil-Balken | ✅ covered | Ohne Flüsse zeigt `BaseChart` den Leerzustand, wie beim Sankey (E10). |
+| partial | E11 Mobil-Balken | ✅ covered | Gleiche Knotenlogik wie E10: Defizit-, Überschuss- und Minderaufwand-Segmente erscheinen nur bei Wert ≠ 0, beide Balken haben dieselbe Summe. |
+| empty | E12 Investitionen | ✅ covered | Produkte ohne Investitionen zeigen den Copywriting-Leerzustand, alle anderen leeren Abschnitte entfallen. |
+| populated | E12 Produktdetail | ✅ covered | Abschnitte in der Reihenfolge aus Page Layouts: Worum geht es?, Leistungen, Auf einen Blick, Teilergebnisplan, Erläuterungen, Grundzahlen, Investitionen, Quelle. |
+| populated | E13 Glossar | ✅ covered | ≥ 22 Begriffe, alphabetisch (`localeCompare('de')`), je Begriff `h3`, Definition und Seitenverweis als Caption. |
+| partial | E13 Glossar | 🧪 backstop | `{ statement: "Jeder Glossarbegriff hat eine nicht leere Definition, und jede Zahl in einer Definition hat einen PDF-Seitenverweis", verification: backstop }`, Unit-Test über die Glossardaten (GLOS-03). |
+| overflow | E13 Glossar | ✅ covered | Definitionen umbrechen innerhalb der 72rem-Inhaltsbreite, kein horizontales Scrollen. |
+| error | E13 Glossar | ⬜ dismissed | Reason: Statische Daten. Ein unbekannter Hash ist als Leerfall abgedeckt (Copywriting), einen Ladefehler gibt es nicht. |
+| empty | E14 Produktakkordeon | ✅ covered | Ein Aufgabenbereich ohne Produkte wird nicht gerendert, die Gruppen sind datengetrieben. |
+| partial | E14 Produktakkordeon | ✅ covered | Ein Produkt ohne Beschreibung zeigt im Inhalt nur den Link „Produkt öffnen“. |
+| long-text | E14 Produktakkordeon | ✅ covered | „{Code} {Name}“ in der Summary umbricht, die Trefferfläche bleibt ≥ 44 px. |
+| error | E14 Produktakkordeon | ⬜ dismissed | Reason: Statischer JSON-Import, kein Laufzeit-Ladefehler. |
+| error | E2 Einstiegskacheln | ⬜ dismissed | Reason: Ziele sind feste Routen. Die Texte kommen aus statisch importierten Daten, einen Laufzeitfehler gibt es nicht. |
+| loading | E15 Kopfmenü | ⬜ dismissed | Reason: Die Menüeinträge sind statisch, es wird nichts nachgeladen. |
+| error | E15 Kopfmenü | ⬜ dismissed | Reason: Statische Routen. Unbekannte Routen sind Sache des Routers, nicht des Menüs. |
 | loading | E1, E3, E4, E6, E9, E12, E13, E14, E16 | ⬜ dismissed | Reason: alle Inhalte stammen aus statisch importierten JSON-Dateien. Werden Routen lazy geladen, zeigt ein `wa-skeleton` den Seitenplatzhalter (kein eigener Zustand je Element). |
 | loading | E5, E7, E10, E11 | 🧪 backstop | `{ statement: "Diagramme zeigen wa-skeleton, solange laedt gesetzt ist, und erscheinen ohne Layoutsprung", verification: backstop }`, Smoke-Test Phase 7. |
 
