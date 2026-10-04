@@ -23,11 +23,12 @@ import {
   ZINSEN_FARBE,
   type Decal,
 } from '@/charts/echartsTheme'
-import { euro, euroKurz } from '@/charts/format'
+import { euro, euroKurz, jahr as formatiereJahr } from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
 import { haushalt } from '@/data/daten'
 import { anteil } from '@/lib/berechnung'
 import { findeKlKnoten } from '@/lib/kreisumlage'
+import { textFuerJahr } from '@/lib/texte'
 
 export type KnotenSeite = 'links' | 'mitte' | 'rechts'
 
@@ -442,4 +443,166 @@ export function geldflussOption(
       },
     ],
   }
+}
+
+// ---- Mobil-Alternative: zwei gleich lange gestapelte Balken (D-12, D-19) --------------------
+
+export interface BalkenSegment {
+  id: string
+  name: string
+  wert: number
+  /** Anteil an der Summe des Balkens (0–1). */
+  anteil: number | null
+  art: KnotenArt
+  /** Klickziel (Aufgabenbereich oder KL) für den Link in der Legendentabelle; sonst `null`. */
+  code: string | null
+  farbe: string
+  decal?: Decal
+}
+
+export interface GeldflussBalken {
+  /** Ertragsarten plus Defizit und Globaler Minderaufwand. */
+  woher: BalkenSegment[]
+  /** KL, Aufgabenbereiche, Zinsen plus Überschuss. */
+  wohin: BalkenSegment[]
+  summeWoher: number
+  summeWohin: number
+}
+
+function segmente(geldfluss: Geldfluss, seite: 'links' | 'rechts', summe: number): BalkenSegment[] {
+  return geldfluss.knoten
+    .filter((k) => k.seite === seite)
+    .map((k) => ({
+      id: k.id,
+      name: k.name,
+      wert: k.wert,
+      anteil: anteil(k.wert, summe),
+      art: k.art,
+      code: k.code,
+      farbe: k.farbe,
+      decal: k.decal,
+    }))
+}
+
+/** Die Segmente beider Balken aus demselben Modell wie das Sankey: dieselben Summen, Farben und Muster. */
+export function baueGeldflussBalken(geldfluss: Geldfluss): GeldflussBalken {
+  return {
+    woher: segmente(geldfluss, 'links', geldfluss.summeLinks),
+    wohin: segmente(geldfluss, 'rechts', geldfluss.summeRechts),
+    summeWoher: geldfluss.summeLinks,
+    summeWohin: geldfluss.summeRechts,
+  }
+}
+
+/** Trennerfarbe der Segmente: die Flächenfarbe aus dem Web-Awesome-Token, Ersatz Weiß (wie `token()` im Theme). */
+function trennerFarbe(): string {
+  if (typeof document === 'undefined') {
+    return '#ffffff'
+  }
+  const wert = getComputedStyle(document.documentElement)
+    .getPropertyValue('--wa-color-surface-default')
+    .trim()
+  return wert === '' ? '#ffffff' : wert
+}
+
+/**
+ * Option für einen einzelnen gestapelten Balken (56 px, keine Achsen, keine Beschriftung in
+ * den Segmenten, 2 px Trenner). Die Skala reicht von 0 bis zur Summe des Balkens, daher füllt
+ * jeder Balken die ganze Breite und beide sind gleich lang. Tooltip nur über `tooltipZeilen`.
+ */
+export function balkenOption(
+  segmenteDesBalkens: readonly BalkenSegment[],
+  summe: number,
+  wertartText: string,
+): EChartsOption {
+  const nachId = new Map(segmenteDesBalkens.map((s) => [s.id, s] as const))
+  const trenner = trennerFarbe()
+
+  return {
+    grid: { left: 0, right: 0, top: 0, bottom: 0 },
+    tooltip: {
+      trigger: 'item',
+      confine: true,
+      formatter: (params: unknown) => {
+        const id = istObjekt(params) ? params.seriesName : undefined
+        const segment = typeof id === 'string' ? nachId.get(id) : undefined
+        return segment === undefined
+          ? ''
+          : tooltipZeilen([segment.name, euro(segment.wert), wertartText])
+      },
+    },
+    xAxis: { type: 'value', show: false, min: 0, max: summe },
+    yAxis: { type: 'category', show: false, data: [''] },
+    series: segmenteDesBalkens.map((segment) => ({
+      type: 'bar' as const,
+      name: segment.id,
+      stack: 'summe',
+      data: [segment.wert],
+      barWidth: '100%',
+      label: { show: false },
+      itemStyle: {
+        color: segment.farbe,
+        borderColor: trenner,
+        borderWidth: 2,
+        ...(segment.decal ? { decal: segment.decal } : {}),
+      },
+      emphasis: { focus: 'series' as const },
+    })),
+  }
+}
+
+// ---- Lesehilfe „So liest du das Diagramm“ --------------------------------------------------
+
+/**
+ * Satz aus den Daten des gewählten Jahres (D-11, Pitfall 6): nennt Defizit bzw. Überschuss
+ * und den Globalen Minderaufwand mit ihren Beträgen und die PDF-Seite. `wertart` ist der
+ * Anzeigename der Wertart („Ist“, „Ansatz“, „Planung“). Zahlen kommen nur aus `geldfluss`.
+ */
+export function lesehilfeSatz(geldfluss: Geldfluss, jahr: number, wertart: string): string {
+  const defizit = geldfluss.knoten.find((k) => k.art === 'defizit')
+  const ueberschuss = geldfluss.knoten.find((k) => k.art === 'ueberschuss')
+  const minderaufwand = geldfluss.knoten.find((k) => k.art === 'minderaufwand')
+
+  const saetze = [
+    `Für ${formatiereJahr(jahr)} (${wertart}) sind beide Seiten gleich groß: rund ${euroKurz(geldfluss.summeLinks)}.`,
+  ]
+  if (defizit) {
+    saetze.push(
+      `Das Defizit von ${euro(defizit.wert)} steht links, weil die Gemeinde diesen Betrag aus ihren Rücklagen deckt.`,
+    )
+  }
+  if (minderaufwand) {
+    saetze.push(
+      `Der globale Minderaufwand von ${euro(minderaufwand.wert)} steht ebenfalls links: Er senkt die geplanten Aufwendungen rechnerisch, ohne dass dafür ein Ertrag eingeht.`,
+    )
+  }
+  if (ueberschuss) {
+    saetze.push(
+      `Der Überschuss von ${euro(ueberschuss.wert)} steht rechts, weil er den Rücklagen zugeführt wird.`,
+    )
+  }
+  if (!defizit && !ueberschuss) {
+    saetze.push('Erträge und Aufwendungen gleichen sich in diesem Jahr genau aus.')
+  }
+  if (geldfluss.pdfSeite !== null) {
+    saetze.push(`Quelle: PDF-Seite ${String(geldfluss.pdfSeite)}.`)
+  }
+  return saetze.join(' ')
+}
+
+/**
+ * Schlüssel der Erklärtexte unter dem Diagramm: die Lesehilfe immer, `defizit_ruecklagen`
+ * nur bei einem Defizit, `ueberschuss_ruecklage` nur bei einem Überschuss. Jahrgebundene
+ * Texte (mit Zahlen des Haushaltsjahrs) bleiben außen vor, wenn das gewählte Jahr ein
+ * anderes ist (RESEARCH Pitfall 6): diese Entscheidung trifft `textFuerJahr`.
+ */
+export function welcheLesetexte(jahr: number, geldfluss: Geldfluss): string[] {
+  const kandidaten = ['geldfluss_lesehilfe']
+  if (geldfluss.knoten.some((k) => k.art === 'defizit')) {
+    kandidaten.push('defizit_ruecklagen')
+  }
+  if (geldfluss.knoten.some((k) => k.art === 'ueberschuss')) {
+    kandidaten.push('ueberschuss_ruecklage')
+  }
+  return kandidaten.filter((schluessel) => textFuerJahr(schluessel, jahr) !== null)
 }
