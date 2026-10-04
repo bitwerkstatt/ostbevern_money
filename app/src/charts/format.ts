@@ -5,6 +5,9 @@
 
 export const LOCALE = 'de-DE'
 
+/** Sichtbarer Ersatz für einen fehlenden Zahlenwert (UI-SPEC „Fehlender Zahlenwert“). */
+export const KEIN_WERT = '–'
+
 export const EURO_OPTIONEN: Intl.NumberFormatOptions = {
   style: 'currency',
   currency: 'EUR',
@@ -76,8 +79,17 @@ export type FormatKuerzel = 'euro' | 'mio' | 'zahl' | 'jahr' | 'prozent' | 'prom
  * (Jahreszahlen wie das Haushaltsjahr, CR-01). `prozent`/`promille` erwarten den
  * Rohwert als ganze Prozent- bzw. Promillepunkte (z. B. Hebesatz 554 oder 363),
  * nicht als Anteil 0–1.
+ *
+ * Fehlender Zahlenwert (UI-SPEC „Fehlender Zahlenwert“, WR-06/IN-01): `null`,
+ * `undefined`, `NaN` und `±Infinity` erscheinen als sichtbarer Gedankenstrich
+ * `KEIN_WERT` — nie als 0, „NaN“ oder „undefined“, damit ein Text keine falsche
+ * Zahl still anzeigt. Ein unbekanntes Formatkürzel wirft einen Fehler, der das
+ * Kürzel nennt, statt `undefined` zu liefern.
  */
-export function formatiere(wert: number, kuerzel: FormatKuerzel): string {
+export function formatiere(wert: number | null | undefined, kuerzel: FormatKuerzel): string {
+  if (wert === null || wert === undefined || !Number.isFinite(wert)) {
+    return KEIN_WERT
+  }
   switch (kuerzel) {
     case 'euro':
       return euro(wert)
@@ -93,5 +105,9 @@ export function formatiere(wert: number, kuerzel: FormatKuerzel): string {
       return prozent(wert / 1000)
     case 'vzae':
       return vzae(wert)
+    default: {
+      const unbekannt: never = kuerzel
+      throw new Error(`Unbekanntes Formatkürzel: ${String(unbekannt)}`)
+    }
   }
 }
