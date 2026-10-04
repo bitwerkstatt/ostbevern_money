@@ -133,13 +133,48 @@ export function abstufung(farbe: string, rang: number): string {
   return `#${kanaele.join('')}`
 }
 
-/** Hex-Farbe mit Deckkraft als rgba(); Nicht-Hex-Werte bleiben unverändert. */
-function mitDeckkraft(farbe: string, deckkraft: number): string {
-  if (!/^#[0-9a-f]{6}$/i.test(farbe)) {
-    return farbe
+/**
+ * Löst eine beliebige CSS-Farbe (Schlüsselwort wie `white`, `rgb()`, `oklch()` …) zu RGB auf,
+ * indem der Browser sie auf eine 1×1-Zeichenfläche malt. Ohne DOM oder Zeichenfläche `null`.
+ * Die Web-Awesome-Tokens sind nicht immer Hex (`--wa-color-surface-default` ist `white`).
+ */
+function alsRgb(farbe: string): [number, number, number] | null {
+  if (typeof document === 'undefined') {
+    return null
   }
-  const [r, g, b] = [1, 3, 5].map((start) => parseInt(farbe.slice(start, start + 2), 16))
-  return `rgba(${r}, ${g}, ${b}, ${deckkraft})`
+  const kontext = document.createElement('canvas').getContext('2d', { willReadFrequently: true })
+  if (kontext === null) {
+    return null
+  }
+  kontext.canvas.width = 1
+  kontext.canvas.height = 1
+  kontext.clearRect(0, 0, 1, 1)
+  kontext.fillStyle = farbe
+  kontext.fillRect(0, 0, 1, 1)
+  const [r, g, b, a] = kontext.getImageData(0, 0, 1, 1).data
+  if (r === undefined || g === undefined || b === undefined || a !== 255) {
+    return null
+  }
+  return [r, g, b]
+}
+
+/**
+ * Farbe mit Deckkraft als rgba(). Hex wird direkt umgerechnet, jede andere CSS-Farbe über
+ * `alsRgb`; ist keine Auflösung möglich, bleibt `color-mix` als Ausweg, damit die Deckkraft
+ * nie still verloren geht.
+ */
+export function mitDeckkraft(farbe: string, deckkraft: number): string {
+  const rgb = /^#[0-9a-f]{6}$/i.test(farbe)
+    ? ([1, 3, 5].map((start) => parseInt(farbe.slice(start, start + 2), 16)) as [
+        number,
+        number,
+        number,
+      ])
+    : alsRgb(farbe)
+  if (rgb === null) {
+    return `color-mix(in srgb, ${farbe} ${String(Math.round(deckkraft * 100))}%, transparent)`
+  }
+  return `rgba(${String(rgb[0])}, ${String(rgb[1])}, ${String(rgb[2])}, ${String(deckkraft)})`
 }
 
 /** Diagonale Streifen (45°) für KL: KL bleibt auch ohne Farbwahrnehmung erkennbar. */

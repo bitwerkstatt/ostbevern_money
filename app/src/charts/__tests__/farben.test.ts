@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { haushalt } from '@/data/daten'
-import { PB_FARBEN, abstufung, farbeFuerPb } from '@/charts/echartsTheme'
+import { PB_FARBEN, abstufung, farbeFuerPb, mitDeckkraft } from '@/charts/echartsTheme'
 
 // WCAG-2.x-Kontrast: relative Luminanz nach sRGB-Linearisierung.
 function luminanz(hex: string): number {
@@ -71,5 +71,32 @@ describe('abstufung', () => {
         ).toBeGreaterThanOrEqual(4.5)
       }
     }
+  })
+})
+
+describe('mitDeckkraft (WR-03)', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('rechnet Hex in rgba um', () => {
+    expect(mitDeckkraft('#ffffff', 0.45)).toBe('rgba(255, 255, 255, 0.45)')
+  })
+
+  it('löst ein Farbschlüsselwort über die Zeichenfläche auf, statt es unverändert zu lassen', () => {
+    const kontext = {
+      canvas: { width: 0, height: 0 },
+      fillStyle: '',
+      clearRect: () => undefined,
+      fillRect: () => undefined,
+      getImageData: () => ({ data: [255, 255, 255, 255] }),
+    }
+    vi.stubGlobal('document', { createElement: () => ({ getContext: () => kontext }) })
+    expect(mitDeckkraft('white', 0.55)).toBe('rgba(255, 255, 255, 0.55)')
+    expect(kontext.fillStyle).toBe('white')
+  })
+
+  it('fällt ohne Auflösung auf color-mix zurück, nie auf die deckende Farbe', () => {
+    expect(mitDeckkraft('white', 0.45)).toBe('color-mix(in srgb, white 45%, transparent)')
   })
 })
