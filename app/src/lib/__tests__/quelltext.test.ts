@@ -37,15 +37,27 @@ const PFLICHT_SCHLUESSEL = [
 ] as const
 
 /** Der Inhalt zwischen dem ersten `<template>` und dem letzten `</template>` einer Vue-Datei. */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function templateTeil(quelltext: string): string {
-  return ''
+  const anfang = quelltext.search(/^<template>/m)
+  const ende = quelltext.lastIndexOf('</template>')
+  if (anfang === -1 || ende === -1 || ende <= anfang) {
+    return ''
+  }
+  return quelltext.slice(anfang + '<template>'.length, ende)
 }
 
+/** Deutsche Tausendergruppen: 1 bis 3 Ziffern, dann Gruppen aus Punkt und drei Ziffern. */
+const GRUPPIERTE_ZAHL = /(?<![\d.,])\d{1,3}(?:\.\d{3})+(?!\d)/g
+/** Eine Ziffer, optional ein Leerzeichen, dann „Mio.“, „€“ oder „%“. */
+const BETRAG_ODER_PROZENT = /\d\s*(?:Mio\.|€|%)/g
+/** Die Roh-HTML-Direktive; aus zwei Teilen gebaut, damit diese Datei sich nicht selbst trifft. */
+const ROH_HTML = new RegExp('\\bv-' + 'html\\b', 'g')
+
 /** Die Fundstellen getippter Zahlen oder der Roh-HTML-Direktive im Template (UI-05, T-05-40/41). */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getippteZahlen(template: string): string[] {
-  return []
+  return [GRUPPIERTE_ZAHL, BETRAG_ODER_PROZENT, ROH_HTML].flatMap((muster) =>
+    Array.from(template.matchAll(muster), (treffer) => treffer[0]),
+  )
 }
 
 function seitenQuelltext(seite: string): string {
