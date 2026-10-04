@@ -336,3 +336,43 @@ Erst nach Freigabe werden `erklaerungen.md` und etwaige neue `meta.json`-Einträ
 unter `vorbericht_werte` committet. Zwei solche Einträge — `bbo_verlustausgleich_wirtschaftsplan`
 (S. 48) und `satzung_verringerung_allgemeine_ruecklage` (S. 9, § 4) — existieren in
 keiner anderen Datei und sind deshalb hier statt in einer CSV gespeichert.
+
+**Jahrneutrale Erklärtexte (Phase 5, D-02, D-19):** Seit Phase 5 enthält die Datei neben den
+zehn Texten des Vorberichts sieben Abschnitte ohne jeden Platzhalter
+(`steuern_selbst_festgelegt`, `zuwendungen_laufende_zwecke`, `ueberschuss_pb_16`,
+`ueberschuss_pb_11`, `ueberschuss_allgemein`, `ueberschuss_ruecklage`,
+`geldfluss_lesehilfe`). Sie gelten für jedes wählbare Jahr; ein Test hält sie
+platzhalterfrei. **Quellenregel (D-02):** Für ein Jahr, in dem Plan oder Vorbericht einen Wert
+haben (ab dem ersten Jahr von `haushalt.jahre`), zitiert ein Erklärtext nie eine Grundzahl in
+Euro (`grundzahlen.<produkt>.<position>.<jahr>`), sondern den Wert aus `vorbericht.*` — so
+zeigen Text und Diagramm für dasselbe Jahr denselben Wert. Schritt 07 und ein Test lehnen
+einen solchen Platzhalter ab (`ostbevern.texte.pruefe_grundzahl_jahre`). Quellseiten werden
+einzeln geschrieben (`Quelle: S. 24, S. 25`, nicht `S. 24/25`), weil der Parser bei einer
+Spanne nur die erste Seite übernimmt.
+
+### `texte/glossar.md`
+
+Die Begriffsdefinitionen der Seite `/glossar` und der `GlossarBegriff`-Tooltips (GLOS-01,
+D-14 bis D-16). Das Format gleicht `erklaerungen.md` (gleiche Platzhalter, gleiche
+Ziffernregel, kein HTML), mit drei Unterschieden: die erste Zeile ist `# Glossar`, der
+Kopfblock besteht aus der Zeile `Titel:` (der angezeigte Begriff) und einer **optionalen**
+Zeile `Quelle:`, und die `Quelle:`-Zeile ist **Pflicht, sobald ein Absatz des Begriffs einen
+Platzhalter enthält** (Seitenverweis bei Zahlen).
+
+```markdown
+# Glossar
+
+## hebesatz
+Titel: Hebesatz
+Quelle: S. 9
+
+Der erste Satz steht allein und dient als Tooltip. Er enthält nie eine Zahl.
+
+Weitere Sätze dürfen Platzhalter wie {{meta.hebesaetze.gewerbesteuer|prozent}} enthalten.
+```
+
+Der Abschnittsschlüssel (`hebesatz`) ist der stabile Anker `/glossar#hebesatz`; er ändert
+sich nie, auch wenn der Titel umformuliert wird. Mindestens die 22 Begriffe aus Spez. 6.14
+müssen vorhanden sein (Test `test_glossar_pflichtbegriffe`). Schritt 07 schreibt das Glossar
+als `glossar` nach `app/src/data/texte.json`; die Texte werden wie die Erklärtexte nach
+fachlicher Abnahme (D-15) committet.

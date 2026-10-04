@@ -69,6 +69,9 @@ VE_UEBERSICHT_CSV = MANUELL_WURZEL / "ve_uebersicht.csv"
 # Erklärtexte (Phase 4, Plan 04-05, D-15 bis D-17, MANU-08): von Hand entworfene,
 # fachlich geprüfte Texte mit Datenplatzhaltern; Format und Parser siehe ostbevern.texte.
 ERKLAERUNGEN_MD = MANUELL_WURZEL / "texte" / "erklaerungen.md"
+# Glossar (Phase 5, Plan 05-03, D-14, GLOS-01): Begriffsdefinitionen im selben Textvertrag
+# wie die Erklärtexte (Platzhalter, Ziffernregel); Parser: ostbevern.texte.lies_glossar.
+GLOSSAR_MD = MANUELL_WURZEL / "texte" / "glossar.md"
 # Stellenplan (Phase 4, Plan 04-03, D-18 bis D-20, EXTR-10): aus dem PDF extrahiert
 # (S. 284-290), daher unter aufbereitet/ wie investitionen.csv, nicht manuell/.
 STELLENPLAN_CSV = Path("aufbereitet/stellenplan.csv")

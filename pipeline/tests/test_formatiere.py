@@ -419,7 +419,7 @@ def test_erklaerungen_rendern_korrekt(
 def test_texte_json_rendert_korrekt(texte_json: dict) -> None:
     verstoesse: list[str] = []
     texte_werte = texte_json["werte"]
-    for text in texte_json["texte"]:
+    for text in [*texte_json["texte"], *texte_json["glossar"]]:
         verstoesse.extend(_pruefe_absaetze(text["absaetze"], texte_werte))
     assert not verstoesse, "\n".join(verstoesse)
 
@@ -475,7 +475,7 @@ def test_port_wie_format_ts(werte: dict[str, int | float], texte_json: dict) -> 
         (-3, "promille"),
     ]
     paare: list[tuple[int | float | None, str]] = [*beispiele, *kanten]
-    for text in texte_json["texte"]:
+    for text in [*texte_json["texte"], *texte_json["glossar"]]:
         for absatz in text["absaetze"]:
             for schluessel, format_kuerzel in PLATZHALTER_MUSTER.findall(absatz):
                 paare.append((texte_json["werte"][schluessel], format_kuerzel))

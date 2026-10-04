@@ -54,6 +54,7 @@ _QUELLE_MUSTER = re.compile(r"^Quelle:\s*(.+)$")
 _SEITENZAHL_MUSTER = re.compile(r"S\.\s*(\d+)")
 _SCHLUESSEL_MUSTER = re.compile(r"^[a-z][a-z0-9_]*$")
 _KOPFZEILE = "# Erklärtexte"
+_KOPFZEILE_GLOSSAR = "# Glossar"
 
 
 @dataclass(frozen=True)
@@ -66,18 +67,11 @@ class Erklaertext:
     absaetze: tuple[str, ...]
 
 
-def lies_erklaerungen(pfad: Path) -> list[Erklaertext]:
-    """Parst `erklaerungen.md` (D-16, D-17).
-
-    Bricht mit `TexteFehler` ab, wenn: die erste Zeile nicht `# Erklärtexte` ist, ein
-    Abschnitt keine `Titel:`- oder `Quelle:`-Zeile hat, ein Schlüssel nicht
-    `^[a-z][a-z0-9_]*$` entspricht, ein Schlüssel doppelt vorkommt, eine Quelle-Zeile
-    keine Seitenzahl enthält oder ein Abschnitt keinen Absatztext nach Titel/Quelle hat.
-    """
+def _lies_abschnitte(pfad: Path, *, kopfzeile: str, quelle_pflicht: bool) -> list[Erklaertext]:
     rohtext = pfad.read_text(encoding="utf-8")
     zeilen = rohtext.splitlines()
-    if not zeilen or zeilen[0].strip() != _KOPFZEILE:
-        raise TexteFehler(f"{pfad}: erste Zeile muss {_KOPFZEILE!r} sein")
+    if not zeilen or zeilen[0].strip() != kopfzeile:
+        raise TexteFehler(f"{pfad}: erste Zeile muss {kopfzeile!r} sein")
     rest = "\n".join(zeilen[1:])
 
     treffer = list(_ABSCHNITT_MUSTER.finditer(rest))
@@ -106,23 +100,32 @@ def lies_erklaerungen(pfad: Path) -> list[Erklaertext]:
                 f"{pfad}: Abschnitt {schluessel!r} hat keine Absätze nach Titel/Quelle"
             )
         kopf_zeilen = [z.strip() for z in bloecke[0].splitlines() if z.strip()]
-        if len(kopf_zeilen) != 2:
+        erlaubte_zeilen = (2,) if quelle_pflicht else (1, 2)
+        if len(kopf_zeilen) not in erlaubte_zeilen:
+            erwartet = (
+                "genau eine Titel- und eine Quelle-Zeile"
+                if quelle_pflicht
+                else "eine Titel- und höchstens eine Quelle-Zeile"
+            )
             raise TexteFehler(
-                f"{pfad}: Abschnitt {schluessel!r} braucht genau eine Titel- und eine "
-                "Quelle-Zeile direkt nach der Überschrift"
+                f"{pfad}: Abschnitt {schluessel!r} braucht {erwartet} direkt nach der Überschrift"
             )
         titel_treffer = _TITEL_MUSTER.match(kopf_zeilen[0])
         if titel_treffer is None:
             raise TexteFehler(f"{pfad}: Abschnitt {schluessel!r} hat keine 'Titel:'-Zeile")
-        quelle_treffer = _QUELLE_MUSTER.match(kopf_zeilen[1])
-        if quelle_treffer is None:
+
+        seiten: tuple[int, ...] = ()
+        if len(kopf_zeilen) == 2:
+            quelle_treffer = _QUELLE_MUSTER.match(kopf_zeilen[1])
+            if quelle_treffer is None:
+                raise TexteFehler(f"{pfad}: Abschnitt {schluessel!r} hat keine 'Quelle:'-Zeile")
+            seiten = tuple(int(s) for s in _SEITENZAHL_MUSTER.findall(quelle_treffer.group(1)))
+            if not seiten:
+                raise TexteFehler(f"{pfad}: Abschnitt {schluessel!r}: Quelle ohne Seitenzahl")
+        elif quelle_pflicht:  # pragma: no cover - durch erlaubte_zeilen bereits ausgeschlossen
             raise TexteFehler(f"{pfad}: Abschnitt {schluessel!r} hat keine 'Quelle:'-Zeile")
 
         titel = titel_treffer.group(1).strip()
-        seiten = tuple(int(s) for s in _SEITENZAHL_MUSTER.findall(quelle_treffer.group(1)))
-        if not seiten:
-            raise TexteFehler(f"{pfad}: Abschnitt {schluessel!r}: Quelle ohne Seitenzahl")
-
         absaetze = tuple(
             " ".join(z.strip() for z in block.splitlines() if z.strip())
             for block in bloecke[1:]
@@ -133,6 +136,44 @@ def lies_erklaerungen(pfad: Path) -> list[Erklaertext]:
 
         ergebnis.append(Erklaertext(schluessel, titel, seiten, absaetze))
     return ergebnis
+
+
+def lies_erklaerungen(
+    pfad: Path, *, kopfzeile: str = _KOPFZEILE, quelle_pflicht: bool = True
+) -> list[Erklaertext]:
+    """Parst `erklaerungen.md` (D-16, D-17).
+
+    Bricht mit `TexteFehler` ab, wenn: die erste Zeile nicht `kopfzeile` (Standard
+    `# Erklärtexte`) ist, ein Abschnitt keine `Titel:`- oder (bei `quelle_pflicht`) keine
+    `Quelle:`-Zeile hat, ein Schlüssel nicht `^[a-z][a-z0-9_]*$` entspricht, ein Schlüssel
+    doppelt vorkommt, eine Quelle-Zeile keine Seitenzahl enthält oder ein Abschnitt keinen
+    Absatztext nach Titel/Quelle hat.
+
+    Mit `quelle_pflicht=False` darf der Kopfblock nur aus der Titel-Zeile bestehen;
+    `quelle_seiten` ist dann leer (Plan 05-03, Glossar).
+    """
+    return _lies_abschnitte(pfad, kopfzeile=kopfzeile, quelle_pflicht=quelle_pflicht)
+
+
+def lies_glossar(pfad: Path) -> list[Erklaertext]:
+    """Parst `glossar.md` (D-14, GLOS-01): Kopfzeile `# Glossar`, je Begriff ein
+    `## schluessel`-Abschnitt mit `Titel:` (dem angezeigten Begriff), optionaler
+    `Quelle:`-Zeile und Absätzen.
+
+    Gleiche Regeln wie `lies_erklaerungen`, aber die Quelle ist nur Pflicht, sobald ein
+    Absatz des Abschnitts einen Platzhalter (also eine Zahl) enthält — sonst bricht der
+    Parser mit `TexteFehler` ab (Seitenverweis bei Zahlen, D-14).
+    """
+    texte = _lies_abschnitte(pfad, kopfzeile=_KOPFZEILE_GLOSSAR, quelle_pflicht=False)
+    for text in texte:
+        if not text.quelle_seiten and any(
+            PLATZHALTER_MUSTER.search(absatz) or "{{" in absatz for absatz in text.absaetze
+        ):
+            raise TexteFehler(
+                f"{pfad}: Glossarbegriff {text.schluessel!r} enthält einen Platzhalter, "
+                "aber keine 'Quelle:'-Zeile (Seitenverweis bei Zahlen, D-14)"
+            )
+    return texte
 
 
 def pruefe_text(text: str) -> None:
@@ -375,6 +416,44 @@ def loese_auf(
                 if schluessel not in verwendet:
                     verwendet[schluessel] = (werte[schluessel], format_kuerzel)
     return verwendet
+
+
+# Platzhalter auf eine Grundzahl: grundzahlen.<produkt>.<position>.<jahr> (D-02).
+_GRUNDZAHL_SCHLUESSEL_MUSTER = re.compile(r"^grundzahlen\.([0-9]+)\.([0-9]+)\.([0-9]{4})$")
+
+
+def pruefe_grundzahl_jahre(
+    texte: Sequence[Erklaertext],
+    produkte: Sequence[Mapping[str, object]],
+    erstes_planjahr: int,
+) -> None:
+    """D-02: Text und Diagramm zeigen für dasselbe Jahr denselben Wert.
+
+    Für jedes Jahr ab dem ersten Planjahr gibt es Plan- bzw. Vorberichtswerte (D-01); ein
+    Euro-Platzhalter auf eine Grundzahl dieses Jahres würde davon abweichen können. Bricht
+    mit `TexteFehler` ab (Text und Platzhalter benannt), wenn ein Platzhalter
+    `grundzahlen.<produkt>.<position>.<jahr>` ein Jahr >= `erstes_planjahr` meint und die
+    Einheit dieser Grundzahl in `produkte` `EUR` ist. Grundzahlen anderer Einheiten und
+    Jahre davor bleiben erlaubt; unbekannte Schlüssel prüft `loese_auf`.
+    """
+    einheiten: dict[tuple[str, int], object] = {}
+    for produkt in produkte:
+        for grundzahl in produkt["grundzahlen"]:  # type: ignore[attr-defined]
+            einheiten[(str(produkt["code"]), int(grundzahl["position"]))] = grundzahl["einheit"]
+    for text in texte:
+        for absatz in text.absaetze:
+            for treffer in PLATZHALTER_MUSTER.finditer(absatz):
+                schluessel = treffer.group(1)
+                teile = _GRUNDZAHL_SCHLUESSEL_MUSTER.match(schluessel)
+                if teile is None:
+                    continue
+                code, position, jahr = teile.group(1), int(teile.group(2)), int(teile.group(3))
+                if jahr >= erstes_planjahr and einheiten.get((code, position)) == "EUR":
+                    raise TexteFehler(
+                        f"Text {text.schluessel!r}: Platzhalter {{{{{schluessel}|...}}}} zitiert "
+                        f"die Grundzahl in Euro für {jahr}; ab {erstes_planjahr} gilt die "
+                        "Quelle der Zeitreihe (vorbericht.*, D-02)"
+                    )
 
 
 def vorschau(texte: Sequence[Erklaertext], werte: Mapping[str, int | float]) -> str:

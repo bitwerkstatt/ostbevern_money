@@ -373,10 +373,28 @@ export interface Erklaertext {
   absaetze: string[]
 }
 
-/** Gesamtstruktur von `texte.json` (D-15 bis D-17, MANU-08, D-21). */
+/**
+ * Ein Glossarbegriff (D-14, D-16, GLOS-01). `schluessel` ist der stabile Anker
+ * (`/glossar#<schluessel>`). `absaetze[0]` steht allein und enthält nie einen Platzhalter:
+ * Sein erster Satz ist der Tooltip-Text des `GlossarBegriff`. Weitere Absätze können
+ * `{{schluessel|formatkuerzel}}`-Platzhalter tragen (aufgelöst gegen `Texte.werte`);
+ * dann ist `quelle_seiten` nicht leer. Ohne Zahlen darf `quelle_seiten` leer sein.
+ */
+export interface Glossarbegriff {
+  /** Eindeutiger, stabiler Schlüssel, z. B. "kreisumlage". */
+  schluessel: string
+  /** Angezeigter Begriff, z. B. "Kreisumlage". */
+  begriff: string
+  /** 1-basierte PDF-Seite(n), die den Begriff oder seine Zahlen belegen. */
+  quelle_seiten: number[]
+  absaetze: string[]
+}
+
+/** Gesamtstruktur von `texte.json` (D-15 bis D-17, MANU-08, D-21, D-14). */
 export interface Texte {
   haushaltsjahr: number
   texte: Erklaertext[]
+  glossar: Glossarbegriff[]
   /** Nur die tatsächlich in `texte` verwendeten Datenschlüssel -> Rohwert (kein
    * vollständiger Daten-Dump, D-15). */
   werte: Record<string, number>

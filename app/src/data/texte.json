@@ -18,7 +18,7 @@
         27
       ],
       "absaetze": [
-        "Die Gewerbesteuer gehört zu den unsichersten Einnahmen im Haushalt, weil sie von der wirtschaftlichen Lage der Betriebe vor Ort abhängt. Du siehst das deutlich an den tatsächlichen Einnahmen der letzten Jahre: 2022 kamen {{grundzahlen.160101.1.2022|mio}} herein, 2023 brachen sie auf {{grundzahlen.160101.1.2023|mio}} ein und 2024 lagen sie bei {{grundzahlen.160101.1.2024|mio}}. Für {{jahr.haushaltsjahr|jahr}} plant Ostbevern mit {{vorbericht.steuerarten.gewerbesteuer.2026|mio}} bei einem Hebesatz von {{meta.hebesaetze.gewerbesteuer|prozent}}. Weil niemand die Zukunft einzelner Betriebe sicher kennt, bleibt dieser Ansatz eine vorsichtige Schätzung."
+        "Die Gewerbesteuer gehört zu den unsichersten Einnahmen im Haushalt, weil sie von der wirtschaftlichen Lage der Betriebe vor Ort abhängt. Du siehst das deutlich an den tatsächlichen Einnahmen der letzten Jahre: 2022 kamen {{grundzahlen.160101.1.2022|mio}} herein, 2023 brachen sie auf {{grundzahlen.160101.1.2023|mio}} ein und 2024 lagen sie laut Vorbericht bei {{vorbericht.steuerarten.gewerbesteuer.2024|mio}} (vorläufiges Ergebnis). Für {{jahr.haushaltsjahr|jahr}} plant Ostbevern mit {{vorbericht.steuerarten.gewerbesteuer.2026|mio}} bei einem Hebesatz von {{meta.hebesaetze.gewerbesteuer|prozent}}. Weil niemand die Zukunft einzelner Betriebe sicher kennt, bleibt dieser Ansatz eine vorsichtige Schätzung."
       ]
     },
     {
@@ -111,6 +111,369 @@
       "absaetze": [
         "Zwei größere Einrichtungen tauchen im Kernhaushalt nur am Rand auf, weil sie eigene Wirtschaftspläne führen: die Bäder- und Beteiligungsgesellschaft Ostbevern mbH (BBO, u. a. das Hallenbad) und der Technische Eigenbetrieb Ostbevern AöR (TEO, u. a. Abwasser). Für den BBO-Verlustausgleich plant der eigene Wirtschaftsplan {{meta.vorbericht_werte.bbo_verlustausgleich_wirtschaftsplan|euro}}, wovon {{vorbericht.transferaufwendungen.verlustuebernahme_bbo.2026|euro}} als Verlustübernahme im Kernhaushalt {{jahr.haushaltsjahr|jahr}} erscheinen. Der TEO verzinst sein Eigenkapital gegenüber der Gemeinde eigenständig; beide Betriebe werden in dieser App nur mit diesem Hinweis erwähnt, nicht im Detail dargestellt."
       ]
+    },
+    {
+      "schluessel": "steuern_selbst_festgelegt",
+      "titel": "Welche Steuern die Gemeinde selbst festlegt",
+      "quelle_seiten": [
+        9,
+        27,
+        28
+      ],
+      "absaetze": [
+        "Nicht jede Steuer, die in Ostbevern ankommt, bestimmt die Gemeinde selbst. Über die Hebesätze der Grundsteuer und der Gewerbesteuer entscheidet der Rat mit der Haushaltssatzung. Auch die Hundesteuer und die Vergnügungssteuer sind örtliche Steuern, die die Gemeinde selbst erhebt.",
+        "Die Anteile an der Einkommensteuer und an der Umsatzsteuer sind dagegen Anteile an Steuern von Bund und Land. Die Gemeinde kann ihre Höhe nicht beeinflussen: Der Vorbericht stützt die Ansätze auf die Orientierungsdaten des Landes NRW. Die Kompensationszahlungen gleichen Mindererträge aus, die durch geänderte steuerliche Regelungen des Bundes zugunsten von Familien entstanden sind."
+      ]
+    },
+    {
+      "schluessel": "zuwendungen_laufende_zwecke",
+      "titel": "Zuweisungen für laufende Zwecke",
+      "quelle_seiten": [
+        28,
+        29
+      ],
+      "absaetze": [
+        "Zuweisungen für laufende Zwecke sind Gelder von Land, Bund und Kreis, die ein laufendes Angebot der Gemeinde mitfinanzieren. Anders als die Schlüsselzuweisung sind sie an einen bestimmten Zweck gebunden.",
+        "Laut Vorbericht gehören dazu zum Beispiel Mittel von Land und Kreis für die Offene Ganztagsgrundschule und die Schulsozialarbeit, die Aufwands- und Unterhaltungspauschale des Landes für die kommunale Infrastruktur sowie die Schulpauschale, soweit sie für Unterhaltungsmaßnahmen an den Schulen eingesetzt wird."
+      ]
+    },
+    {
+      "schluessel": "ueberschuss_pb_16",
+      "titel": "Warum die Allgemeine Finanzwirtschaft einen Überschuss hat",
+      "quelle_seiten": [
+        18,
+        22
+      ],
+      "absaetze": [
+        "In der Allgemeinen Finanzwirtschaft liegen die Einnahmen, die keinem einzelnen Angebot zugeordnet sind, vor allem die Steuern und die Schlüsselzuweisung. Deshalb steht hier kein Zuschussbedarf, sondern ein Überschuss.",
+        "Dieser Überschuss ist kein Gewinn der Gemeinde. Er deckt den Zuschussbedarf der übrigen Aufgabenbereiche. Der Vorbericht beschreibt den Saldo der Allgemeinen Finanzen im Wesentlichen als Steuern plus Schlüsselzuweisungen minus Kreisumlage."
+      ]
+    },
+    {
+      "schluessel": "ueberschuss_pb_11",
+      "titel": "Warum die Ver- und Entsorgung einen Überschuss hat",
+      "quelle_seiten": [
+        30,
+        44
+      ],
+      "absaetze": [
+        "In der Ver- und Entsorgung, zum Beispiel bei der Abfallbeseitigung, bezahlen die Bürgerinnen und Bürger über Gebühren für die Leistung. Ein Überschuss entsteht, wenn die Gebühren in einem Jahr mehr einbringen, als die Leistung kostet.",
+        "Dieser Überschuss ist kein Gewinn zugunsten des übrigen Haushalts. Laut Vorbericht wird er bei der Gebührenberechnung gebührenmindernd berücksichtigt: Ein Jahresüberschuss der Abfallbeseitigung aus dem Jahr 2023 ist im Jahr 2025 in die Gebühren eingeflossen."
+      ]
+    },
+    {
+      "schluessel": "ueberschuss_allgemein",
+      "titel": "Warum ein Aufgabenbereich einen Überschuss haben kann",
+      "quelle_seiten": [
+        22,
+        30
+      ],
+      "absaetze": [
+        "Manche Aufgabenbereiche nehmen mehr ein, als sie kosten. Das kann an Gebühren, Erstattungen von Dritten, Fördermitteln oder Erträgen aus Grundstücksverkäufen liegen, die höher sind als die Aufwendungen dieses Bereichs.",
+        "Ein solcher Überschuss ist kein Gewinn im Sinne eines Unternehmens. Er senkt den Betrag, der für die übrigen Aufgaben aus Steuern und allgemeinen Zuweisungen aufgebracht werden muss."
+      ]
+    },
+    {
+      "schluessel": "ueberschuss_ruecklage",
+      "titel": "Was bei einem Überschuss im Jahresergebnis passiert",
+      "quelle_seiten": [
+        20,
+        24
+      ],
+      "absaetze": [
+        "Schließt ein Jahr mit einem Überschuss ab, ist mehr Ertrag übrig geblieben, als Aufwand angefallen ist. Dieser Betrag wird den Rücklagen zugeführt, und das Eigenkapital der Gemeinde steigt.",
+        "Der Vorbericht zeigt das an der Ausgleichsrücklage, die sich über die Jahresergebnisse der Jahre 2020 bis 2024 wieder aufgebaut hat. Das ist kein Geld, das schon ausgegeben wurde, sondern ein Polster, das später ein Defizit auffangen kann."
+      ]
+    },
+    {
+      "schluessel": "geldfluss_lesehilfe",
+      "titel": "So liest du das Geldfluss-Diagramm",
+      "quelle_seiten": [
+        26,
+        51
+      ],
+      "absaetze": [
+        "Links siehst du, woher das Geld kommt: die Erträge der Gemeinde, bei einem Defizit eine Entnahme aus den Rücklagen und der globale Minderaufwand. Rechts siehst du, wofür es verwendet wird: die Aufgabenbereiche, die Weitergabe an Kreis und Land und die Zinsen. Beide Seiten sind gleich groß.",
+        "Der globale Minderaufwand steht links neben dem Defizit, weil er die geplanten Aufwendungen rechnerisch senkt, ohne dass dafür ein Ertrag eingeht. Der Rat plant damit eine pauschale Einsparung, weil erfahrungsgemäß nicht jeder angesetzte Euro ausgegeben wird. Schließt ein Jahr mit einem Überschuss ab, steht rechts stattdessen die Zuführung zur Rücklage."
+      ]
+    }
+  ],
+  "glossar": [
+    {
+      "schluessel": "ergebnisplan",
+      "begriff": "Ergebnisplan",
+      "quelle_seiten": [
+        26
+      ],
+      "absaetze": [
+        "Der Ergebnisplan zeigt, welche Erträge und welche Aufwendungen die Gemeinde in einem Jahr erwartet und ob am Ende ein Überschuss oder ein Fehlbetrag bleibt.",
+        "Er bildet den Verbrauch von Ressourcen ab, also auch Posten wie Abschreibungen, bei denen kein Geld fließt. Den Gesamtergebnisplan für {{jahr.haushaltsjahr|jahr}} nennt der Vorbericht mit einem Fehlbetrag von {{abgeleitet.jahresergebnis_defizit_haushaltsjahr|euro}} (nach Abzug des globalen Minderaufwands)."
+      ]
+    },
+    {
+      "schluessel": "finanzplan",
+      "begriff": "Finanzplan",
+      "quelle_seiten": [
+        26,
+        51
+      ],
+      "absaetze": [
+        "Der Finanzplan erfasst alle geplanten Zahlungen der Gemeinde: was tatsächlich eingeht und was tatsächlich bezahlt wird, auch für Investitionen und Kredite.",
+        "Damit zeigt er, ob das Geld auf dem Konto reicht. Für {{jahr.haushaltsjahr|jahr}} weist der Gesamtfinanzplan eine Änderung des Finanzmittelbestands von {{gfp.aenderung_finanzbestand.2026|euro}} aus."
+      ]
+    },
+    {
+      "schluessel": "ertrag_aufwand",
+      "begriff": "Ertrag und Aufwand",
+      "quelle_seiten": [
+        15
+      ],
+      "absaetze": [
+        "Ertrag ist der Wertzuwachs und Aufwand der Werteverbrauch der Gemeinde in einem Jahr, unabhängig davon, wann dafür Geld fließt.",
+        "Erträge sind zum Beispiel Steuern, Gebühren und Zuweisungen; Aufwendungen sind zum Beispiel Personal, Sachkosten und Abschreibungen. Beide stehen im Ergebnisplan. Der Unterschied zwischen beiden ist das Jahresergebnis."
+      ]
+    },
+    {
+      "schluessel": "einzahlung_auszahlung",
+      "begriff": "Einzahlung und Auszahlung",
+      "quelle_seiten": [
+        51
+      ],
+      "absaetze": [
+        "Einzahlungen und Auszahlungen sind tatsächliche Geldbewegungen: Geld, das bei der Gemeinde eingeht oder von ihr bezahlt wird.",
+        "Sie stehen im Finanzplan. Nicht jeder Ertrag ist zugleich eine Einzahlung und nicht jeder Aufwand eine Auszahlung. Abschreibungen sind zum Beispiel Aufwand, aber keine Auszahlung."
+      ]
+    },
+    {
+      "schluessel": "produkt",
+      "begriff": "Produkt",
+      "quelle_seiten": [
+        17
+      ],
+      "absaetze": [
+        "Ein Produkt ist eine Leistung der Gemeinde, für die es am Ort oder in der Verwaltung eine Nachfrage gibt, zum Beispiel der Betrieb einer Grundschule.",
+        "Mehrere Produkte bilden eine Produktgruppe, mehrere Produktgruppen einen Produktbereich. Zu jedem Produkt findest du in dieser App den Aufwand, die Erträge und den Zuschussbedarf."
+      ]
+    },
+    {
+      "schluessel": "produktgruppe",
+      "begriff": "Produktgruppe",
+      "quelle_seiten": [
+        17
+      ],
+      "absaetze": [
+        "Eine Produktgruppe fasst mehrere zusammengehörige Produkte zusammen.",
+        "Mehrere Produktgruppen ergeben wiederum einen Produktbereich."
+      ]
+    },
+    {
+      "schluessel": "produktbereich",
+      "begriff": "Produktbereich",
+      "quelle_seiten": [
+        17
+      ],
+      "absaetze": [
+        "Ein Produktbereich ist ein großes Aufgabenfeld der Gemeinde, in dem mehrere Produktgruppen zusammengefasst sind, zum Beispiel Schulträgeraufgaben oder Verkehrsflächen und -anlagen.",
+        "Das Land NRW gibt die Produktbereiche vor. In dieser App heißen sie auch Aufgabenbereiche."
+      ]
+    },
+    {
+      "schluessel": "transferaufwendungen",
+      "begriff": "Transferaufwendungen",
+      "quelle_seiten": [
+        46
+      ],
+      "absaetze": [
+        "Transferaufwendungen sind Zahlungen der Gemeinde, denen keine unmittelbare Gegenleistung gegenübersteht, etwa Umlagen an den Kreis, Zuschüsse an Kitas und Vereine oder Sozialleistungen.",
+        "Für {{jahr.haushaltsjahr|jahr}} plant Ostbevern dafür insgesamt {{vorbericht.transferaufwendungen.gesamt_plan.2026|mio}}. Den größten Teil davon macht die Kreisumlage mit {{vorbericht.transferaufwendungen.kreisumlage.2026|mio}} aus."
+      ]
+    },
+    {
+      "schluessel": "kreisumlage",
+      "begriff": "Kreisumlage",
+      "quelle_seiten": [
+        46,
+        47
+      ],
+      "absaetze": [
+        "Die Kreisumlage ist der Betrag, den die Gemeinde an den Kreis Warendorf zahlt, damit der Kreis seine Aufgaben finanzieren kann.",
+        "Ihre Höhe richtet sich nach einem Hebesatz, den der Kreis in seinem Haushalt festlegt. Für {{jahr.haushaltsjahr|jahr}} liegt er bei {{meta.kreisumlage.hebesatz_kreisumlage|promille}} (im Vorjahr {{meta.kreisumlage.hebesatz_kreisumlage.vorjahr|promille}}). Laut Vorbericht ist die Kreisumlage die mit Abstand größte Aufwandsposition im Haushaltsplan."
+      ]
+    },
+    {
+      "schluessel": "jugendamtsumlage",
+      "begriff": "Jugendamtsumlage",
+      "quelle_seiten": [
+        47
+      ],
+      "absaetze": [
+        "Die Jugendamtsumlage ist der Teil der Umlage an den Kreis Warendorf, der die Kosten der Jugendhilfe über das Jugendamt abdeckt.",
+        "Sie wird zusätzlich zur allgemeinen Kreisumlage erhoben und hat einen eigenen Hebesatz. Für {{jahr.haushaltsjahr|jahr}} liegt er bei {{meta.kreisumlage.hebesatz_jugendamtsumlage|promille}} (im Vorjahr {{meta.kreisumlage.hebesatz_jugendamtsumlage.vorjahr|promille}})."
+      ]
+    },
+    {
+      "schluessel": "gewerbesteuerumlage",
+      "begriff": "Gewerbesteuerumlage",
+      "quelle_seiten": [
+        46,
+        47
+      ],
+      "absaetze": [
+        "Die Gewerbesteuerumlage ist ein Teil der Gewerbesteuer, den die Gemeinde an andere staatliche Ebenen weitergeben muss.",
+        "Sie richtet sich nach den Einnahmen aus der Gewerbesteuer und schwankt deshalb mit ihnen. Für {{jahr.haushaltsjahr|jahr}} sind {{vorbericht.transferaufwendungen.gewerbesteuerumlage.2026|euro}} eingeplant, bei geplanten Gewerbesteuereinnahmen von {{vorbericht.steuerarten.gewerbesteuer.2026|mio}}."
+      ]
+    },
+    {
+      "schluessel": "schluesselzuweisung",
+      "begriff": "Schlüsselzuweisung",
+      "quelle_seiten": [
+        28
+      ],
+      "absaetze": [
+        "Die Schlüsselzuweisung ist Geld vom Land NRW für Gemeinden, deren eigene Steuerkraft im Vergleich gering ist.",
+        "Sie wird nicht für einen bestimmten Zweck gezahlt, sondern hilft der Gemeinde, ihre Aufgaben insgesamt zu finanzieren. Für {{jahr.haushaltsjahr|jahr}} plant Ostbevern mit {{vorbericht.zuwendungen.schluesselzuweisung.2026|mio}}, im Vorjahr waren es {{vorbericht.zuwendungen.schluesselzuweisung.2025|mio}}."
+      ]
+    },
+    {
+      "schluessel": "hebesatz",
+      "begriff": "Hebesatz",
+      "quelle_seiten": [
+        9,
+        47
+      ],
+      "absaetze": [
+        "Der Hebesatz ist der Prozentsatz, mit dem die Gemeinde aus dem Messbetrag eines Grundstücks oder Betriebs die Steuer berechnet.",
+        "Je höher der Hebesatz, desto mehr zahlst du bei gleichem Messbetrag. Der Rat legt die Hebesätze für Grundsteuer und Gewerbesteuer jedes Jahr in der Haushaltssatzung fest (§ 6). Für {{jahr.haushaltsjahr|jahr}} gelten {{meta.hebesaetze.grundsteuer_a|prozent}} (Grundsteuer A), {{meta.hebesaetze.grundsteuer_b|prozent}} (Grundsteuer B) und {{meta.hebesaetze.gewerbesteuer|prozent}} (Gewerbesteuer). Auch die Umlagen des Kreises werden über einen Hebesatz berechnet."
+      ]
+    },
+    {
+      "schluessel": "sonderposten",
+      "begriff": "Sonderposten",
+      "quelle_seiten": [
+        28,
+        29
+      ],
+      "absaetze": [
+        "Ein Sonderposten ist ein Bilanzposten für Zuschüsse, die die Gemeinde in der Vergangenheit für Investitionen erhalten hat.",
+        "Er wird über die Nutzungsdauer der geförderten Anlage aufgelöst, passend zu den Abschreibungen. Die Auflösung ist ein Ertrag, bei dem kein Geld fließt. Für {{jahr.haushaltsjahr|jahr}} werden {{vorbericht.zuwendungen.aufloesung_sonderposten.2026|mio}} aus erhaltenen Zuwendungen aufgelöst."
+      ]
+    },
+    {
+      "schluessel": "abschreibungen",
+      "begriff": "Abschreibungen",
+      "quelle_seiten": [
+        45
+      ],
+      "absaetze": [
+        "Abschreibungen verteilen die Anschaffungs- oder Herstellungskosten eines Vermögensgegenstands gleichmäßig auf seine Nutzungsdauer.",
+        "Sie bilden den Werteverbrauch des Anlagevermögens ab, etwa von Gebäuden und Straßen. Sie sind Aufwand im Ergebnisplan, aber keine Zahlung. Für {{jahr.haushaltsjahr|jahr}} sind {{gep.abschreibungen.2026|mio}} geplant."
+      ]
+    },
+    {
+      "schluessel": "globaler_minderaufwand",
+      "begriff": "Globaler Minderaufwand",
+      "quelle_seiten": [
+        51,
+        8
+      ],
+      "absaetze": [
+        "Der globale Minderaufwand ist ein pauschaler Abzug von den geplanten Aufwendungen, mit dem der Rat berücksichtigt, dass erfahrungsgemäß nicht jeder geplante Euro ausgegeben wird.",
+        "Das Gesetz erlaubt dafür höchstens zwei Prozent des ordentlichen Aufwands. Für {{jahr.haushaltsjahr|jahr}} sind {{abgeleitet.globaler_minderaufwand_betrag_haushaltsjahr|mio}} angesetzt."
+      ]
+    },
+    {
+      "schluessel": "ausgleichsruecklage",
+      "begriff": "Ausgleichsrücklage",
+      "quelle_seiten": [
+        9,
+        24,
+        311
+      ],
+      "absaetze": [
+        "Die Ausgleichsrücklage ist ein Teil des Eigenkapitals, der dazu dient, Fehlbeträge aufzufangen, bevor die allgemeine Rücklage angegriffen wird.",
+        "Für {{jahr.haushaltsjahr|jahr}} setzt die Haushaltssatzung ihre Verringerung auf {{abgeleitet.ausgleichsruecklage_minderung_haushaltsjahr|euro}} fest (§ 4). Danach ist sie nach der Übersicht zum Eigenkapital aufgebraucht."
+      ]
+    },
+    {
+      "schluessel": "allgemeine_ruecklage",
+      "begriff": "Allgemeine Rücklage",
+      "quelle_seiten": [
+        9,
+        24,
+        311
+      ],
+      "absaetze": [
+        "Die allgemeine Rücklage ist der Teil des Eigenkapitals, der nicht in Sonderrücklagen oder in der Ausgleichsrücklage gebunden ist.",
+        "Eigenkapital ist nicht dasselbe wie Bargeld: Es steckt laut Vorbericht überwiegend in Anlagegütern wie Gebäuden und Straßen. Für {{jahr.haushaltsjahr|jahr}} setzt die Haushaltssatzung ihre Verringerung auf {{meta.vorbericht_werte.satzung_verringerung_allgemeine_ruecklage|euro}} fest (§ 4)."
+      ]
+    },
+    {
+      "schluessel": "verpflichtungsermaechtigung",
+      "begriff": "Verpflichtungsermächtigung",
+      "quelle_seiten": [
+        8,
+        25,
+        309
+      ],
+      "absaetze": [
+        "Eine Verpflichtungsermächtigung erlaubt es der Gemeinde, schon heute Verträge für Investitionen abzuschließen, deren Auszahlungen erst in späteren Jahren fällig werden.",
+        "Die Haushaltssatzung für {{jahr.haushaltsjahr|jahr}} setzt dafür insgesamt {{ve.gesamt|mio}} fest (§ 3). Die Beträge belasten dann die Haushalte der Jahre, in denen gezahlt wird."
+      ]
+    },
+    {
+      "schluessel": "bindungsgrad",
+      "begriff": "Bindungsgrad",
+      "quelle_seiten": [
+        72
+      ],
+      "absaetze": [
+        "Der Bindungsgrad gibt an, wie stark die Gemeinde zu einer Aufgabe verpflichtet ist: pflichtig, teils pflichtig und teils freiwillig oder freiwillig.",
+        "Bei pflichtigen Aufgaben schreibt ein Gesetz oder eine Verordnung die Leistung vor. Bei freiwilligen Aufgaben entscheidet der Rat selbst, ob und in welchem Umfang die Gemeinde sie erbringt. Die Verwaltung ordnet jedes Produkt in seiner Produktbeschreibung ein."
+      ]
+    },
+    {
+      "schluessel": "zuschussbedarf",
+      "begriff": "Zuschussbedarf",
+      "quelle_seiten": [
+        22
+      ],
+      "absaetze": [
+        "Der Zuschussbedarf eines Produkts ist sein Aufwand abzüglich seiner Erträge, also der Betrag, der aus Steuern und allgemeinen Zuweisungen finanziert werden muss.",
+        "Ist der Wert negativ, nimmt das Produkt mehr ein, als es kostet. Das nennen wir einen Überschuss."
+      ]
+    },
+    {
+      "schluessel": "nkf",
+      "begriff": "NKF (Neues Kommunales Finanzmanagement)",
+      "quelle_seiten": [
+        15
+      ],
+      "absaetze": [
+        "NKF steht für Neues Kommunales Finanzmanagement, das Rechnungswesen der Gemeinden in Nordrhein-Westfalen.",
+        "Es beruht laut Vorbericht auf drei Säulen: Finanzen, Bilanz und Ergebnis. Deshalb gibt es neben dem Ergebnisplan auch einen Finanzplan."
+      ]
+    },
+    {
+      "schluessel": "haushaltssicherung",
+      "begriff": "Haushaltssicherung",
+      "quelle_seiten": [
+        23
+      ],
+      "absaetze": [
+        "Haushaltssicherung bedeutet, dass die Gemeinde ein Haushaltssicherungskonzept aufstellen muss, weil ihr Eigenkapital zu stark schrumpft.",
+        "Nach § 76 der Gemeindeordnung NRW ist das der Fall, wenn die allgemeine Rücklage innerhalb eines Jahres um mehr als ein Viertel sinkt oder in zwei aufeinanderfolgenden Jahren jeweils um mehr als ein Zwanzigstel. Laut Vorbericht ergibt sich für den Haushalt {{jahr.haushaltsjahr|jahr}} keine Verpflichtung dazu; er ist aber deutlich strukturell unausgeglichen."
+      ]
+    },
+    {
+      "schluessel": "wertart",
+      "begriff": "Ist, Ansatz und Planung",
+      "quelle_seiten": [
+        27
+      ],
+      "absaetze": [
+        "Die Wertart sagt, woher eine Zahl stammt: Ist ist ein bereits abgerechnetes Ergebnis, Ansatz ist der beschlossene Plan, Planung ist die Finanzplanung für die Folgejahre.",
+        "Für das erste Jahr der Tabellen, den Rückblick, nennt der Vorbericht die Werte vorläufiges Rechnungsergebnis (vorl. RE). Ansätze und Planung sind Schätzungen und können von dem abweichen, was am Ende tatsächlich eintritt."
+      ]
     }
   ],
   "werte": {
@@ -120,7 +483,7 @@
     "abgeleitet.schluesselzuweisung_rueckgang_haushaltsjahr": 1917000,
     "grundzahlen.160101.1.2022": 9737018,
     "grundzahlen.160101.1.2023": 4771497,
-    "grundzahlen.160101.1.2024": 8418043,
+    "vorbericht.steuerarten.gewerbesteuer.2024": 9511000,
     "vorbericht.steuerarten.gewerbesteuer.2026": 7800000,
     "meta.hebesaetze.gewerbesteuer": 418,
     "vorbericht.transferaufwendungen.kreisumlage.2026": 10147000,
@@ -149,6 +512,10 @@
     "ve.faellig.2027": 9400000,
     "ve.faellig.2028": 2200000,
     "meta.vorbericht_werte.bbo_verlustausgleich_wirtschaftsplan": 584000,
-    "vorbericht.transferaufwendungen.verlustuebernahme_bbo.2026": 270000
+    "vorbericht.transferaufwendungen.verlustuebernahme_bbo.2026": 270000,
+    "gfp.aenderung_finanzbestand.2026": -3300089,
+    "vorbericht.transferaufwendungen.gesamt_plan.2026": 13764981,
+    "meta.kreisumlage.hebesatz_jugendamtsumlage.vorjahr": 203,
+    "vorbericht.transferaufwendungen.gewerbesteuerumlage.2026": 654000
   }
 }
