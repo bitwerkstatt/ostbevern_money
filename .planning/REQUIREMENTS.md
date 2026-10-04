@@ -26,18 +26,18 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [x] **EXTR-07**: Grundzahlen je Produkt stehen in `grundzahlen.csv` mit Einheit, Jahr und Stichtagshinweis; die Steuer-Istwerte 2022–2025 aus 160101 sind enthalten
 - [x] **EXTR-08**: Erläuterungsposten („Erläuterung zu Nr. …“) sind je Produkt mit Betrag, Text und Zeilenbezug extrahiert
 - [x] **EXTR-09**: Investitionsmaßnahmen werden nur aus den Produktseiten in `investitionen.csv` extrahiert (Konto, Richtung, Jahr, Wertart); „(Kassenwirksamkeit)“-Zeilen landen in `ve_faelligkeiten.csv` und nicht in Summen
-- [ ] **EXTR-10**: Der Stellenplan (Teil A Beamte, Teil B Tarif, Stellenübersicht nach PB) steht in `stellenplan.csv` mit Stellen 2026, 2025, besetzt 30.06.2025 und Vermerken
+- [x] **EXTR-10**: Der Stellenplan (Teil A Beamte, Teil B Tarif, Stellenübersicht nach PB) steht in `stellenplan.csv` mit Stellen 2026, 2025, besetzt 30.06.2025 und Vermerken
 
 ### Manuelle Daten
 
-- [ ] **MANU-01**: `steuerarten.csv` (8 Steuerarten, 2024–2029, T€) aus Vorbericht S. 27
-- [ ] **MANU-02**: `zuwendungen.csv` (Schlüsselzuweisung, laufende Zwecke, Sonderposten) aus S. 28
-- [ ] **MANU-03**: `transferaufwendungen.csv` inklusive Kreisumlage netto mit Fußnote (Rückstellungsauflösung 1.325.478 €) aus S. 45–46
-- [ ] **MANU-04**: `kita_zuschuesse.csv` (7 Einrichtungen, Summe 559 T€) aus S. 46
-- [ ] **MANU-05**: `weitere_vorberichtstabellen.csv` (Leistungsentgelte, Kostenerstattungen, Personal, Sachaufwand, Sonstige Aufwendungen) aus S. 29–50
-- [ ] **MANU-06**: `meta.json` mit Einwohnerzahl 11.741 (Stichtag, Quelle), Hebesätzen, Fläche, Satzungsdatum, Kreisumlage brutto/netto und Kreisumlage-Hebesätzen
-- [ ] **MANU-07**: Jede manuelle Datei hat eine Spalte `quelle` mit PDF-Seite; ein README begründet die Werte
-- [ ] **MANU-08**: Geprüfte Erklärtexte (`texte/erklaerungen.md`) mit Seitenverweis, z. B. zu Schlüsselzuweisung, Gewerbesteuer und Kreisumlage
+- [x] **MANU-01**: `steuerarten.csv` (8 Steuerarten, 2024–2029, T€) aus Vorbericht S. 27
+- [x] **MANU-02**: `zuwendungen.csv` (Schlüsselzuweisung, laufende Zwecke, Sonderposten) aus S. 28
+- [x] **MANU-03**: `transferaufwendungen.csv` inklusive Kreisumlage netto mit Fußnote (Rückstellungsauflösung 1.325.478 €) aus S. 45–46
+- [x] **MANU-04**: `kita_zuschuesse.csv` (7 Einrichtungen, Summe 559 T€) aus S. 46
+- [x] **MANU-05**: `weitere_vorberichtstabellen.csv` (Leistungsentgelte, Kostenerstattungen, Personal, Sachaufwand, Sonstige Aufwendungen) aus S. 29–50
+- [x] **MANU-06**: `meta.json` mit Einwohnerzahl 11.741 (Stichtag, Quelle), Hebesätzen, Fläche, Satzungsdatum, Kreisumlage brutto/netto und Kreisumlage-Hebesätzen
+- [x] **MANU-07**: Jede manuelle Datei hat eine Spalte `quelle` mit PDF-Seite; ein README begründet die Werte
+- [x] **MANU-08**: Geprüfte Erklärtexte (`texte/erklaerungen.md`) mit Seitenverweis, z. B. zu Schlüsselzuweisung, Gewerbesteuer und Kreisumlage
 
 ### Prüfung
 
@@ -45,18 +45,18 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [x] **PRUEF-02**: Summe der Produkt-Teilpläne = PG = PB-Teilplan, je Zeile und Jahr
 - [x] **PRUEF-03**: Summe der 15 PB = Gesamtergebnisplan (Z. 01–17, 19, 20; ohne TP 27/28)
 - [x] **PRUEF-04**: Sollwerte aus Anhang B (Gesamtergebnisplan, Gesamtfinanzplan/Satzung § 1, PB-Summen, Eckwerte) werden getroffen
-- [ ] **PRUEF-05**: Manuelle Tabellen stimmen mit den jeweiligen Planzeilen überein (Toleranz ±1 T€ bei T€-Tabellen; bekannte Differenzen dokumentiert)
+- [x] **PRUEF-05**: Manuelle Tabellen stimmen mit den jeweiligen Planzeilen überein (Toleranz ±1 T€ bei T€-Tabellen; bekannte Differenzen dokumentiert)
 - [x] **PRUEF-06**: Investitionssummen je Produkt = Teilfinanzplan Z. 23/30; Summe aller = Gesamtfinanzplan (2026: 7.224.830 € / 12.280.484 €)
 - [x] **PRUEF-07**: Querschnitte S. 291 ff. stimmen mit den eigenen PG-Aggregaten überein
 - [x] **PRUEF-08**: Vollständigkeit: 63 Produkte mit Produktinformationen, Bindungsgrad, Teilergebnisplan und Teilfinanzplan
 - [x] **PRUEF-09**: Alle Prüfungen laufen in pytest und erzeugen `daten/pruefberichte/konsistenz.md`; Abweichungen über 1 € sind Fehler, außer sie stehen in `befunde.md`
-- [ ] **PRUEF-10**: `pipeline/alle.py` läuft alle Schritte in Reihenfolge; CI prüft, dass sie keinen Diff an eingecheckten Daten erzeugt
+- [x] **PRUEF-10**: `pipeline/alle.py` läuft alle Schritte in Reihenfolge; CI prüft, dass sie keinen Diff an eingecheckten Daten erzeugt
 
 ### App-Daten
 
-- [ ] **DATA-01**: Das Build-Skript erzeugt `haushalt.json`, `produkte.json` (ohne Personennamen), `investitionen.json` und `stellenplan.json` in `app/src/data/`
-- [ ] **DATA-02**: In allen Ausgabendaten ist „Weitergabe an Kreis und Land“ (Kreisumlage, Gewerbesteuerumlage, Krankenhausinvestitionsumlage) als eigene Kategorie aus PB 16 herausgelöst; der Rest bleibt „Allgemeine Finanzwirtschaft“
-- [ ] **DATA-03**: Zuschussbedarf (Aufwand − Erträge) ist je Knoten und Jahr berechnet und als berechneter Wert gekennzeichnet
+- [x] **DATA-01**: Das Build-Skript erzeugt `haushalt.json`, `produkte.json` (ohne Personennamen), `investitionen.json` und `stellenplan.json` in `app/src/data/`
+- [x] **DATA-02**: In allen Ausgabendaten ist „Weitergabe an Kreis und Land“ (Kreisumlage, Gewerbesteuerumlage, Krankenhausinvestitionsumlage) als eigene Kategorie aus PB 16 herausgelöst; der Rest bleibt „Allgemeine Finanzwirtschaft“
+- [x] **DATA-03**: Zuschussbedarf (Aufwand − Erträge) ist je Knoten und Jahr berechnet und als berechneter Wert gekennzeichnet
 - [ ] **DATA-04**: Quellenbelege: Zu prominent gezeigten Werten werden PDF-Zeilenrechteck und gerenderte WebP-Seite erzeugt (`quellen.json`, `public/quellen/`)
 
 ### Start
@@ -192,28 +192,28 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXTR-07 | Phase 3 | Complete |
 | EXTR-08 | Phase 3 | Complete |
 | EXTR-09 | Phase 3 | Complete |
-| EXTR-10 | Phase 4 | Gaps Found |
-| MANU-01 | Phase 4 | Gaps Found |
-| MANU-02 | Phase 4 | Gaps Found |
-| MANU-03 | Phase 4 | Gaps Found |
-| MANU-04 | Phase 4 | Gaps Found |
-| MANU-05 | Phase 4 | Gaps Found |
-| MANU-06 | Phase 4 | Gaps Found |
-| MANU-07 | Phase 4 | Gaps Found |
-| MANU-08 | Phase 4 | Gaps Found |
+| EXTR-10 | Phase 4 | Complete |
+| MANU-01 | Phase 4 | Complete |
+| MANU-02 | Phase 4 | Complete |
+| MANU-03 | Phase 4 | Complete |
+| MANU-04 | Phase 4 | Complete |
+| MANU-05 | Phase 4 | Complete |
+| MANU-06 | Phase 4 | Complete |
+| MANU-07 | Phase 4 | Complete |
+| MANU-08 | Phase 4 | Complete |
 | PRUEF-01 | Phase 2 | Complete |
 | PRUEF-02 | Phase 2 | Complete |
 | PRUEF-03 | Phase 2 | Complete |
 | PRUEF-04 | Phase 2 | Complete |
-| PRUEF-05 | Phase 4 | Gaps Found |
+| PRUEF-05 | Phase 4 | Complete |
 | PRUEF-06 | Phase 3 | Complete |
 | PRUEF-07 | Phase 3 | Complete |
 | PRUEF-08 | Phase 3 | Complete |
 | PRUEF-09 | Phase 2 | Complete |
-| PRUEF-10 | Phase 4 | Gaps Found |
-| DATA-01 | Phase 4 | Gaps Found |
-| DATA-02 | Phase 4 | Gaps Found |
-| DATA-03 | Phase 4 | Gaps Found |
+| PRUEF-10 | Phase 4 | Complete |
+| DATA-01 | Phase 4 | Complete |
+| DATA-02 | Phase 4 | Complete |
+| DATA-03 | Phase 4 | Complete |
 | DATA-04 | Phase 7 | Pending |
 | START-01 | Phase 5 | Pending |
 | START-02 | Phase 5 | Pending |

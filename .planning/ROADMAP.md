@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Setup** - Repo-Struktur, uv-Pipeline, Vue-Grundgerüst mit Münster-Komponenten, Jahrgangskonfiguration, CLAUDE.md und CI (Spez. P0) (completed 2026-10-01)
 - [x] **Phase 2: Kernzahlen** - Seitenklassifikation, Hierarchie, alle Ergebnis- und Finanzpläne; Prüfregeln 1–4 grün, Anhang-B-Sollwerte getroffen (Spez. P1) (completed 2026-10-01)
 - [x] **Phase 3: Details** - Produktinformationen, Grundzahlen, Erläuterungen, Investitionen; Prüfregeln 6–8 grün, 63 Produkte vollständig (Spez. P2) (completed 2026-10-02)
-- [ ] **Phase 4: Manuelle Daten und App-Daten** - Vorberichtstabellen, meta.json, Erklärtexte, Stellenplan, App-JSON; Prüfregel 5 grün, `alle.py` reproduzierbar (Spez. P3)
+- [x] **Phase 4: Manuelle Daten und App-Daten** - Vorberichtstabellen, meta.json, Erklärtexte, Stellenplan, App-JSON; Prüfregel 5 grün, `alle.py` reproduzierbar (Spez. P3) (completed 2026-10-04)
 - [ ] **Phase 5: Leitfragen-Seiten** - Start, Einnahmen, Ausgaben, Geldfluss und Glossar beantworten „Woher?“ und „Wofür?“ (Spez. P4)
 - [ ] **Phase 6: Kontext-Seiten** - Entwicklung, Investitionen und Schulden, Rat entscheidet, Stellenplan, „Was nicht im Haushalt steht“ (Spez. P5)
 - [ ] **Phase 7: Feinschliff und Veröffentlichung** - Quellenbelege, Barrierefreiheit, Mobilansicht, Textdurchgang, Smoke-Test, Deployment auf GitHub Pages (Spez. P7)
@@ -132,7 +132,7 @@ Plans:
   4. `app/src/data/` enthält `haushalt.json`, `produkte.json`, `investitionen.json` und `stellenplan.json`. Ein Test bestätigt, dass keine Personennamen enthalten sind. „Weitergabe an Kreis und Land“ (Kreisumlage, Gewerbesteuerumlage, Krankenhausinvestitionsumlage) ist eine eigene Kategorie, und der Rest von PB 16 heißt „Allgemeine Finanzwirtschaft“. Der Zuschussbedarf ist je Knoten und Jahr als berechneter Wert gekennzeichnet.
   5. `uv run pipeline/alle.py` führt alle Schritte in Reihenfolge aus. Die CI schlägt fehl, wenn danach eingecheckte Daten einen Diff zeigen.
 
-**Plans**: 6/6 plans executed
+**Plans**: 6/6 plans complete
 
 Plans:
 **Wave 1**
@@ -218,7 +218,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 1. Setup | 5/5 | Complete    | 2026-10-01 |
 | 2. Kernzahlen | 5/5 | Complete    | 2026-10-01 |
 | 3. Details | 5/5 | Complete    | 2026-10-02 |
-| 4. Manuelle Daten und App-Daten | 6/6 | In Progress|  |
+| 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 0/TBD | Not started | - |
 | 6. Kontext-Seiten | 0/TBD | Not started | - |
 | 7. Feinschliff und Veröffentlichung | 0/TBD | Not started | - |

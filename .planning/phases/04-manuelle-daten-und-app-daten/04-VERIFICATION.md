@@ -1,8 +1,8 @@
 ---
 phase: 04-manuelle-daten-und-app-daten
-verified: 2026-10-03T20:16:46Z
-status: gaps_found
-score: 9/10 must-haves verified
+verified: 2026-10-04T08:51:42Z
+status: passed
+score: 10/10 must-haves verified
 covered_files:
   - ".github/workflows/ci.yml"
   - ".planning/phases/04-manuelle-daten-und-app-daten/04-01-PLAN.md"
@@ -15,10 +15,17 @@ covered_files:
   - ".planning/phases/04-manuelle-daten-und-app-daten/04-04-SUMMARY.md"
   - ".planning/phases/04-manuelle-daten-und-app-daten/04-05-PLAN.md"
   - ".planning/phases/04-manuelle-daten-und-app-daten/04-05-SUMMARY.md"
+  - ".planning/phases/04-manuelle-daten-und-app-daten/04-06-PLAN.md"
+  - ".planning/phases/04-manuelle-daten-und-app-daten/04-06-SUMMARY.md"
+  - ".planning/phases/04-manuelle-daten-und-app-daten/04-REVIEW-DISPOSITION.md"
+  - ".planning/phases/04-manuelle-daten-und-app-daten/04-REVIEW.md"
   - "app/.prettierignore"
   - "app/src/charts/format.ts"
   - "app/src/data/daten.ts"
+  - "app/src/data/texte.json"
   - "app/src/data/typen.ts"
+  - "daten/manuell/README.md"
+  - "daten/manuell/texte/erklaerungen.md"
   - "pipeline/05_stellenplan.py"
   - "pipeline/07_app_daten.py"
   - "pipeline/alle.py"
@@ -29,32 +36,25 @@ covered_files:
   - "pipeline/ostbevern/schema.py"
   - "pipeline/ostbevern/stellenplan.py"
   - "pipeline/ostbevern/texte.py"
-covered_digest: "v2:sha256:2d13e05f8611cec30840b55cd430b7523fbd6dcf589b831755ba1f63ea8796c3"
+  - "pipeline/tests/test_formatiere.py"
+covered_digest: "v2:sha256:c0d25de8b80abcea3dd297f318fd34e24cba96b9ada351fc5f03b86895dfa127"
 behavior_unverified: 0
 overrides_applied: 0
-gaps:
-  - truth: "Jede Zahl in den Erklärtexten (daten/manuell/texte/erklaerungen.md, app/src/data/texte.json) wird beim Rendern über formatiere()/FormatKuerzel korrekt angezeigt — keine falsch formatierte Zahl erreicht die Bürgerinnen und Bürger (MANU-08, D-15; Projekt-Kernwert 'Bürgerinformation muss stimmen')"
-    status: failed
-    reason: "CR-01 (04-REVIEW.md, disposition: open): format.ts::formatiere() dispatcht 'zahl' auf Intl.NumberFormat('de-DE',{maximumFractionDigits:0}), was Tausendertrennung erzwingt. Alle zehn Vorkommen von {{jahr.haushaltsjahr|zahl}} in erklaerungen.md (und damit in app/src/data/texte.json) rendern das Haushaltsjahr als '2.026' statt '2026', sobald eine künftige Phase formatiere() in die Vue-Templates verdrahtet. FORMATKUERZEL (texte.py) kennt kein ungruppiertes Jahres-Kürzel, sodass der Textautor 'zahl' missbrauchen musste. Reproduziert: `node -e \"console.log(new Intl.NumberFormat('de-DE',{maximumFractionDigits:0}).format(2026))\"` -> '2.026'. Der Fehler ist deterministisch und betrifft alle zehn Texte (schluesselzuweisung, gewerbesteuer, kreisumlage, grundsteuer_hebesaetze, sonderposten, globaler_minderaufwand, defizit_ruecklagen, schulden, verpflichtungsermaechtigungen, nicht_im_haushalt); er wurde vom Abnahme-Checkpoint (D-17, Task 2 von 04-05) nicht erkannt, weil `vorschau()` nur Rohwerte, nicht den über formatiere() gerenderten String zeigt."
-    artifacts:
-      - path: "app/src/charts/format.ts"
-        issue: "FormatKuerzel-Union hat kein ungruppiertes Jahres-Kürzel; formatiere('zahl') gruppiert immer"
-      - path: "pipeline/ostbevern/texte.py"
-        issue: "FORMATKUERZEL = (euro, mio, zahl, prozent, promille, vzae) — kein 'jahr'-Kürzel"
-      - path: "daten/manuell/texte/erklaerungen.md"
-        issue: "10 Vorkommen von {{jahr.haushaltsjahr|zahl}} statt eines ungruppierten Formats"
-    missing:
-      - "Ein ungruppiertes Formatkürzel (z. B. 'jahr') in FormatKuerzel/formatiere() (format.ts) UND FORMATKUERZEL (texte.py), synchron gehalten durch test_formatkuerzel_wie_format_ts"
-      - "Ersetzen aller zehn {{jahr.haushaltsjahr|zahl}}-Platzhalter in erklaerungen.md durch das neue Kürzel"
-      - "Ein Test, der jedes aufgelöste (wert, format)-Paar aus loese_auf() tatsächlich durch eine Portierung/Nachbildung von formatiere() rendert, damit ein Regressionsfehler mechanisch statt durch PDF-Vergleich erkannt wird"
+re_verification:
+  previous_status: gaps_found
+  previous_score: 9/10
+  gaps_closed:
+    - "MANU-08/D-15: Jede Zahl in den Erklärtexten wird beim Rendern über formatiere() korrekt angezeigt (CR-01: Haushaltsjahr rendered as '2.026' via formatiere(…,'zahl'))"
+  gaps_remaining: []
+  regressions: []
 ---
 
 # Phase 4: Manuelle Daten und App-Daten Verification Report
 
 **Phase Goal:** Die Pipeline ist geschlossen. Die Vorberichtswerte sind manuell gepflegt und gegen den Plan geprüft, der Stellenplan ist extrahiert, und die App-JSON-Dateien entstehen reproduzierbar ohne Personennamen.
-**Verified:** 2026-10-03T20:16:46Z
-**Status:** gaps_found
-**Re-verification:** No — initial verification
+**Verified:** 2026-10-04T08:51:42Z
+**Status:** passed
+**Re-verification:** Yes — after gap closure (plan 04-06, CR-01)
 
 ## Goal Achievement
 
@@ -62,132 +62,118 @@ gaps:
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | SC1: Alle Tabellen in `daten/manuell/` haben eine `quelle`-Spalte und ein README begründet die Werte; Regel 5 ist grün inkl. dokumentierter Befunde (Zuwendungen, Kreisumlage-Fußnote) | ✓ VERIFIED | Every manual CSV header ends in `...,quelle`; README.md has a `###` section per file; `konsistenz.md`: `Regel 5 – Manuelle Tabellen → Planzeilen \| grün \| 133 \| 0 \| 0 \| 25`; befunde.md documents the Zuwendungen 2026 Δ −4.200 € and the 1 T€ rounding rows |
-| 2 | SC2: `meta.json` enthält Einwohner 11.741 (Stichtag, Quelle), Hebesätze 242/554/418 %, Fläche, Satzungsdatum, Kreisumlage brutto/netto, Umlage-Hebesätze 36,3 %/21 %; `texte/erklaerungen.md` enthält geprüfte Erklärtexte mit Seitenverweis | ✓ VERIFIED | `python3 -c "json.load(open('daten/manuell/meta.json'))"` confirms einwohner.wert=11741 (quelle 25), hebesaetze.{grundsteuer_a,grundsteuer_b,gewerbesteuer}={242,554,418}, kreisumlage.netto=10147000, kreisumlage.brutto=11472478 (berechnet); `erklaerungen.md` has 10 `## <schluessel>` sections each with a `Quelle: S. n` line |
-| 3 | SC2b: Daten für Schuldenstand, Rücklagen und VE-Übersicht (S. 24/25, 309–311) liegen mit Quelle vor | ✓ VERIFIED | `verbindlichkeiten.csv`, `eigenkapital.csv`, `ve_uebersicht.csv` exist, each row carries `quelle`; `investitionen.json` key `schuldenstand` present with `berechnet`/`formel` fields |
-| 4 | SC3: `stellenplan.csv` enthält Teil A (Beamte), Teil B (Tarif) und die Stellenübersicht nach PB mit Stellen 2026/2025, besetzt 30.06.2025 und Vermerken; Beamtenstellen 2026 = 8 | ✓ VERIFIED | `daten/aufbereitet/stellenplan.csv` header matches spec; Python query over the CSV: Σ beamte stellen 2026 (produktbereich null) = 8.0; `konsistenz.md`: `Regel 10 – Stellenplan: Stellenübersicht → Teil A/B \| grün \| 19 \| 0 \| 0 \| 0`, `Regel 9 – Eckwerte (Anhang B.6) \| grün` |
-| 5 | SC4: `app/src/data/` enthält `haushalt.json`, `produkte.json`, `investitionen.json`, `stellenplan.json`; kein Personenname; "Weitergabe an Kreis und Land" eigene Kategorie, Rest von PB 16 "Allgemeine Finanzwirtschaft"; Zuschussbedarf je Knoten/Jahr als berechnet gekennzeichnet | ✓ VERIFIED | All four files present; `test_keine_personennamen_in_app_daten` passes (1 passed); `haushalt.json` knoten: `KL` eltern=GESAMT, synthetisch=True, `KL.kreisumlage` gerundet=True, node `16` name="Allgemeine Finanzwirtschaft"; `ergebnisplan.GESAMT.berechnet` present per node/year |
-| 6 | SC5: `uv run pipeline/alle.py` führt alle Schritte in Reihenfolge aus; CI schlägt bei Diff fehl | ✓ VERIFIED | `alle.py --jahr 2026` ran Schritte 01→02→03→04→Querschnitte→05→06→07 to exit 0; `git diff --stat --exit-code -- daten app/src/data` exits 0, no untracked files; `.github/workflows/ci.yml:43` runs the identical `git diff --stat --exit-code -- daten app/src/data` |
-| 7 | Requirement coverage: all 14 declared IDs (MANU-01..08, PRUEF-05, EXTR-10, DATA-01..03, PRUEF-10) are claimed by a plan and have supporting evidence | ✓ VERIFIED | Cross-referenced against REQUIREMENTS.md; all 14 marked `[x]`/`Complete`; no orphaned IDs found for Phase 4 |
-| 8 | Full pipeline test suite green, lint/format clean, app checks green, pipeline reproducible | ✓ VERIFIED | `uv run --directory pipeline pytest -q`: 456 passed; `ruff check . && ruff format --check .`: clean; scratch-copy `npm ci`, `type-check`, `lint`, `format:check`, `build`: all exit 0 |
-| 9 | MANU-08/D-15: Jede Zahl in den Erklärtexten ist ein Platzhalter `{{schluessel|format}}`; kein nackter Ziffernlauf außer Jahren/§/S. | ✓ VERIFIED | `grep -c '^## '` ≥ 10; `test_erklaerungen_keine_nackten_ziffern` and related texte-tests pass as part of the 456; this truth checks the *syntactic* contract only |
-| 10 | MANU-08/D-15: Jede Zahl in den Erklärtexten wird beim Rendern über `formatiere()` **korrekt** angezeigt (kein falsches Format erreicht die Bürgerinnen) | ✗ FAILED | **CR-01** (04-REVIEW.md, disposition: open, still unresolved): `formatiere(2026, 'zahl')` groups thousands → renders "2.026" instead of "2026". Reproduced directly: `node -e "console.log(new Intl.NumberFormat('de-DE',{maximumFractionDigits:0}).format(2026))"` → `2.026`. All 10 occurrences of `{{jahr.haushaltsjahr\|zahl}}` in `erklaerungen.md` are affected |
+| 1 | SC1: Alle Tabellen in `daten/manuell/` haben eine `quelle`-Spalte und ein README begründet die Werte; Regel 5 grün inkl. Befunde | ✓ VERIFIED (regression) | `alle.py --jahr 2026` run shows `Regel 5: grün (133 Werte)`; files unchanged since last verification |
+| 2 | SC2: `meta.json` enthält Einwohner 11.741, Hebesätze 242/554/418 %, Kreisumlage; `erklaerungen.md` enthält geprüfte Erklärtexte mit Seitenverweis | ✓ VERIFIED (regression) | `python3 -c "json.load(...)"`: einwohner.wert=11741, hebesaetze={242,554,418}; 10 `## <schluessel>` sections unchanged |
+| 3 | SC2b: Schuldenstand/Rücklagen/VE-Übersicht liegen mit Quelle vor | ✓ VERIFIED (regression) | Files unchanged since last verification; not touched by 04-06 (`git diff --quiet f9e085d -- app/src/data/typen.ts app/src/data/daten.ts pipeline/ostbevern/app_daten.py pipeline/ostbevern/pruefung.py` exits 0 per 04-06 acceptance criteria) |
+| 4 | SC3: `stellenplan.csv` Teil A/B + Stellenübersicht, Beamte 2026 = 8 | ✓ VERIFIED (regression) | `daten/aufbereitet/stellenplan.csv` re-checked: 162 rows; `Regel 9/10: grün` in `alle.py` output |
+| 5 | SC4: `app/src/data/` enthält die vier JSON-Dateien ohne Personennamen; KL-Split; Zuschussbedarf berechnet | ✓ VERIFIED (regression) | `pytest tests/test_app_daten.py -k personennamen`: 1 passed; files present |
+| 6 | SC5: `alle.py` läuft alle Schritte in Reihenfolge; CI schlägt bei Diff fehl | ✓ VERIFIED | Re-ran `uv run --directory pipeline python alle.py --jahr 2026` myself: exit 0, Schritte 01→07 in order; `git diff --stat --exit-code -- daten app/src/data` exits 0 with no output; `git status --porcelain --untracked-files=all -- daten app/src/data` empty; `.github/workflows/ci.yml:43` runs the identical check |
+| 7 | Requirement coverage: all 14 declared IDs are claimed by a plan and have supporting evidence | ✓ VERIFIED | All 14 IDs (MANU-01..08, PRUEF-05, EXTR-10, DATA-01..03, PRUEF-10) present in REQUIREMENTS.md mapped to Phase 4; no orphans found |
+| 8 | Full pipeline test suite green, lint/format clean, app checks green, pipeline reproducible | ✓ VERIFIED | I independently ran: `uv run --directory pipeline pytest -q` → **472 passed in 340.36s**; `ruff check .` → "All checks passed!"; `ruff format --check .` → "46 files already formatted"; scratch-copy (`tar` + `npm ci`) `type-check`/`lint`/`format:check`/`build` all exit 0, `dist/` produced |
+| 9 | MANU-08/D-15: Jede Zahl in den Erklärtexten ist ein Platzhalter; kein nackter Ziffernlauf außer Jahren/§/S. | ✓ VERIFIED (regression) | `test_texte.py -k "formatkuerzel or erklaerungen"`: 15 passed |
+| 10 | MANU-08/D-15: Jede Zahl in den Erklärtexten wird beim Rendern über `formatiere()` **korrekt** angezeigt (CR-01) | ✓ VERIFIED (gap closed) | `app/src/charts/format.ts` now has `jahr()`/`JAHR_FORMAT` (`useGrouping: false`) and `case 'jahr'` in `formatiere()`; `pipeline/ostbevern/texte.py` FORMATKUERZEL has `"jahr"` in the same position; all 10 `{{jahr.haushaltsjahr|zahl}}` placeholders in `erklaerungen.md`/`texte.json` changed to `|jahr}}`, byte-identical to `f9e085d` apart from the 10 suffixes (independently diffed); **I independently transpiled the real `format.ts` in a scratch `app/` copy with the app's own `typescript` devDependency and rendered all 10 `jahr.*` placeholders of the regenerated `texte.json` through the real `formatiere()`: all 10 render as bare 4-digit years ("2026"), not "2.026"**; `pipeline/tests/test_formatiere.py` (new, 16 tests) renders every placeholder of `erklaerungen.md` and `texte.json` through a Python port and proves the CR-01 pattern is mechanically detected — I ran it myself: **16 passed**, including `test_port_wie_format_ts` (the Node cross-check against the real `format.ts`, which actually executed because `app/node_modules/typescript` exists in this checkout) |
 
-**Score:** 9/10 truths verified (0 present, behavior-unverified)
+**Score:** 10/10 truths verified (0 present, behavior-unverified)
 
 ### Required Artifacts
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `daten/manuell/{steuerarten,zuwendungen,transferaufwendungen,kita_zuschuesse,weitere_vorberichtstabellen,verbindlichkeiten,eigenkapital,ve_uebersicht}.csv` | Vorbericht tables, T€/Euro as printed, `quelle` column | ✓ VERIFIED | All 8 exist, correct headers, non-empty, byte-identical round-trip tests pass |
-| `daten/manuell/meta.json` | Meta values with strict allowlist, `quelle` per value | ✓ VERIFIED | Present, validated structure, matches §6/§9/S.24-28/46-47 values |
-| `daten/manuell/texte/erklaerungen.md` | 10 reviewed Erklärtexte with `Quelle:` lines, placeholders only | ✓ VERIFIED (syntax) / ✗ one rendering defect (see Truth 10) | File committed, 10 sections, D-17 checkpoint evidence in 04-05-SUMMARY.md |
-| `daten/manuell/README.md` | Justification per manual file | ✓ VERIFIED | 9 `###` sections, one per file, plus Regel-9 paragraph |
-| `pipeline/ostbevern/app_daten.py` | Schritt 07 writer, KL split, Zuschussbedarf | ✓ VERIFIED | `baue_knoten`, `baue_ergebnisplan`, `KL_CODE`, etc. present and exercised by tests |
-| `pipeline/ostbevern/texte.py` | Placeholder parser/contract | ✓ VERIFIED | `FORMATKUERZEL`, `lies_erklaerungen`, `pruefe_text`, `textwerte`, `loese_auf` present |
-| `app/src/data/{haushalt,produkte,investitionen,stellenplan,texte}.json` | Generated App-JSON | ✓ VERIFIED | All exist, structurally correct, person-name-free, reproducible |
-| `app/src/data/typen.ts`, `daten.ts` | Typed contract for generated JSON | ✓ VERIFIED | `vue-tsc --build` passes against all five JSON files, no casts |
-| `app/src/charts/format.ts` | `formatiere()`/`FormatKuerzel` dispatcher | ⚠️ ORPHANED-BY-DEFECT | Exists, exported, type-checks — but one of its 6 branches (`zahl`) produces an incorrect result for the one value class (bare years) it is used for in this phase's own data (see Truth 10 / CR-01) |
-| `.github/workflows/ci.yml` | Reproducibility gate (D-24) | ✓ VERIFIED | `git diff --stat --exit-code -- daten app/src/data` step present in job `pipeline` |
+| `app/src/charts/format.ts` | `formatiere()`/`FormatKuerzel` dispatcher incl. ungrouped `jahr` kürzel | ✓ VERIFIED | `JAHR_FORMAT` constant, `jahr()` function, `'jahr'` in the `FormatKuerzel` union directly after `'zahl'`, `case 'jahr': return jahr(wert)` in `formatiere()` — all present and confirmed by direct `Read` |
+| `pipeline/ostbevern/texte.py` | `FORMATKUERZEL` tuple incl. `"jahr"`, same order as the TS union | ✓ VERIFIED | `FORMATKUERZEL: tuple[str, ...] = ("euro", "mio", "zahl", "jahr", "prozent", "promille", "vzae")` confirmed by direct `Read` |
+| `daten/manuell/texte/erklaerungen.md` | 10 `jahr.haushaltsjahr` placeholders using the `jahr` kürzel, wording unchanged | ✓ VERIFIED | `grep -c '{{jahr\.haushaltsjahr|jahr}}'` = 10, 0 remaining `|zahl}}` occurrences for this key; suffix-normalized diff against `f9e085d` is empty |
+| `app/src/data/texte.json` | Regenerated with the corrected placeholders, raw `werte` unchanged | ✓ VERIFIED | Same 10/10 count; suffix-normalized diff against `f9e085d` is empty; regenerating via `alle.py` reproduces it byte-for-byte |
+| `daten/manuell/README.md` | Format-kürzel vocabulary sentence extended with `jahr` | ✓ VERIFIED | `` `zahl`, `jahr`, `prozent` `` present in the vocabulary sentence |
+| `pipeline/tests/test_formatiere.py` | Python port of `formatiere()`, rendering tests, CR-01 mutation test, Node cross-check | ✓ VERIFIED | File exists, 16 tests (`test_port_deckt_alle_formatkuerzel_ab`, `test_port_beispiele` ×11, `test_erklaerungen_rendern_korrekt`, `test_texte_json_rendert_korrekt`, `test_cr01_gruppiertes_haushaltsjahr_wird_erkannt`, `test_port_wie_format_ts`); all 16 pass when I ran them |
+| `.planning/phases/04-manuelle-daten-und-app-daten/04-REVIEW-DISPOSITION.md` | CR-01 row set to `fixed` | ✓ VERIFIED | `\| CR-01 \| critical \| fixed \|` confirmed in the current file |
+| `.github/workflows/ci.yml` | Reproducibility gate (D-24) | ✓ VERIFIED (regression) | `git diff --stat --exit-code -- daten app/src/data` step still present at line 43 |
 
 ### Key Link Verification
 
 | From | To | Via | Status | Details |
 |------|-----|-----|--------|---------|
-| `pipeline/alle.py` | `pipeline/ostbevern/app_daten.py` | `app_daten.erzeuge_app_daten(jahr)` after grün Prüfbericht | ✓ WIRED | `grep -q 'app_daten.erzeuge_app_daten(' pipeline/alle.py` exits 0; alle.py run confirms "Schritt 07: geschrieben: ..." x5 |
-| `pipeline/alle.py` | `pipeline/ostbevern/stellenplan.py` | `stellenplan.extrahiere_stellenplan(jahrgang)` between Querschnitte and Schritt 06 | ✓ WIRED | `grep -q 'stellenplan.extrahiere_stellenplan(' pipeline/alle.py` exits 0; alle.py output shows "Schritt 05: 162 Zeilen geschrieben" before Schritt 06 |
-| `pipeline/ostbevern/app_daten.py` | `pipeline/ostbevern/texte.py` | `texte.lies_erklaerungen`/`loese_auf` inside `erzeuge_app_daten` | ✓ WIRED | alle.py output includes "Schritt 07: geschrieben: app/src/data/texte.json" |
-| `app/src/data/daten.ts` | `app/src/data/{haushalt,produkte,investitionen,stellenplan,texte}.json` | typed imports without cast | ✓ WIRED | `grep -q 'haushalt: Haushalt'` / `investitionen: Investitionen'` / `produkte: Produkt\[\]'` all present; `vue-tsc --build` green |
-| `.github/workflows/ci.yml` | `pipeline/alle.py` | CI step runs alle.py then `git diff --stat --exit-code` | ✓ WIRED | Step present at ci.yml:43; reproduced locally with identical result |
-| `pipeline/ostbevern/pruefung.py` (Regel 5 `_pruefe_regel5_ve_uebersicht`) | `daten/manuell/ve_uebersicht.csv` | per-(produkt, jahr) cross-check | ⚠️ PARTIAL | Wired for the VE-Gesamtbetrag and per-(produkt,jahr) rows, but the two per-year `ist_gesamt` summary rows (faellig 2027/2028) are read and never compared against anything (WR-01, open) |
+| `app/src/charts/format.ts` (`formatiere`) | `pipeline/ostbevern/texte.py` (`FORMATKUERZEL`) | Order-sensitive single-line sync, `test_formatkuerzel_wie_format_ts` | ✓ WIRED | Test passes (`test_texte.py -k formatkuerzel`: part of 15 passed); both lists read `euro, mio, zahl, jahr, prozent, promille, vzae` |
+| `daten/manuell/texte/erklaerungen.md` | `app/src/data/texte.json` | Schritt 07 (`app_daten.erzeuge_app_daten`) regenerates texte.json from erklaerungen.md | ✓ WIRED | `alle.py --jahr 2026` output: "Schritt 07: geschrieben: app/src/data/texte.json"; regenerated file is byte-identical to the committed one (clean `git diff`) |
+| `app/src/data/texte.json` | real `app/src/charts/format.ts::formatiere()` | Node subprocess transpile-and-import (test_port_wie_format_ts and my own independent scratch-copy check) | ✓ WIRED | Both my own ad-hoc Node check and `test_port_wie_format_ts` (ran, not skipped, because `app/node_modules/typescript` exists) confirm the real `formatiere()` renders all 10 `jahr.*` placeholders correctly |
+| `pipeline/tests/test_formatiere.py` | `pipeline/ostbevern/texte.py` (`loese_auf`, `textwerte`, `lies_erklaerungen`) | Direct import and fixture use | ✓ WIRED | Imports confirmed in file; fixtures build `werte`/`echte_erklaerungen` from the real pipeline functions, not mocks |
+| `pipeline/alle.py` | `pipeline/ostbevern/app_daten.py` / `stellenplan.py` | Unchanged since initial verification | ✓ WIRED (regression) | Not modified by 04-06; `alle.py` run confirms Schritt 05/07 output unchanged in structure |
+
+### Data-Flow Trace (Level 4)
+
+| Artifact | Data Variable | Source | Produces Real Data | Status |
+|----------|---------------|--------|---------------------|--------|
+| `app/src/data/texte.json` `werte["jahr.haushaltsjahr"]` | raw int (e.g. 2026) | `textwerte()` from `haushalt.json["haushaltsjahr"]` | Yes — regeneration via `alle.py` reproduces identical value, no static fallback | ✓ FLOWING |
+| `formatiere(2026, 'jahr')` render | rendered string | `JAHR_FORMAT.format(wert)` (`Intl.NumberFormat` with `useGrouping: false`) | Yes — confirmed via transpiled real source in a scratch copy, output `"2026"` not a hardcoded literal | ✓ FLOWING |
 
 ### Behavioral Spot-Checks
 
 | Behavior | Command | Result | Status |
 |----------|---------|--------|--------|
-| Full pipeline test suite | `uv run --directory pipeline pytest -q` | `456 passed in 337.35s` | ✓ PASS |
-| Person-name scan (named test) | `pytest tests/test_app_daten.py -q -k personennamen` | `1 passed` | ✓ PASS |
-| Reproducibility | `alle.py --jahr 2026 && git diff --stat --exit-code -- daten app/src/data` | exit 0, no diff, no untracked files | ✓ PASS |
-| Ruff lint/format | `ruff check . && ruff format --check .` | "All checks passed!", "45 files already formatted" | ✓ PASS |
-| App type-check | `npm run type-check` (scratch copy) | exit 0 | ✓ PASS |
-| App lint | `npm run lint` (scratch copy) | exit 0 | ✓ PASS |
-| App format:check | `npm run format:check` (scratch copy) | exit 0 | ✓ PASS |
-| App build | `npm run build` (scratch copy) | exit 0, `dist/` produced | ✓ PASS |
-| **CR-01 reproduction** | `node -e "console.log(new Intl.NumberFormat('de-DE',{maximumFractionDigits:0}).format(2026))"` | `2.026` | ✗ FAIL (confirms defect) |
+| Full pipeline test suite | `uv run --directory pipeline pytest -q` | `472 passed in 340.36s` | ✓ PASS |
+| New gap-closure test module | `uv run --directory pipeline pytest tests/test_formatiere.py -q -rA` | `16 passed` (incl. `test_port_wie_format_ts` actually executed, not skipped) | ✓ PASS |
+| Formatkürzel sync test | `uv run --directory pipeline pytest tests/test_texte.py -q -k "formatkuerzel or erklaerungen"` | `15 passed` | ✓ PASS |
+| Person-name scan | `pytest tests/test_app_daten.py -q -k personennamen` | `1 passed` | ✓ PASS |
+| Ruff lint/format | `ruff check . && ruff format --check .` | "All checks passed!", "46 files already formatted" | ✓ PASS |
+| Reproducibility | `alle.py --jahr 2026 && git diff --stat --exit-code -- daten app/src/data` | exit 0, no diff, no untracked files (re-ran myself) | ✓ PASS |
+| App type-check/lint/format/build (scratch copy, independently built) | `npm ci && npm run type-check && npm run lint && npm run format:check && npm run build` | all exit 0, `dist/` produced | ✓ PASS |
+| **CR-01 fix confirmation** | Transpiled real `format.ts` in a scratch copy, rendered all 10 `jahr.*` placeholders of regenerated `texte.json` | `jahr-Platzhalter korrekt gerendert: 10` | ✓ PASS |
+| **CR-01 regression guard** | `test_cr01_gruppiertes_haushaltsjahr_wird_erkannt` | Proves `_verstoesse` flags the old `zahl`-kürzel pattern and accepts the new `jahr`-kürzel pattern | ✓ PASS |
 
 ### Requirements Coverage
 
 | Requirement | Source Plan | Description | Status | Evidence |
 |---|---|---|---|---|
-| MANU-01 | 04-01 | steuerarten.csv (8 Steuerarten, T€, S.27) | ✓ SATISFIED | File present, 54 rows, Regel 5 grün |
-| MANU-02 | 04-01 | zuwendungen.csv (S.28) | ✓ SATISFIED | File present, 24 rows, Regel 5 grün with befunde |
-| MANU-03 | 04-01 | transferaufwendungen.csv incl. Kreisumlage-Fußnote | ✓ SATISFIED | 10147 with "10.1473" anmerkung present |
-| MANU-04 | 04-01 | kita_zuschuesse.csv (Σ 559 T€) | ✓ SATISFIED | 8 rows, gesamt row = 559 |
-| MANU-05 | 04-02 | weitere_vorberichtstabellen.csv (5 tables) | ✓ SATISFIED | All 5 tabellen present |
-| MANU-06 | 04-02 | meta.json | ✓ SATISFIED | See Truth 2 |
-| MANU-07 | 04-01/02/03 | `quelle` column + README | ✓ SATISFIED | See Truths 1/3 |
-| MANU-08 | 04-05 | Geprüfte Erklärtexte mit Seitenverweis | ⚠️ PARTIALLY SATISFIED | Content/syntax satisfied; **rendering correctness defect open (CR-01)** |
-| PRUEF-05 | 04-01/02 | Regel 5 grün, Toleranz ±1 T€, Befunde dokumentiert | ✓ SATISFIED | konsistenz.md Regel 5 grün |
-| EXTR-10 | 04-03 | Stellenplan extrahiert | ✓ SATISFIED | See Truth 4 |
-| DATA-01 | 04-01/03/04/05 | App-JSON-Dateien erzeugt | ✓ SATISFIED | See Truth 5 |
-| DATA-02 | 04-04 | "Weitergabe an Kreis und Land" separiert | ✓ SATISFIED | See Truth 5 |
-| DATA-03 | 04-04 | Zuschussbedarf berechnet gekennzeichnet | ✓ SATISFIED | `berechnet` dict present per node |
-| PRUEF-10 | 04-01/03/05 | alle.py + CI-Diff-Prüfung | ✓ SATISFIED | See Truth 6 |
+| MANU-01 | 04-01 | steuerarten.csv | ✓ SATISFIED | Unchanged since initial verification |
+| MANU-02 | 04-01 | zuwendungen.csv | ✓ SATISFIED | Unchanged |
+| MANU-03 | 04-01 | transferaufwendungen.csv | ✓ SATISFIED | Unchanged |
+| MANU-04 | 04-01 | kita_zuschuesse.csv | ✓ SATISFIED | Unchanged |
+| MANU-05 | 04-02 | weitere_vorberichtstabellen.csv | ✓ SATISFIED | Unchanged |
+| MANU-06 | 04-02 | meta.json | ✓ SATISFIED | Unchanged |
+| MANU-07 | 04-01/02/03 | `quelle` column + README | ✓ SATISFIED | Unchanged |
+| MANU-08 | 04-05, 04-06 | Geprüfte Erklärtexte mit Seitenverweis, korrekt gerendert | ✓ SATISFIED (was PARTIALLY) | CR-01 fixed and independently confirmed (Truth 10) |
+| PRUEF-05 | 04-01/02 | Regel 5 grün | ✓ SATISFIED | Unchanged |
+| EXTR-10 | 04-03 | Stellenplan extrahiert | ✓ SATISFIED | Unchanged |
+| DATA-01 | 04-01/03/04/05/06 | App-JSON-Dateien erzeugt | ✓ SATISFIED | texte.json regenerated with corrected placeholders, still only raw values |
+| DATA-02 | 04-04 | "Weitergabe an Kreis und Land" separiert | ✓ SATISFIED | Unchanged |
+| DATA-03 | 04-04 | Zuschussbedarf berechnet gekennzeichnet | ✓ SATISFIED | Unchanged |
+| PRUEF-10 | 04-01/03/05/06 | alle.py + CI-Diff-Prüfung | ✓ SATISFIED | Re-confirmed green after the CR-01 fix |
 
-No orphaned Phase-4 requirements found in REQUIREMENTS.md beyond the 14 declared.
+No orphaned Phase-4 requirements found in REQUIREMENTS.md beyond the 14 declared. **Bookkeeping note (non-blocking):** `.planning/REQUIREMENTS.md`'s tracking table still shows all 14 Phase-4 rows as "Gaps Found" (set by commit `49e1caf` after the initial verification) and the checkbox list above it is still unchecked — this predates the gap-closure plan and was deliberately left untouched by the 04-06 worktree executor ("deferred to the orchestrator's centralized post-wave update", per 04-06-SUMMARY.md). It is stale documentation bookkeeping, not evidence of a code gap — every one of the 14 requirements is independently confirmed satisfied above. It should be updated to "Complete" as part of closing out this phase.
 
 ### Anti-Patterns Found
 
 | File | Line | Pattern | Severity | Impact |
 |---|---|---|---|---|
-| `app/src/charts/format.ts` / `pipeline/ostbevern/texte.py` / `daten/manuell/texte/erklaerungen.md` | format.ts:39-83, texte.py:28-30, 10 occurrences in erklaerungen.md | CR-01: `zahl` kuerzel groups thousands, mis-renders bare years | 🛑 Blocker | Confirmed reproducible; see Truth 10 |
-| `pipeline/ostbevern/pruefung.py` | ~1555-1656 (`_pruefe_regel5_ve_uebersicht`) | WR-01: per-year VE summary rows never cross-checked | ⚠️ Warning | Latent verification gap; current data happens to be arithmetically correct, but a future typo in either summary cell would pass undetected |
-| `pipeline/ostbevern/app_daten.py` | ~570-586 (`baue_investitionen_json`) | WR-02: negative-index fallback (`investitionskredite[index - 1]`) with no `AppDatenFehler` guard | ⚠️ Warning | Holds only by coincidence of the 2026 configuration; would raise raw `IndexError` for a different jahrgang shape |
-| `pipeline/ostbevern/texte.py` | ~204-227 (`ABGELEITET` formulas) | WR-03: neighbour-year lookups (`hh+1`/`hh-1`) assume presence, no `TexteFehler` wrapping | ⚠️ Warning | Would raise raw `KeyError` for a jahrgang where haushaltsjahr is the first/last configured year |
-| `app/src/charts/format.ts` | 68-83 (`formatiere` switch) | IN-01: no runtime fallback/exhaustive-check for an unknown kuerzel | ℹ️ Info | Silent `undefined` render instead of a loud failure |
+| `pipeline/ostbevern/texte.py` | ~54, 122 (`_SEITENZAHL_MUSTER`) | WR-04 (new, 04-REVIEW.md): range-style `Quelle:` lines (`S. 24/25`) silently drop all but the first page | ⚠️ Warning | Latent — does not trigger on current data (all 10 sections repeat `S.` per page); would silently truncate `quelle_seiten` if a future edit used the compact range form |
+| `pipeline/ostbevern/texte.py` | ~138-176 (`pruefe_text`) | WR-05 (new): the CR-01 jahr-namespace-vs-kürzel invariant is enforced only by the test suite (`test_formatiere.py::_verstoesse`), not by the pipeline's own fail-fast `pruefe_text` | ⚠️ Warning | A future `{{jahr.irgendwas\|zahl}}` edit would ship silently unless someone remembers to run pytest; overlaps conceptually with the already-open IN-01 |
+| `app/src/charts/format.ts` | 80-97 (`formatiere`) | WR-06 (new): no `default`/exhaustiveness guard — an out-of-union runtime kürzel silently renders `undefined` | ⚠️ Warning | Same underlying gap as the already-open IN-01; not worsened by 04-06 |
+| `app/src/data/texte.json` | 2, 118 | IN-02 (new): `haushaltsjahr` stored at both the top level and `werte["jahr.haushaltsjahr"]`, no cross-check | ℹ️ Info | Drift risk only on a future refactor; both values currently match |
+| `pipeline/ostbevern/pruefung.py` | ~1555-1656 | WR-01 (carried forward, still open): per-year VE summary rows never cross-checked | ⚠️ Warning | Unchanged since initial verification; out of scope for 04-06 by explicit user decision 2026-10-03 |
+| `pipeline/ostbevern/app_daten.py` | ~570-586 | WR-02 (carried forward, still open): unguarded negative-index fallback | ⚠️ Warning | Unchanged; out of scope by user decision |
+| `pipeline/ostbevern/texte.py` | ~204-227 | WR-03 (carried forward, still open): unguarded neighbour-year lookups | ⚠️ Warning | Unchanged; out of scope by user decision |
+| `app/src/charts/format.ts` | 68-97 | IN-01 (carried forward, still open): no fallback/exhaustiveness in `formatiere()` | ℹ️ Info | Unchanged; out of scope by user decision; functionally the same concern as the new WR-06 |
 
-All five findings were already identified by the Phase-4 code review (`04-REVIEW.md`) and remain **disposition: open** per `04-REVIEW-DISPOSITION.md` — none have been fixed, waived, or deferred since that review. This verifier independently reproduced CR-01, WR-01, WR-02 and WR-03 directly against the current code (not merely trusting the review document).
+**No critical/blocker findings.** `04-REVIEW.md` (incremental review after 04-06) reports `critical: 0, warning: 3, info: 1` — consistent with my own reading of the diff. `04-REVIEW-DISPOSITION.md` records CR-01 as `fixed` and all eight warning/info rows (four carried forward, four new) as `open`, which the user explicitly scoped out of this gap-closure plan on 2026-10-03 ("WR/IN items (old and new) are advisory and out of scope for this gap closure by user decision"). None of these warnings reproduce on the currently-shipped data; none block the phase goal.
 
 ### Human Verification Required
 
-None. CR-01 is a deterministically reproducible defect (confirmed above), not an uncertain or UI/real-time judgment call — it is recorded as a gap, not a human-verification item.
+None. CR-01's fix was independently confirmed through deterministic, reproducible evidence (direct code reading, a from-scratch rebuild of the app, and running the real `formatiere()` against the regenerated `texte.json` in a scratch copy) — not just by re-reading SUMMARY.md's narration. The remaining open warnings (WR-01..06, IN-01, IN-02) are non-blocking design/robustness gaps explicitly deferred by user decision, not uncertain judgment calls.
 
 ### Gaps Summary
 
-Phase 4's data-generation goal is substantively achieved: all five ROADMAP success criteria
-hold against the actual codebase (manual tables with sourced values and a green Regel 5,
-`meta.json` with the correct figures, a correctly extracted Stellenplan with Beamte=8, four
-name-free `app/src/data/*.json` files with the KL split and flagged Zuschussbedarf, and a
-fully reproducible `alle.py` enforced by a CI diff gate). The full pipeline test suite (456
-tests), ruff, and the app's type-check/lint/format/build all pass independently of the
-SUMMARY.md claims — this verifier re-ran every one of them rather than trusting the executor's
-narration.
+No gaps remain. The single blocking gap from the initial verification — **CR-01** (the Haushaltsjahr rendering as "2.026" instead of "2026" through `formatiere(wert, 'zahl')`) — is closed by plan 04-06 and independently re-verified here, not merely trusted from SUMMARY.md:
 
-One gap blocks a clean pass: **CR-01**, an open critical finding from the phase's own code
-review, is a confirmed, deterministic defect in the number-formatting contract (D-15) that
-this phase itself established and marked "reversibility: costly" (because Phase 5/6 will
-consume it as-is). All ten Erklärtexte use `{{jahr.haushaltsjahr|zahl}}` to state the current
-Haushaltsjahr, and the `zahl` format kuerzel groups thousands by design — so every one of the
-ten citizen-facing explanatory texts will display "2.026" instead of "2026" once a later
-phase wires `formatiere()` into the Vue templates. This directly contradicts the project's
-explicit core value ("Jede Zahl in der App ist korrekt... Bürgerinformation muss stimmen")
-and was not caught by the D-17 human checkpoint, because the checkpoint's preview showed raw
-values, not values rendered through `formatiere()`. The fix is small and scoped (add an
-ungrouped `jahr` format kuerzel to both `format.ts` and `texte.py`, repoint the ten
-placeholders, and add a test that renders resolved values) but it was not applied before this
-phase's commits were finalized, and the review disposition for CR-01 is still "open" — not
-fixed, not waived, not deferred to a later phase's documented success criteria.
+- `app/src/charts/format.ts` and `pipeline/ostbevern/texte.py` both now carry an ungrouped `jahr` format kürzel, kept in sync by the pre-existing order-sensitive `test_formatkuerzel_wie_format_ts`.
+- All ten `jahr.haushaltsjahr` placeholders in `erklaerungen.md` and the regenerated `app/src/data/texte.json` use the new kürzel; a suffix-normalized diff proves the approved D-17 wording is otherwise byte-identical to the base commit `f9e085d`.
+- I independently transpiled the real, current `format.ts` in a from-scratch copy of `app/` (not the executor's claim) and rendered every one of the 10 `jahr.*` placeholders of the freshly regenerated `texte.json` through the real `formatiere()`: all render as bare four-digit years.
+- The new `pipeline/tests/test_formatiere.py` (16 tests, all passing when I ran them myself, including the Node cross-check against the real TypeScript source) makes this a mechanically-guarded invariant going forward, including a mutation test that proves the exact CR-01 pattern is detected.
+- The full reproducibility/quality gate — 472 pipeline tests, ruff check/format, `alle.py` regeneration with a clean `git diff` and no untracked files, and the app's type-check/lint/format:check/build — all pass, re-run independently in this verification rather than taken from the orchestrator's or executor's narration.
 
-Three further open warnings (WR-01: unchecked VE-Übersicht summary rows; WR-02: an unguarded
-negative-index fallback in the Schuldenstand-Fortschreibung; WR-03: unguarded neighbour-year
-lookups in the `ABGELEITET` text formulas) do not currently produce incorrect output on the
-committed 2026 data, but they are latent robustness/verification-coverage gaps consistent
-with, yet slightly undercutting, the project's "jede Zahl ... ist durch automatische
-Prüfungen ... belegt" guarantee. They are reported as warnings, not blockers, since no
-demonstrated defect exists in the current data — but they should be dispositioned (fixed or
-explicitly accepted) before later phases build further on these codepaths.
+Eight warning/info-level findings remain open (WR-01..06, IN-01, IN-02; four carried forward from before 04-06, four newly surfaced by the incremental code review of 04-06's own diff). None are critical, none reproduce against the currently-shipped data, and all are explicitly scoped out of this gap-closure round by the user's 2026-10-03 decision. They are reported for visibility but do not block Phase 4's goal achievement.
+
+One non-blocking bookkeeping item: `.planning/REQUIREMENTS.md`'s tracking table still reads "Gaps Found" for all 14 Phase-4 requirement IDs (set after the initial verification, intentionally left untouched through the gap-closure plan). It should be synced to "Complete" now that this re-verification passes.
 
 ---
 
-_Verified: 2026-10-03T20:16:46Z_
+_Verified: 2026-10-04T08:51:42Z_
 _Verifier: Claude (gsd-verifier)_
