@@ -133,6 +133,9 @@ export function abstufung(farbe: string, rang: number): string {
   return `#${kanaele.join('')}`
 }
 
+/** Unwahrscheinliche Farbe als Marker, um eine vom Browser abgelehnte Farbe zu erkennen. */
+const ABLEHNUNGSMARKER = '#010203'
+
 /**
  * Löst eine beliebige CSS-Farbe (Schlüsselwort wie `white`, `rgb()`, `oklch()` …) zu RGB auf,
  * indem der Browser sie auf eine 1×1-Zeichenfläche malt. Ohne DOM oder Zeichenfläche `null`.
@@ -149,7 +152,14 @@ function alsRgb(farbe: string): [number, number, number] | null {
   kontext.canvas.width = 1
   kontext.canvas.height = 1
   kontext.clearRect(0, 0, 1, 1)
+  // Eine Zeichenfläche ignoriert eine unlesbare Farbe und behält den vorherigen Wert (sonst
+  // Schwarz). Daher zuerst einen Marker setzen: bleibt er stehen, hat der Browser die Farbe
+  // abgelehnt, und es gibt kein stilles Schwarz.
+  kontext.fillStyle = ABLEHNUNGSMARKER
   kontext.fillStyle = farbe
+  if (kontext.fillStyle === ABLEHNUNGSMARKER && farbe.trim().toLowerCase() !== ABLEHNUNGSMARKER) {
+    return null
+  }
   kontext.fillRect(0, 0, 1, 1)
   const [r, g, b, a] = kontext.getImageData(0, 0, 1, 1).data
   if (r === undefined || g === undefined || b === undefined || a !== 255) {
