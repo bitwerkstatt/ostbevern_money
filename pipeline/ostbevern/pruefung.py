@@ -1366,6 +1366,8 @@ def _pruefe_regel5(
     nötig) statt gegen den Gesamtergebnisplan; die Konzessionsabgaben-Aufteilung
     (`_pruefe_regel5_konzessionsabgaben`) läuft, sobald `sonstige_ertraege` da ist; fehlt dann
     `meta`, bricht die Regel mit PruefungsFehler ab, statt die Prüfung still auszulassen.
+    Ebenso die Kreisumlage-Prüfung (`_pruefe_regel5_meta_kreisumlage`): ist
+    `transferaufwendungen` da, sind `meta` und `eckwerte` Pflicht.
     """
     geprueft = 0
     abweichungen: list[Pruefpunkt] = []
@@ -1474,7 +1476,12 @@ def _pruefe_regel5(
         geprueft += geprueft_weitergabe
         abweichungen += abweichungen_weitergabe
 
-    if "transferaufwendungen" in vorbericht and meta is not None and eckwerte is not None:
+    if "transferaufwendungen" in vorbericht:
+        if meta is None or eckwerte is None:
+            raise PruefungsFehler(
+                "Regel 5: transferaufwendungen braucht meta.json und die [eckwerte]-Sollwerte "
+                "für die Kreisumlage-Prüfung"
+            )
         geprueft_meta, abweichungen_meta = _pruefe_regel5_meta_kreisumlage(
             meta=meta,
             transfer_df=vorbericht["transferaufwendungen"],

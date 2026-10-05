@@ -2267,6 +2267,25 @@ def test_regel5_sonstige_ertraege_ohne_meta_bricht_ab(monkeypatch: pytest.Monkey
         )
 
 
+@pytest.mark.parametrize("fehlt", ["meta", "eckwerte"])
+def test_regel5_transferaufwendungen_ohne_meta_oder_eckwerte_bricht_ab(
+    monkeypatch: pytest.MonkeyPatch, fehlt: str
+) -> None:
+    """IN-03: auch die Kreisumlage-Prüfung darf ohne meta/eckwerte nicht still entfallen."""
+    monkeypatch.setattr(pruefung, "REGEL5_TABELLEN_OHNE_GESAMT", ("transferaufwendungen",))
+    monkeypatch.setattr(pruefung, "_pruefe_regel5_weitergabe", lambda **_: (0, []))
+    leer = pl.DataFrame()
+    with pytest.raises(PruefungsFehler, match="transferaufwendungen"):
+        pruefung._pruefe_regel5(
+            vorbericht={"transferaufwendungen": leer},
+            planwerte_ergebnisplan=Planwerte(leer, datei="ergebnisplan"),
+            ergebnisplan=leer,
+            jahrgang=lade_jahrgang(STANDARD_JAHR),
+            meta=None if fehlt == "meta" else {},
+            eckwerte=None if fehlt == "eckwerte" else {},
+        )
+
+
 def test_regel5_konzessionsabgaben_split_gruen_auf_eingecheckten_daten() -> None:
     regel5 = _regel5_von(pruefe_alles(STANDARD_JAHR))
     assert not [p for p in regel5.abweichungen if p.plan == "vorbericht_konzessionsabgaben"]
