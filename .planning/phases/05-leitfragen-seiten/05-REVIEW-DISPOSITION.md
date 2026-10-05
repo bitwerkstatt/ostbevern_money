@@ -5,12 +5,28 @@ titles: json
 findings:
   - id: WR-01
     severity: warning
-    disposition: fixed
-    title: "Geldfluss shows Vorbericht-derived amounts as exact euros, without \"rd.\" or \"berechnet\""
+    disposition: open
+    title: "`Quelle:` page lists without a repeated `S.` are still silently truncated (incomplete fix of the old WR-04)"
   - id: WR-02
     severity: warning
     disposition: fixed
-    title: "Start page says \"Den größten Anteil bekommt Innere Verwaltung\", but Weitergabe an Kreis und Land is more than twice as large"
+    title: "`DatenTabelle` overflow detection observes only the elements present at mount"
+  - id: IN-01
+    severity: info
+    disposition: fixed
+    title: "`alsRgb` turns an unparseable colour into black without a signal"
+  - id: IN-02
+    severity: info
+    disposition: open
+    title: "Scroll region without `beschriftung` is never keyboard-focusable; the new overflow logic has no test"
+  - id: IN-03
+    severity: info
+    disposition: fixed
+    title: "Regel 5 still skips the Kreisumlage check silently when `meta` is `None`"
+  - id: IN-04
+    severity: info
+    disposition: fixed
+    title: "The \"rd.\" / \"berechnet\" cell template is copy-pasted three times; the space after \"rd.\" can wrap"
   - id: WR-03
     severity: warning
     disposition: fixed
@@ -31,22 +47,6 @@ findings:
     severity: warning
     disposition: fixed
     title: "`DatenTabelle` makes every captioned table a tab stop and duplicates its name for screen readers"
-  - id: IN-01
-    severity: info
-    disposition: open
-    title: "Latent \"-0 €\" and \"-0 %\" output from `proKopf` and `Intl`"
-  - id: IN-02
-    severity: info
-    disposition: open
-    title: "Hard-coded superlative in the Kreisumlage callout"
-  - id: IN-03
-    severity: info
-    disposition: open
-    title: "\"Quelle: PDF-Seite 51, 8\" – singular for several pages, unsorted order"
-  - id: IN-04
-    severity: info
-    disposition: open
-    title: "Page-wide `useJahr` registers a redirect watcher in every component that calls it"
   - id: IN-05
     severity: info
     disposition: open
@@ -75,33 +75,33 @@ findings:
     severity: info
     disposition: open
     title: "Documentation and tooling drift"
-open: 11
+open: 9
 total: 18
-recorded: 2026-10-04T21:17:52.220Z
+recorded: 2026-10-05T05:19:26.707Z
 ---
 
 # Phase 05: Code Review Disposition
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| WR-01 | warning | fixed | 05-REVIEW-FIX.md |
+| WR-01 | warning | open | - |
 | WR-02 | warning | fixed | 05-REVIEW-FIX.md |
-| WR-03 | warning | fixed | 05-REVIEW-FIX.md |
-| WR-04 | warning | fixed | 05-REVIEW-FIX.md |
-| WR-05 | warning | fixed | 05-REVIEW-FIX.md |
-| WR-06 | warning | fixed | 05-REVIEW-FIX.md |
-| WR-07 | warning | fixed | 05-REVIEW-FIX.md |
-| IN-01 | info | open | - |
+| IN-01 | info | fixed | 05-REVIEW-FIX.md |
 | IN-02 | info | open | - |
-| IN-03 | info | open | - |
-| IN-04 | info | open | - |
-| IN-05 | info | open | - |
-| IN-06 | info | open | - |
-| IN-07 | info | open | - |
-| IN-08 | info | open | - |
-| IN-09 | info | open | - |
-| IN-10 | info | open | - |
-| IN-11 | info | open | - |
+| IN-03 | info | fixed | 05-REVIEW-FIX.md |
+| IN-04 | info | fixed | 05-REVIEW-FIX.md |
+| WR-03 | warning | fixed | 05-REVIEW-FIX.md (not in the current review) |
+| WR-04 | warning | fixed | 05-REVIEW-FIX.md (not in the current review) |
+| WR-05 | warning | fixed | 05-REVIEW-FIX.md (not in the current review) |
+| WR-06 | warning | fixed | 05-REVIEW-FIX.md (not in the current review) |
+| WR-07 | warning | fixed | 05-REVIEW-FIX.md (not in the current review) |
+| IN-05 | info | open | - (not in the current review) |
+| IN-06 | info | open | - (not in the current review) |
+| IN-07 | info | open | - (not in the current review) |
+| IN-08 | info | open | - (not in the current review) |
+| IN-09 | info | open | - (not in the current review) |
+| IN-10 | info | open | - (not in the current review) |
+| IN-11 | info | open | - (not in the current review) |
 
 Dispositions: `open` (recorded, not yet triaged), `fixed`, `skipped`, `deferred`.
 Set `deferred` by hand and put the reason in the Source cell; both are preserved. A `|` in the reason is kept as prose and escaped on the next run.
