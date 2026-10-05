@@ -1,43 +1,43 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 05
-current_phase_name: Leitfragen-Seiten
-status: executing
-stopped_at: Phase 5 UI-SPEC approved
-last_updated: "2026-10-05T17:42:01.685Z"
+current_phase: 6
+current_phase_name: Kontext-Seiten
+status: planning
+stopped_at: Phase 05 complete, ready to plan Phase 6
+last_updated: "2026-10-05T18:21:06.364Z"
 last_activity: 2026-10-05
-last_activity_desc: Phase 05 execution resumed (wave continue)
-state_head: 4eebd57fc3c3055aff72dc2568e673b6e7e06874
+last_activity_desc: Phase 05 complete, transitioned to Phase 6
+state_head: 3e2e14c947e89033cc5de85e6795829dd777f183
 progress:
   total_phases: 7
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 37
-  completed_plans: 36
-  percent: 57
+  completed_plans: 37
+  percent: 71
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-10-04)
+See: .planning/PROJECT.md (updated 2026-10-05)
 
 **Core value:** Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch automatische Prüfungen belegt. Die Leitfragen „Woher?“ und „Wofür?“ sind für Laien verständlich beantwortet.
-**Current focus:** Phase 05 — Leitfragen-Seiten
+**Current focus:** Phase 6 — Kontext-Seiten
 
 ## Current Position
 
-Phase: 05 (Leitfragen-Seiten) — EXECUTING
-Plan: 1 of 15
-Status: Executing Phase 05
-Last activity: 2026-10-05 — Phase 05 execution resumed (wave continue)
+Phase: 6 — Kontext-Seiten
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-10-05 — Phase 05 complete, transitioned to Phase 6
 
-Progress: [██████░░░░] 57%
+Progress: [███████░░░] 71%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 21
+- Total plans completed: 37
 - Average duration: -
 - Total execution time: 0.0 hours
 
@@ -49,6 +49,7 @@ Progress: [██████░░░░] 57%
 | 2 | 5 | - | - |
 | 03 | 5 | - | - |
 | 04 | 6 | - | - |
+| 05 | 16 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: -
@@ -78,6 +79,9 @@ Recent decisions affecting current work:
 
 - [Phase 4]: Prüfregeln 1–10 grün; Vorberichtswerte, `meta.json`, Schuldenstand/Rücklagen/VE mit Quelle; Stellenplan (Beamte 2026 = 8); App-JSON reproduzierbar über `alle.py` ohne Personennamen (472 Tests).
 - [Phase 4]: Erklärtexte: Platzhalter `{{schluessel|kuerzel}}`, Jahreszahlen mit Kürzel `jahr` (CR-01 behoben in 04-06); `test_formatiere.py` rendert jede Zahl über eine `formatiere()`-Portierung mit Node-Gegenprobe.
+- [Phase 5]: Leitfragen-Seiten Start, Einnahmen, Ausgaben (inkl. Produktseite), Geldfluss und Glossar fertig; vitest 5.0.3 als Testframework (1031 Tests), Zahlen nur aus Daten (Quelltext-Scan), kein `v-html`, Tooltips über `htmlSicher`/`tooltipZeilen`.
+- [Phase 5]: Hash-Sprungziele berücksichtigen den sticky Header (`sprungziel.ts`); `stiltokens.test.ts` verbietet undefinierte `--wa-*`-Tokens (Lücken G-05-4/G-05-6, Plan 05-16).
+- [Phase 5]: Fußzeilen-Kontakt und PDF-Link bleiben `.invalid`-Platzhalter bis Phase 7 (D-17).
 
 ### Pending Todos
 
@@ -88,8 +92,9 @@ None yet.
 - [Phase 1]: Die CI ist nur lokal nachgestellt; der erste Lauf auf GitHub steht aus, bis ein Remote angelegt ist.
 - [Phase 1]: `app/node_modules` im gemounteten Repo enthält macOS-Binaries; im Linux-Sandbox App-Checks in einer Scratch-Kopie ausführen.
 - [Phase 2]: Code-Review 02-REVIEW.md: 3 Warnungen offen (u. a. Vorzeichen-Beschreibung in `befunde.md`, Kommentar zu PB 09/15 sollte S. 296/299 zitieren).
-- [Phase 4]: Code-Review 04-REVIEW-DISPOSITION.md: 8 Befunde offen (WR-01…WR-06, IN-01, IN-02), alle ohne Auswirkung auf die heutigen Daten; per Nutzerentscheidung vom 2026-10-03 außerhalb der Lückenschließung. WR-06/IN-01 (kein Fallback in `formatiere()`) betreffen Phase 5, sobald `formatiere()` in die Seiten verdrahtet wird.
+- [Phase 4]: Code-Review 04-REVIEW-DISPOSITION.md: Befunde WR-01…WR-05, IN-02 offen, alle ohne Auswirkung auf die heutigen Daten (Nutzerentscheidung 2026-10-03). WR-06/IN-01 (`formatiere()`-Fallback) in Plan 05-01 behoben.
 - [Phase 4]: `/gsd-secure-phase 04` steht aus (Sicherheitsprüfung aktiviert, noch kein 04-SECURITY.md).
+- [Phase 5]: UI-Review 05-UI-REVIEW.md (16/24): Token-Hygiene offen — `font-weight: 600` fest in App.vue, `--wa-font-weight-semibold`, `--wa-font-size-xl`, `--wa-space-3xs`/`2xl` außerhalb der UI-SPEC-Skala; kosmetisch, vor/in Phase 7 bereinigen.
 
 ### Quick Tasks Completed
 
@@ -107,6 +112,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-04T10:19:23.543Z
-Stopped at: Phase 5 UI-SPEC approved
-Resume file: .planning/phases/05-leitfragen-seiten/05-UI-SPEC.md
+Last session: 2026-10-05T18:25:00Z
+Stopped at: Phase 5 complete, ready to plan Phase 6
+Resume file: None

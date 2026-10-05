@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Kernzahlen** - Seitenklassifikation, Hierarchie, alle Ergebnis- und Finanzpläne; Prüfregeln 1–4 grün, Anhang-B-Sollwerte getroffen (Spez. P1) (completed 2026-10-01)
 - [x] **Phase 3: Details** - Produktinformationen, Grundzahlen, Erläuterungen, Investitionen; Prüfregeln 6–8 grün, 63 Produkte vollständig (Spez. P2) (completed 2026-10-02)
 - [x] **Phase 4: Manuelle Daten und App-Daten** - Vorberichtstabellen, meta.json, Erklärtexte, Stellenplan, App-JSON; Prüfregel 5 grün, `alle.py` reproduzierbar (Spez. P3) (completed 2026-10-04)
-- [ ] **Phase 5: Leitfragen-Seiten** - Start, Einnahmen, Ausgaben, Geldfluss und Glossar beantworten „Woher?“ und „Wofür?“ (Spez. P4)
+- [x] **Phase 5: Leitfragen-Seiten** - Start, Einnahmen, Ausgaben, Geldfluss und Glossar beantworten „Woher?“ und „Wofür?“ (Spez. P4) (completed 2026-10-05)
 - [ ] **Phase 6: Kontext-Seiten** - Entwicklung, Investitionen und Schulden, Rat entscheidet, Stellenplan, „Was nicht im Haushalt steht“ (Spez. P5)
 - [ ] **Phase 7: Feinschliff und Veröffentlichung** - Quellenbelege, Barrierefreiheit, Mobilansicht, Textdurchgang, Smoke-Test, Deployment auf GitHub Pages (Spez. P7)
 
@@ -172,7 +172,7 @@ Plans:
   4. `/geldfluss` zeigt einen Sankey 2026, der über „Defizit (Entnahme aus Rücklagen)“ und den Minderaufwand bilanziert. Hover hebt Pfade hervor, und ein Klick auf einen Aufgabenbereich öffnet die Ausgabenseite. Auf schmalen Bildschirmen erscheint stattdessen eine Tabelle oder ein gestapelter Balken. Einnahmen, Ausgaben und Geldfluss haben einen Jahr-Umschalter (2024 Ist … 2029 Planung, Standard 2026).
   5. `/glossar` erklärt mindestens die 22 Begriffe aus Spez. 6.14 und listet alle 63 Produkte als Akkordeon. `GlossarBegriff`-Links auf den Seiten führen zum jeweiligen Begriff. Zahlen in Erklärtexten werden aus den Daten erzeugt und verweisen auf eine PDF-Seite.
 
-**Plans**: 16/16 plans executed
+**Plans**: 16/16 plans complete
 **UI hint**: yes
 
 Plans:
@@ -248,6 +248,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 2. Kernzahlen | 5/5 | Complete    | 2026-10-01 |
 | 3. Details | 5/5 | Complete    | 2026-10-02 |
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
-| 5. Leitfragen-Seiten | 16/16 | In Progress|  |
+| 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
 | 6. Kontext-Seiten | 0/TBD | Not started | - |
 | 7. Feinschliff und Veröffentlichung | 0/TBD | Not started | - |

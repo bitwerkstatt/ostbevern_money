@@ -1,7 +1,7 @@
 ---
 phase: 05-leitfragen-seiten
 verified: 2026-10-05T20:10:00Z
-status: human_needed
+status: passed
 score: 5/5 roadmap success criteria verified in code and data; 6/6 must-haves of gap-closure plan 05-16 verified in code (browser behavior pending)
 covered_files:
   - .planning/phases/05-leitfragen-seiten/05-01-PLAN.md
@@ -96,6 +96,7 @@ covered_files:
   - app/src/router/index.ts
   - pipeline/ostbevern/app_daten.py
   - pipeline/ostbevern/texte.py
+
 covered_digest: "v2:sha256:fd1d7a1c6d3757ecfd0aff58fb5dc9923bcb81f2b451847da44c8b8edaa0154a"
 behavior_unverified: 5
 overrides_applied: 0

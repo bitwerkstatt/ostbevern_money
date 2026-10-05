@@ -23,6 +23,11 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 - ✓ Konsistenzprüfung (Prüfregeln 1–10) in pytest und als Markdown-Bericht; bekannte Abweichungen in `befunde.md` — Phase 4
 - ✓ App-JSON-Dateien (`haushalt.json`, `produkte.json`, `investitionen.json`, `stellenplan.json`, `texte.json`) reproduzierbar über `alle.py`, ohne Personennamen, CI-Diff-Prüfung — Phase 4
 - ✓ Erklärtexte mit Datenplatzhaltern und Seitenverweis; jede Zahl rendert über `formatiere()` korrekt (Jahreszahlen mit Kürzel `jahr`, CR-01) — Phase 4
+- ✓ Start mit Kennzahlenband 2026 und Einstiegen zu den Leitfragen — Phase 5
+- ✓ Einnahmen: Ertragsarten → Steuerarten/Zuwendungen → Zeitreihen; investive Einnahmen separat — Phase 5
+- ✓ Ausgaben: Treemap mit Drilldown, „Weitergabe an Kreis und Land“ als eigene Kategorie, Umschalter Aufwand/Zuschussbedarf, Sicht nach Aufwandsart, Produktdetail — Phase 5
+- ✓ Geldfluss: Sankey 2024–2029 inkl. Defizit- und Minderaufwand-Ausgleich, mobile Alternative — Phase 5
+- ✓ Glossar mit allen Begriffen und allen 63 Produkten, GlossarBegriff-Links mit Tooltip und Sprungmarke — Phase 5
 
 ### Active
 
@@ -31,16 +36,11 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 - [ ] Pipeline ist für das ProFIS-Layout generisch: Jahr, Spalten und Seitenbereiche konfigurierbar, sodass der Haushalt 2027 mit wenig Änderung verarbeitet werden kann
 
 **App (Vue 3, TS, Vite, Web Awesome, ECharts):**
-- [ ] Start mit Kennzahlenband 2026 und Einstiegen zu den Leitfragen
-- [ ] Einnahmen: Ertragsarten → Steuerarten/Zuwendungen → Zeitreihen; investive Einnahmen separat
-- [ ] Ausgaben: Treemap mit Drilldown, „Weitergabe an Kreis und Land“ als eigene Kategorie, Umschalter Aufwand/Zuschussbedarf, Sicht nach Aufwandsart, Produktdetail
-- [ ] Geldfluss: Sankey 2026 inkl. Defizit- und Minderaufwand-Ausgleich, mobile Alternative
-- [ ] Glossar mit allen Begriffen und allen 63 Produkten
 - [ ] Entwicklung 2024–2029
 - [ ] Investitionen und Schulden (Maßnahmen, VE, Finanzierung, Schuldenstand)
 - [ ] Worüber entscheidet der Rat? (Bindungsgrad, nicht beeinflussbare Posten, Einzelzuschüsse)
 - [ ] Stellenplan
-- [ ] Jahr-Umschalter, „Quelle anzeigen“, Fußzeile mit Datenstand und Hinweis „inoffizielles Projekt“
+- [ ] Jahr-Umschalter, „Quelle anzeigen“, Fußzeile mit Datenstand und Hinweis „inoffizielles Projekt“ (Jahr-Umschalter und Fußzeile seit Phase 5; offen: „Quelle anzeigen“, echte Kontakt-/PDF-Links in Phase 7, D-17)
 - [ ] Barrierefreiheit (Lighthouse ≥ 95), Tabellenalternative zu jedem Diagramm, responsiv ab 360 px
 - [ ] Deployment über GitHub Actions auf GitHub Pages (eigener Account)
 
@@ -130,4 +130,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-04 after Phase 4*
+*Last updated: 2026-10-05 after Phase 5*

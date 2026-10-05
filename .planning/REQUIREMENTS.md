@@ -61,32 +61,32 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 
 ### Start
 
-- [ ] **START-01**: Die Startseite zeigt ein Kennzahlenband 2026 (Erträge, Aufwendungen, Defizit nach Minderaufwand, Investitionen, neue Kredite, Pro-Kopf-Werte)
-- [ ] **START-02**: Die Startseite bietet zwei große Einstiege zu „Woher kommt das Geld?“ und „Wofür wird es ausgegeben?“ sowie einen Hinweis auf die Kreisumlage als größten Posten
+- [x] **START-01**: Die Startseite zeigt ein Kennzahlenband 2026 (Erträge, Aufwendungen, Defizit nach Minderaufwand, Investitionen, neue Kredite, Pro-Kopf-Werte)
+- [x] **START-02**: Die Startseite bietet zwei große Einstiege zu „Woher kommt das Geld?“ und „Wofür wird es ausgegeben?“ sowie einen Hinweis auf die Kreisumlage als größten Posten
 
 ### Einnahmen
 
-- [ ] **EINN-01**: Nutzer sieht die Ertragsarten 2026 mit Betrag und Prozentanteil
-- [ ] **EINN-02**: Nutzer kann Steuern nach Steuerart aufklappen, sieht die Hebesätze und erfährt, welche Steuern die Gemeinde selbst festlegt
-- [ ] **EINN-03**: Nutzer kann Zuwendungen aufklappen (Schlüsselzuweisung, laufende Zwecke mit Beispielen, Sonderposten mit Hinweis „kein Geldfluss“)
-- [ ] **EINN-04**: Nutzer sieht sonstige ordentliche Erträge mit Konzessionsabgaben, soweit belegbar
-- [ ] **EINN-05**: Nutzer sieht je Steuerart eine Zeitreihe 2022–2029, Ist und Plan sind visuell unterscheidbar, mit Erklärtexten (Gewerbesteuer-Einbruch, Schlüsselzuweisung)
-- [ ] **EINN-06**: Investive Einnahmen (Pauschalen, Grundstücksverkäufe, Beiträge, Kredite) stehen getrennt und klar abgegrenzt
+- [x] **EINN-01**: Nutzer sieht die Ertragsarten 2026 mit Betrag und Prozentanteil
+- [x] **EINN-02**: Nutzer kann Steuern nach Steuerart aufklappen, sieht die Hebesätze und erfährt, welche Steuern die Gemeinde selbst festlegt
+- [x] **EINN-03**: Nutzer kann Zuwendungen aufklappen (Schlüsselzuweisung, laufende Zwecke mit Beispielen, Sonderposten mit Hinweis „kein Geldfluss“)
+- [x] **EINN-04**: Nutzer sieht sonstige ordentliche Erträge mit Konzessionsabgaben, soweit belegbar
+- [x] **EINN-05**: Nutzer sieht je Steuerart eine Zeitreihe 2022–2029, Ist und Plan sind visuell unterscheidbar, mit Erklärtexten (Gewerbesteuer-Einbruch, Schlüsselzuweisung)
+- [x] **EINN-06**: Investive Einnahmen (Pauschalen, Grundstücksverkäufe, Beiträge, Kredite) stehen getrennt und klar abgegrenzt
 
 ### Ausgaben
 
-- [ ] **AUSG-01**: Nutzer sieht eine Treemap der ordentlichen Aufwendungen mit Drilldown Aufgabenbereich → Produktgruppe → Produkt
-- [ ] **AUSG-02**: „Weitergabe an Kreis und Land“ ist eine farblich abgesetzte Top-Kachel mit Info-Callout; der globale Minderaufwand erscheint als erklärter Hinweis unter dem Diagramm
-- [ ] **AUSG-03**: Nutzer kann zwischen „Aufwand“ und „Zuschussbedarf“ umschalten; Überschüsse werden eigens erklärt
-- [ ] **AUSG-04**: Nutzer sieht Aufwendungen nach Aufwandsart; Transferaufwendungen lassen sich mit der Vorberichtstabelle aufklappen, Abschreibungen tragen den Hinweis „kein Geldfluss“
-- [ ] **AUSG-05**: Nutzer kann ein Produkt öffnen und sieht Beschreibung, Leistungen, Bindungsgrad, Gremium, den Teilergebnisplan 2024–2029, Erläuterungsposten, Grundzahlen mit gekennzeichneten berechneten Pro-Kopf-Werten, Investitionen und den Quellenlink
+- [x] **AUSG-01**: Nutzer sieht eine Treemap der ordentlichen Aufwendungen mit Drilldown Aufgabenbereich → Produktgruppe → Produkt
+- [x] **AUSG-02**: „Weitergabe an Kreis und Land“ ist eine farblich abgesetzte Top-Kachel mit Info-Callout; der globale Minderaufwand erscheint als erklärter Hinweis unter dem Diagramm
+- [x] **AUSG-03**: Nutzer kann zwischen „Aufwand“ und „Zuschussbedarf“ umschalten; Überschüsse werden eigens erklärt
+- [x] **AUSG-04**: Nutzer sieht Aufwendungen nach Aufwandsart; Transferaufwendungen lassen sich mit der Vorberichtstabelle aufklappen, Abschreibungen tragen den Hinweis „kein Geldfluss“
+- [x] **AUSG-05**: Nutzer kann ein Produkt öffnen und sieht Beschreibung, Leistungen, Bindungsgrad, Gremium, den Teilergebnisplan 2024–2029, Erläuterungsposten, Grundzahlen mit gekennzeichneten berechneten Pro-Kopf-Werten, Investitionen und den Quellenlink
 
 ### Geldfluss
 
-- [ ] **FLUSS-01**: Nutzer sieht einen Sankey 2026 (Ergebnisplan): Ertragsarten (Steuern nach Art) → Gemeindehaushalt → Weitergabe an Kreis und Land, Aufgabenbereiche, Zinsen
-- [ ] **FLUSS-02**: Der Sankey bilanziert über einen erklärten Knoten „Defizit (Entnahme aus Rücklagen)“ und den Minderaufwand als Gegenposten
-- [ ] **FLUSS-03**: Hover hebt Pfade hervor; ein Klick auf einen Aufgabenbereich führt zur Ausgabenseite
-- [ ] **FLUSS-04**: Auf schmalen Bildschirmen erscheint statt des Sankeys eine Tabelle oder gestapelte Balken
+- [x] **FLUSS-01**: Nutzer sieht einen Sankey 2026 (Ergebnisplan): Ertragsarten (Steuern nach Art) → Gemeindehaushalt → Weitergabe an Kreis und Land, Aufgabenbereiche, Zinsen
+- [x] **FLUSS-02**: Der Sankey bilanziert über einen erklärten Knoten „Defizit (Entnahme aus Rücklagen)“ und den Minderaufwand als Gegenposten
+- [x] **FLUSS-03**: Hover hebt Pfade hervor; ein Klick auf einen Aufgabenbereich führt zur Ausgabenseite
+- [x] **FLUSS-04**: Auf schmalen Bildschirmen erscheint statt des Sankeys eine Tabelle oder gestapelte Balken
 
 ### Entwicklung
 
@@ -116,17 +116,17 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 
 ### Glossar
 
-- [ ] **GLOS-01**: Das Glossar erklärt alle Begriffe aus Spez. 6.14 (mindestens 22 Begriffe)
-- [ ] **GLOS-02**: Das Glossar listet alle 63 Produkte mit Beschreibung als Akkordeon
-- [ ] **GLOS-03**: `GlossarBegriff`-Links auf allen Seiten führen zum jeweiligen Begriff
+- [x] **GLOS-01**: Das Glossar erklärt alle Begriffe aus Spez. 6.14 (mindestens 22 Begriffe)
+- [x] **GLOS-02**: Das Glossar listet alle 63 Produkte mit Beschreibung als Akkordeon
+- [x] **GLOS-03**: `GlossarBegriff`-Links auf allen Seiten führen zum jeweiligen Begriff
 
 ### Gemeinsame UI
 
-- [ ] **UI-01**: Auf Einnahmen, Ausgaben und Geldfluss gibt es einen Jahr-Umschalter (2024 Ist … 2029 Planung), Standard ist 2026
+- [x] **UI-01**: Auf Einnahmen, Ausgaben und Geldfluss gibt es einen Jahr-Umschalter (2024 Ist … 2029 Planung), Standard ist 2026
 - [ ] **UI-02**: „Quelle anzeigen“ öffnet an Kennzahlen und Tabellenzeilen eine Seitenleiste mit dem PDF-Ausschnitt
-- [ ] **UI-03**: Die Fußzeile zeigt Datenstand, Link zum Original-PDF, den Hinweis „inoffizielles Projekt“ und einen Kontakt
+- [x] **UI-03**: Die Fußzeile zeigt Datenstand, Link zum Original-PDF, den Hinweis „inoffizielles Projekt“ und einen Kontakt
 - [ ] **UI-04**: Ein Hinweis „Was nicht im Haushalt steht“ erklärt BBO (Hallenbad) und TEO AöR (Abwasser)
-- [ ] **UI-05**: Zahlen in Texten werden aus den Daten erzeugt, nicht fest eingetippt; jeder Erklärtext mit Zahl verweist auf eine PDF-Seite
+- [x] **UI-05**: Zahlen in Texten werden aus den Daten erzeugt, nicht fest eingetippt; jeder Erklärtext mit Zahl verweist auf eine PDF-Seite
 - [ ] **UI-06**: Alle Texte sind deutsch und durchgehend in der Du-Anrede
 
 ### Barrierefreiheit und Qualität
@@ -215,23 +215,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-02 | Phase 4 | Complete |
 | DATA-03 | Phase 4 | Complete |
 | DATA-04 | Phase 7 | Pending |
-| START-01 | Phase 5 | Pending |
-| START-02 | Phase 5 | Pending |
-| EINN-01 | Phase 5 | Pending |
-| EINN-02 | Phase 5 | Pending |
-| EINN-03 | Phase 5 | Pending |
-| EINN-04 | Phase 5 | Pending |
-| EINN-05 | Phase 5 | Pending |
-| EINN-06 | Phase 5 | Pending |
-| AUSG-01 | Phase 5 | Pending |
-| AUSG-02 | Phase 5 | Pending |
-| AUSG-03 | Phase 5 | Pending |
-| AUSG-04 | Phase 5 | Pending |
-| AUSG-05 | Phase 5 | Pending |
-| FLUSS-01 | Phase 5 | Pending |
-| FLUSS-02 | Phase 5 | Pending |
-| FLUSS-03 | Phase 5 | Pending |
-| FLUSS-04 | Phase 5 | Pending |
+| START-01 | Phase 5 | Complete |
+| START-02 | Phase 5 | Complete |
+| EINN-01 | Phase 5 | Complete |
+| EINN-02 | Phase 5 | Complete |
+| EINN-03 | Phase 5 | Complete |
+| EINN-04 | Phase 5 | Complete |
+| EINN-05 | Phase 5 | Complete |
+| EINN-06 | Phase 5 | Complete |
+| AUSG-01 | Phase 5 | Complete |
+| AUSG-02 | Phase 5 | Complete |
+| AUSG-03 | Phase 5 | Complete |
+| AUSG-04 | Phase 5 | Complete |
+| AUSG-05 | Phase 5 | Complete |
+| FLUSS-01 | Phase 5 | Complete |
+| FLUSS-02 | Phase 5 | Complete |
+| FLUSS-03 | Phase 5 | Complete |
+| FLUSS-04 | Phase 5 | Complete |
 | ENTW-01 | Phase 6 | Pending |
 | ENTW-02 | Phase 6 | Pending |
 | ENTW-03 | Phase 6 | Pending |
@@ -246,14 +246,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STEL-01 | Phase 6 | Pending |
 | STEL-02 | Phase 6 | Pending |
 | STEL-03 | Phase 6 | Pending |
-| GLOS-01 | Phase 5 | Pending |
-| GLOS-02 | Phase 5 | Pending |
-| GLOS-03 | Phase 5 | Pending |
-| UI-01 | Phase 5 | Pending |
+| GLOS-01 | Phase 5 | Complete |
+| GLOS-02 | Phase 5 | Complete |
+| GLOS-03 | Phase 5 | Complete |
+| UI-01 | Phase 5 | Complete |
 | UI-02 | Phase 7 | Pending |
-| UI-03 | Phase 5 | Pending |
+| UI-03 | Phase 5 | Complete |
 | UI-04 | Phase 6 | Pending |
-| UI-05 | Phase 5 | Pending |
+| UI-05 | Phase 5 | Complete |
 | UI-06 | Phase 7 | Pending |
 | A11Y-01 | Phase 7 | Pending |
 | A11Y-02 | Phase 7 | Pending |
