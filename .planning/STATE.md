@@ -3,11 +3,11 @@ gsd_state_version: "1.0"
 current_phase: 6
 current_phase_name: Kontext-Seiten
 status: planning
-stopped_at: Phase 05 complete, ready to plan Phase 6
-last_updated: "2026-10-05T18:21:06.364Z"
+stopped_at: Phase 6 context gathered
+last_updated: "2026-10-05T18:37:30.560Z"
 last_activity: 2026-10-05
 last_activity_desc: Phase 05 complete, transitioned to Phase 6
-state_head: 3e2e14c947e89033cc5de85e6795829dd777f183
+state_head: 4e74ecc4214a9a798c870efb9b5b458035fee1d4
 progress:
   total_phases: 7
   completed_phases: 5
@@ -112,6 +112,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-05T18:25:00Z
-Stopped at: Phase 5 complete, ready to plan Phase 6
-Resume file: None
+Last session: 2026-10-05T18:37:30.497Z
+Stopped at: Phase 6 context gathered
+Resume file: .planning/phases/06-kontext-seiten/06-CONTEXT.md
