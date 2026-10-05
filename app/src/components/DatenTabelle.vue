@@ -54,8 +54,9 @@ if (import.meta.env.DEV) {
 
 // Ein waagerecht scrollbarer Bereich muss per Tastatur erreichbar und benannt sein; eine
 // Tabelle, die in die Breite passt, braucht das nicht (kein überflüssiger Tabstopp, keine
-// doppelte Namensansage neben der unsichtbaren Caption). Daher gelten Fokus und Region nur,
-// solange der Inhalt breiter ist als der Rahmen.
+// doppelte Namensansage neben der unsichtbaren Caption). Daher gilt der Fokus (tabindex) nur,
+// solange der Inhalt breiter ist als der Rahmen; Rolle und Name zusätzlich nur mit
+// `beschriftung` (ein aria-label ohne Rolle wäre ungültig).
 const rahmen = ref<HTMLElement | null>(null)
 const ueberlaeuft = ref(false)
 let beobachter: ResizeObserver | undefined
@@ -117,7 +118,7 @@ function alsZahl(wert: string | number | null | undefined): number {
     class="om-tabelle-rahmen"
     :role="scrollbarBenannt ? 'region' : undefined"
     :aria-label="scrollbarBenannt ? beschriftung : undefined"
-    :tabindex="scrollbarBenannt ? 0 : undefined"
+    :tabindex="ueberlaeuft ? 0 : undefined"
   >
     <div v-if="laedt" class="om-tabelle-skeleton">
       <wa-skeleton effect="sheen"></wa-skeleton>
