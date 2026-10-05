@@ -1,9 +1,9 @@
 ---
-status: diagnosed
+status: complete
 phase: 05-leitfragen-seiten
 source: [05-VERIFICATION.md]
 started: 2026-10-04T14:37:16Z
-updated: 2026-10-05T17:28:30Z
+updated: 2026-10-05T18:10:00Z
 ---
 
 ## Current Test
@@ -26,9 +26,9 @@ result: pass
 
 ### 4. Produktseite /#/produkt/030101, /#/produkt/160101 und ein Produkt ohne Investitionen öffnen (Plan 05-11)
 expected: Abschnittsreihenfolge laut UI-SPEC, Tabelle scrollt bei 360 px mit fester erster Spalte, Zurück-Link führt zur selben Ebene und demselben Jahr
-result: issue
-reported: "Auf den Produktseiten liegen Glossarbegriffshülle (\"Bindungsgrad\") und Glossarbegriff (\"teils pflichtig, teils freiwillig\") leicht übereinder (Überschneidung)"
-severity: cosmetic
+result: pass
+retest_of: G-05-4 (resolved by 05-16)
+previously_reported: "Auf den Produktseiten liegen Glossarbegriffshülle (\"Bindungsgrad\") und Glossarbegriff (\"teils pflichtig, teils freiwillig\") leicht übereinder (Überschneidung)"
 
 ### 5. Geldfluss-Seite je Jahr 2024 bis 2029 ansehen (Plan 05-12)
 expected: Sankey bilanziert (Defizit und Minderaufwand links, Überschuss rechts in 2024), Knotenbeschriftungen überlappen bei 700 bis 1280 px nicht, Lesehilfe passt zum Jahr
@@ -36,9 +36,9 @@ result: pass
 
 ### 6. Glossar öffnen, Sprungmarken und GlossarBegriff-Links aus Seiten testen (Plan 05-13, 05-15)
 expected: Link scrollt zum Begriff und setzt den Fokus, Tooltip zeigt den ersten Satz bei Hover und Fokus, Produktakkordeon klappt auf und „Produkt öffnen“ führt zur Produktseite
-result: issue
-reported: "Nach dem Klick auf einen Begriff scrollt die Seite zu weit nach oben, das fokussierte Element ist dadurch nicht sichtbar."
-severity: major
+result: pass
+retest_of: G-05-6 (resolved by 05-16)
+previously_reported: "Nach dem Klick auf einen Begriff scrollt die Seite zu weit nach oben, das fokussierte Element ist dadurch nicht sichtbar."
 
 ### 7. Tastatur- und Skip-Link-Prüfung (Plan 05-07)
 expected: Skip-Link „Zum Inhalt springen“ erscheint als erstes fokussierbares Element und springt zum Hauptinhalt; Fokusring überall sichtbar
@@ -51,8 +51,8 @@ result: pass
 ## Summary
 
 total: 8
-passed: 6
-issues: 2
+passed: 8
+issues: 0
 pending: 0
 skipped: 0
 blocked: 0
@@ -60,8 +60,10 @@ blocked: 0
 ## Gaps
 
 - gap_id: G-05-4
+  status: resolved
+  resolved_by: 05-16-PLAN.md
+  resolved_at: 2026-10-05
   truth: "Produktseiten: Abschnittsreihenfolge laut UI-SPEC, Tabelle scrollt bei 360 px mit fester erster Spalte, Zurück-Link führt zur selben Ebene und demselben Jahr; Glossarbegriff und Wert überlappen nicht"
-  status: failed
   reason: "User reported: Auf den Produktseiten liegen Glossarbegriffshülle (\"Bindungsgrad\") und Glossarbegriff (\"teils pflichtig, teils freiwillig\") leicht übereinder (Überschneidung)"
   severity: cosmetic
   test: 4
@@ -77,8 +79,10 @@ blocked: 0
   debug_session: .planning/debug/produkt-glossarbegriff-ueberlappung.md
 
 - gap_id: G-05-6
+  status: resolved
+  resolved_by: 05-16-PLAN.md
+  resolved_at: 2026-10-05
   truth: "GlossarBegriff-Link scrollt zum Begriff und setzt den Fokus; der fokussierte Begriff ist danach sichtbar"
-  status: failed
   reason: "User reported: Nach dem Klick auf einen Begriff scrollt die Seite zu weit nach oben, das fokussierte Element ist dadurch nicht sichtbar."
   severity: major
   test: 6
