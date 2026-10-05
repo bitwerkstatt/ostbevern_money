@@ -222,12 +222,24 @@ def test_lies_erklaerungen_eigene_kopfzeile(tmp_path: Path) -> None:
         lies_erklaerungen(pfad)
 
 
-@pytest.mark.parametrize("spanne", ["S. 309-311", "S. 24/25", "S. 5, S. 8 - 9"])
+@pytest.mark.parametrize(
+    "spanne",
+    [
+        "S. 309-311",
+        "S. 24/25",
+        "S. 5, S. 8 - 9",
+        "S. 24, 25",
+        "S. 309 bis 311",
+        "S. 309 f.",
+        "S. 309\u2014311",
+        "S. 309 \u2212 311",
+    ],
+)
 def test_lies_erklaerungen_lehnt_seitenspannen_in_der_quelle_ab(
     tmp_path: Path, spanne: str
 ) -> None:
     pfad = _schreibe(tmp_path, _GUELTIGE_DATEI.replace("Quelle: S. 12", f"Quelle: {spanne}"))
-    with pytest.raises(TexteFehler, match="Seitenspannen"):
+    with pytest.raises(TexteFehler, match="jede Seite einzeln"):
         lies_erklaerungen(pfad)
 
 
