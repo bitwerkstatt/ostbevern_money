@@ -172,7 +172,7 @@ Plans:
   4. `/geldfluss` zeigt einen Sankey 2026, der über „Defizit (Entnahme aus Rücklagen)“ und den Minderaufwand bilanziert. Hover hebt Pfade hervor, und ein Klick auf einen Aufgabenbereich öffnet die Ausgabenseite. Auf schmalen Bildschirmen erscheint stattdessen eine Tabelle oder ein gestapelter Balken. Einnahmen, Ausgaben und Geldfluss haben einen Jahr-Umschalter (2024 Ist … 2029 Planung, Standard 2026).
   5. `/glossar` erklärt mindestens die 22 Begriffe aus Spez. 6.14 und listet alle 63 Produkte als Akkordeon. `GlossarBegriff`-Links auf den Seiten führen zum jeweiligen Begriff. Zahlen in Erklärtexten werden aus den Daten erzeugt und verweisen auf eine PDF-Seite.
 
-**Plans**: 15/15 plans executed
+**Plans**: 15/16 plans executed
 **UI hint**: yes
 
 Plans:
@@ -200,6 +200,9 @@ Plans:
 
 **Wave 5** *(blocked on Wave 4 completion)*
 - [x] 05-15-PLAN.md — `GlossarBegriff`-Verlinkung auf allen Seiten, Quelltext-Prüfung „keine getippten Zahlen“, Phasen-Gate (Wave 5)
+
+**Gap Closure** *(UAT G-05-4, G-05-6)*
+- [ ] 05-16-PLAN.md — Glossar-Sprung unter der Kopfzeile (Router-Versatz aus scroll-margin-top, Token `--wa-space-m`, Token-Wächter, Einnahmen-Aufschlüsselung), Abstand Etikett–Wert im Produkt-Block (Gap Closure)
 
 ### Phase 6: Kontext-Seiten
 
