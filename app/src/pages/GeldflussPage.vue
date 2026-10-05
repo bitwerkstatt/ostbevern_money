@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue'
 
-import { euro, jahr as formatiereJahr } from '@/charts/format'
-import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
+import { jahr as formatiereJahr } from '@/charts/format'
+import EuroBetrag from '@/components/EuroBetrag.vue'
 import ChartCard from '@/components/ChartCard.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
@@ -76,8 +76,11 @@ const lesesatz = computed(() =>
             >
               <template #zelle="{ zeile, spalte, wert }">
                 <template v-if="spalte.schluessel === 'wert' && typeof wert === 'number'">
-                  <span v-if="zeile['gerundet'] === 1">rd. </span>{{ euro(wert) }}
-                  <BerechnetEtikett v-if="zeile['berechnet'] === 1" />
+                  <EuroBetrag
+                    :wert="wert"
+                    :gerundet="zeile['gerundet'] === 1"
+                    :berechnet="zeile['berechnet'] === 1"
+                  />
                 </template>
               </template>
             </DatenTabelle>
@@ -91,8 +94,11 @@ const lesesatz = computed(() =>
             >
               <template #zelle="{ zeile, spalte, wert }">
                 <template v-if="spalte.schluessel === 'wert' && typeof wert === 'number'">
-                  <span v-if="zeile['gerundet'] === 1">rd. </span>{{ euro(wert) }}
-                  <BerechnetEtikett v-if="zeile['berechnet'] === 1" />
+                  <EuroBetrag
+                    :wert="wert"
+                    :gerundet="zeile['gerundet'] === 1"
+                    :berechnet="zeile['berechnet'] === 1"
+                  />
                 </template>
                 <template
                   v-else-if="spalte.schluessel === 'name' && typeof zeile.code === 'string'"

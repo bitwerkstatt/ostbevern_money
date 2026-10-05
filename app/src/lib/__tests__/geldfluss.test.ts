@@ -10,6 +10,7 @@ import {
   baueGeldflussBalken,
   geldflussOption,
   lesehilfeSatz,
+  RD_PRAEFIX,
   welcheLesetexte,
   zielCodeAusKlick,
 } from '@/lib/geldfluss'
@@ -193,9 +194,28 @@ describe('Vorbericht-Beträge im Geldfluss (WR-01: „rd.“ und „berechnet“
     const option = geldflussOption(fluss, { wertartText: 'Ansatz 2026' })
     const tooltip = option.tooltip as { formatter: (params: unknown) => string }
     const knoten = nachId('ertrag:gewerbesteuer')
-    expect(tooltip.formatter({ dataType: 'node', name: knoten?.id })).toContain('rd. ')
+    expect(tooltip.formatter({ dataType: 'node', name: knoten?.id })).toContain(RD_PRAEFIX)
     const ziel = fluss.knoten.find((k) => k.art === 'kl')
-    expect(tooltip.formatter({ dataType: 'node', name: ziel?.id })).not.toContain('rd. ')
+    expect(tooltip.formatter({ dataType: 'node', name: ziel?.id })).not.toContain(RD_PRAEFIX)
+  })
+
+  it('zeigt Kanten mit „rd.“, wenn der Ertragsknoten gerundet ist, und sonst ohne', () => {
+    const option = geldflussOption(fluss, { wertartText: 'Ansatz 2026' })
+    const tooltip = option.tooltip as { formatter: (params: unknown) => string }
+    const kantenTooltip = (quelle: string, ziel: string) => {
+      const kante = fluss.kanten.find((k) => k.quelle === quelle && k.ziel === ziel)
+      expect(kante, `${quelle} → ${ziel}`).toBeDefined()
+      return tooltip.formatter({
+        dataType: 'edge',
+        data: { source: kante?.quelle, target: kante?.ziel, value: kante?.wert },
+      })
+    }
+    // Ertrag (gerundet) → Gemeinde: Kante erbt das Flag des Ertragsknotens (links).
+    expect(kantenTooltip('ertrag:gewerbesteuer', 'mitte:gemeinde')).toContain(RD_PRAEFIX)
+    // Gemeinde → Kreisumlage (Ergebnisplan-Wert): Kante erbt das Flag des Zielknotens (rechts).
+    const kl = fluss.knoten.find((k) => k.art === 'kl')
+    expect(kl?.gerundet).toBe(false)
+    expect(kantenTooltip('mitte:gemeinde', kl?.id ?? '')).not.toContain(RD_PRAEFIX)
   })
 
   it('übernimmt die Flags in die Balkensegmente', () => {
@@ -206,7 +226,7 @@ describe('Vorbericht-Beträge im Geldfluss (WR-01: „rd.“ und „berechnet“
   })
 
   it('betragMitHinweis setzt „rd.“ nur bei gerundeten Beträgen', () => {
-    expect(betragMitHinweis(7_800_000, true)).toBe(`rd. ${euro(7_800_000)}`)
+    expect(betragMitHinweis(7_800_000, true)).toBe(`${RD_PRAEFIX}${euro(7_800_000)}`)
     expect(betragMitHinweis(7_800_000, false)).toBe(euro(7_800_000))
   })
 })

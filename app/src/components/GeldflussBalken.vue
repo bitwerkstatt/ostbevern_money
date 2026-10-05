@@ -10,8 +10,8 @@ import {
   type BalkenSegment,
   type Geldfluss,
 } from '@/lib/geldfluss'
-import { euro, euroKurz } from '@/charts/format'
-import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
+import { euroKurz } from '@/charts/format'
+import EuroBetrag from '@/components/EuroBetrag.vue'
 import { useJahr } from '@/lib/jahr'
 
 const props = defineProps<{
@@ -80,8 +80,11 @@ const gruppen = computed(() => {
       >
         <template #zelle="{ zeile, spalte, wert }">
           <template v-if="spalte.schluessel === 'wert' && typeof wert === 'number'">
-            <span v-if="zeile['gerundet'] === 1">rd. </span>{{ euro(wert) }}
-            <BerechnetEtikett v-if="zeile['berechnet'] === 1" />
+            <EuroBetrag
+              :wert="wert"
+              :gerundet="zeile['gerundet'] === 1"
+              :berechnet="zeile['berechnet'] === 1"
+            />
           </template>
           <span v-else-if="spalte.schluessel === 'name'" class="om-geldfluss-balken__name">
             <span
