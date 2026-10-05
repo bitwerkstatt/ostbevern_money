@@ -5,7 +5,7 @@ titles: json
 findings:
   - id: WR-01
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "`Quelle:` page lists without a repeated `S.` are still silently truncated (incomplete fix of the old WR-04)"
   - id: WR-02
     severity: warning
@@ -17,7 +17,7 @@ findings:
     title: "`alsRgb` turns an unparseable colour into black without a signal"
   - id: IN-02
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Scroll region without `beschriftung` is never keyboard-focusable; the new overflow logic has no test"
   - id: IN-03
     severity: info
@@ -75,19 +75,19 @@ findings:
     severity: info
     disposition: open
     title: "Documentation and tooling drift"
-open: 9
+open: 7
 total: 18
-recorded: 2026-10-05T05:19:26.707Z
+recorded: 2026-10-05T05:19:38.550Z
 ---
 
 # Phase 05: Code Review Disposition
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| WR-01 | warning | open | - |
+| WR-01 | warning | fixed | 05-REVIEW-FIX.md |
 | WR-02 | warning | fixed | 05-REVIEW-FIX.md |
 | IN-01 | info | fixed | 05-REVIEW-FIX.md |
-| IN-02 | info | open | - |
+| IN-02 | info | fixed | 05-REVIEW-FIX.md |
 | IN-03 | info | fixed | 05-REVIEW-FIX.md |
 | IN-04 | info | fixed | 05-REVIEW-FIX.md |
 | WR-03 | warning | fixed | 05-REVIEW-FIX.md (not in the current review) |
