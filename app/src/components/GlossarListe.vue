@@ -52,8 +52,10 @@ function fokussiereUeberschrift(ereignis: FocusEvent) {
   flex-direction: column;
   gap: var(--wa-space-s);
   max-width: 100%;
-  /* Unter der Kopfzeile: wa-page liefert die Höhe, md ist der Abstand darüber. */
-  scroll-margin-top: calc(var(--scroll-margin-top, 0px) + var(--wa-space-md));
+  /* Unter der Kopfzeile: wa-page liefert die Höhe über --scroll-margin-top, --wa-space-m ist
+     der Abstand über dem Begriff. Der Router liest diesen Wert als Scroll-Versatz
+     (lib/sprungziel.ts). */
+  scroll-margin-top: calc(var(--scroll-margin-top, 0px) + var(--wa-space-m));
 }
 
 .om-glossar-liste__begriff:focus {

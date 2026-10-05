@@ -75,8 +75,6 @@ describe('sprungPosition', () => {
 
   it('liefert bei reinem Query-Wechsel (gleicher Pfad, kein Ziel) false', () => {
     const gleich = { path: '/einnahmen', hash: '' }
-    expect(sprungPosition(gleich, { path: '/einnahmen' }, null, findeNichts, versatz96)).toBe(
-      false,
-    )
+    expect(sprungPosition(gleich, { path: '/einnahmen' }, null, findeNichts, versatz96)).toBe(false)
   })
 })
