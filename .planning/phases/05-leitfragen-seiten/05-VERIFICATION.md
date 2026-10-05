@@ -1,8 +1,8 @@
 ---
 phase: 05-leitfragen-seiten
-verified: 2026-10-04T17:10:00Z
+verified: 2026-10-05T20:10:00Z
 status: human_needed
-score: 5/5 roadmap success criteria verified in code and data (browser behavior pending)
+score: 5/5 roadmap success criteria verified in code and data; 6/6 must-haves of gap-closure plan 05-16 verified in code (browser behavior pending)
 covered_files:
   - .planning/phases/05-leitfragen-seiten/05-01-PLAN.md
   - .planning/phases/05-leitfragen-seiten/05-01-SUMMARY.md
@@ -34,6 +34,8 @@ covered_files:
   - .planning/phases/05-leitfragen-seiten/05-14-SUMMARY.md
   - .planning/phases/05-leitfragen-seiten/05-15-PLAN.md
   - .planning/phases/05-leitfragen-seiten/05-15-SUMMARY.md
+  - .planning/phases/05-leitfragen-seiten/05-16-PLAN.md
+  - .planning/phases/05-leitfragen-seiten/05-16-SUMMARY.md
   - app/src/App.vue
   - app/src/components/AufwandTreemap.vue
   - app/src/components/AufwandsartBalken.vue
@@ -62,6 +64,8 @@ covered_files:
   - app/src/data/haushalt.json
   - app/src/data/produkte.json
   - app/src/data/texte.json
+  - app/src/lib/__tests__/sprungziel.test.ts
+  - app/src/lib/__tests__/stiltokens.test.ts
   - app/src/lib/ansage.ts
   - app/src/lib/ansicht.ts
   - app/src/lib/aufwandsarten.ts
@@ -78,6 +82,7 @@ covered_files:
   - app/src/lib/kreisumlage.ts
   - app/src/lib/menue.ts
   - app/src/lib/produkt.ts
+  - app/src/lib/sprungziel.ts
   - app/src/lib/texte.ts
   - app/src/lib/webawesome.ts
   - app/src/lib/zeilen.ts
@@ -91,9 +96,17 @@ covered_files:
   - app/src/router/index.ts
   - pipeline/ostbevern/app_daten.py
   - pipeline/ostbevern/texte.py
-covered_digest: "v2:sha256:0112f03a585ffe6c3d6a229bf7212d8b2035d4737b27211eb6a65b0e924168f9"
-behavior_unverified: 4
+covered_digest: "v2:sha256:fd1d7a1c6d3757ecfd0aff58fb5dc9923bcb81f2b451847da44c8b8edaa0154a"
+behavior_unverified: 5
 overrides_applied: 0
+re_verification:
+  previous_status: human_needed
+  previous_score: 5/5 roadmap success criteria verified in code and data (browser behavior pending)
+  gaps_closed:
+    - "G-05-6 (UAT, major): GlossarBegriff-Sprung landete unter der festen Kopfzeile (Router-Offset fehlte, --wa-space-md undefiniert) - Code- und Testbeleg, Browserbeleg offen"
+    - "G-05-4 (UAT, cosmetic): Unterstrich von „Bindungsgrad“ berührte das wa-tag (kein Abstand dt/dd) - CSS-Beleg, Browserbeleg offen"
+  gaps_remaining: []
+  regressions: []
 behavior_unverified_items:
   - truth: "Nach jedem Seitenwechsel springt der Fokus auf die h1, der Titel wird gesetzt und die Ansage erfolgt (D-13, router/index.ts afterEach)"
     test: "Im Browser zwischen Start, Einnahmen, Ausgaben, Geldfluss und Glossar wechseln (Menü und Tastatur), danach document.title, document.activeElement und die Live-Region prüfen; zusätzlich /#/glossar#hebesatz direkt aufrufen"
@@ -111,7 +124,20 @@ behavior_unverified_items:
     test: "Fenster auf 360 px verkleinern und /#/geldfluss sowie das Menü öffnen; über 700 px zurück"
     expected: "GeldflussBalken statt SankeyDiagramm, kein horizontales Scrollen, Drawer öffnet, schließt bei Navigation und gibt den Fokus an die Menütaste zurück"
     why_human: "useSchmalerBildschirm und die Drawer-Ereignisse hängen an matchMedia und Web-Awesome-Elementen, die vitest ohne DOM nicht ausführt"
+  - truth: "Nach einem Klick auf einen GlossarBegriff oder eine Sprungmarke landet der Zielbegriff unter der festen wa-page-Kopfzeile und ist vollständig sichtbar (G-05-6, GLOS-03, D-16)"
+    test: "Auf /#/produkt/030101 den Link „Bindungsgrad“ anklicken; auf /#/glossar die erste, eine mittlere und die letzte Sprungmarke anklicken; je bei 1280 px und 360 px (Drawer-Kopfzeile), einmal mit prefers-reduced-motion"
+    expected: "Der Begriff samt 2-px-Fokusring liegt vollständig unter der Kopfzeile sichtbar; der Sprung ist ein Sofortsprung"
+    why_human: "sprungPosition ist per Unit-Test auf { el, top } geprüft und vue-router zieht top ab (Quelltext gelesen), aber der berechnete scroll-margin-top (calc mit var(--scroll-margin-top), vererbt von wa-page) und die tatsächliche Landeposition entstehen nur im Browser"
 human_verification:
+  - test: "Glossar-Sprung unter der Kopfzeile (Plan 05-16, G-05-6): /#/produkt/030101 „Bindungsgrad“ anklicken; auf /#/glossar drei Sprungmarken (erste, mittlere, letzte) anklicken; bei 1280 px und bei 360 px (Drawer-Kopfzeile); einmal mit prefers-reduced-motion"
+    expected: "Der Begriff und sein Fokusring liegen vollständig sichtbar direkt unter der festen Kopfzeile; der Sprung bleibt ein Sofortsprung"
+    why_human: "Landeposition hängt am berechneten scroll-margin-top und an der Kopfzeilenhöhe von wa-page, nur im Browser sichtbar"
+  - test: "Einnahmen-Balken-Scroll (Plan 05-16): auf /#/einnahmen den Balken „Steuern“ anklicken, bei 1280 px und 360 px"
+    expected: "Die Zeile der geöffneten Aufschlüsselung liegt vollständig unter der festen Kopfzeile; mit prefers-reduced-motion ohne Animation"
+    why_human: "scrollIntoView mit scroll-margin-top, Sichtbarkeit unter der Kopfzeile ist ein Layouturteil"
+  - test: "Produktseite Etikett–Wert-Abstand (Plan 05-16, G-05-4): /#/produkt/030101 und /#/produkt/160101 bei 360 px und 1280 px"
+    expected: "Der gepunktete Unterstrich von „Bindungsgrad“ berührt das wa-tag darunter nicht (4 px Abstand); Gremium und Fachbereich zeigen denselben Abstand"
+    why_human: "Überlappung von Unterstreichung und Tag-Rand ist ein Rendering-Urteil; automatisch ist nur die CSS-Deklaration belegt"
   - test: "Kennzahlenband, Einstiege, Kreisumlage-Hinweis und Fußzeile auf der Startseite bei 360 px und 1280 px ansehen (Plan 05-08)"
     expected: "Sieben Kacheln ohne horizontales Scrollen und ohne umbrechende Zahlen; „-2,35 Mio. €“ steht neben „Defizit“; „berechnet“-Etikett zeigt Tooltip bei Fokus; beide Einstiege und der Kreisumlage-Link navigieren"
     why_human: "Layout, Umbruch und Tooltip-Fokus sind ohne Browser nicht prüfbar (Sandbox hat keinen Browser)"
@@ -142,11 +168,32 @@ gaps: []
 # Phase 5: Leitfragen-Seiten Verification Report
 
 **Phase Goal:** Bürgerinnen und Bürger finden in der App laienverständliche Antworten auf „Wo kommt das Geld her?“ und „Wofür wird es ausgegeben?“. Jede gezeigte Zahl stammt aus den generierten Daten.
-**Verified:** 2026-10-04T17:10:00Z
+**Verified:** 2026-10-05T20:10:00Z
 **Status:** human_needed
-**Re-verification:** No, initial verification
+**Re-verification:** Ja, nach Gap-Closure-Plan 05-16 (G-05-4, G-05-6 aus 05-UAT.md); Erstverifikation vom 2026-10-04 (23 Dateien, 1005 Tests)
 
-## Zusammenfassung
+## Re-Verifikation nach Plan 05-16 (G-05-4, G-05-6)
+
+Ausgangslage: 05-UAT.md meldet 6 bestanden und 2 Probleme. Plan 05-16 sollte beide schließen. Ich habe die Must-haves des Plans gegen den Code geprüft, nicht gegen 05-16-SUMMARY.md. Ergebnis: alle sechs Wahrheiten sind im Code belegt, keine Regression, keine neuen Gaps. Die Landeposition im Browser bleibt offen und steht unter Human Verification.
+
+| # | Must-have aus 05-16 | Status | Evidenz |
+|---|---------------------|--------|---------|
+| 1 | Hash-Ziel landet unter der Kopfzeile: Router scrollt zum Element minus dessen berechnetes `scroll-margin-top` | ✓ VERIFIED im Code, ⚠️ PRESENT_BEHAVIOR_UNVERIFIED im Browser | `router/index.ts` `scrollBehavior` delegiert an `sprungPosition(to, from, gespeichert)`; `sprungziel.ts` gibt `{ el: ziel, top: versatz(ziel) }` zurück, `scrollVersatz` liest `getComputedStyle(ziel).scrollMarginTop`. vue-router (`devtools-CN5uWJaH.js`, `getElementPosition`) rechnet `top = elRect.top - docRect.top - (offset.top \|\| 0)`, `top` ist also ein Abzug, wie der Plan annimmt. `wa-page` definiert `--scroll-margin-top: calc(var(--header-height, 0px) + var(--subheader-height, 0px) + 0.5em)` (Web-Awesome-Stylesheet, gelesen). `GlossarListe.vue:58` nutzt `calc(var(--scroll-margin-top, 0px) + var(--wa-space-m))` |
+| 2 | `sprungPosition` liefert genau `{ el, top }`; Offset 0 bei unlesbar oder negativ; unbekannter Hash bleibt oben; gespeicherte Position und reiner Query-Wechsel wie zuvor | ✓ VERIFIED | `sprungziel.ts` Zweigfolge: Ziel, gespeichert, gleicher Pfad `false`, sonst `{ top: 0 }`; `versatzAusScrollMargin` lässt nur endliche Werte > 0 zu. `sprungziel.test.ts` (11 Tests) enthält `toEqual({ el, top: 96 })` und `toEqual({ top: 0 })`. Lauf: 2 Dateien, 16 Tests grün |
+| 3 | Sprung bleibt ein Sofortsprung, kein `behavior`-Schlüssel | ✓ VERIFIED | Rückgabe enthält kein `behavior`; `toEqual` im Test schließt einen zusätzlichen Schlüssel aus |
+| 4 | Jedes `var(--wa-*)` in `app/src` ist definiert, ein Test schlägt bei undefiniertem Token fehl; `--wa-space-md` ist behoben | ✓ VERIFIED | `grep wa-space-md app/src` trifft nur noch die absichtlichen Beispiele in `stiltokens.test.ts`. Mutationsprobe in einer Scratch-Kopie: Rückgängig-Machen der Korrektur in `GlossarListe.vue` lässt `stiltokens.test.ts` mit `expected [ '--wa-space-md' ] to deeply equal []` fehlschlagen; mit der Korrektur 5/5 grün. Der Test hat Sanity-Zähler (> 20 Dateien, > 100 Tokens) |
+| 5 | Einnahmen-Balkenklick scrollt unter die Kopfzeile nach derselben Regel; Reduced-Motion-Schalter unverändert | ✓ VERIFIED im Code, ⚠️ Browser offen | `EinnahmenPage.vue:447` `scroll-margin-top: calc(var(--scroll-margin-top, 0px) + var(--wa-space-m))`; `oeffneAufschluesselung` ist im Plan-Diff nicht angefasst (Plan 05-16 listet nur diese Regel als Änderung) |
+| 6 | Blick-Block: dt/dd durch `--wa-space-2xs` getrennt, Unterstrich berührt das Tag nicht | ✓ VERIFIED im Code, ⚠️ Browser offen | `ProduktPage.vue:238-242` `.om-produkt__blick dd { margin: 0; margin-block-start: var(--wa-space-2xs); }`; gilt für alle drei Zeilen |
+
+Verbote aus 05-16: `GlossarBegriff.vue:37` behält `text-underline-offset: 4px` (✓); die dt-Regel behält `line-height: var(--wa-line-height-condensed)` (✓).
+
+Key Links: `router/index.ts` → `sprungziel.ts` (Import von `elementFuerHash`, `sprungPosition`; Aufruf `sprungPosition(`) ✓ WIRED; `sprungziel.ts` → `scrollMarginTop` ✓; `GlossarListe.vue` → `var(--scroll-margin-top` ✓. Die lokale `elementFuerHash` wurde aus dem Router entfernt; `afterEach` nutzt die importierte Funktion, der Fokus-Code (D-13) ist unverändert.
+
+Selbst erhobene Evidenz: Scratch-Kopie von `app/` (git-Stand = Arbeitsbaum, keine Änderungen unter `app/`) mit der Linux-`node_modules` per Symlink; `vitest run` gesamt: **1031 Tests grün**; die beiden neuen Dateien einzeln: 16 Tests grün. Type-check, lint, format:check, build und die Pipeline-Kette (ruff, pytest 528) habe ich nicht erneut gefahren, sie wurden nach dem Merge als grün gemeldet. Anti-Pattern-Scan der neuen Dateien: keine TODO/FIXME/XXX/TBD.
+
+Folgen für den Status: G-05-4 und G-05-6 sind im Code und in den Tests geschlossen. Ob die Begriffe im Browser tatsächlich sichtbar unter der Kopfzeile landen (1280 px und 360 px) und der Unterstrich das Tag nicht mehr berührt, kann nur ein Mensch prüfen. Das sind drei neue Human-Verification-Punkte, davon einer als `behavior_unverified`. Deshalb bleibt der Status `human_needed`. Eine Rückmeldung per `/gsd-verify-work` (UAT-Tests 4 und 6) schließt die Gaps formal.
+
+## Zusammenfassung (Erstverifikation, weiterhin gültig)
 
 Ich bin von der Annahme ausgegangen, dass das Ziel verfehlt ist, und habe sie gegen Code und Daten geprüft. Sie ließ sich nicht halten: Alle fünf ROADMAP-Erfolgskriterien sind im Code vorhanden, mit den echten Daten verdrahtet und durch Unit-Tests auf konkrete Sollwerte geprüft. Es gibt keine fehlgeschlagene Wahrheit und keinen Blocker.
 
@@ -158,7 +205,7 @@ Der Status ist trotzdem `human_needed`, aus drei Gründen:
 
 ## Evidenz, die ich selbst erhoben habe
 
-- vitest in der Scratch-Kopie `.../scratchpad/s2/app`: Der Quellbaum `app/src` ist laut `diff -rq` identisch mit HEAD (`ed0b034`). Ergebnis: **23 Dateien, 1005 Tests bestanden**.
+- Erstverifikation: vitest in der Scratch-Kopie `.../scratchpad/s2/app` auf HEAD `ed0b034`: 23 Dateien, 1005 Tests bestanden. Nach Plan 05-16 (siehe oben): 25 Dateien, 1031 Tests bestanden.
 - Der Orchestrator hat die vollständige CI-Spiegelung auf dem Endstand gefahren (type-check, lint, format:check, build, pytest 515, `alle.py` byte-identisch). Das habe ich nicht erneut ausgeführt und übernehme es als gemeldet.
 - Anti-Pattern-Scan über `app/src` und `pipeline/ostbevern`: keine Treffer für TBD, FIXME, XXX, TODO, HACK, placeholder, „coming soon“, „not yet implemented“ (außerhalb der Tests).
 - `texte.json`: Nach Entfernen der `{{…}}`-Platzhalter bleiben in den 41 Texten nur Jahreszahlen und §-Verweise als Ziffern übrig. Jeder Text mit Platzhalter hat nicht-leere `quelle_seiten`.
@@ -181,7 +228,8 @@ Der Status ist trotzdem `human_needed`, aus drei Gründen:
 | Artifact | Erwartet | Status | Details |
 |----------|----------|--------|---------|
 | `app/src/pages/{Start,Einnahmen,Ausgaben,Produkt,Geldfluss,Glossar}Page.vue` | Sechs Seiten | ✓ VERIFIED | 154 / 501 / 466 / 274 / 154 / 76 Zeilen, voll gefüllte Templates, im Router eingetragen |
-| `app/src/router/index.ts` | Routen `/`, `/einnahmen`, `/ausgaben`, `/produkt/:code`, `/geldfluss`, `/glossar`, Titel und Fokus | ✓ VERIFIED | Alle sechs Routen vorhanden, `afterEach` mit Titel, Fokus, Ansage |
+| `app/src/router/index.ts` | Routen `/`, `/einnahmen`, `/ausgaben`, `/produkt/:code`, `/geldfluss`, `/glossar`, Titel und Fokus | ✓ VERIFIED | Alle sechs Routen vorhanden, `afterEach` mit Titel, Fokus, Ansage; `scrollBehavior` delegiert seit 05-16 an `sprungPosition` |
+| `app/src/lib/sprungziel.ts` (+ `sprungziel.test.ts`, `stiltokens.test.ts`) | Router-Scrollposition mit Kopfzeilen-Versatz, Token-Wächter (05-16) | ✓ VERIFIED | Substanziell (Logik, 11 + 5 Tests), vom Router importiert und genutzt |
 | `app/src/lib/*.ts` (Builder) | Datenaufbereitung ohne getippte Werte | ✓ VERIFIED | 21 Module, 19 Testdateien in `lib/__tests__` |
 | `app/src/data/{haushalt,texte,produkte}.json` | Generierte Daten | ✓ VERIFIED | Von `alle.py` byte-identisch reproduziert (Orchestrator) |
 | `pipeline/ostbevern/texte.py`, `app_daten.py` | Textprüfung und Datenexport | ✓ VERIFIED | Teil der 515 grünen Pipeline-Tests |
@@ -195,7 +243,7 @@ Der Status ist trotzdem `human_needed`, aus drei Gründen:
 | `EinnahmenPage` | Vorbericht-Tabellen | `baueSteuern`, `baueZuwendungen`, `baueSonstigeErtraege` | ✓ WIRED |
 | `AusgabenPage` | `haushalt.knoten`/`ergebnisplan` | `baueEbene`, `useAnsicht` (URL-Zustand) | ✓ WIRED |
 | `SankeyDiagramm` | `/ausgaben?pb=` | `beiKlick` → `router.push(jahrLink(…))` | ✓ WIRED (Laufzeit nicht geprüft) |
-| `GlossarBegriff` | `/glossar#schluessel` | `RouterLink` mit Hash, `scrollBehavior` | ✓ WIRED |
+| `GlossarBegriff` | `/glossar#schluessel` | `RouterLink` mit Hash, `scrollBehavior` → `sprungPosition` mit `scroll-margin-top`-Versatz (05-16) | ✓ WIRED (Landeposition im Browser offen) |
 | `GlossarPage` | 63 Produkte | `ProduktAkkordeon` → `produktGruppen()` | ✓ WIRED |
 | Seiten | Erklärtexte | `ErklaerText` → `textFuerJahr` → `rendereAbsatz` | ✓ WIRED |
 | `App.vue` Fußzeile | `config.ts` | `ORIGINAL_PDF_URL`, `KONTAKT_EMAIL` | ✓ WIRED, Werte Platzhalter |
@@ -225,7 +273,7 @@ Step 7c (Probes): Es gibt keine `probe-*.sh` und die Pläne deklarieren keine. �
 
 ## Requirements Coverage
 
-Alle 23 IDs der Phase stehen in mindestens einem PLAN-Frontmatter und in der Traceability-Tabelle von REQUIREMENTS.md als „Phase 5“. Keine verwaisten IDs. UI-02 (Phase 7), UI-04 (Phase 6) und UI-06 (Phase 7) sind korrekt nicht Phase 5 zugeordnet.
+Alle 23 IDs der Phase stehen in mindestens einem PLAN-Frontmatter (05-16 deklariert GLOS-03 und AUSG-05) und in der Traceability-Tabelle von REQUIREMENTS.md als „Phase 5“. Keine verwaisten IDs. Hinweis: Status und Checkboxen in REQUIREMENTS.md stehen noch auf „Pending“ bzw. `[ ]`; die Pflege gehört zum Phasenabschluss. UI-02 (Phase 7), UI-04 (Phase 6) und UI-06 (Phase 7) sind korrekt nicht Phase 5 zugeordnet.
 
 | Requirement | Pläne | Status | Evidenz |
 |-------------|-------|--------|---------|
@@ -241,14 +289,14 @@ Alle 23 IDs der Phase stehen in mindestens einem PLAN-Frontmatter und in der Tra
 | AUSG-02 | 05-05, 05-06, 05-10, 05-14 | ✓ SATISFIED | KL-Dekal und Callout, Minderaufwand-Callout unter dem Diagramm |
 | AUSG-03 | 05-10 | ✓ SATISFIED | `wa-radio-group` Aufwand/Zuschussbedarf, Überschuss-Callout |
 | AUSG-04 | 05-14 | ✓ SATISFIED | `AufwandsartBalken`, Transfer-Aufklapper, Abschreibung „kein Geldfluss“ |
-| AUSG-05 | 05-04, 05-11 | ✓ SATISFIED | `ProduktPage` mit allen geforderten Abschnitten; Quellenlink als Seitenangabe (D-09) |
+| AUSG-05 | 05-04, 05-11, 05-16 | ✓ SATISFIED (Optik im Browser offen) | `ProduktPage` mit allen geforderten Abschnitten; Quellenlink als Seitenangabe (D-09); Etikett–Wert-Abstand seit 05-16 (G-05-4) |
 | FLUSS-01 | 05-05, 05-12 | ✓ SATISFIED | `geldflussOption` Sankey |
 | FLUSS-02 | 05-12 | ✓ SATISFIED | Defizit- und Minderaufwand-Knoten, Bilanztest |
 | FLUSS-03 | 05-12 | ✓ SATISFIED (Laufzeit offen) | `emphasis`, `beiKlick`, `zielCodeAusKlick` getestet |
 | FLUSS-04 | 05-05, 05-12 | ✓ SATISFIED (Laufzeit offen) | `GeldflussBalken` bei `istSchmal`, Tabelle bei breit |
 | GLOS-01 | 05-03, 05-13 | ✓ SATISFIED | 24 Begriffe |
 | GLOS-02 | 05-13 | ✓ SATISFIED | `ProduktAkkordeon`, 63 Produkte |
-| GLOS-03 | 05-13, 05-15 | ✓ SATISFIED | `GlossarBegriff` auf allen fünf Inhaltsseiten, Quelltext-Test |
+| GLOS-03 | 05-13, 05-15, 05-16 | ✓ SATISFIED (Landeposition im Browser offen) | `GlossarBegriff` auf allen fünf Inhaltsseiten, Quelltext-Test; seit 05-16 scrollt der Router mit Kopfzeilen-Versatz (G-05-6) |
 | UI-01 | 05-04 | ✓ SATISFIED | `JahrUmschalter` auf Einnahmen, Ausgaben, Geldfluss; `?jahr=` validiert, Standard 2026 |
 | UI-03 | 05-07 | ⚠️ NEEDS HUMAN | Fußzeile vollständig verdrahtet; Kontakt und PDF-URL sind Platzhalter (D-17) |
 | UI-05 | 05-01, 05-03, 05-06, 05-15 | ✓ SATISFIED | Platzhalter-Renderer, Pipeline-Ziffernregel, `quelltext.test.ts`, Seitenverweis in `ErklaerText` |
@@ -279,7 +327,9 @@ Echte Kontakt-Adresse und PDF-URL sind **nicht** ausdrücklich in einem Phase-7-
 
 ## Human Verification Required
 
-Siehe das Frontmatter (`human_verification`, acht Punkte). Zusammengefasst:
+Siehe das Frontmatter (`human_verification`, elf Punkte; die ersten drei stammen aus 05-16). Zusammengefasst:
+
+0. Neu aus 05-16: Glossar-Sprung unter der Kopfzeile (1280 und 360 px, Reduced Motion), Einnahmen-Balken-Scroll, Etikett–Wert-Abstand auf Produktseiten
 
 1. Startseite bei 360 und 1280 px (Plan 05-08)
 2. Einnahmen-Seite (Plan 05-09)
@@ -290,13 +340,13 @@ Siehe das Frontmatter (`human_verification`, acht Punkte). Zusammengefasst:
 7. Skip-Link und Tastatur (Plan 05-07)
 8. Entscheidung zu Kontakt und PDF-Link in der Fußzeile (UI-03)
 
-Dazu die vier `behavior_unverified_items` (Fokus nach Routenwechsel, Sankey-Klick, Drilldown-Zusammenspiel, mobile Umschaltung und Drawer).
+Dazu die fünf `behavior_unverified_items` (vier aus der Erstverifikation, eines neu: Landeposition des Glossar-Sprungs) (Fokus nach Routenwechsel, Sankey-Klick, Drilldown-Zusammenspiel, mobile Umschaltung und Drawer).
 
 ## Gaps Summary
 
-Keine Gaps. Das Phasenziel ist im Code und in den Daten erreicht: Beide Leitfragen haben eigene Seiten, jede Zahl läuft über `haushalt.json`, `texte.json` oder `produkte.json`, und Tests binden die Kernzahlen an die Sollwerte aus dem PDF. Offen sind ausschließlich Browserprüfungen, die Entscheidung zu den Fußzeilen-Platzhaltern und ein redaktioneller Widerspruch auf der Startseite (WR-02), den ich als Warnung führe.
+Keine Gaps. Das Phasenziel ist im Code und in den Daten erreicht: Beide Leitfragen haben eigene Seiten, jede Zahl läuft über `haushalt.json`, `texte.json` oder `produkte.json`, und Tests binden die Kernzahlen an die Sollwerte aus dem PDF. Seit Plan 05-16 sind auch die beiden UAT-Gaps G-05-4 und G-05-6 im Code geschlossen. Offen sind ausschließlich Browserprüfungen, die Entscheidung zu den Fußzeilen-Platzhaltern und ein redaktioneller Widerspruch auf der Startseite (WR-02), den ich als Warnung führe.
 
 ---
 
-_Verified: 2026-10-04T17:10:00Z_
+_Verified: 2026-10-05T20:10:00Z (Re-Verifikation)_
 _Verifier: Claude (gsd-verifier)_
