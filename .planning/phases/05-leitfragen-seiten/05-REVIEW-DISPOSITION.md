@@ -5,28 +5,28 @@ titles: json
 findings:
   - id: WR-01
     severity: warning
-    disposition: fixed
-    title: "`Quelle:` page lists without a repeated `S.` are still silently truncated (incomplete fix of the old WR-04)"
+    disposition: open
+    title: "`rd.` rule is only half migrated; the new non-breaking space and `EuroBetrag` coexist with five older copies"
   - id: WR-02
     severity: warning
-    disposition: fixed
-    title: "`DatenTabelle` overflow detection observes only the elements present at mount"
+    disposition: open
+    title: "`DatenTabelle` makes the scroll container focusable without a role or name when `beschriftung` is missing"
   - id: IN-01
     severity: info
-    disposition: fixed
-    title: "`alsRgb` turns an unparseable colour into black without a signal"
+    disposition: open
+    title: "`alsRgb` rejects a valid colour that happens to normalise to the marker"
   - id: IN-02
     severity: info
-    disposition: fixed
-    title: "Scroll region without `beschriftung` is never keyboard-focusable; the new overflow logic has no test"
+    disposition: open
+    title: "`DatenTabelle` only re-observes on `laedt` / `istLeer` / `istDatenModus` changes, not on slot-mode content swaps"
   - id: IN-03
     severity: info
-    disposition: fixed
-    title: "Regel 5 still skips the Kreisumlage check silently when `meta` is `None`"
+    disposition: open
+    title: "Edge-tooltip test has a vacuous negative assertion"
   - id: IN-04
     severity: info
-    disposition: fixed
-    title: "The \"rd.\" / \"berechnet\" cell template is copy-pasted three times; the space after \"rd.\" can wrap"
+    disposition: open
+    title: "The token guard cannot see dynamic token names and only reads Web Awesome's global stylesheets"
   - id: WR-03
     severity: warning
     disposition: fixed
@@ -75,21 +75,21 @@ findings:
     severity: info
     disposition: open
     title: "Documentation and tooling drift"
-open: 7
+open: 13
 total: 18
-recorded: 2026-10-05T05:19:38.550Z
+recorded: 2026-10-05T18:00:34.075Z
 ---
 
 # Phase 05: Code Review Disposition
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| WR-01 | warning | fixed | 05-REVIEW-FIX.md |
-| WR-02 | warning | fixed | 05-REVIEW-FIX.md |
-| IN-01 | info | fixed | 05-REVIEW-FIX.md |
-| IN-02 | info | fixed | 05-REVIEW-FIX.md |
-| IN-03 | info | fixed | 05-REVIEW-FIX.md |
-| IN-04 | info | fixed | 05-REVIEW-FIX.md |
+| WR-01 | warning | open | - |
+| WR-02 | warning | open | - |
+| IN-01 | info | open | - |
+| IN-02 | info | open | - |
+| IN-03 | info | open | - |
+| IN-04 | info | open | - |
 | WR-03 | warning | fixed | 05-REVIEW-FIX.md (not in the current review) |
 | WR-04 | warning | fixed | 05-REVIEW-FIX.md (not in the current review) |
 | WR-05 | warning | fixed | 05-REVIEW-FIX.md (not in the current review) |
