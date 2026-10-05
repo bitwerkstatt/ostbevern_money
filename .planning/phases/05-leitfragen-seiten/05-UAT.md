@@ -1,9 +1,9 @@
 ---
-status: complete
+status: diagnosed
 phase: 05-leitfragen-seiten
 source: [05-VERIFICATION.md]
 started: 2026-10-04T14:37:16Z
-updated: 2026-10-05T17:22:50Z
+updated: 2026-10-05T17:28:30Z
 ---
 
 ## Current Test
@@ -65,8 +65,16 @@ blocked: 0
   reason: "User reported: Auf den Produktseiten liegen Glossarbegriffshülle (\"Bindungsgrad\") und Glossarbegriff (\"teils pflichtig, teils freiwillig\") leicht übereinder (Überschneidung)"
   severity: cosmetic
   test: 4
-  artifacts: []
-  missing: []
+  root_cause: "Im „Auf einen Blick“-Block der Produktseite hat das dt eine kondensierte Zeilenhöhe (1.2 bei font-size-s), dd hat margin 0 und es gibt keinen Abstand zwischen Label und Wert. Seit Plan 05-15 (86ce67e) ist „Bindungsgrad“ ein GlossarBegriff mit text-underline-offset 4px; die gepunktete Unterstreichung liegt unterhalb der dt-Linienbox und wird auf die obere Kante des wa-tag (Rahmen + Füllung) im dd gezeichnet."
+  artifacts:
+    - path: "app/src/pages/ProduktPage.vue"
+      issue: "Zeilen 91-98 und 232-240: dt line-height condensed, dd margin 0, kein Label/Wert-Abstand"
+    - path: "app/src/components/GlossarBegriff.vue"
+      issue: "Zeilen 36-37: fester text-underline-offset 4px ragt bei kondensierter Zeilenhöhe aus der Linienbox"
+  missing:
+    - "Abstand zwischen dt und dd im Blick-Block (z. B. dd margin-block-start var(--wa-space-2xs) oder Zeile als Flex-Spalte mit gap)"
+    - "Optional: text-underline-offset in GlossarBegriff relativ (z. B. 0.2em)"
+  debug_session: .planning/debug/produkt-glossarbegriff-ueberlappung.md
 
 - gap_id: G-05-6
   truth: "GlossarBegriff-Link scrollt zum Begriff und setzt den Fokus; der fokussierte Begriff ist danach sichtbar"
@@ -74,5 +82,15 @@ blocked: 0
   reason: "User reported: Nach dem Klick auf einen Begriff scrollt die Seite zu weit nach oben, das fokussierte Element ist dadurch nicht sichtbar."
   severity: major
   test: 6
-  artifacts: []
-  missing: []
+  root_cause: "Router-scrollBehavior gibt { el: ziel } ohne top-Offset zurück; vue-router scrollt per window.scrollTo auf y=0 und ignoriert scroll-margin-top. Dort verdeckt der sticky, deckende wa-page-Header den fokussierten Begriff. Zusätzlich ist scroll-margin-top in GlossarListe.vue ungültig, weil der Token --wa-space-md nicht existiert (richtig: --wa-space-m)."
+  artifacts:
+    - path: "app/src/router/index.ts"
+      issue: "Zeilen 99-103: scrollBehavior ohne top-Offset für Hash-Ziele"
+    - path: "app/src/components/GlossarListe.vue"
+      issue: "Zeile 56: undefinierter Token --wa-space-md macht scroll-margin-top ungültig"
+  missing:
+    - "Header-Offset beim Hash-Scroll berücksichtigen (top aus computed scrollMarginTop bzw. --header-height, oder scrollIntoView statt Router-Scroll)"
+    - "Token --wa-space-md durch --wa-space-m ersetzen"
+    - "Test: scrollBehavior liefert für Hash-Ziele einen Offset; optional Test, dass alle var(--wa-*) existieren"
+    - "Prüfen: EinnahmenPage.vue:446 scroll-margin-top berücksichtigt Headerhöhe ebenfalls nicht"
+  debug_session: .planning/debug/glossar-sprung-scrollt-zu-weit.md
