@@ -24,7 +24,7 @@ All fixes were made in an isolated git worktree and fast-forwarded onto `main`.
 
 ## Fixed Issues
 
-### WR-01: `Quelle:` page lists without a repeated `S.` are silently truncated
+### WR-01: `Quelle:` page lists without a repeated `S.` are still silently truncated (incomplete fix of the old WR-04)
 
 **Files modified:** `pipeline/ostbevern/texte.py`, `pipeline/tests/test_texte.py`
 **Commit:** 9d18267
@@ -42,7 +42,7 @@ All fixes were made in an isolated git worktree and fast-forwarded onto `main`.
 **Commit:** 20b7fc2
 **Applied fix:** Before assigning `farbe`, `fillStyle` is set to the marker `#010203`. If the marker is still there afterwards (the canvas rejected the colour) and `farbe` is not the marker itself, `alsRgb` returns `null`, so `mitDeckkraft` falls back to `color-mix` instead of producing black stripes. Browser-only code path, not covered by Vitest (no DOM); requires human verification: fixed, requires human verification.
 
-### IN-02: Scroll region without `beschriftung` is never keyboard-focusable
+### IN-02: Scroll region without `beschriftung` is never keyboard-focusable; the new overflow logic has no test
 
 **Files modified:** `app/src/components/DatenTabelle.vue`
 **Commit:** 52491a7
