@@ -1,7 +1,7 @@
 ---
 phase: "6"
 slug: "kontext-seiten"
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: "2026-10-05"
@@ -401,7 +401,7 @@ Diese Punkte stammen aus dem Abgleich von `06-CONTEXT.md` mit den tatsächlichen
 
 Probe: `ui-consideration-probe` über 13 Elemente (E1 Entwicklungsdiagramme, E2 Posten-Zeitreihen, E3 Rücklagen, E4 Bindungsgrad-Balken und Aufklapper, E5 Überschussliste, E6 Block „nicht beeinflussbar“ und Einzelzuschüsse, E7 Maßnahmen-Filter/-Chart/-Tabelle, E8 VE und Finanzierung, E9 Schuldenstand, E10 Stellenplan-Kacheln und -Diagramme, E11 Hinweisbox, E12 Menügruppe, E13 neue Routen/Seitenrahmen). Elementarten (Heuristik): E1 media+interactive-control, E2 media+list-collection, E3 media+static-content, E4 media+list-collection+nav, E5 list-collection+nav, E6 list-collection+static-content, E7 interactive-control+list-collection+media, E8 media, E9 media+static-content, E10 media+list-collection, E11 static-content, E12 nav, E13 nav. Empty-/Error-**Texte** stehen im Copywriting Contract, dieser Abschnitt bildet nur die Zustandsabdeckung ab.
 
-Applicable state considerations resolved: 57 covered, 11 backstop, 0 unresolved, 4 dismissed mit Begründung (72 Zeilen; Zeilen mit mehreren Elementen zählen einmal). Die in `05-UI-SPEC.md` offene Annahme zu E15 (Kopfmenü, zero-one-many) ist durch E12 hier gelöst.
+Applicable state considerations resolved: 61 covered, 13 backstop, 0 unresolved, 6 dismissed mit Begründung (80 Zeilen; Zeilen mit mehreren Elementen zählen einmal). Nachprüfung nach Checker-Freigabe (2026-10-05): Probe-Engine über E1–E13 ergab 77 Paare; 8 nicht explizit abgedeckte Paare wurden mit dem Nutzer aufgelöst (letzte 8 Zeilen), E8 ist heuristisch unklassifiziert und manuell abgedeckt. Die in `05-UI-SPEC.md` offene Annahme zu E15 (Kopfmenü, zero-one-many) ist durch E12 hier gelöst.
 
 | Category | Element(s) | Status | Resolution / Reason |
 |----------|------------|--------|---------------------|
@@ -477,6 +477,14 @@ Applicable state considerations resolved: 57 covered, 11 backstop, 0 unresolved,
 | error | E5, E6, E10, E11 | ⬜ dismissed | Reason: Statischer JSON-Import, kein Laufzeit-Ladefehler. Schemafehler fängt `typen.ts` zur Build-Zeit ab. |
 | empty | E13 Seitenrahmen | ⬜ dismissed | Reason: Die vier Routen sind fest, `meta.titel` ist Pflicht (Typ-Deklaration); eine leere Route gibt es nicht. |
 | error | E13 Seitenrahmen | ⬜ dismissed | Reason: Unbekannte Pfade fängt die bestehende Catch-all-Weiterleitung; die vier neuen Routen sind statisch. |
+| overflow | E5 Überschussliste | ✅ covered | Die Tabelle scrollt nur in ihrem eigenen Container; bei 360 px kein horizontales Scrollen der Seite. |
+| populated | E5 Überschussliste | 🧪 backstop | `{ statement: "Die Überschussliste enthält genau die Produkte mit negativem Zuschussbedarf, jede Zeile verlinkt auf /produkt/:code", verification: backstop }`. |
+| populated | E6 Block nicht beeinflussbar | 🧪 backstop | `{ statement: "Die KL-Kacheln stammen aus lib/kreisumlage.ts und zeigen dieselben Werte wie /einnahmen bzw. /ausgaben für das Haushaltsjahr", verification: backstop }`. |
+| overflow | E11 Hinweisbox | ✅ covered | Callout nimmt die Containerbreite, Text bricht um; bei 360 px kein horizontales Scrollen der Seite. |
+| partial | E12 Menügruppe | ⬜ dismissed | Reason: Die Gruppe ist statisch in `menue.ts` definiert; ein Teilzustand existiert nicht (leere Gruppe siehe zero-one-many). |
+| loading | E13 Seitenrahmen | ⬜ dismissed | Reason: Statischer JSON-Import; Lazy-Routen zeigen den bestehenden `wa-skeleton`-Platzhalter (siehe loading-Zeile E4…E12). |
+| overflow | E13 Seitenrahmen | ✅ covered | Lange `h1`-Titel („Wie viele Stellen hat die Verwaltung?“) brechen bei 360 px um, kein horizontales Scrollen. |
+| long-text | E13 Seitenrahmen | ✅ covered | Seitentitel und Lead werden nie gekürzt (keine Auslassungspunkte), `document.title` enthält den vollen Titel. |
 
 ---
 
@@ -491,12 +499,12 @@ Applicable state considerations resolved: 57 covered, 11 backstop, 0 unresolved,
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
-- [ ] Dimension 7 Inventory Provenance: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
+- [x] Dimension 7 Inventory Provenance: PASS
 
 **Approval:** pending
