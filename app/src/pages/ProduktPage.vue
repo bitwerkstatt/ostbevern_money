@@ -237,6 +237,8 @@ const investitionen = computed(() => baueInvestitionenTabelle(baueProduktInvesti
 
 .om-produkt__blick dd {
   margin: 0;
+  /* Etikett–Wert: der gepunktete Unterstrich des Etiketts berührt den Wert nicht. */
+  margin-block-start: var(--wa-space-2xs);
 }
 
 .om-produkt__erlaeuterungen {
