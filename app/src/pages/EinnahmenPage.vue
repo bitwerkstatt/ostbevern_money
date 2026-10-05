@@ -443,7 +443,8 @@ const investivSeite = computed(() => {
 }
 
 .om-einnahmen__aufklapper {
-  scroll-margin-top: var(--wa-space-xl);
+  /* wa-page liefert die Kopfzeilenhöhe über --scroll-margin-top, scrollIntoView beachtet es. */
+  scroll-margin-top: calc(var(--scroll-margin-top, 0px) + var(--wa-space-m));
 }
 
 /* Name links, Betrag rechts; bis 699 px rutscht der Betrag unter den Namen (UI-SPEC E4). */

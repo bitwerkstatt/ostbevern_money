@@ -14,6 +14,7 @@ import ProduktPage from '@/pages/ProduktPage.vue'
 import StartPage from '@/pages/StartPage.vue'
 import { ansagen } from '@/lib/ansage'
 import { findeProdukt } from '@/lib/ansicht'
+import { elementFuerHash, sprungPosition } from '@/lib/sprungziel'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -31,21 +32,6 @@ function seitentitel(route: RouteLocationNormalized): string {
     return findeProdukt(route.params.code)?.name ?? PRODUKT_UNBEKANNT
   }
   return route.meta.titel
-}
-
-/**
- * Das Element zu einem URL-Fragment, ausschließlich per `getElementById` (der Hash ist nur
- * eine Element-ID, nie ein Selektor oder Ziel einer Weiterleitung). Unbekannt: `null`.
- */
-function elementFuerHash(hash: string): HTMLElement | null {
-  if (typeof document === 'undefined' || hash.length < 2) {
-    return null
-  }
-  try {
-    return document.getElementById(decodeURIComponent(hash.slice(1)))
-  } catch {
-    return null // fehlerhafte Prozentkodierung
-  }
 }
 
 function fokussiere(ziel: HTMLElement | null, ohneScrollen: boolean) {
@@ -95,19 +81,10 @@ const router = createRouter({
     { path: '/:pathMatch(.*)*', redirect: { name: 'start' } },
   ],
   // Mit Fragment zum Element scrollen (Glossar-Sprungziele), sonst nach oben. Reine
-  // Query-Wechsel (Jahr, Modus, Drilldown) lassen die Scrollposition in Ruhe.
+  // Query-Wechsel (Jahr, Modus, Drilldown) lassen die Scrollposition in Ruhe. Der Versatz
+  // unter der festen Kopfzeile kommt aus dem scroll-margin-top des Ziels (lib/sprungziel.ts).
   scrollBehavior(to, from, gespeichert) {
-    const ziel = elementFuerHash(to.hash)
-    if (ziel !== null) {
-      return { el: ziel }
-    }
-    if (gespeichert) {
-      return gespeichert
-    }
-    if (to.path === from.path) {
-      return false
-    }
-    return { top: 0 }
+    return sprungPosition(to, from, gespeichert)
   },
 })
 
