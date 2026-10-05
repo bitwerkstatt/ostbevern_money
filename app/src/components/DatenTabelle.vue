@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue'
 import { EURO_OPTIONEN, KEIN_WERT } from '@/charts/format'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 
@@ -65,17 +65,30 @@ function pruefeUeberlauf() {
   ueberlaeuft.value = element !== null && element.scrollWidth > element.clientWidth
 }
 
-onMounted(() => {
-  pruefeUeberlauf()
-  if (typeof ResizeObserver === 'undefined' || rahmen.value === null) {
+// Der Inhalt des Rahmens wechselt per v-if zwischen Skeleton, Leerzustand und Tabelle. Ein
+// Element, das erst nach dem Mounten entsteht, würde sonst nie beobachtet; daher wird bei
+// jedem Zweigwechsel neu beobachtet und der Überlauf sofort neu geprüft.
+function beobachteInhalt() {
+  beobachter?.disconnect()
+  const element = rahmen.value
+  if (element === null) {
     return
   }
-  beobachter = new ResizeObserver(pruefeUeberlauf)
-  beobachter.observe(rahmen.value)
-  for (const kind of Array.from(rahmen.value.children)) {
-    beobachter.observe(kind)
+  beobachter?.observe(element)
+  for (const kind of Array.from(element.children)) {
+    beobachter?.observe(kind)
   }
+  pruefeUeberlauf()
+}
+
+onMounted(() => {
+  if (typeof ResizeObserver !== 'undefined') {
+    beobachter = new ResizeObserver(pruefeUeberlauf)
+  }
+  beobachteInhalt()
 })
+
+watch([() => props.laedt, istLeer, istDatenModus], () => void nextTick(beobachteInhalt))
 
 onBeforeUnmount(() => {
   beobachter?.disconnect()
