@@ -117,7 +117,28 @@ export function baueErgebnisReihen(): ErgebnisReihen {
       false,
     ),
     ergebnisVor: gepZeile('jahresergebnis'),
-    minderaufwand: gepZeile('globaler_minderaufwand', (wert) => -wert),
+    // Die GEP-Zeile trägt die Kürzung negativ; `wert === 0` verhindert ein negatives Null („-0 €“).
+    minderaufwand: gepZeile('globaler_minderaufwand', (wert) => (wert === 0 ? 0 : -wert)),
     ergebnisNach: gepZeile('ergebnis_nach_minderaufwand'),
   }
+}
+
+/** Beschriftung einer Ergebnissäule (Gerüst, folgt im GREEN-Commit). */
+export function ergebnisBeschriftung(_wert: number | null): string {
+  return ''
+}
+
+export interface ErgebnisZeile {
+  jahr: number
+  wertart: string
+  ertraege: number | null
+  aufwendungen: number | null
+  ergebnisVor: number | null
+  minderaufwand: number | null
+  ergebnisNach: number | null
+}
+
+/** Tabellenzeilen je Jahr (Gerüst, folgt im GREEN-Commit). */
+export function ergebnisTabelle(): ErgebnisZeile[] {
+  return []
 }

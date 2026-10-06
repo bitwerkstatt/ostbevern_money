@@ -1,8 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
+import { euroKurz } from '@/charts/format'
 import { haushalt } from '@/data/daten'
 import { baueKennzahlen } from '@/lib/kennzahlen'
-import { baueErgebnisReihen, type Jahreswert } from '@/lib/entwicklung'
+import {
+  baueErgebnisReihen,
+  ergebnisBeschriftung,
+  ergebnisTabelle,
+  type Jahreswert,
+} from '@/lib/entwicklung'
 
 const GESAMT = haushalt.ergebnisplan['GESAMT']
 const GESAMT_KNOTEN = haushalt.knoten.find((knoten) => knoten.code === 'GESAMT')
@@ -83,8 +89,13 @@ describe('baueErgebnisReihen (ENTW-01, D-11)', () => {
 
   it('führt den globalen Minderaufwand als positive Kürzung des Aufwands', () => {
     expect(werte(reihen.minderaufwand)).toEqual(
-      zeile('globaler_minderaufwand').map((wert) => -wert),
+      zeile('globaler_minderaufwand').map((wert) => (wert === 0 ? 0 : -wert)),
     )
+  })
+
+  it('führt bei einem Minderaufwand von 0 eine echte Null, kein negatives Null', () => {
+    const nullen = reihen.minderaufwand.filter((eintrag) => eintrag.wert === 0)
+    expect(nullen.every((eintrag) => Object.is(eintrag.wert, 0))).toBe(true)
   })
 
   it('zeigt das Jahresergebnis des Haushaltsjahrs wie die Startseite (Satzung, Nutzerentscheidung 1)', () => {
@@ -104,6 +115,50 @@ describe('baueErgebnisReihen (ENTW-01, D-11)', () => {
       const index = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
       expect(reihen.ertraege[index]?.wert).toBe(27502063)
     })
+  })
+})
+
+describe('ergebnisBeschriftung (ENTW-01, Säulenbeschriftung)', () => {
+  it('nennt ein negatives Ergebnis ein Defizit mit dem Betrag ohne Vorzeichen', () => {
+    expect(ergebnisBeschriftung(-3557700)).toBe(`Defizit ${euroKurz(3557700)}`)
+    expect(ergebnisBeschriftung(-3557700)).toBe('Defizit 3,56 Mio. €')
+  })
+
+  it('nennt ein positives Ergebnis einen Überschuss', () => {
+    expect(ergebnisBeschriftung(191990)).toBe(`Überschuss ${euroKurz(191990)}`)
+  })
+
+  it('zeigt „–“ ohne Wert, nie „Defizit 0“', () => {
+    expect(ergebnisBeschriftung(null)).toBe('–')
+  })
+
+  it('nennt ein Ergebnis von genau 0 weder Defizit noch Überschuss', () => {
+    expect(ergebnisBeschriftung(0)).toBe(euroKurz(0))
+  })
+})
+
+describe('ergebnisTabelle (ENTW-01, Tabelle zur Säule)', () => {
+  const reihen = baueErgebnisReihen()
+  const zeilen = ergebnisTabelle()
+
+  it('hat je Jahr aus haushalt.jahre genau eine Zeile mit der Wertart des Jahres', () => {
+    expect(zeilen.map((eintrag) => eintrag.jahr)).toEqual(haushalt.jahre)
+    expect(zeilen.map((eintrag) => eintrag.wertart)).toEqual(haushalt.wertarten)
+  })
+
+  it('führt Erträge, Aufwendungen, Ergebnis vor Minderaufwand, Minderaufwand und Ergebnis nach Minderaufwand', () => {
+    expect(zeilen.map((eintrag) => eintrag.ertraege)).toEqual(werte(reihen.ertraege))
+    expect(zeilen.map((eintrag) => eintrag.aufwendungen)).toEqual(werte(reihen.aufwendungen))
+    expect(zeilen.map((eintrag) => eintrag.ergebnisVor)).toEqual(werte(reihen.ergebnisVor))
+    expect(zeilen.map((eintrag) => eintrag.minderaufwand)).toEqual(werte(reihen.minderaufwand))
+    expect(zeilen.map((eintrag) => eintrag.ergebnisNach)).toEqual(werte(reihen.ergebnisNach))
+  })
+
+  it('Ergebnis nach Minderaufwand je Zeile gleicht Ergebnis vor plus Minderaufwand auf 1 € genau', () => {
+    for (const eintrag of zeilen) {
+      const summe = (eintrag.ergebnisVor ?? Number.NaN) + (eintrag.minderaufwand ?? Number.NaN)
+      expect(Math.abs(summe - (eintrag.ergebnisNach ?? Number.NaN))).toBeLessThanOrEqual(1)
+    }
   })
 })
 
