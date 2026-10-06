@@ -327,7 +327,7 @@ const gesamtSeite = computed(() => {
       Glossar.
     </p>
     <p v-if="hatAbschreibung" class="om-ausgaben-abschreibung">
-      <wa-tag size="small" variant="neutral">kein Geldfluss</wa-tag>
+      <wa-tag size="s" variant="neutral">kein Geldfluss</wa-tag>
       {{ ABSCHREIBUNG_SATZ }}
     </p>
     <wa-details summary="Transferaufwendungen im Einzelnen" class="om-ausgaben-tabelle">
@@ -365,7 +365,7 @@ const gesamtSeite = computed(() => {
         <template #zeilenzusatz="{ zeile }">
           <wa-tag
             v-if="zeile['keinGeldfluss'] === 1"
-            size="small"
+            size="s"
             variant="neutral"
             class="om-ausgaben-etikett"
             >kein Geldfluss</wa-tag

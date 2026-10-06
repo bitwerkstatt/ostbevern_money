@@ -91,7 +91,7 @@ const investitionen = computed(() => baueInvestitionenTabelle(baueProduktInvesti
           <div v-if="produkt.bindungsgrad">
             <dt><GlossarBegriff schluessel="bindungsgrad">Bindungsgrad</GlossarBegriff></dt>
             <dd>
-              <wa-tag size="small" variant="neutral">{{ kopf.bindungsgrad }}</wa-tag>
+              <wa-tag size="s" variant="neutral">{{ kopf.bindungsgrad }}</wa-tag>
               <span v-if="kopf.bindungsgradOriginal !== null" class="om-produkt__hinweis">
                 Im Haushaltsplan steht: „{{ kopf.bindungsgradOriginal }}“
               </span>

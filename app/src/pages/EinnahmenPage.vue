@@ -320,7 +320,7 @@ const investivSeite = computed(() => {
                   <span :class="{ 'om-einnahmen__teil': zeile['teil'] === 1 }">{{ wert }}</span>
                   <wa-tag
                     v-if="zeile['keinGeldfluss'] === 1"
-                    size="small"
+                    size="s"
                     variant="neutral"
                     class="om-einnahmen__etikett"
                     >kein Geldfluss</wa-tag

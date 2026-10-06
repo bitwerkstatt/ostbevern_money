@@ -6,7 +6,7 @@ const id = useId()
 
 <template>
   <span class="om-berechnet">
-    <wa-tag :id="id" size="small" variant="neutral" tabindex="0">berechnet</wa-tag>
+    <wa-tag :id="id" size="s" variant="neutral" tabindex="0">berechnet</wa-tag>
     <wa-tooltip :for="id">
       Dieser Wert steht nicht im PDF. Er wird aus den Planwerten berechnet.
     </wa-tooltip>

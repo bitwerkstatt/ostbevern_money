@@ -10,5 +10,5 @@ defineProps<{
 </script>
 
 <template>
-  <wa-tag size="small" variant="neutral">{{ wertartName(wertart) }}</wa-tag>
+  <wa-tag size="s" variant="neutral">{{ wertartName(wertart) }}</wa-tag>
 </template>
