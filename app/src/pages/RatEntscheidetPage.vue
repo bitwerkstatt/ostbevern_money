@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import PageIntro from '@/components/PageIntro.vue'
 import WertartEtikett from '@/components/WertartEtikett.vue'
+import ZuschussListe from '@/components/ZuschussListe.vue'
 import { haushalt } from '@/data/daten'
 import { wertartFuerJahr } from '@/lib/jahr'
 
@@ -16,6 +17,7 @@ const lead =
     <PageIntro titel="Worüber entscheidet der Rat?" :beschreibung="lead">
       <WertartEtikett :wertart="wertart" />
     </PageIntro>
+    <ZuschussListe />
   </div>
 </template>
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { haushalt } from '@/data/daten'
-import { kitaZuschuesse, vorberichtTabelle, weitereZuschuesse } from '@/lib/zuschuesse'
+import { kitaZuschuesse, vorberichtTabelle, weitereZuschuesse, zusammen } from '@/lib/zuschuesse'
 
 const INDEX = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
 
@@ -71,6 +71,35 @@ describe('weitereZuschuesse', () => {
     const { lfdZwecke } = weitereZuschuesse()
     expect(summe(lfdZwecke.posten)).toBe(transferWert('zuschuesse_laufende_zwecke'))
     expect(lfdZwecke.gesamt).toBe(transferWert('zuschuesse_laufende_zwecke'))
+  })
+})
+
+describe('zusammen', () => {
+  const posten = (wert: number | null) => ({
+    schluessel: 'x',
+    name: 'X',
+    wert,
+    gerundet: true,
+    pdfSeite: 1,
+  })
+
+  it('nimmt die gedruckte Gesamtzeile, wenn es sie gibt', () => {
+    expect(zusammen({ posten: [posten(1000)], gesamt: 5000, pdfSeiten: [1] })).toBe(5000)
+  })
+
+  it('summiert ohne Gesamtzeile nur vorhandene Werte', () => {
+    expect(
+      zusammen({
+        posten: [posten(1000), posten(null), posten(2000)],
+        gesamt: null,
+        pdfSeiten: [1],
+      }),
+    ).toBe(3000)
+  })
+
+  it('liefert null, wenn kein einziger Wert vorhanden ist', () => {
+    expect(zusammen({ posten: [posten(null)], gesamt: null, pdfSeiten: [1] })).toBeNull()
+    expect(zusammen({ posten: [], gesamt: null, pdfSeiten: [] })).toBeNull()
   })
 })
 
