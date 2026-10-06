@@ -8,6 +8,9 @@
 // KLIMA1 mit verschiedenen Photovoltaikanlagen) und der Link auf `/produkt/:code` sonst
 // mehrdeutig wäre (RESEARCH Pitfall 2, Entscheidung 2 des Nutzers).
 
+import { computed, watch } from 'vue'
+import { useRoute, useRouter, type LocationQueryRaw } from 'vue-router'
+
 import { jahr as formatiereJahr } from '@/charts/format'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import { haushalt, investitionen } from '@/data/daten'
@@ -242,8 +245,44 @@ export interface MassnahmenAufgabenbereich {
   name: string
 }
 
-/** Gerüst, wird mit der Implementierung ersetzt. */
-export const MASSNAHMEN_AUFGABENBEREICHE: readonly MassnahmenAufgabenbereich[] = []
+/**
+ * Die Aufgabenbereiche, die Auszahlungs-Maßnahmen haben, in Knotenreihenfolge. Nur echte
+ * Aufgabenbereiche (Ebene PB unter GESAMT, nicht synthetisch): „Weitergabe an Kreis und Land“
+ * (KL) ist auch ein PB-Knoten, hat aber keine Maßnahmen und ist nie ein Aufgabenbereich
+ * dieser Liste (RESEARCH Pitfall 8).
+ */
+export const MASSNAHMEN_AUFGABENBEREICHE: readonly MassnahmenAufgabenbereich[] = (() => {
+  const mitMassnahmen = new Set(baueVorhaben({ pb: null, art: null }).map((e) => e.pb))
+  return haushalt.knoten
+    .filter(
+      (knoten) =>
+        knoten.ebene === 'PB' &&
+        knoten.eltern === 'GESAMT' &&
+        !knoten.synthetisch &&
+        mitMassnahmen.has(knoten.code),
+    )
+    .map((knoten) => ({ code: knoten.code, name: knoten.name }))
+})()
+
+// Allowlists als Set: URL-Werte werden nie als Schlüssel eines einfachen Objekts benutzt
+// (Prototyp-Schlüssel wie `__proto__`, T-06-14).
+const PB_CODES: ReadonlySet<string> = new Set(MASSNAHMEN_AUFGABENBEREICHE.map((b) => b.code))
+const ART_CODES: ReadonlySet<string> = new Set(ARTEN.map((a) => a.art))
+const FILTER_SCHLUESSEL: ReadonlySet<string> = new Set(['pb', 'art'])
+const NUR_PB: ReadonlySet<string> = new Set(['pb'])
+const NUR_ART: ReadonlySet<string> = new Set(['art'])
+
+function istArt(wert: unknown): wert is Art {
+  return typeof wert === 'string' && ART_CODES.has(wert)
+}
+
+function istPb(wert: unknown): wert is string {
+  return typeof wert === 'string' && PB_CODES.has(wert)
+}
+
+function erster(roh: unknown): unknown {
+  return Array.isArray(roh) ? roh[0] : roh
+}
 
 /** Validierter Filterzustand aus der URL. */
 export interface MassnahmenFilter {
@@ -253,17 +292,119 @@ export interface MassnahmenFilter {
   bereinigt: boolean
 }
 
-export function leseMassnahmenFilter(_query: Readonly<Record<string, unknown>>): MassnahmenFilter {
-  return { pb: null, art: null, bereinigt: false }
+/**
+ * Liest `pb` und `art` defensiv aus der Query (D-06, T-06-14): `pb` nur aus
+ * `MASSNAHMEN_AUFGABENBEREICHE`, `art` nur aus den vier Filterarten, bei einem Array gilt das
+ * erste Element. Fehlt ein Schlüssel, gilt „Alle“; ein vorhandener, aber unbrauchbarer Wert
+ * (auch `?art` ohne Wert) fällt auf „Alle“ zurück und setzt `bereinigt`.
+ */
+export function leseMassnahmenFilter(query: Readonly<Record<string, unknown>>): MassnahmenFilter {
+  let bereinigt = false
+
+  let pb: string | null = null
+  const rohPb = erster(query.pb)
+  if (rohPb !== undefined) {
+    if (istPb(rohPb)) {
+      pb = rohPb
+    } else {
+      bereinigt = true
+    }
+  }
+
+  let art: Art | null = null
+  const rohArt = erster(query.art)
+  if (rohArt !== undefined) {
+    if (istArt(rohArt)) {
+      art = rohArt
+    } else {
+      bereinigt = true
+    }
+  }
+
+  return { pb, art, bereinigt }
 }
 
+/** Query ohne die genannten Schlüssel; `fromEntries` legt die Schlüssel als Datenfelder an. */
+function ohne<W>(
+  query: Readonly<Record<string, W>>,
+  schluessel: ReadonlySet<string>,
+): Record<string, W> {
+  return Object.fromEntries(Object.entries(query).filter(([name]) => !schluessel.has(name)))
+}
+
+/**
+ * Die Query mit nur den gültigen Filterteilen: ungültige `pb`/`art`-Werte entfallen, fremde
+ * Schlüssel (z. B. `jahr`) und gültige Teile bleiben.
+ */
 export function bereinigteMassnahmenQuery<W>(
   query: Readonly<Record<string, W>>,
-  _filter: MassnahmenFilter,
+  filter: MassnahmenFilter,
 ): Record<string, W | string> {
-  return { ...query }
+  const ergebnis: Record<string, W | string> = ohne(query, FILTER_SCHLUESSEL)
+  if (filter.pb !== null) {
+    ergebnis.pb = filter.pb
+  }
+  if (filter.art !== null) {
+    ergebnis.art = filter.art
+  }
+  return ergebnis
 }
 
-export function useMassnahmenFilter(): never {
-  throw new Error('nicht implementiert')
+/**
+ * Filterzustand der Maßnahmen in der URL (`pb`, `art`). Ungültige Teile werden mit
+ * `router.replace` entfernt; jede Änderung nutzt `replace` (kein Verlaufseintrag), fremde
+ * Query-Schlüssel und der Hash bleiben. Die Seite zeigt immer alle Planjahre, `?jahr=` gilt
+ * hier nicht (D-07).
+ */
+export function useMassnahmenFilter() {
+  const route = useRoute()
+  const router = useRouter()
+  // Beim Verlassen der Seite wechselt die Route vor dem Abbau der Komponente; dann darf der
+  // Zustand der nächsten Seite nicht angefasst werden.
+  const eigeneRoute = route.name
+
+  const filter = computed(() => leseMassnahmenFilter(route.query))
+  const vorhaben = computed(() => baueVorhaben({ pb: filter.value.pb, art: filter.value.art }))
+
+  function ersetze(query: LocationQueryRaw) {
+    if (route.name !== eigeneRoute) {
+      return
+    }
+    void router.replace({ query, hash: route.hash })
+  }
+
+  watch(
+    filter,
+    (aktuell) => {
+      if (aktuell.bereinigt) {
+        ersetze(bereinigteMassnahmenQuery(route.query, aktuell))
+      }
+    },
+    { immediate: true },
+  )
+
+  /** Wählt einen Aufgabenbereich; `null` bedeutet „Alle“, ein unbekannter Code wird ignoriert. */
+  function setzePb(code: string | null) {
+    if (code === null) {
+      ersetze(ohne(route.query, NUR_PB))
+    } else if (istPb(code)) {
+      ersetze({ ...ohne(route.query, NUR_PB), pb: code })
+    }
+  }
+
+  /** Wählt eine Art; `null` bedeutet „Alle“, ein unbekannter Wert wird ignoriert. */
+  function setzeArt(art: Art | null) {
+    if (art === null) {
+      ersetze(ohne(route.query, NUR_ART))
+    } else if (istArt(art)) {
+      ersetze({ ...ohne(route.query, NUR_ART), art })
+    }
+  }
+
+  /** Setzt beide Filter auf „Alle“. */
+  function zuruecksetzen() {
+    ersetze(ohne(route.query, FILTER_SCHLUESSEL))
+  }
+
+  return { filter, vorhaben, setzePb, setzeArt, zuruecksetzen }
 }
