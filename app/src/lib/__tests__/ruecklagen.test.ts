@@ -9,9 +9,19 @@ import {
   hskSchwellen,
   rueckgang,
   rueckgangAchsenMaximum,
+  rueckgangFormelText,
   rueckgangPlanjahre,
   ruecklagenTabelle,
 } from '@/lib/ruecklagen'
+
+// Der Quelltext der Seite (wie in `menue.test.ts` über `?raw`): die Formelprosa der Fußnote darf nur
+// in `ruecklagen.ts` stehen, die Seite ruft `rueckgangFormelText()` auf.
+const seitenQuelltexte = import.meta.glob<string>('/src/pages/EntwicklungPage.vue', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
+const seitenQuelltext = seitenQuelltexte['/src/pages/EntwicklungPage.vue'] ?? ''
 
 const EIGENKAPITAL = haushalt.eigenkapital
 const LETZTER_INDEX = haushalt.jahre.length - 1
@@ -157,6 +167,122 @@ describe('rueckgang (ENTW-03, S. 23)', () => {
         )
       expect(geprueft).toEqual([1.77, 4.23, 4.73, 10.04])
     })
+  })
+})
+
+describe('rueckgangFormelText (CR-01, S. 23)', () => {
+  const VERRECHNUNG = 'verrechnung_bilanzierungshilfe'
+  const verrechnungsWerte = posten(VERRECHNUNG)
+  const datenHabenVerrechnung = verrechnungsWerte.some((wert) => wert !== null && wert !== 0)
+  const verrechnungsName = EIGENKAPITAL.posten.find((eintrag) => eintrag.posten === VERRECHNUNG)?.name
+
+  const ohneVerrechnung = mitPosten(
+    VERRECHNUNG,
+    haushalt.jahre.map(() => 0),
+  )
+  const verrechnungNull = mitPosten(
+    VERRECHNUNG,
+    haushalt.jahre.map(() => null),
+  )
+  const nurErsteSpalte = mitPosten(
+    VERRECHNUNG,
+    haushalt.jahre.map((_jahr, index) => (index === 0 ? -5 : 0)),
+  )
+
+  /**
+   * Rückgang, nachgerechnet allein aus den Termen, die der Text nennt: das Defizit, soweit die
+   * Ausgleichsrücklage es nicht deckt, plus (nur wenn der Text sie nennt) die Verrechnung, geteilt durch
+   * die allgemeine Rücklage zu Jahresbeginn.
+   */
+  function nachgerechnet(tabelle: VorberichtTabelle, text: string, index: number): number {
+    const wert = (schluessel: string): number => {
+      const eintrag = tabelle.posten.find((kandidat) => kandidat.posten === schluessel)
+      const einzel = eintrag?.werte[index]
+      if (einzel === null || einzel === undefined) {
+        throw new Error(`Testdaten: ${schluessel} ohne Wert an Index ${String(index)}`)
+      }
+      return einzel
+    }
+    const nenntVerrechnung = text.includes('Verrechnung')
+    const abbau =
+      Math.max(0, -wert('jahresergebnis') - wert('ausgleichsruecklage')) -
+      (nenntVerrechnung ? wert(VERRECHNUNG) : 0)
+    return abbau / wert('allgemeine_ruecklage')
+  }
+
+  it('nennt die Verrechnung samt Postenname aus den Daten genau dann, wenn ein Jahr sie ungleich 0 hat', () => {
+    const text = rueckgangFormelText()
+    expect(text.includes('Verrechnung')).toBe(datenHabenVerrechnung)
+    if (datenHabenVerrechnung) {
+      expect(verrechnungsName).toBeDefined()
+      expect(text).toContain(verrechnungsName ?? '')
+    }
+  })
+
+  describe.runIf(haushalt.haushaltsjahr === 2026)('Jahrgang 2026', () => {
+    it('nennt die Verrechnung der Bilanzierungshilfe', () => {
+      expect(datenHabenVerrechnung).toBe(true)
+      expect(rueckgangFormelText()).toContain('Einmalige Verrechnung Bilanzierungshilfe')
+    })
+
+    it('ergäbe ohne den Verrechnungs-Term 0,56 % statt der gezeigten 1,77 % (Regressionsschutz CR-01)', () => {
+      const ohneTerm = nachgerechnet(EIGENKAPITAL, '', START_INDEX)
+      expect(Math.round(ohneTerm * 10000) / 100).toBe(0.56)
+      expect(Math.round((rueckgang(START_INDEX) ?? Number.NaN) * 10000) / 100).toBe(1.77)
+      expect(Math.round(ohneTerm * 10000) / 100).not.toBe(
+        Math.round((rueckgang(START_INDEX) ?? Number.NaN) * 10000) / 100,
+      )
+    })
+  })
+
+  it('nennt die Verrechnung nicht, wenn alle Werte 0 sind', () => {
+    expect(rueckgangFormelText(ohneVerrechnung)).not.toContain('Verrechnung')
+  })
+
+  it('nennt die Verrechnung nicht, wenn alle Werte fehlen', () => {
+    expect(rueckgangFormelText(verrechnungNull)).not.toContain('Verrechnung')
+  })
+
+  it('nennt die Verrechnung auch, wenn nur eine Spalte vor dem Haushaltsjahr sie hat', () => {
+    expect(rueckgangFormelText(nurErsteSpalte)).toContain('Verrechnung')
+  })
+
+  it('rechnet jedes Planjahr aus den im Text genannten Termen auf rueckgang() zurück (echte Daten)', () => {
+    const text = rueckgangFormelText()
+    for (let index = START_INDEX; index <= LETZTER_INDEX; index += 1) {
+      expect(nachgerechnet(EIGENKAPITAL, text, index)).toBeCloseTo(rueckgang(index) ?? Number.NaN, 12)
+    }
+  })
+
+  it('rechnet jedes Planjahr auch ohne Verrechnung aus den genannten Termen zurück', () => {
+    const text = rueckgangFormelText(ohneVerrechnung)
+    for (let index = START_INDEX; index <= LETZTER_INDEX; index += 1) {
+      expect(nachgerechnet(ohneVerrechnung, text, index)).toBeCloseTo(
+        rueckgang(index, ohneVerrechnung) ?? Number.NaN,
+        12,
+      )
+    }
+  })
+
+  it('enthält keine Ziffer und endet mit einem Punkt', () => {
+    for (const tabelle of [EIGENKAPITAL, ohneVerrechnung, verrechnungNull, nurErsteSpalte]) {
+      const text = rueckgangFormelText(tabelle)
+      expect(text).not.toMatch(/\d/)
+      expect(text.endsWith('.')).toBe(true)
+    }
+  })
+
+  it('wirft ohne den Posten und nennt seinen Schlüssel', () => {
+    const ohne: VorberichtTabelle = {
+      ...EIGENKAPITAL,
+      posten: EIGENKAPITAL.posten.filter((eintrag) => eintrag.posten !== VERRECHNUNG),
+    }
+    expect(() => rueckgangFormelText(ohne)).toThrow(/verrechnung_bilanzierungshilfe/)
+  })
+
+  it('wird von EntwicklungPage.vue aufgerufen, die Formelprosa steht nicht in der Seite', () => {
+    expect(seitenQuelltext).toContain('rueckgangFormelText(')
+    expect(seitenQuelltext).not.toContain('soweit die Ausgleichsrücklage')
   })
 })
 

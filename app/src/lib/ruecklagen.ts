@@ -122,6 +122,12 @@ export function rueckgang(
   return verlust / bestand
 }
 
+/** Platzhalter für die RED-Phase (CR-01); wird im nächsten Commit durch die Formelbeschreibung ersetzt. */
+export function rueckgangFormelText(tabelle: VorberichtTabelle = haushalt.eigenkapital): string {
+  void tabelle
+  return ''
+}
+
 export interface HskSchwellen {
   /** Rückgang der allgemeinen Rücklage in einem Jahr (Anteil 0–1). */
   einJahr: number
