@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { haushalt } from '@/data/daten'
 import { baueKreisumlage, findeKlKnoten } from '@/lib/kreisumlage'
+import { findeBeleg } from '@/lib/quelle'
 import {
   kitaZuschuesse,
   nichtBeeinflussbar,
@@ -90,6 +91,7 @@ describe('zusammen', () => {
     wert,
     gerundet: true,
     pdfSeite: 1,
+    beleg: null,
   })
 
   it('nimmt die gedruckte Gesamtzeile, wenn es sie gibt', () => {
@@ -126,6 +128,25 @@ describe.runIf(haushalt.haushaltsjahr === 2026)('Einzelzuschüsse Haushalt 2026'
   })
 })
 
+describe('Zuschuss.beleg', () => {
+  it('trägt zu jedem Posten mit Seite einen auflösbaren Schlüssel, ohne Seite null', () => {
+    const { transfer, lfdZwecke } = weitereZuschuesse()
+    for (const z of [...kitaZuschuesse().posten, ...transfer.posten, ...lfdZwecke.posten]) {
+      if (z.pdfSeite === null) {
+        expect(z.beleg, z.schluessel).toBeNull()
+      } else {
+        expect(findeBeleg(z.beleg ?? '')?.pdfSeite, z.schluessel).toBe(z.pdfSeite)
+      }
+    }
+  })
+
+  it('nichtBeeinflussbar liefert zu jeder Kachel einen auflösbaren Schlüssel', () => {
+    for (const p of nichtBeeinflussbar().posten) {
+      expect(findeBeleg(p.beleg ?? ''), p.schluessel).not.toBeNull()
+    }
+  })
+})
+
 describe('ohneLeere', () => {
   const posten = (schluessel: string, wert: number | null) => ({
     schluessel,
@@ -133,6 +154,7 @@ describe('ohneLeere', () => {
     wert,
     gerundet: true,
     pdfSeite: 1,
+    beleg: null,
   })
 
   it('lässt Posten mit dem Wert 0 oder ohne Wert weg', () => {
