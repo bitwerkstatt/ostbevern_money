@@ -8,6 +8,7 @@ import {
   baueTransferaufwendungen,
   minderaufwandHinweis,
 } from '@/lib/aufwandsarten'
+import { findeBeleg } from '@/lib/quelle'
 import { zeilenName } from '@/lib/zeilen'
 
 const JAHRE = haushalt.jahre.map((jahr, index) => [jahr, index] as const)
@@ -172,6 +173,20 @@ describe('baueTransferaufwendungen (AUSG-04)', () => {
       }
     }
   })
+
+  it.each(JAHRE)(
+    'Jahr %i: jede Zeile trägt vb:transferaufwendungen, jede Kita-Einrichtung vb:kita_zuschuesse',
+    (_j, i) => {
+      for (const p of baueTransferaufwendungen(i)) {
+        expect(p.beleg, p.posten).toBe(`vb:transferaufwendungen:${p.posten}`)
+        expect(findeBeleg(p.beleg ?? '')?.pdfSeite, p.posten).toBe(p.quelle)
+        for (const k of p.kinder ?? []) {
+          expect(k.beleg, k.posten).toBe(`vb:kita_zuschuesse:${k.posten}`)
+          expect(findeBeleg(k.beleg ?? '')?.pdfSeite, k.posten).toBe(k.quelle)
+        }
+      }
+    },
+  )
 
   it('keine andere Zeile als die Kita-Zuschüsse hat Kinder', () => {
     for (const [, i] of JAHRE) {

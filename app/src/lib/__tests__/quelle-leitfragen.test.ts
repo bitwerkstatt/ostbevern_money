@@ -13,6 +13,10 @@ import {
   baueSteuern,
   baueZuwendungen,
 } from '@/lib/einnahmen'
+import type { Modus } from '@/lib/ansicht'
+import { baueEbene } from '@/lib/drilldown'
+import { ebenenBeleg } from '@/lib/ebenenBeleg'
+import { findeKlKnoten } from '@/lib/kreisumlage'
 import { findeBeleg } from '@/lib/quelle'
 import { ZEITREIHEN_POSTEN, baueZeitreihe } from '@/lib/zeitreihen'
 
@@ -104,5 +108,91 @@ describe('Einnahmen: Seitenquelltexte definieren keine Seitenspalte als Text', (
     expect(
       SEITENSPALTE_ALS_TEXT.test("{ schluessel: 'quelle', titel: 'Quelle', art: 'text' }"),
     ).toBe(true)
+  })
+})
+
+const MODI: readonly Modus[] = ['aufwand', 'zuschussbedarf']
+const WURZEL = 'GESAMT'
+
+/** Alle Ebenen des Drilldowns: die Wurzel und jeder Knoten mit Kindern. */
+function ebenenCodes(): string[] {
+  const eltern = new Set(haushalt.knoten.flatMap((k) => (k.eltern === null ? [] : [k.eltern])))
+  return [WURZEL, ...[...eltern].filter((code) => code !== WURZEL)]
+}
+
+describe('Ausgaben: jede Zeile des Drilldowns hat einen auflösbaren Beleg', () => {
+  const kl = findeKlKnoten()
+
+  haushalt.jahre.forEach((jahr, index) => {
+    it.each(MODI)(`Jahr ${String(jahr)}, Modus %s`, (modus) => {
+      const fehler: string[] = []
+      let geprueft = 0
+      for (const code of ebenenCodes()) {
+        for (const eintrag of baueEbene(code, index, modus)) {
+          geprueft += 1
+          const beleg = ebenenBeleg(eintrag, index, modus)
+          if (beleg === null || findeBeleg(beleg.schluessel) === null) {
+            fehler.push(`${eintrag.code}: ${String(beleg?.schluessel)} löst nicht auf`)
+            continue
+          }
+          if (modus === 'zuschussbedarf') {
+            if (beleg.herleitung !== 'Aufwendungen minus Erträge') {
+              fehler.push(`${eintrag.code}: Herleitung fehlt im Modus Zuschussbedarf`)
+            }
+          } else if (!eintrag.istKl) {
+            const aufwand = haushalt.ergebnisplan[eintrag.code]?.berechnet.aufwand[index]
+            const gedruckt =
+              haushalt.ergebnisplan[eintrag.code]?.zeilen['ordentliche_aufwendungen']?.[index]
+            if ((beleg.herleitung === null) !== (aufwand === gedruckt)) {
+              fehler.push(`${eintrag.code}: Herleitung passt nicht zum Vergleich mit Z. 17`)
+            }
+          }
+        }
+      }
+      expect(geprueft).toBeGreaterThan(50)
+      expect(fehler, fehler.join('; ')).toEqual([])
+    })
+  })
+
+  it.each(MODI)(
+    'Modus %s: Knoten außerhalb von KL zeigen auf ep:{code}:ordentliche_aufwendungen',
+    (modus) => {
+      for (const code of ebenenCodes()) {
+        for (const eintrag of baueEbene(code, 0, modus).filter((e) => !e.istKl)) {
+          expect(ebenenBeleg(eintrag, 0, modus)?.schluessel, eintrag.code).toBe(
+            `ep:${eintrag.code}:ordentliche_aufwendungen`,
+          )
+        }
+      }
+    },
+  )
+
+  it('KL-Unterposten zeigen auf ihren Vorbericht-Posten, KL selbst auf die Seite des Knotens', () => {
+    expect(ebenenBeleg({ code: kl.code, istKl: true }, 0, 'aufwand')?.schluessel).toBe(
+      `seite:${String(kl.pdf_seite)}`,
+    )
+    const unterposten = baueEbene(kl.code, 0, 'aufwand')
+    expect(unterposten.length).toBeGreaterThan(0)
+    for (const unter of unterposten) {
+      const posten = unter.code.slice(kl.code.length + 1)
+      expect(ebenenBeleg(unter, 0, 'aufwand')?.schluessel, unter.code).toBe(
+        `vb:transferaufwendungen:${posten}`,
+      )
+    }
+  })
+})
+
+describe('Ausgaben: Seitenquelltexte definieren keine Seitenspalte als Text', () => {
+  it.each(['AusgabenPage.vue', 'EbenenTabelle.vue'])('%s nutzt art quelle', (datei) => {
+    const text = quelltext(datei)
+    expect(text).toContain("art: 'quelle'")
+    expect(
+      SEITENSPALTE_ALS_TEXT.test(text),
+      `${datei} hat noch eine Textspalte für die Seite`,
+    ).toBe(false)
+  })
+
+  it('AusgabenPage.vue nennt die Quelle-Spalte der Transferaufwendungen', () => {
+    expect(quelltext('AusgabenPage.vue')).toContain("titel: 'Quelle', art: 'quelle'")
   })
 })
