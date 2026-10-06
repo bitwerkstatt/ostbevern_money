@@ -175,3 +175,74 @@ export function ausgleichsruecklageAufgebrauchtJahr(
   }
   return null
 }
+
+/** Ein Planjahr des Rückgang-Diagramms (S. 23): ab dem Haushaltsjahr, je Jahr der eigenen Spalte. */
+export interface Rueckgangsjahr {
+  jahr: number
+  /** `ergebnis`, `ansatz` oder `planung` (aus `haushalt.wertarten`). */
+  wertart: string
+  /** Rückgang der allgemeinen Rücklage als Anteil (0–1); `null`, wenn ein Eingangswert fehlt. */
+  anteil: number | null
+}
+
+/** Index des Haushaltsjahres in `haushalt.jahre`; fehlt es, ist das ein Datenfehler. */
+function haushaltsjahrIndex(): number {
+  const index = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
+  if (index < 0) {
+    throw new Error('haushalt.haushaltsjahr steht nicht in haushalt.jahre')
+  }
+  return index
+}
+
+/**
+ * Der Rückgang je Planjahr: ein Eintrag für jedes Jahr vom Haushaltsjahr an (wie S. 23). Die Jahre
+ * davor tragen keinen Abbau und erscheinen nicht, ebenso keine Jahre nach dem letzten Planjahr.
+ */
+export function rueckgangPlanjahre(
+  tabelle: VorberichtTabelle = haushalt.eigenkapital,
+): Rueckgangsjahr[] {
+  const start = haushaltsjahrIndex()
+  return haushalt.jahre.slice(start).map((jahr, versatz) => ({
+    jahr,
+    wertart: wertartAn(start + versatz),
+    anteil: rueckgang(start + versatz, tabelle),
+  }))
+}
+
+/** Luft über dem höchsten Wert der Rückgang-Achse (UI-SPEC: y-Achse bis max × 1,2). */
+const ACHSEN_FAKTOR = 1.2
+
+/**
+ * Obergrenze der y-Achse des Rückgang-Diagramms: das 1,2-Fache des größeren aus allen Werten und der
+ * Schwelle, damit Schwellenlinie und ihre Beschriftung innerhalb des Diagramms bleiben.
+ */
+export function rueckgangAchsenMaximum(anteile: readonly number[], schwelle: number): number {
+  return Math.max(...anteile, schwelle) * ACHSEN_FAKTOR
+}
+
+/** Eine Zeile der Rücklagentabelle: beide Bestände zu Jahresbeginn und der Rückgang im Jahr. */
+export interface Ruecklagentabellenzeile {
+  jahr: number
+  wertart: string
+  allgemeine: number | null
+  ausgleich: number | null
+  /** Rückgang der allgemeinen Rücklage im Jahr (Anteil 0–1, berechnet); `null` vor dem Haushaltsjahr. */
+  rueckgang: number | null
+}
+
+/**
+ * Eine Zeile je Jahr aus `haushalt.jahre`. Der Rückgang gehört zu dem Jahr der eigenen Spalte und
+ * steht erst ab dem Haushaltsjahr (davor `null`), nie als Differenz zur Vorspalte.
+ */
+export function ruecklagenTabelle(
+  tabelle: VorberichtTabelle = haushalt.eigenkapital,
+): Ruecklagentabellenzeile[] {
+  const start = haushaltsjahrIndex()
+  return baueRuecklagen(tabelle).map((zeile, index) => ({
+    jahr: zeile.jahr,
+    wertart: zeile.wertart,
+    allgemeine: zeile.allgemeine,
+    ausgleich: zeile.ausgleich,
+    rueckgang: index < start ? null : rueckgang(index, tabelle),
+  }))
+}
