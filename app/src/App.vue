@@ -4,6 +4,7 @@ import { useRoute, type RouteLocationRaw } from 'vue-router'
 
 import { datum, jahr, KEIN_WERT } from '@/charts/format'
 import MenueGruppe from '@/components/MenueGruppe.vue'
+import QuelleSeitenleiste from '@/components/QuelleSeitenleiste.vue'
 import { KONTAKT_EMAIL, ORIGINAL_PDF_URL } from '@/config'
 import { haushalt } from '@/data/daten'
 import { useSchmalerBildschirm } from '@/lib/bildschirm'
@@ -184,6 +185,8 @@ onBeforeUnmount(() => {
     <main class="om-content">
       <RouterView />
     </main>
+
+    <QuelleSeitenleiste />
 
     <div slot="footer" class="om-footer">
       <p>

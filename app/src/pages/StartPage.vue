@@ -69,6 +69,9 @@ const einstiege = computed(() => {
           :wert="k.wertText"
           :zeile="k.zeile"
           :berechnet="k.berechnet"
+          :quelle="k.quelle"
+          :herleitung="k.herleitung"
+          :wertart="`${k.wertart} ${formatJahr(k.jahr)}`"
         />
       </li>
     </ul>

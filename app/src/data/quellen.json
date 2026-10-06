@@ -1,0 +1,757 @@
+{
+  "haushaltsjahr": 2026,
+  "seiten": {
+    "62": {
+      "bild": "s062.webp",
+      "breite": 595.28,
+      "hoehe": 841.89
+    },
+    "63": {
+      "bild": "s063.webp",
+      "breite": 595.28,
+      "hoehe": 841.89
+    }
+  },
+  "belege": {
+    "ep:GESAMT:abschreibungen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        342.56,
+        561.74,
+        354.53
+      ]
+    },
+    "ep:GESAMT:aktivierte_eigenleistungen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        249.71,
+        561.74,
+        261.68
+      ]
+    },
+    "ep:GESAMT:ausserordentliche_aufwendungen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        498.38,
+        561.74,
+        510.35
+      ]
+    },
+    "ep:GESAMT:ausserordentliche_ertraege": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        483.04,
+        561.74,
+        495.01
+      ]
+    },
+    "ep:GESAMT:ausserordentliches_ergebnis": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        514.12,
+        561.74,
+        526.09
+      ]
+    },
+    "ep:GESAMT:bestandsveraenderungen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        265.06,
+        561.74,
+        277.03
+      ]
+    },
+    "ep:GESAMT:ergebnis_laufende_verwaltung": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        467.3,
+        561.74,
+        479.27
+      ]
+    },
+    "ep:GESAMT:ergebnis_nach_minderaufwand": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        561.34,
+        561.74,
+        573.31
+      ]
+    },
+    "ep:GESAMT:finanzergebnis": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        451.56,
+        561.74,
+        463.53
+      ]
+    },
+    "ep:GESAMT:finanzertraege": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        420.47,
+        561.74,
+        432.44
+      ]
+    },
+    "ep:GESAMT:globaler_minderaufwand": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        545.6,
+        561.74,
+        557.57
+      ]
+    },
+    "ep:GESAMT:jahresergebnis": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        529.86,
+        561.74,
+        541.83
+      ]
+    },
+    "ep:GESAMT:kostenerstattungen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        219.03,
+        561.74,
+        231.0
+      ]
+    },
+    "ep:GESAMT:nachrichtlich_aufwendungen_finanzanlagen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        648.42,
+        561.74,
+        660.39
+      ]
+    },
+    "ep:GESAMT:nachrichtlich_aufwendungen_vermoegensgegenstaende": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        633.07,
+        561.74,
+        645.04
+      ]
+    },
+    "ep:GESAMT:nachrichtlich_ertraege_finanzanlagen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        617.73,
+        561.74,
+        629.7
+      ]
+    },
+    "ep:GESAMT:nachrichtlich_ertraege_vermoegensgegenstaende": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        602.39,
+        561.74,
+        614.36
+      ]
+    },
+    "ep:GESAMT:nachrichtlich_verrechnungssaldo": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        664.16,
+        561.74,
+        676.13
+      ]
+    },
+    "ep:GESAMT:oeffentlich_rechtliche_entgelte": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        188.34,
+        561.74,
+        200.31
+      ]
+    },
+    "ep:GESAMT:ordentliche_aufwendungen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        388.99,
+        561.74,
+        400.96
+      ]
+    },
+    "ep:GESAMT:ordentliche_ertraege": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        280.8,
+        561.74,
+        292.77
+      ]
+    },
+    "ep:GESAMT:ordentliches_ergebnis": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        404.73,
+        561.74,
+        416.7
+      ]
+    },
+    "ep:GESAMT:personalaufwendungen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        296.54,
+        561.74,
+        308.51
+      ]
+    },
+    "ep:GESAMT:privatrechtliche_entgelte": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        203.69,
+        561.74,
+        215.66
+      ]
+    },
+    "ep:GESAMT:sach_und_dienstleistungen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        327.22,
+        561.74,
+        339.19
+      ]
+    },
+    "ep:GESAMT:sonstige_ordentliche_aufwendungen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        373.25,
+        561.74,
+        385.22
+      ]
+    },
+    "ep:GESAMT:sonstige_ordentliche_ertraege": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        234.37,
+        561.74,
+        246.34
+      ]
+    },
+    "ep:GESAMT:sonstige_transferertraege": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        173.0,
+        561.74,
+        184.97
+      ]
+    },
+    "ep:GESAMT:steuern": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        142.32,
+        561.74,
+        154.29
+      ]
+    },
+    "ep:GESAMT:transferaufwendungen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        357.91,
+        561.74,
+        369.88
+      ]
+    },
+    "ep:GESAMT:versorgungsaufwendungen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        311.88,
+        561.74,
+        323.85
+      ]
+    },
+    "ep:GESAMT:zinsaufwendungen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        435.81,
+        561.74,
+        447.78
+      ]
+    },
+    "ep:GESAMT:zuwendungen": {
+      "pdf_seite": 62,
+      "bild": "s062.webp",
+      "bbox": [
+        42.05,
+        157.66,
+        561.74,
+        169.63
+      ]
+    },
+    "fp:GESAMT:aenderung_finanzbestand": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        714.98,
+        564.12,
+        726.95
+      ]
+    },
+    "fp:GESAMT:aktivierbare_zuwendungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        559.16,
+        564.12,
+        571.13
+      ]
+    },
+    "fp:GESAMT:anfangsbestand_finanzmittel": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        730.72,
+        564.12,
+        742.69
+      ]
+    },
+    "fp:GESAMT:auszahlungen_investitionen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        590.25,
+        564.12,
+        602.22
+      ]
+    },
+    "fp:GESAMT:auszahlungen_laufende_verwaltung": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        373.46,
+        564.12,
+        385.43
+      ]
+    },
+    "fp:GESAMT:baumassnahmen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        513.14,
+        564.12,
+        525.11
+      ]
+    },
+    "fp:GESAMT:beitraege": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        450.97,
+        564.12,
+        462.94
+      ]
+    },
+    "fp:GESAMT:einzahlungen_investitionen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        482.05,
+        564.12,
+        494.02
+      ]
+    },
+    "fp:GESAMT:einzahlungen_laufende_verwaltung": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        265.27,
+        564.12,
+        277.24
+      ]
+    },
+    "fp:GESAMT:erwerb_bewegliches_anlagevermoegen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        528.48,
+        564.12,
+        540.45
+      ]
+    },
+    "fp:GESAMT:erwerb_finanzanlagen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        543.82,
+        564.12,
+        555.79
+      ]
+    },
+    "fp:GESAMT:erwerb_grundstuecke_gebaeude": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        497.8,
+        564.12,
+        509.77
+      ]
+    },
+    "fp:GESAMT:finanzauszahlungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        327.04,
+        564.12,
+        339.01
+      ]
+    },
+    "fp:GESAMT:finanzeinzahlungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        249.53,
+        564.12,
+        261.5
+      ]
+    },
+    "fp:GESAMT:finanzmittelueberschuss": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        621.73,
+        564.12,
+        633.7
+      ]
+    },
+    "fp:GESAMT:fremde_finanzmittel": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        746.06,
+        564.12,
+        758.03
+      ]
+    },
+    "fp:GESAMT:investitionszuwendungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        404.94,
+        564.12,
+        416.91
+      ]
+    },
+    "fp:GESAMT:kostenerstattungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        218.84,
+        564.12,
+        230.81
+      ]
+    },
+    "fp:GESAMT:kreditaufnahme": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        637.47,
+        564.12,
+        649.44
+      ]
+    },
+    "fp:GESAMT:liquide_mittel": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        761.8,
+        564.12,
+        773.77
+      ]
+    },
+    "fp:GESAMT:liquiditaetskredite_aufnahme": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        652.81,
+        564.12,
+        664.78
+      ]
+    },
+    "fp:GESAMT:liquiditaetskredite_tilgung": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        683.5,
+        564.12,
+        695.47
+      ]
+    },
+    "fp:GESAMT:oeffentlich_rechtliche_entgelte": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        188.16,
+        564.12,
+        200.13
+      ]
+    },
+    "fp:GESAMT:personalauszahlungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        281.01,
+        564.12,
+        292.98
+      ]
+    },
+    "fp:GESAMT:privatrechtliche_entgelte": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        203.5,
+        564.12,
+        215.47
+      ]
+    },
+    "fp:GESAMT:sach_und_dienstleistungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        311.69,
+        564.12,
+        323.66
+      ]
+    },
+    "fp:GESAMT:saldo_finanzierung": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        699.24,
+        564.12,
+        711.21
+      ]
+    },
+    "fp:GESAMT:saldo_investitionen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        605.99,
+        564.12,
+        617.96
+      ]
+    },
+    "fp:GESAMT:saldo_laufende_verwaltung": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        389.2,
+        564.12,
+        401.17
+      ]
+    },
+    "fp:GESAMT:sonstige_auszahlungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        357.72,
+        564.12,
+        369.69
+      ]
+    },
+    "fp:GESAMT:sonstige_einzahlungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        234.19,
+        564.12,
+        246.16
+      ]
+    },
+    "fp:GESAMT:sonstige_investitionsauszahlungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        574.51,
+        564.12,
+        586.48
+      ]
+    },
+    "fp:GESAMT:sonstige_investitionseinzahlungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        466.31,
+        564.12,
+        478.28
+      ]
+    },
+    "fp:GESAMT:sonstige_transfereinzahlungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        172.82,
+        564.12,
+        184.79
+      ]
+    },
+    "fp:GESAMT:steuern": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        142.13,
+        564.12,
+        154.1
+      ]
+    },
+    "fp:GESAMT:tilgung": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        668.16,
+        564.12,
+        680.13
+      ]
+    },
+    "fp:GESAMT:transferauszahlungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        342.38,
+        564.12,
+        354.35
+      ]
+    },
+    "fp:GESAMT:veraeusserung_finanzanlagen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        435.63,
+        564.12,
+        447.6
+      ]
+    },
+    "fp:GESAMT:veraeusserung_sachanlagen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        420.29,
+        564.12,
+        432.26
+      ]
+    },
+    "fp:GESAMT:versorgungsauszahlungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        296.35,
+        564.12,
+        308.32
+      ]
+    },
+    "fp:GESAMT:zuwendungen": {
+      "pdf_seite": 63,
+      "bild": "s063.webp",
+      "bbox": [
+        42.05,
+        157.47,
+        564.12,
+        169.44
+      ]
+    }
+  }
+}

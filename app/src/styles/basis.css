@@ -30,4 +30,17 @@ body {
   wa-skeleton::part(indicator) {
     animation: none;
   }
+
+  /* Web Awesome bringt für Drawer, Details und Tooltips keine eigene Reduktion mit (A11Y-02):
+     Die Übergangs-Tokens und die Drawer-Dauern fallen auf 0, immer mit Einheit. */
+  :root {
+    --wa-transition-fast: 0ms;
+    --wa-transition-normal: 0ms;
+    --wa-transition-slow: 0ms;
+  }
+
+  wa-drawer {
+    --show-duration: 0s;
+    --hide-duration: 0s;
+  }
 }

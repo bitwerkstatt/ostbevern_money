@@ -9,6 +9,7 @@ import type { Knoten } from '@/data/typen'
 import { proKopf } from '@/lib/berechnung'
 import { baueErtragsarten } from '@/lib/ertragsarten'
 import { wertartFuerJahr, wertartName } from '@/lib/jahr'
+import { belegSchluessel } from '@/lib/quelle'
 
 export interface Kennzahl {
   schluessel: string
@@ -24,6 +25,13 @@ export interface Kennzahl {
   pdfSeiten: number[]
   /** `true`, wenn der Wert nicht im PDF steht, sondern berechnet ist. */
   berechnet: boolean
+  /** Belegschlüssel der Zeile, die der Wert belegt (`lib/quelle.ts`, Grammatik `ep:`/`fp:`). */
+  quelle: string
+  /**
+   * Herleitung für die Quell-Seitenleiste (D-03), wenn der angezeigte Wert aus mehr als der
+   * belegten Zeile besteht; sonst `null`. Namen, Zeilennummern und Seiten stammen aus den Daten.
+   */
+  herleitung: string | null
 }
 
 /** Zeile unter einem Wert: „{Wertart} {jahr} · PDF-Seite {n}“ (D-10, UI-SPEC KennzahlKachel). */
@@ -66,6 +74,17 @@ function ergebnisplanSeite(): number {
   return seite
 }
 
+/** Gedruckter Name und Zeilennummer einer Ergebnisplan-Zeile: „Ordentliche Erträge (Zeile 10)“. */
+function zeilenBezug(schluessel: string): string {
+  const eintrag = haushalt.zeilen_namen.ergebnisplan.find(
+    (zeile) => zeile.schluessel === schluessel,
+  )
+  if (eintrag === undefined) {
+    throw new Error(`Die Ergebnisplan-Zeile ${schluessel} fehlt in haushalt.zeilen_namen`)
+  }
+  return `${eintrag.name} (Zeile ${eintrag.nummer})`
+}
+
 export function baueKennzahlen(): Kennzahl[] {
   const index = jahrIndex()
   const jahr = haushalt.haushaltsjahr
@@ -91,6 +110,9 @@ export function baueKennzahlen(): Kennzahl[] {
   const einwohner = einwohnerZahl()
 
   const basis = { wertart, jahr }
+  const herleitungErtraege = `${zeilenBezug('ordentliche_ertraege')} plus ${zeilenBezug('finanzertraege')}`
+  const herleitungAufwand = `${zeilenBezug('ordentliche_aufwendungen')} plus ${zeilenBezug('zinsaufwendungen')}`
+  const durchEinwohner = `geteilt durch die Einwohnerzahl (PDF-Seite ${String(einwohnerSeite)})`
   return [
     {
       ...basis,
@@ -100,6 +122,8 @@ export function baueKennzahlen(): Kennzahl[] {
       anzeige: 'kurz',
       pdfSeiten: [epSeite],
       berechnet: false,
+      quelle: belegSchluessel.ep('GESAMT', 'ordentliche_ertraege'),
+      herleitung: herleitungErtraege,
     },
     {
       ...basis,
@@ -109,6 +133,8 @@ export function baueKennzahlen(): Kennzahl[] {
       anzeige: 'kurz',
       pdfSeiten: [epSeite],
       berechnet: false,
+      quelle: belegSchluessel.ep('GESAMT', 'ordentliche_aufwendungen'),
+      herleitung: herleitungAufwand,
     },
     {
       ...basis,
@@ -118,6 +144,8 @@ export function baueKennzahlen(): Kennzahl[] {
       anzeige: 'kurz',
       pdfSeiten: [epSeite],
       berechnet: false,
+      quelle: belegSchluessel.ep('GESAMT', 'ergebnis_nach_minderaufwand'),
+      herleitung: null,
     },
     {
       ...basis,
@@ -127,6 +155,8 @@ export function baueKennzahlen(): Kennzahl[] {
       anzeige: 'kurz',
       pdfSeiten: [fpSeite],
       berechnet: false,
+      quelle: belegSchluessel.fp('GESAMT', 'auszahlungen_investitionen'),
+      herleitung: null,
     },
     {
       ...basis,
@@ -136,6 +166,8 @@ export function baueKennzahlen(): Kennzahl[] {
       anzeige: 'kurz',
       pdfSeiten: [fpSeite],
       berechnet: false,
+      quelle: belegSchluessel.fp('GESAMT', 'kreditaufnahme'),
+      herleitung: null,
     },
     {
       ...basis,
@@ -145,6 +177,8 @@ export function baueKennzahlen(): Kennzahl[] {
       anzeige: 'euro',
       pdfSeiten: [epSeite, einwohnerSeite],
       berechnet: true,
+      quelle: belegSchluessel.ep('GESAMT', 'ordentliche_aufwendungen'),
+      herleitung: `(${herleitungAufwand}) ${durchEinwohner}`,
     },
     {
       ...basis,
@@ -154,6 +188,8 @@ export function baueKennzahlen(): Kennzahl[] {
       anzeige: 'euro',
       pdfSeiten: [epSeite, einwohnerSeite],
       berechnet: true,
+      quelle: belegSchluessel.ep('GESAMT', 'steuern'),
+      herleitung: `${zeilenBezug('steuern')} ${durchEinwohner}`,
     },
   ]
 }

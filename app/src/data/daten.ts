@@ -5,12 +5,14 @@
 import haushaltJson from './haushalt.json'
 import investitionenJson from './investitionen.json'
 import produkteJson from './produkte.json'
+import quellenJson from './quellen.json'
 import stellenplanJson from './stellenplan.json'
 import texteJson from './texte.json'
-import type { Haushalt, Investitionen, Produkt, Stellenplan, Texte } from './typen'
+import type { Haushalt, Investitionen, Produkt, Quellen, Stellenplan, Texte } from './typen'
 
 export const haushalt: Haushalt = haushaltJson
 export const stellenplan: Stellenplan = stellenplanJson
 export const produkte: Produkt[] = produkteJson
 export const investitionen: Investitionen = investitionenJson
 export const texte: Texte = texteJson
+export const quellen: Quellen = quellenJson

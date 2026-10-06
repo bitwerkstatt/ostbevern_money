@@ -1,0 +1,11 @@
+// TSConfig für die Playwright-Specs unter e2e/: laufen in Node, greifen im Browserkontext
+// aber auf `document` und `window` zu (page.evaluate), deshalb zusätzlich die DOM-Bibliothek.
+{
+  "extends": "./tsconfig.node.json",
+  "include": ["e2e/**/*"],
+  "compilerOptions": {
+    "lib": ["ES2024", "DOM"],
+    "types": ["node"],
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.e2e.tsbuildinfo"
+  }
+}
