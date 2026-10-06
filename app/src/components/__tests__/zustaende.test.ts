@@ -1,6 +1,6 @@
 import { createSSRApp, type Component } from 'vue'
 import { renderToString } from 'vue/server-renderer'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import BaseChart, { datenpunkte } from '@/components/BaseChart.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
@@ -9,12 +9,8 @@ import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 
 // Zustände von BaseChart und DatenTabelle (E6, QUAL-02): laden, Fehler, leer, teilweise leer.
 // Gerendert wird serverseitig mit `vue/server-renderer` (Teil des vue-Pakets, kein neues
-// Paket, kein DOM). VChart zeichnet in Node nichts; es wird durch eine leere Komponente
-// ersetzt, geprüft wird der Rahmen, den BaseChart darum setzt.
-
-vi.mock('vue-echarts', () => ({
-  default: { name: 'VChart', render: () => null },
-}))
+// Paket, kein DOM). vue-echarts lädt in Node und rendert serverseitig nur seinen Rahmen;
+// geprüft wird der Rahmen, den BaseChart darum setzt (Zustand, Attribute).
 
 function rendere(komponente: Component, props: Record<string, unknown>): Promise<string> {
   return renderToString(createSSRApp(komponente, props))

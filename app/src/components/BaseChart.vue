@@ -1,6 +1,30 @@
+<script lang="ts">
+import type { EChartsOption } from 'echarts'
+
+/**
+ * Zahl der Einträge in `data`, `links` oder `edges` aller Serien einer Option. Dieselbe
+ * Zählung bestimmt den Leerzustand (0 = leer) und das Attribut `data-om-datenpunkte`, an dem
+ * der Smoke-Test (e2e/smoke.spec.ts) erkennt, dass ein Diagramm echte Daten trägt.
+ */
+export function datenpunkte(option: EChartsOption): number {
+  const series = option.series
+  if (!series) {
+    return 0
+  }
+  const serienListe = Array.isArray(series) ? series : [series]
+  return serienListe.reduce((summe, eintrag) => {
+    const { data, links, edges } = eintrag as {
+      data?: unknown[]
+      links?: unknown[]
+      edges?: unknown[]
+    }
+    return summe + (data?.length ?? 0) + (links?.length ?? 0) + (edges?.length ?? 0)
+  }, 0)
+}
+</script>
+
 <script setup lang="ts">
 import { computed, inject } from 'vue'
-import type { EChartsOption } from 'echarts'
 import VChart from 'vue-echarts'
 import { CHART_THEME } from '@/charts/echartsTheme'
 import { CHART_KONTEXT } from '@/components/chartKontext'
@@ -45,25 +69,9 @@ const ariaLabelledby = computed(() => {
   return beschreibungId ? `${kontext.titelId} ${beschreibungId}` : kontext.titelId
 })
 
-const istLeer = computed(() => {
-  const series = props.option.series
-  if (!series) {
-    return true
-  }
-  const serienListe = Array.isArray(series) ? series : [series]
-  if (serienListe.length === 0) {
-    return true
-  }
-  // Eine Serie ist leer, wenn weder `data` noch (Sankey) `links`/`edges` Einträge haben.
-  return serienListe.every((eintrag) => {
-    const { data, links, edges } = eintrag as {
-      data?: unknown[]
-      links?: unknown[]
-      edges?: unknown[]
-    }
-    return !data?.length && !links?.length && !edges?.length
-  })
-})
+const anzahlDatenpunkte = computed(() => datenpunkte(props.option))
+// Eine Serie ist leer, wenn weder `data` noch (Sankey) `links`/`edges` Einträge haben.
+const istLeer = computed(() => anzahlDatenpunkte.value === 0)
 
 function onClick(params: unknown) {
   emit('chartClick', params)
@@ -89,6 +97,7 @@ function onClick(params: unknown) {
     <div
       v-else
       class="om-base-chart__chart"
+      :data-om-datenpunkte="anzahlDatenpunkte"
       role="img"
       :aria-label="props.beschreibung"
       :aria-labelledby="ariaLabelledby"
