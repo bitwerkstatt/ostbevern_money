@@ -36,6 +36,46 @@ function scriptTeil(text: string): string {
   return treffer?.[1] ?? ''
 }
 
+describe('HinweisNichtImHaushalt auf /einnahmen und in der Kurzform (UI-04, D-18)', () => {
+  it('EinnahmenPage bindet die Hinweisbox mit variante="einnahmen" ein', () => {
+    const seite = quelltext('/src/pages/EinnahmenPage.vue')
+    expect(seite).toContain('<HinweisNichtImHaushalt')
+    expect(seite).toContain('variante="einnahmen"')
+  })
+
+  it('EinnahmenPage setzt die Hinweisbox hinter den Abschnitt Investive Einnahmen', () => {
+    const template = templateTeil(quelltext('/src/pages/EinnahmenPage.vue'))
+    expect(template.indexOf('<HinweisNichtImHaushalt')).toBeGreaterThan(
+      template.indexOf('Investive Einnahmen'),
+    )
+  })
+
+  it('die Komponente trägt die drei Leitsätze wörtlich', () => {
+    const komponente = quelltext(KOMPONENTE)
+    expect(komponente).toContain(
+      'Nicht alles, was in Ostbevern Geld kostet, steht in diesem Haushalt. Das Hallenbad führt die BBO in eigenen Büchern. Im Haushalt siehst du nur die Verlustübernahme.',
+    )
+    expect(komponente).toContain(
+      'Abwassergebühren findest du hier nicht. Die Abwasserentsorgung führt der TEO AöR in eigenen Büchern.',
+    )
+    expect(komponente).toContain(
+      'Das Hallenbad (BBO) und die Abwasserentsorgung (TEO AöR) führen eigene Bücher und stehen nicht in diesem Haushalt.',
+    )
+  })
+
+  it('die Kurzform verlinkt auf den Glossaranker nicht_im_haushalt', () => {
+    const komponente = quelltext(KOMPONENTE)
+    expect(komponente).toContain('#nicht_im_haushalt')
+    expect(komponente).toContain('Mehr dazu im Glossar')
+  })
+
+  it('der Aufklapper „Was sind BBO und TEO?“ hängt am vorhandenen Pipeline-Text', () => {
+    const komponente = quelltext(KOMPONENTE)
+    expect(komponente).toContain('Was sind BBO und TEO?')
+    expect(komponente).toContain("findeText('nicht_im_haushalt')")
+  })
+})
+
 describe('HinweisNichtImHaushalt auf /ausgaben (UI-04, D-18)', () => {
   it('AusgabenPage bindet die Hinweisbox mit variante="ausgaben" ein', () => {
     const seite = quelltext('/src/pages/AusgabenPage.vue')
