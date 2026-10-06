@@ -545,6 +545,32 @@ def test_layout_text_fehlender_schluessel_meldet_pfad() -> None:
         layout_text(jahrgang, "unbekannter_bereich", "nix")
 
 
+def test_layout_quellenbelege_pruefwoerter_und_leere_schwaerzen_nach() -> None:
+    jahrgang = lade_jahrgang(STANDARD_JAHR)
+    pruefwoerter = layout_liste(jahrgang, "quellenbelege", "pruefwoerter")
+    assert "Bürgermeister" in pruefwoerter and "Verantwortlich" in pruefwoerter
+    assert len(set(pruefwoerter)) == len(pruefwoerter)
+    assert layout_liste(jahrgang, "quellenbelege", "schwaerzen_nach") == ()
+
+
+def test_layout_leere_liste_ist_erlaubt_leerer_eintrag_nicht(tmp_path: Path) -> None:
+    text = _jahrgangsdatei_text()
+    assert "schwaerzen_nach = []" in text
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    assert (
+        layout_liste(
+            lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path), "quellenbelege", "schwaerzen_nach"
+        )
+        == ()
+    )
+
+    _schreibe_jahrgangsdatei(
+        tmp_path, text.replace("schwaerzen_nach = []", 'schwaerzen_nach = [""]')
+    )
+    with pytest.raises(KonfigurationsFehler, match="layout.quellenbelege.schwaerzen_nach"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
 # [stichproben] (Phase 3, 03-04): PDF-geprüfte Testreferenzen, keine Extraktions-
 # Steuerung (keine Pflichttabelle, muss aber eine Tabelle von Tabellen sein). Steht am
 # Dateiende der echten Sollwertdatei, daher reicht das Muster bis zum Dateiende.

@@ -5,8 +5,9 @@ nummerierten Schritte in Reihenfolge aus (D-09, D-24): 01 (Seiten klassifizieren
 (Pläne extrahieren), 03 (Produktinformationen und Erläuterungen), 04
 (Investitionsmaßnahmen), Querschnitte (Kontrollquelle, PDF-lesend, D-14), 05
 (Stellenplan, EXTR-10), 06 (Konsistenzprüfung, liest danach nur noch CSVs, D-06), 07
-(App-JSON-Erzeugung, nur nach einem grünen Bericht, D-24). Die eigentliche Logik lebt in
-`ostbevern/`; dieses Modul bleibt ein dünner typer-Einstiegspunkt.
+(App-JSON-Erzeugung, nur nach einem grünen Bericht, D-24), 08 (Quellenbelege: quellen.json,
+Belegseiten und Bericht, nach Schritt 07; fehlende Rechtecke brechen nie ab, D-03). Die
+eigentliche Logik lebt in `ostbevern/`; dieses Modul bleibt ein dünner typer-Einstiegspunkt.
 """
 
 from __future__ import annotations
@@ -21,11 +22,13 @@ from ostbevern import (
     plaene,
     produkte,
     pruefung,
+    quellen,
     querschnitte,
     seiten,
     stellenplan,
 )
 from ostbevern.app_daten import AppDatenFehler
+from ostbevern.belegbilder import BelegbildFehler
 from ostbevern.investitionen import InvestitionenFehler
 from ostbevern.konfiguration import (
     PROJEKT_WURZEL,
@@ -38,6 +41,7 @@ from ostbevern.pdf import PdfFehler
 from ostbevern.plaene import PlaeneFehler
 from ostbevern.produkte import ProdukteFehler
 from ostbevern.pruefung import PruefungsFehler
+from ostbevern.quellen import QuellenFehler
 from ostbevern.querschnitte import QuerschnitteFehler
 from ostbevern.schema import SchemaFehler
 from ostbevern.seiten import SeitenFehler
@@ -163,6 +167,25 @@ def main(
     for pfad in pfade_app_daten:
         pfad_relativ = pfad.relative_to(PROJEKT_WURZEL)
         typer.echo(f"Schritt 07: geschrieben: {pfad_relativ}")
+
+    try:
+        ergebnis_quellen = quellen.erzeuge_quellen(jahr)
+    except (
+        QuellenFehler,
+        BelegbildFehler,
+        ProdukteFehler,
+        PdfFehler,
+        SchemaFehler,
+        KonfigurationsFehler,
+    ) as fehler:
+        typer.echo(f"Fehler: {fehler}", err=True)
+        raise typer.Exit(code=1) from fehler
+    typer.echo(
+        f"Schritt 08: {ergebnis_quellen.anzahl_belege} Belege, "
+        f"{ergebnis_quellen.anzahl_ohne_bbox} ohne Markierung, "
+        f"{len(ergebnis_quellen.seiten)} Seiten, "
+        f"{ergebnis_quellen.neu_gerendert} Bilder neu gerendert"
+    )
 
 
 if __name__ == "__main__":

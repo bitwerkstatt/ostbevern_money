@@ -45,6 +45,14 @@ jobs:
             git status --porcelain --untracked-files=all -- daten app/src/data
             exit 1
           fi
+          # Schritt 08 rendert nur fehlende Belegseiten (RESEARCH Pitfall 2): Alle Bilder
+          # müssen eingecheckt sein. Die WebP-Bytes werden bewusst nicht verglichen, weil
+          # PDFium und libwebp je Plattform andere Bytes liefern können; geprüft wird nur, dass
+          # alle.py unter app/public/quellen keine Datei neu anlegt oder ändert.
+          if [ -n "$(git status --porcelain --untracked-files=all -- app/public/quellen)" ]; then
+            git status --porcelain --untracked-files=all -- app/public/quellen
+            exit 1
+          fi
 
   app:
     runs-on: ubuntu-latest

@@ -1,5 +1,5 @@
 """Tests für den alle.py-Einstiegspunkt: Schrittfolge 01 -> 02 -> 03 -> 04 -> Querschnitte
--> 05 -> 06 -> 07 (D-09, D-24)."""
+-> 05 -> 06 -> 07 -> 08 (D-09, D-24)."""
 
 from __future__ import annotations
 
@@ -16,11 +16,13 @@ from ostbevern import (
     plaene,
     produkte,
     pruefung,
+    quellen,
     querschnitte,
     seiten,
     stellenplan,
 )
 from ostbevern.app_daten import AppDatenFehler
+from ostbevern.belegbilder import BelegbildFehler
 from ostbevern.investitionen import ExtraktionsErgebnis as InvestitionenErgebnis
 from ostbevern.investitionen import InvestitionenFehler
 from ostbevern.konfiguration import PROJEKT_WURZEL, STANDARD_JAHR
@@ -28,6 +30,7 @@ from ostbevern.plaene import ExtraktionsErgebnis
 from ostbevern.produkte import ExtraktionsErgebnis as ProdukteErgebnis
 from ostbevern.produkte import ProdukteFehler
 from ostbevern.pruefung import Bericht, Pruefpunkt, Regelergebnis
+from ostbevern.quellen import QuellenErgebnis, QuellenFehler
 from ostbevern.querschnitte import QuerschnitteFehler
 from ostbevern.seiten import KlassifizierungsErgebnis, SeitenFehler
 from ostbevern.stellenplan import StellenplanFehler
@@ -103,6 +106,19 @@ def _app_daten_ergebnis() -> list[Path]:
     # 07_app_daten.py); die Fixture braucht deshalb einen absoluten Pfad, wie
     # _investitionen_ergebnisse() oben.
     return [PROJEKT_WURZEL / "app/src/data/haushalt.json"]
+
+
+def _quellen_ergebnis() -> QuellenErgebnis:
+    # alle.py ruft .relative_to(PROJEKT_WURZEL) auf dem Pfad auf (wie 08_quellenbelege.py).
+    return QuellenErgebnis(
+        pfad=PROJEKT_WURZEL / "app/src/data/quellen.json",
+        anzahl_belege=2496,
+        anzahl_ohne_bbox=33,
+        seiten=(62, 63),
+        neu_gerendert=0,
+        ohne_bbox={},
+        bericht=PROJEKT_WURZEL / "daten/pruefberichte/quellenbelege.md",
+    )
 
 
 def _investitionen_ergebnisse() -> tuple[InvestitionenErgebnis, InvestitionenErgebnis]:
@@ -194,6 +210,11 @@ def aufrufe(monkeypatch: pytest.MonkeyPatch) -> _Aufrufe:
         aufzeichnung.jahre["app_daten"] = jahr
         return _app_daten_ergebnis()
 
+    def _erzeuge_quellen(jahr, **kwargs):  # noqa: ANN001, ANN003, ANN202
+        aufzeichnung.reihenfolge.append("quellen")
+        aufzeichnung.jahre["quellen"] = jahr
+        return _quellen_ergebnis()
+
     monkeypatch.setattr(seiten, "klassifiziere_seiten", _klassifiziere_seiten)
     monkeypatch.setattr(plaene, "extrahiere_plaene", _extrahiere_plaene)
     monkeypatch.setattr(produkte, "extrahiere_produkte", _extrahiere_produkte)
@@ -203,6 +224,7 @@ def aufrufe(monkeypatch: pytest.MonkeyPatch) -> _Aufrufe:
     monkeypatch.setattr(pruefung, "pruefe_alles", _pruefe_alles)
     monkeypatch.setattr(pruefung, "schreibe_konsistenzbericht", _schreibe_konsistenzbericht)
     monkeypatch.setattr(app_daten, "erzeuge_app_daten", _erzeuge_app_daten)
+    monkeypatch.setattr(quellen, "erzeuge_quellen", _erzeuge_quellen)
     return aufzeichnung
 
 
@@ -220,6 +242,7 @@ def test_ohne_jahr_nutzt_standardjahr(aufrufe: _Aufrufe) -> None:
         "pruefe",
         "schreibe",
         "app_daten",
+        "quellen",
     ]
     assert aufrufe.jahre == {
         "seiten": STANDARD_JAHR,
@@ -230,6 +253,7 @@ def test_ohne_jahr_nutzt_standardjahr(aufrufe: _Aufrufe) -> None:
         "stellenplan": STANDARD_JAHR,
         "pruefe": STANDARD_JAHR,
         "app_daten": STANDARD_JAHR,
+        "quellen": STANDARD_JAHR,
     }
 
 
@@ -422,3 +446,53 @@ def test_app_daten_fehler_beendet_mit_fehler(
         "schreibe",
         "app_daten",
     ]
+
+
+@pytest.mark.parametrize(
+    "fehler",
+    [
+        QuellenFehler("Testfehler: Beleg doppelt"),
+        BelegbildFehler("Testfehler: Bild nicht erzeugbar"),
+        ProdukteFehler("Testfehler: Personenfeld ohne Wert"),
+    ],
+    ids=["quellenfehler", "belegbildfehler", "produktefehler"],
+)
+def test_quellenfehler_beendet_mit_fehler(
+    aufrufe: _Aufrufe, monkeypatch: pytest.MonkeyPatch, fehler: Exception
+) -> None:
+    def _bricht_ab(jahr, **kwargs):  # noqa: ANN001, ANN003, ANN202
+        aufrufe.reihenfolge.append("quellen")
+        raise fehler
+
+    monkeypatch.setattr(quellen, "erzeuge_quellen", _bricht_ab)
+
+    ergebnis = runner.invoke(alle.app, [])
+    assert ergebnis.exit_code == 1
+    ausgabe = (
+        ergebnis.output if ergebnis.stderr_bytes is None else ergebnis.output + ergebnis.stderr
+    )
+    assert "Fehler:" in ausgabe
+    assert aufrufe.reihenfolge[-2:] == ["app_daten", "quellen"]
+
+
+def test_schritt_08_meldet_belege_und_laeuft_nach_schritt_07(aufrufe: _Aufrufe) -> None:
+    ergebnis = runner.invoke(alle.app, [])
+    assert ergebnis.exit_code == 0
+    assert aufrufe.reihenfolge[-2:] == ["app_daten", "quellen"]
+    assert "Schritt 08: 2496 Belege, 33 ohne Markierung, 2 Seiten, 0 Bilder neu gerendert" in (
+        ergebnis.output
+    )
+
+
+def test_roter_bericht_ruft_quellen_nicht_auf(
+    aufrufe: _Aufrufe, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def _rot(jahr, **kwargs):  # noqa: ANN001, ANN003, ANN202
+        aufrufe.reihenfolge.append("pruefe")
+        return _roter_bericht(jahr)
+
+    monkeypatch.setattr(pruefung, "pruefe_alles", _rot)
+
+    ergebnis = runner.invoke(alle.app, [])
+    assert ergebnis.exit_code == 1
+    assert "quellen" not in aufrufe.reihenfolge

@@ -37,6 +37,9 @@ QUERSCHNITTE_CSV = Path("zwischen/querschnitte.csv")
 INVESTITIONEN_PB_CSV = Path("zwischen/investitionen_pb.csv")
 KONSISTENZ_MD = Path("pruefberichte/konsistenz.md")
 BEFUNDE_MD = Path("pruefberichte/befunde.md")
+# Bericht von Schritt 08 (Phase 7, D-03): alle Belege ohne Zeilenrechteck und die
+# Datenschutz-Prüfliste; wird von `quellen.erzeuge_quellen` geschrieben.
+QUELLENBELEGE_MD = Path("pruefberichte/quellenbelege.md")
 
 # Manuell gepflegte Vorberichtstabellen (Phase 4, D-05, D-06, D-09): einmalig von Hand
 # abgeschrieben, danach eingecheckte Handdaten, die kein Pipeline-Schritt überschreibt.
