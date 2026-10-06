@@ -497,6 +497,112 @@ def test_textwerte_vorjahr_schluesselzuweisung_groesser_als_haushaltsjahr(
     )
 
 
+# ---------------------------------------------------------------------------
+# Phase 6 (Plan 06-04): Polster- und Schuldenformeln (D-14, D-09, D-20)
+# ---------------------------------------------------------------------------
+
+
+def _eigenkapital_reihe(haushalt: dict, posten: str) -> list[int | float]:
+    for eintrag in haushalt["eigenkapital"]["posten"]:
+        if eintrag["posten"] == posten:
+            return eintrag["werte"]
+    raise AssertionError(f"Eigenkapitalposten {posten!r} fehlt")
+
+
+def test_textwerte_enthaelt_letztes_jahr(
+    app_daten: tuple[dict, dict, list[dict]], werte: dict[str, int | float]
+) -> None:
+    haushalt, _investitionen, _produkte = app_daten
+    assert werte["jahr.letztes_jahr"] == haushalt["jahre"][-1]
+
+
+def test_ausgleichsruecklage_aufgebraucht_ohne_nullspalte_ist_texte_fehler(
+    app_daten: tuple[dict, dict, list[dict]],
+) -> None:
+    haushalt, investitionen, produkte = app_daten
+    kopie = copy.deepcopy(haushalt)
+    for posten in kopie["eigenkapital"]["posten"]:
+        if posten["posten"] == "ausgleichsruecklage":
+            posten["werte"] = [1] * len(posten["werte"])
+    with pytest.raises(TexteFehler, match="ausgleichsruecklage_aufgebraucht_jahr"):
+        textwerte(kopie, investitionen, produkte)
+
+
+def test_ausgleichsruecklage_aufgebraucht_jahr_ist_jahr_vor_erster_nullspalte(
+    app_daten: tuple[dict, dict, list[dict]], werte: dict[str, int | float]
+) -> None:
+    """S. 311 nennt Anfangsbestände: die erste Nullspalte nach dem Haushaltsjahr ist der
+    Stand zu Beginn des Folgejahrs, aufgebraucht ist die Rücklage also am Ende des Jahres
+    davor."""
+    haushalt, _investitionen, _produkte = app_daten
+    reihe = _eigenkapital_reihe(haushalt, "ausgleichsruecklage")
+    jahre = haushalt["jahre"]
+    erste_nullspalte = next(
+        jahr for jahr, wert in zip(jahre, reihe, strict=True) if jahr > jahre[0] and wert == 0
+    )
+    assert erste_nullspalte > haushalt["haushaltsjahr"]
+    assert werte["abgeleitet.ausgleichsruecklage_aufgebraucht_jahr"] == erste_nullspalte - 1
+
+
+def test_allgemeine_ruecklage_ende_letztes_jahr_gleich_gedruckter_gesamtsumme(
+    app_daten: tuple[dict, dict, list[dict]], werte: dict[str, int | float]
+) -> None:
+    """Gegenprobe gegen S. 311: ist die Ausgleichsrücklage im letzten Jahr 0, ist das
+    Eigenkapital des letzten Jahres (gedruckte Summe) die allgemeine Rücklage nach Abbau."""
+    haushalt, _investitionen, _produkte = app_daten
+    assert _eigenkapital_reihe(haushalt, "ausgleichsruecklage")[-1] == 0
+    gedruckt = haushalt["eigenkapital"]["gesamt_vorbericht"]["werte"][-1]
+    assert werte["abgeleitet.allgemeine_ruecklage_ende_letztes_jahr"] == gedruckt
+
+
+def test_allgemeine_ruecklage_rueckgang_ist_relativ_zum_haushaltsjahr(
+    app_daten: tuple[dict, dict, list[dict]], werte: dict[str, int | float]
+) -> None:
+    haushalt, _investitionen, _produkte = app_daten
+    jahre = haushalt["jahre"]
+    ruecklage = _eigenkapital_reihe(haushalt, "allgemeine_ruecklage")
+    anfang = ruecklage[jahre.index(haushalt["haushaltsjahr"])]
+    ende = werte["abgeleitet.allgemeine_ruecklage_ende_letztes_jahr"]
+    erwartet = (anfang - ende) / anfang * 100
+    assert werte["abgeleitet.allgemeine_ruecklage_rueckgang_bis_letztes_jahr"] == pytest.approx(
+        erwartet
+    )
+    assert 0 < erwartet < 100
+
+
+def test_schulden_formeln_kreditaufnahme_minus_tilgung_ist_anstieg_der_investitionskredite(
+    app_daten: tuple[dict, dict, list[dict]], werte: dict[str, int | float]
+) -> None:
+    haushalt, _investitionen, _produkte = app_daten
+    vorjahr = haushalt["haushaltsjahr"] - 1
+    letztes = haushalt["jahre"][-1]
+    anstieg = (
+        werte[f"schulden.investitionskredite.{letztes}"]
+        - werte[f"schulden.investitionskredite.{vorjahr}"]
+    )
+    kredit = werte["abgeleitet.kreditaufnahme_ab_haushaltsjahr"]
+    tilgung = werte["abgeleitet.tilgung_ab_haushaltsjahr"]
+    assert anstieg == kredit - tilgung
+    assert werte["abgeleitet.schulden_gesamt_vorjahr"] == werte[f"schulden.gesamt.{vorjahr}"]
+    assert werte["abgeleitet.schulden_gesamt_letztes_jahr"] == werte[f"schulden.gesamt.{letztes}"]
+
+
+def test_phase6_formeln_auf_den_echten_daten_2026(
+    app_daten: tuple[dict, dict, list[dict]], werte: dict[str, int | float]
+) -> None:
+    """Gedruckte Eckwerte des Haushalts 2026 (S. 23, S. 310, S. 311, GFP Z. 33/35)."""
+    haushalt, _investitionen, _produkte = app_daten
+    if haushalt["haushaltsjahr"] != 2026:
+        pytest.skip("Eckwerte gelten nur für den Haushalt 2026")
+    assert werte["abgeleitet.ausgleichsruecklage_aufgebraucht_jahr"] == 2026
+    assert werte["abgeleitet.allgemeine_ruecklage_ende_letztes_jahr"] == 31866316
+    assert round(werte["abgeleitet.allgemeine_ruecklage_rueckgang_bis_letztes_jahr"], 2) == 19.37
+    assert werte["abgeleitet.schulden_gesamt_vorjahr"] == 7710000
+    assert werte["abgeleitet.schulden_gesamt_letztes_jahr"] == 19625000
+    assert werte["abgeleitet.kreditaufnahme_ab_haushaltsjahr"] == 14700000
+    assert werte["abgeleitet.tilgung_ab_haushaltsjahr"] == 2700000
+
+
 def test_loese_auf_gibt_verwendete_schluessel_zurueck(
     werte: dict[str, int | float],
 ) -> None:

@@ -279,6 +279,70 @@ def _ausgleichsruecklage_minderung_haushaltsjahr(w: dict[str, int | float]) -> i
     return stand_haushaltsjahr - stand_folgejahr
 
 
+def _planjahre(w: dict[str, int | float]) -> range:
+    """Alle Jahre vom Haushaltsjahr bis zum letzten Planjahr (beide eingeschlossen)."""
+    return range(int(w["jahr.haushaltsjahr"]), int(w["jahr.letztes_jahr"]) + 1)
+
+
+def _ausgleichsruecklage_aufgebraucht_jahr(w: dict[str, int | float]) -> int | float:
+    # S. 311 (Eigenkapitalübersicht): die Spalten sind Bestände zu Beginn des Jahres. Die
+    # erste Spalte nach dem Haushaltsjahr mit Ausgleichsrücklage 0 ist also der Stand zu
+    # Beginn jenes Jahres; aufgebraucht ist die Rücklage am Ende des Jahres davor (Research
+    # Pattern 3). Gibt es keine Nullspalte, bricht Schritt 07 ab: der Satz könnte sonst
+    # nicht mehr stimmen (Plan 06-04, ENTW-03).
+    for jahr in range(int(w["jahr.haushaltsjahr"]) + 1, int(w["jahr.letztes_jahr"]) + 1):
+        if w[f"eigenkapital.ausgleichsruecklage.{jahr}"] == 0:
+            return jahr - 1
+    raise TexteFehler(
+        "Formel 'ausgleichsruecklage_aufgebraucht_jahr': keine Spalte der Ausgleichsrücklage "
+        "nach dem Haushaltsjahr hat den Stand 0 – der Polster-Text muss überarbeitet werden"
+    )
+
+
+def _allgemeine_ruecklage_abbau(w: dict[str, int | float], jahr: int) -> int | float:
+    # S. 23 (Vorbericht): Fehlbetrag des Jahres, soweit ihn die Ausgleichsrücklage nicht
+    # deckt, mindert die allgemeine Rücklage; die Verrechnung der Bilanzierungshilfe (S. 311,
+    # negativ gebucht) kommt hinzu. Alle Reihen sind Stände zu Beginn des Jahres.
+    fehlbetrag = -w[f"eigenkapital.jahresergebnis.{jahr}"]
+    ausgleich = w[f"eigenkapital.ausgleichsruecklage.{jahr}"]
+    verrechnung = w[f"eigenkapital.verrechnung_bilanzierungshilfe.{jahr}"]
+    return max(0, fehlbetrag - ausgleich) - verrechnung
+
+
+def _allgemeine_ruecklage_ende_letztes_jahr(w: dict[str, int | float]) -> int | float:
+    letztes = int(w["jahr.letztes_jahr"])
+    return w[f"eigenkapital.allgemeine_ruecklage.{letztes}"] - _allgemeine_ruecklage_abbau(
+        w, letztes
+    )
+
+
+def _allgemeine_ruecklage_rueckgang_bis_letztes_jahr(w: dict[str, int | float]) -> int | float:
+    # Prozentpunkte (Formatkürzel "prozent"), bezogen auf den Stand der allgemeinen Rücklage
+    # zu Beginn des Haushaltsjahrs (Bezugsgröße der Schwellen aus § 76 GO NRW, S. 23).
+    anfang = w[f"eigenkapital.allgemeine_ruecklage.{int(w['jahr.haushaltsjahr'])}"]
+    ende = _allgemeine_ruecklage_ende_letztes_jahr(w)
+    return (anfang - ende) / anfang * 100
+
+
+def _schulden_gesamt_vorjahr(w: dict[str, int | float]) -> int | float:
+    return w[f"schulden.gesamt.{int(w['jahr.vorjahr'])}"]
+
+
+def _schulden_gesamt_letztes_jahr(w: dict[str, int | float]) -> int | float:
+    return w[f"schulden.gesamt.{int(w['jahr.letztes_jahr'])}"]
+
+
+def _kreditaufnahme_ab_haushaltsjahr(w: dict[str, int | float]) -> int | float:
+    # Gesamtfinanzplan Z. 33, Summe Haushaltsjahr bis letztes Planjahr; deckt sich mit der
+    # Fortschreibung des Schuldenstands (schuldenstand.formel, S. 310).
+    return sum(w[f"gfp.kreditaufnahme.{jahr}"] for jahr in _planjahre(w))
+
+
+def _tilgung_ab_haushaltsjahr(w: dict[str, int | float]) -> int | float:
+    # Gesamtfinanzplan Z. 35, Summe Haushaltsjahr bis letztes Planjahr.
+    return sum(w[f"gfp.tilgung.{jahr}"] for jahr in _planjahre(w))
+
+
 # Benannte, dokumentierte Formeln über die Werte aus `textwerte` (D-15): der Name
 # verwendet relative Begriffe (Haushaltsjahr, Vorjahr), nie eine Jahreszahl. Jede
 # Formel liest `jahr.haushaltsjahr`/`jahr.vorjahr` aus dem übergebenen Werte-Dict, um
@@ -293,6 +357,17 @@ ABGELEITET: dict[str, Callable[[dict[str, int | float]], int | float]] = {
     # Satzung § 4, Research Pitfall 4: Ausgleichsrücklage Stand Haushaltsjahr minus
     # Stand Folgejahr (NICHT der rohe Vorjahresdelta der Eigenkapitalübersicht).
     "ausgleichsruecklage_minderung_haushaltsjahr": _ausgleichsruecklage_minderung_haushaltsjahr,
+    # Phase 6 (Plan 06-04, D-14): Polster der Rücklagen bis zum letzten Planjahr.
+    "ausgleichsruecklage_aufgebraucht_jahr": _ausgleichsruecklage_aufgebraucht_jahr,
+    "allgemeine_ruecklage_ende_letztes_jahr": _allgemeine_ruecklage_ende_letztes_jahr,
+    "allgemeine_ruecklage_rueckgang_bis_letztes_jahr": (
+        _allgemeine_ruecklage_rueckgang_bis_letztes_jahr
+    ),
+    # Phase 6 (Plan 06-04, D-09): Schuldenanstieg von Ende Vorjahr bis Ende letztes Planjahr.
+    "schulden_gesamt_vorjahr": _schulden_gesamt_vorjahr,
+    "schulden_gesamt_letztes_jahr": _schulden_gesamt_letztes_jahr,
+    "kreditaufnahme_ab_haushaltsjahr": _kreditaufnahme_ab_haushaltsjahr,
+    "tilgung_ab_haushaltsjahr": _tilgung_ab_haushaltsjahr,
 }
 
 
@@ -319,6 +394,8 @@ def textwerte(
     vorjahr = haushaltsjahr - 1
     werte["jahr.haushaltsjahr"] = haushaltsjahr
     werte["jahr.vorjahr"] = vorjahr
+    # Letztes Planjahr des Jahrgangs (D-14): Grenze für Polster- und Schuldenformeln.
+    werte["jahr.letztes_jahr"] = int(jahre[-1])
 
     # vorbericht.<tabelle>.<posten>.<jahr> und vorbericht.<tabelle>.gesamt_plan.<jahr>.
     vorbericht = haushalt["vorbericht"]  # type: ignore[index]
