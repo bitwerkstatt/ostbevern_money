@@ -3,9 +3,19 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import quelleKnopfQuelltext from '@/components/QuelleKnopf.vue?raw'
 import quelleSeiteQuelltext from '@/components/QuelleSeite.vue?raw'
 import quelleSeitenleisteQuelltext from '@/components/QuelleSeitenleiste.vue?raw'
+import { sichtbareSpalten, type DatenSpalte } from '@/components/datenTabelle'
+import { ORIGINAL_PDF_URL } from '@/config'
 import { haushalt, quellen } from '@/data/daten'
 import { baueKennzahlen } from '@/lib/kennzahlen'
-import { bboxProzent, belegSchluessel, bildUrl, findeBeleg } from '@/lib/quelle'
+import {
+  bboxProzent,
+  belegHinweis,
+  belegSchluessel,
+  bildUrl,
+  findeBeleg,
+  originalSeitenUrl,
+  quellAltText,
+} from '@/lib/quelle'
 
 describe('belegSchluessel (Grammatik wie pipeline/ostbevern/quellen.py)', () => {
   it('baut jeden Schlüssel nach der Grammatik', () => {
@@ -135,5 +145,108 @@ describe('keine Drittanbieter- oder Absolutpfade in den Beleg-Komponenten (D-05)
   it('die Seitenleiste nennt den Originallink nur über ORIGINAL_PDF_URL', () => {
     expect(quelleSeitenleisteQuelltext).not.toMatch(/https?:\/\//)
     expect(quelleSeitenleisteQuelltext).toContain('ORIGINAL_PDF_URL')
+  })
+})
+
+const HINWEIS_OHNE_MARKIERUNG =
+  'Zeile nicht automatisch markiert. Der Wert steht auf dieser Seite, vielleicht in anderer Schreibweise, zum Beispiel gerundet in Tausend Euro.'
+
+describe('belegHinweis (D-03)', () => {
+  it('nennt bei vorhandenem Rechteck nur den Markierungshinweis', () => {
+    expect(belegHinweis({ bbox: [1, 2, 3, 4] }, null)).toEqual({
+      art: 'markiert',
+      text: 'Die markierte Zeile ist umrandet.',
+    })
+  })
+
+  it('erklärt bei fehlendem Rechteck, dass die Zeile nicht markiert ist', () => {
+    expect(belegHinweis({ bbox: null }, null)).toEqual({
+      art: 'ohne_markierung',
+      text: HINWEIS_OHNE_MARKIERUNG,
+    })
+  })
+
+  it('nennt bei berechneten Werten die Herleitung, mit und ohne Rechteck', () => {
+    const erwartet = {
+      art: 'berechnet',
+      titel: 'Berechneter Wert',
+      text: 'Dieser Wert steht nicht im PDF. Er wird berechnet: Steuern geteilt durch die Einwohnerzahl. Die Seite zeigt die Ausgangswerte.',
+    }
+    expect(belegHinweis({ bbox: [1, 2, 3, 4] }, 'Steuern geteilt durch die Einwohnerzahl')).toEqual(
+      erwartet,
+    )
+    expect(belegHinweis({ bbox: null }, 'Steuern geteilt durch die Einwohnerzahl')).toEqual(
+      erwartet,
+    )
+  })
+
+  it('setzt ohne Herleitungstext „aus den Planwerten“ ein', () => {
+    expect(belegHinweis({ bbox: [1, 2, 3, 4] }, '')).toEqual({
+      art: 'berechnet',
+      titel: 'Berechneter Wert',
+      text: 'Dieser Wert steht nicht im PDF. Er wird berechnet: aus den Planwerten. Die Seite zeigt die Ausgangswerte.',
+    })
+  })
+})
+
+describe('originalSeitenUrl (D-06)', () => {
+  it('hängt die 1-basierte Seite als #page an die Original-URL', () => {
+    expect(originalSeitenUrl(62)).toBe(`${ORIGINAL_PDF_URL}#page=62`)
+    expect(originalSeitenUrl(1)).toBe(`${ORIGINAL_PDF_URL}#page=1`)
+  })
+
+  it.each([0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY])('lehnt %s ab', (seite) => {
+    expect(() => originalSeitenUrl(seite)).toThrow()
+  })
+})
+
+describe('quellAltText', () => {
+  it('beschreibt die Seite und nennt mit Markierung die markierte Zeile', () => {
+    expect(quellAltText(62, 'Erträge', true)).toBe(
+      'Ausschnitt des Haushaltsplans, PDF-Seite 62. Die markierte Zeile gehört zu: Erträge.',
+    )
+  })
+
+  it('beschreibt ohne Markierung nur die Seite', () => {
+    expect(quellAltText(62, 'Erträge', false)).toBe('Ausschnitt des Haushaltsplans, PDF-Seite 62.')
+  })
+})
+
+describe('sichtbareSpalten (Spalte „Quelle“ der DatenTabelle)', () => {
+  const spalten: DatenSpalte[] = [
+    { schluessel: 'name', titel: 'Name', art: 'text' },
+    { schluessel: 'betrag', titel: 'Betrag', art: 'euro' },
+    { schluessel: 'beleg', titel: 'Quelle', art: 'quelle' },
+  ]
+  const hatBeleg = (wert: string | number | null): boolean =>
+    typeof wert === 'string' && findeBeleg(wert) !== null
+  const gueltig = belegSchluessel.ep('GESAMT', 'steuern')
+
+  it('behält die Quelle-Spalte, wenn mindestens eine Zeile einen Beleg hat', () => {
+    const zeilen = [
+      { name: 'a', betrag: 1, beleg: null },
+      { name: 'b', betrag: 2, beleg: gueltig },
+    ]
+    expect(sichtbareSpalten(spalten, zeilen, hatBeleg)).toEqual(spalten)
+  })
+
+  it('lässt die Quelle-Spalte weg, wenn keine Zeile einen Beleg hat', () => {
+    const zeilen = [
+      { name: 'a', betrag: 1, beleg: null },
+      { name: 'b', betrag: 2, beleg: 'ep:GESAMT:gibt_es_nicht' },
+    ]
+    expect(sichtbareSpalten(spalten, zeilen, hatBeleg).map((s) => s.schluessel)).toEqual([
+      'name',
+      'betrag',
+    ])
+  })
+
+  it('lässt die Quelle-Spalte bei einer Tabelle ohne Zeilen weg und ändert andere Spalten nie', () => {
+    expect(sichtbareSpalten(spalten, [], hatBeleg).map((s) => s.schluessel)).toEqual([
+      'name',
+      'betrag',
+    ])
+    const ohneQuelle = spalten.slice(0, 2)
+    expect(sichtbareSpalten(ohneQuelle, [{ name: 'a', betrag: 1 }], hatBeleg)).toEqual(ohneQuelle)
   })
 })
