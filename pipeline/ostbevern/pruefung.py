@@ -8,6 +8,7 @@ identisch auf. Dieses Modul liest ausschließlich generierte Dateien unter `date
 from __future__ import annotations
 
 import os
+import re
 import tempfile
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
@@ -74,6 +75,8 @@ from ostbevern.zeilen import FORMELN, plantyp_fuer
 # Kopfzeile der maschinenlesbaren Schlüsseltabelle in befunde.md (D-02); wird sowohl beim
 # Lesen (lies_befunde) als auch beim Schreiben des Konsistenzberichts verwendet, damit eine
 # Zeile 1:1 zwischen beiden Dateien kopierbar bleibt.
+# Trennt Tabellenzellen an jedem "|", das nicht mit einem Backslash maskiert ist.
+_TABELLENZELLEN_TRENNER = re.compile(r"(?<!\\)\|")
 _SCHLUESSELTABELLE_KOPF = (
     "| regel | plan | ebene | code | zeile | jahr | wertart | abweichung | pdf_seite | "
     "begruendung |"
@@ -95,9 +98,16 @@ def toleranz_fuer(regel: int) -> int:
 
 
 # Regel 3 (Spez. 5.5): nur diese Zeilen des Ergebnisplans werden über die 15 PB summiert und
-# gegen den Gesamtergebnisplan geprüft. TP 27/28 (interne Leistungsbeziehungen) und der
-# Minderaufwand (GEP 27, TP 30) sind absichtlich ausgenommen; Z. 18 (Ordentliches Ergebnis)
-# ist bereits über Regel 1 als Formel aus Z. 10/17 abgesichert.
+# gegen den Gesamtergebnisplan geprüft (Z. 01-17, 19, 20). Ausgenommen sind absichtlich:
+#   - Z. 18, 21, 22, 25, 26 (Ordentliches Ergebnis, Finanzergebnis, Ergebnis der lfd.
+#     Verw.-tätigkeit, Außerordentliches Ergebnis, Jahresergebnis): Summen- bzw. Ergebniszeilen,
+#     die Regel 1 in jedem Plan als Formel aus ihren Bestandteilen absichert;
+#   - Z. 23/24 (außerordentliche Erträge/Aufwendungen): von Spez. 5.5 nicht in die Liste
+#     aufgenommen;
+#   - Z. 27/28: im Teilergebnisplan die internen Leistungsbeziehungen (TP 27/28, durch
+#     Spez. 5.5 ausgeschlossen), im Gesamtergebnisplan der globale Minderaufwand (GEP 27/28);
+#   - Z. 29-33: Verrechnungs- und Minderaufwandzeilen (TP 29-31, GEP 29-33 nachrichtlich),
+#     die nicht über die PB summiert werden.
 REGEL3_ZEILEN: tuple[str, ...] = tuple(f"{zeile:02d}" for zeile in range(1, 18)) + ("19", "20")
 
 # Anhang B.3 (Spez. Anhang B.3, fachliche Regel): Sollwertfeld -> Teilergebnisplan-Zeile je PB.
@@ -323,6 +333,11 @@ class Planwerte:
         return betrag
 
 
+def _maskiere_pipe(text: str) -> str:
+    """Maskiert "|" für eine Markdown-Tabellenzelle (Gegenstück zu lies_befunde)."""
+    return text.replace("|", "\\|")
+
+
 def lies_befunde(pfad: Path) -> tuple[Befund, ...]:
     """Parst die maschinenlesbare Schlüsseltabelle aus befunde.md streng (D-02, D-08).
 
@@ -330,6 +345,9 @@ def lies_befunde(pfad: Path) -> tuple[Befund, ...]:
     (fehlende Datei, fehlende Überschrift, abweichende Kopfzeile, falsche Zellenzahl,
     unbekannte Ebene/Wertart, nicht-ganzzahlige Zelle, Abweichung innerhalb der Toleranz,
     leere Begründung) bricht sofort mit Datei und Zeilennummer ab.
+
+    Ein "|" innerhalb der Begründung muss als maskierte Pipe ("\\|") geschrieben werden; eine
+    unmaskierte Pipe erzeugt zu viele Zellen und bricht mit Zeilennummer ab (D-20, IN-02).
     """
     if not pfad.is_file():
         raise PruefungsFehler(f"Befunde-Datei nicht gefunden: {pfad}")
@@ -356,11 +374,20 @@ def lies_befunde(pfad: Path) -> tuple[Befund, ...]:
         if not text.startswith("|"):
             break
         zeilennummer = index + 1  # 1-basiert für Fehlermeldungen
-        zellen = [zelle.strip() for zelle in text.strip("|").split("|")]
+        # Ein mit Backslash maskiertes "|" gehört zum Zelleninhalt (D-20, IN-02).
+        zellen = [
+            zelle.strip().replace("\\|", "|")
+            for zelle in _TABELLENZELLEN_TRENNER.split(text[1:].removesuffix("|"))
+        ]
         if len(zellen) != 10:
+            hinweis = (
+                " (unmaskierte Pipe '|' in der Begründung? Als '\\|' schreiben)"
+                if len(zellen) > 10
+                else ""
+            )
             raise PruefungsFehler(
                 f"{pfad}:{zeilennummer}: Schlüsseltabelle-Zeile hat {len(zellen)} Zellen, "
-                "erwartet 10"
+                f"erwartet 10{hinweis}"
             )
         (
             regel_text,
@@ -659,6 +686,11 @@ def _pruefe_regel4_b1(
     jahre = gesamtergebnisplan["jahre"]
     pdf_seite = gesamtergebnisplan.get("pdf_seite")
     spalten_zu_wertart = [zerlege_spaltenkopf(kopf) for kopf in spalten]
+    if len(spalten_zu_wertart) != len(jahre):
+        raise PruefungsFehler(
+            f"Regel 4 (B.1): {len(spalten)} Spaltenköpfe in jahrgang.spalten.ergebnisplan, "
+            f"aber {len(jahre)} Jahre in gesamtergebnisplan.jahre"
+        )
 
     geprueft = 0
     abweichungen: list[Pruefpunkt] = []
@@ -2777,7 +2809,7 @@ def rendere_konsistenzbericht(bericht: Bericht) -> str:
             zeilen.append(
                 f"| {punkt.regel} | {punkt.plan} | {punkt.ebene} | {punkt.code} | "
                 f"{punkt.zeile} | {punkt.jahr} | {punkt.wertart} | {punkt.abweichung} | "
-                f"{punkt.pdf_seite} | {befund.begruendung} |"
+                f"{punkt.pdf_seite} | {_maskiere_pipe(befund.begruendung)} |"
             )
 
     zeilen += ["", "## Veraltete Befunde", ""]
@@ -2790,7 +2822,7 @@ def rendere_konsistenzbericht(bericht: Bericht) -> str:
             zeilen.append(
                 f"| {befund.regel} | {befund.plan} | {befund.ebene} | {befund.code} | "
                 f"{befund.zeile} | {befund.jahr} | {befund.wertart} | {befund.abweichung} | "
-                f"{befund.pdf_seite} | {befund.begruendung} |"
+                f"{befund.pdf_seite} | {_maskiere_pipe(befund.begruendung)} |"
             )
 
     zeilen += ["", "## Seiten mit typ=unbekannt", ""]
