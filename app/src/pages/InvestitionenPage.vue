@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import { euro, euroKurz, jahr as formatiereJahr } from '@/charts/format'
 import ChartCard from '@/components/ChartCard.vue'
 import ErklaerText from '@/components/ErklaerText.vue'
+import FinanzierungsDiagramm from '@/components/FinanzierungsDiagramm.vue'
 import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import KennzahlKachel from '@/components/KennzahlKachel.vue'
 import MassnahmenFilter from '@/components/MassnahmenFilter.vue'
@@ -11,7 +12,7 @@ import MassnahmenListe from '@/components/MassnahmenListe.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import SchuldenstandDiagramm from '@/components/SchuldenstandDiagramm.vue'
 import VeFaelligkeiten from '@/components/VeFaelligkeiten.vue'
-import { haushalt } from '@/data/daten'
+import { haushalt, investitionen } from '@/data/daten'
 import { vePdfSeiten, veGesamt } from '@/lib/finanzierung'
 import { planjahre, useMassnahmenFilter } from '@/lib/investitionen'
 import { wertartFuerJahr, wertartName } from '@/lib/jahr'
@@ -64,6 +65,7 @@ const kacheln = [
   },
 ]
 
+const finanzierungSeite = investitionen.finanzierung.quelle
 const veQuelle = `Haushaltsplan, PDF-Seiten ${vePdfSeiten().join(', ')}`
 
 const schuldenTitel = (() => {
@@ -130,6 +132,20 @@ const { vorhaben, zuruecksetzen } = useMassnahmenFilter()
       </p>
       <ChartCard titel="Verpflichtungsermächtigungen nach Fälligkeit" :quelle="veQuelle">
         <VeFaelligkeiten />
+      </ChartCard>
+    </section>
+    <section class="om-investitionen__abschnitt" aria-labelledby="om-investitionen-finanzierung">
+      <h2 id="om-investitionen-finanzierung">Wie die Investitionen bezahlt werden</h2>
+      <p class="om-investitionen__erklaerung">
+        Beide Diagramme zeigen Ein- und Auszahlungen des
+        <GlossarBegriff schluessel="finanzplan">Finanzplans</GlossarBegriff>, nicht Erträge und
+        Aufwendungen.
+      </p>
+      <ChartCard titel="Investitionen und ihre Einzahlungen" :pdf="{ seite: finanzierungSeite }">
+        <FinanzierungsDiagramm variante="investitionen" />
+      </ChartCard>
+      <ChartCard titel="Kreditaufnahme und Tilgung" :pdf="{ seite: finanzierungSeite }">
+        <FinanzierungsDiagramm variante="kredite" />
       </ChartCard>
     </section>
     <section class="om-investitionen__abschnitt" aria-labelledby="om-investitionen-schulden">
