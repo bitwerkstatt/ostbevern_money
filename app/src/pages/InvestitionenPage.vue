@@ -1,13 +1,23 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { jahr as formatiereJahr } from '@/charts/format'
+import { euro, euroKurz, jahr as formatiereJahr } from '@/charts/format'
 import ChartCard from '@/components/ChartCard.vue'
+import ErklaerText from '@/components/ErklaerText.vue'
+import FinanzierungsDiagramm from '@/components/FinanzierungsDiagramm.vue'
 import GlossarBegriff from '@/components/GlossarBegriff.vue'
+import KennzahlKachel from '@/components/KennzahlKachel.vue'
 import MassnahmenFilter from '@/components/MassnahmenFilter.vue'
 import MassnahmenListe from '@/components/MassnahmenListe.vue'
 import PageIntro from '@/components/PageIntro.vue'
+import SchuldenstandDiagramm from '@/components/SchuldenstandDiagramm.vue'
+import VeFaelligkeiten from '@/components/VeFaelligkeiten.vue'
+import { haushalt, investitionen } from '@/data/daten'
+import { vePdfSeiten, veGesamt } from '@/lib/finanzierung'
 import { planjahre, useMassnahmenFilter } from '@/lib/investitionen'
+import { wertartFuerJahr, wertartName } from '@/lib/jahr'
+import { quellenZeile } from '@/lib/kennzahlen'
+import { baueSchuldenstand, schuldenKennzahlen } from '@/lib/schulden'
 
 // Die Seite zeigt alle ausgewiesenen Jahre, ohne Jahr-Umschalter (UI-SPEC Routes). Der Lead
 // enthält keine Zahlen und darf deshalb als Text im Code stehen.
@@ -23,6 +33,49 @@ const massnahmenTitel = computed(() => {
     : `Maßnahmen ${formatiereJahr(erstes)}–${formatiereJahr(letztes)}`
 })
 
+// Kennzahlkacheln zum Schuldenstand am Ende des Vorjahrs (D-10). „Schulden je Einwohner“ trägt nur
+// dann „berechnet“, wenn das Datenfeld des Vorjahrs es sagt (gedruckt: kein Etikett).
+const schuldenstand = baueSchuldenstand()
+const schulden = schuldenKennzahlen()
+const kacheln = [
+  {
+    schluessel: 'schuldenstand',
+    bezeichnung: `Schuldenstand Ende ${formatiereJahr(schulden.jahr)}`,
+    wert: euroKurz(schulden.gesamt),
+    zeile: quellenZeile(schulden.wertart, schulden.jahr, [schulden.quelle]),
+    berechnet: false,
+  },
+  {
+    schluessel: 'schulden_je_einwohner',
+    bezeichnung: 'Schulden je Einwohner',
+    wert: euro(schulden.proKopf),
+    zeile: quellenZeile(schulden.wertart, schulden.jahr, schulden.pdfSeiten),
+    berechnet: schulden.berechnet,
+  },
+  {
+    schluessel: 'verpflichtungsermaechtigungen',
+    bezeichnung: 'Verpflichtungsermächtigungen',
+    wert: euroKurz(veGesamt()),
+    zeile: quellenZeile(
+      wertartName(wertartFuerJahr(haushalt.haushaltsjahr)),
+      haushalt.haushaltsjahr,
+      vePdfSeiten(),
+    ),
+    berechnet: false,
+  },
+]
+
+const finanzierungSeite = investitionen.finanzierung.quelle
+const veQuelle = `Haushaltsplan, PDF-Seiten ${vePdfSeiten().join(', ')}`
+
+const schuldenTitel = (() => {
+  const erstes = schuldenstand.jahre[0]
+  const letztes = schuldenstand.jahre.at(-1)
+  return erstes === undefined || letztes === undefined
+    ? 'Schuldenstand'
+    : `Schuldenstand ${formatiereJahr(erstes)}–${formatiereJahr(letztes)}`
+})()
+
 // Der Filterzustand liegt in der URL (`pb`, `art`); die Filterzeile liest ihn selbst, die Seite
 // braucht die Treffer und den Rücksetzer für den Leerzustand.
 const { vorhaben, zuruecksetzen } = useMassnahmenFilter()
@@ -36,6 +89,20 @@ const { vorhaben, zuruecksetzen } = useMassnahmenFilter()
         >Finanzplan</GlossarBegriff
       >), nicht Erträge und Aufwendungen.
     </p>
+    <ul
+      class="om-investitionen__kacheln"
+      role="list"
+      aria-label="Kennzahlen zu Schulden und Verpflichtungen"
+    >
+      <li v-for="kachel in kacheln" :key="kachel.schluessel">
+        <KennzahlKachel
+          :bezeichnung="kachel.bezeichnung"
+          :wert="kachel.wert"
+          :zeile="kachel.zeile"
+          :berechnet="kachel.berechnet"
+        />
+      </li>
+    </ul>
     <section class="om-investitionen__abschnitt" aria-labelledby="om-investitionen-massnahmen">
       <h2 id="om-investitionen-massnahmen">{{ massnahmenTitel }}</h2>
       <MassnahmenFilter />
@@ -53,6 +120,41 @@ const { vorhaben, zuruecksetzen } = useMassnahmenFilter()
         </wa-button>
       </div>
     </section>
+    <section class="om-investitionen__abschnitt" aria-labelledby="om-investitionen-ve">
+      <h2 id="om-investitionen-ve">Verpflichtungsermächtigungen</h2>
+      <ErklaerText schluessel="verpflichtungsermaechtigungen" />
+      <p class="om-investitionen__erklaerung">
+        Die Säulen zeigen
+        <GlossarBegriff schluessel="verpflichtungsermaechtigung"
+          >Verpflichtungsermächtigungen</GlossarBegriff
+        >
+        nach dem Jahr, in dem sie fällig werden.
+      </p>
+      <ChartCard titel="Verpflichtungsermächtigungen nach Fälligkeit" :quelle="veQuelle">
+        <VeFaelligkeiten />
+      </ChartCard>
+    </section>
+    <section class="om-investitionen__abschnitt" aria-labelledby="om-investitionen-finanzierung">
+      <h2 id="om-investitionen-finanzierung">Wie die Investitionen bezahlt werden</h2>
+      <p class="om-investitionen__erklaerung">
+        Beide Diagramme zeigen Ein- und Auszahlungen des
+        <GlossarBegriff schluessel="finanzplan">Finanzplans</GlossarBegriff>, nicht Erträge und
+        Aufwendungen.
+      </p>
+      <ChartCard titel="Investitionen und ihre Einzahlungen" :pdf="{ seite: finanzierungSeite }">
+        <FinanzierungsDiagramm variante="investitionen" />
+      </ChartCard>
+      <ChartCard titel="Kreditaufnahme und Tilgung" :pdf="{ seite: finanzierungSeite }">
+        <FinanzierungsDiagramm variante="kredite" />
+      </ChartCard>
+    </section>
+    <section class="om-investitionen__abschnitt" aria-labelledby="om-investitionen-schulden">
+      <h2 id="om-investitionen-schulden">Schulden</h2>
+      <ChartCard :titel="schuldenTitel" :pdf="{ seite: schuldenstand.pdfSeite }">
+        <SchuldenstandDiagramm />
+      </ChartCard>
+      <ErklaerText schluessel="schulden_anstieg" />
+    </section>
   </div>
 </template>
 
@@ -66,6 +168,21 @@ const { vorhaben, zuruecksetzen } = useMassnahmenFilter()
   margin: 0 0 var(--wa-space-l);
   font-size: var(--wa-font-size-s);
   color: var(--wa-color-text-quiet);
+}
+
+.om-investitionen__erklaerung {
+  margin: 0;
+  font-size: var(--wa-font-size-s);
+  color: var(--wa-color-text-quiet);
+}
+
+.om-investitionen__kacheln {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--wa-space-m);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .om-investitionen__abschnitt {
