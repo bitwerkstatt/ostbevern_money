@@ -81,10 +81,8 @@ const spalten: DatenSpalte[] = [
   { schluessel: 'jahr', titel: 'Jahr', art: 'text' },
   { schluessel: 'wertart', titel: 'Wertart', art: 'text' },
   { schluessel: 'betrag', titel: 'Betrag', art: 'euro' },
-  { schluessel: 'quelle', titel: 'Quelle', art: 'text' },
+  { schluessel: 'quelle', titel: 'Quelle', art: 'quelle' },
 ]
-
-const quelleText = { grundzahlen: 'Grundzahlen', vorbericht: 'Vorbericht' } as const
 
 const tabelle = computed<DatenZeile[]>(() =>
   hatWerte.value
@@ -92,10 +90,7 @@ const tabelle = computed<DatenZeile[]>(() =>
         jahr: formatiereJahr(punkt.jahr),
         wertart: wertartName(punkt.wertart),
         betrag: punkt.wert,
-        quelle:
-          punkt.pdfSeite === null
-            ? quelleText[punkt.quelle]
-            : `${quelleText[punkt.quelle]}, PDF-Seite ${String(punkt.pdfSeite)}`,
+        quelle: punkt.beleg,
         gerundet: punkt.gerundet ? 1 : 0,
       }))
     : [],

@@ -7,6 +7,7 @@ import { formatiere, jahr as formatiereJahr } from '@/charts/format'
 import { haushalt, produkte } from '@/data/daten'
 import type { Grundzahl, Produkt } from '@/data/typen'
 import { WERTART_NAMEN } from '@/lib/jahr'
+import { belegSchluessel } from '@/lib/quelle'
 
 /** Eine Auswahlmöglichkeit der Zeitreihe und ihre Herkunft in beiden Quellen. */
 export interface ZeitreihenPosten {
@@ -27,6 +28,8 @@ export interface Zeitpunkt {
   quelle: 'grundzahlen' | 'vorbericht'
   /** 1-basierte PDF-Seite der Quelle. */
   pdfSeite: number | null
+  /** Belegschlüssel des Punkts (`gz:…` bzw. `vb:…`), `null` ohne PDF-Seite. */
+  beleg: string | null
   /** `true` für Vorbericht-Werte, die in T€ geführt und × 1000 genommen wurden (Anzeige „rd.“). */
   gerundet: boolean
 }
@@ -148,6 +151,7 @@ export function baueZeitreihe(posten: string): Zeitpunkt[] {
         wertart: 'ergebnis',
         quelle: 'grundzahlen',
         pdfSeite: grundzahl.pdf_seite,
+        beleg: belegSchluessel.gz(ZEITREIHEN_PRODUKT, grundzahl.position),
         gerundet: false,
       })
     }
@@ -164,6 +168,8 @@ export function baueZeitreihe(posten: string): Zeitpunkt[] {
       wertart,
       quelle: 'vorbericht',
       pdfSeite: vorbericht.quelle,
+      beleg:
+        vorbericht.quelle === null ? null : belegSchluessel.vb(eintrag.tabelle, eintrag.posten),
       gerundet: vorbericht.gerundet,
     })
   })
