@@ -852,3 +852,43 @@ def test_unbekannter_platzhalter_bricht_schritt_07_ab(tmp_path: Path) -> None:
         erzeuge_app_daten(
             STANDARD_JAHR, daten_wurzel=daten_kopie, app_daten_wurzel=tmp_path / "app"
         )
+
+
+# ---------------------------------------------------------------------------
+# Phase 7 / Plan 02 (D-20): Restpunkte der Phase-4-Review (WR-02, IN-02)
+# ---------------------------------------------------------------------------
+
+
+def test_schuldenstand_fortschreibung_schreibt_ab_letztem_gedrucktem_stand_fort() -> None:
+    investitionskredite, nrw_bank, berechnet = app_daten.schreibe_schuldenstand_fort(
+        jahre=[2024, 2025, 2026, 2027],
+        investitionskredite_gedruckt={2024: 100, 2025: 110},
+        nrw_bank_gedruckt={2024: 7, 2025: 8},
+        kreditaufnahme=[0, 0, 30, 5],
+        tilgung=[0, 0, 10, 15],
+    )
+    assert investitionskredite == [100, 110, 130, 120]
+    assert nrw_bank == [7, 8, 8, 8]
+    assert berechnet == [False, False, True, True]
+
+
+def test_schuldenstand_fortschreibung_ohne_gedruckten_stand_vor_dem_jahr_bricht_ab() -> None:
+    with pytest.raises(app_daten.AppDatenFehler, match="2024"):
+        app_daten.schreibe_schuldenstand_fort(
+            jahre=[2024, 2025],
+            investitionskredite_gedruckt={2025: 110},
+            nrw_bank_gedruckt={2025: 8},
+            kreditaufnahme=[0, 0],
+            tilgung=[0, 0],
+        )
+
+
+def test_texte_haushaltsjahr_muss_zu_jahr_wert_passen() -> None:
+    app_daten.pruefe_texte_haushaltsjahr(
+        {"haushaltsjahr": 2026, "werte": {"jahr.haushaltsjahr": 2026}}
+    )
+    app_daten.pruefe_texte_haushaltsjahr({"haushaltsjahr": 2026, "werte": {}})
+    with pytest.raises(TexteFehler, match="haushaltsjahr"):
+        app_daten.pruefe_texte_haushaltsjahr(
+            {"haushaltsjahr": 2026, "werte": {"jahr.haushaltsjahr": 2027}}
+        )

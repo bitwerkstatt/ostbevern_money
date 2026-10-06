@@ -842,3 +842,48 @@ def test_formatkuerzel_wie_format_ts() -> None:
     kuerzel_ts = tuple(re.findall(r"'([a-z]+)'", treffer.group(1)))
     assert kuerzel_ts == FORMATKUERZEL
     assert "export function formatiere" in inhalt
+
+
+# ---------------------------------------------------------------------------
+# Phase 7 / Plan 02 (D-20): Restpunkte der Phase-4-Review (WR-03, WR-05)
+# ---------------------------------------------------------------------------
+
+
+class _ZugriffsProtokoll(dict):
+    """Werte-Dict, das alle gelesenen Schlüssel festhält."""
+
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        super().__init__(*args, **kwargs)  # type: ignore[arg-type]
+        self.gelesen: list[str] = []
+
+    def __getitem__(self, schluessel: str) -> int | float:
+        self.gelesen.append(schluessel)
+        return super().__getitem__(schluessel)
+
+
+def _formel_und_eingabeschluessel(werte: dict[str, int | float]) -> list[tuple[str, str]]:
+    paare: list[tuple[str, str]] = []
+    for name, formel in ABGELEITET.items():
+        protokoll = _ZugriffsProtokoll(werte)
+        formel(protokoll)
+        paare.extend((name, schluessel) for schluessel in dict.fromkeys(protokoll.gelesen))
+    return paare
+
+
+def test_abgeleitete_formel_ohne_eingabewert_nennt_formel_und_schluessel(
+    werte: dict[str, int | float],
+) -> None:
+    paare = _formel_und_eingabeschluessel(werte)
+    assert any(schluessel.startswith("jahr.") for _name, schluessel in paare)
+    for name, schluessel in paare:
+        ohne = {k: v for k, v in werte.items() if k != schluessel}
+        with pytest.raises(TexteFehler) as fehler:
+            ABGELEITET[name](ohne)
+        assert name in str(fehler.value)
+        assert schluessel in str(fehler.value)
+
+
+def test_pruefe_text_jahr_platzhalter_braucht_formatkuerzel_jahr() -> None:
+    pruefe_text("Haushalt {{jahr.haushaltsjahr|jahr}}.")
+    with pytest.raises(TexteFehler, match=r"jahr\.haushaltsjahr"):
+        pruefe_text("Haushalt {{jahr.haushaltsjahr|zahl}}.")
