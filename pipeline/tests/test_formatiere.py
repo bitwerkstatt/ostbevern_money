@@ -192,12 +192,19 @@ def _rundung_halb_aufwaerts(wert: int | float) -> Decimal:
     return -betrag if negativ else betrag
 
 
+# Abgeleitete Formeln, deren Ergebnis ein Kalenderjahr ist (Plan 06-04, D-14). Sie liegen im
+# Namensraum "abgeleitet." und gehören trotzdem mit dem Kürzel "jahr" formatiert, sonst
+# erschiene "2.026". Andere Formeln mit der Endung "_jahr" (..._letztes_jahr) liefern Beträge.
+_JAHRWERTIGE_ABGELEITETE = frozenset({"abgeleitet.ausgleichsruecklage_aufgebraucht_jahr"})
+
+
 def _verstoesse(schluessel: str, wert: int | float | None, kuerzel: str) -> list[str]:
     """Prüft ein (Rohwert, Formatkürzel)-Paar gegen die CR-01-/Rundtrip-Regeln (D-15).
 
     (a) ein Schlüssel im Namensraum "jahr." mit einem anderen Kürzel als "jahr" (CR-01);
     (b) Kürzel "jahr", dessen Rendering keine vierstellige Jahreszahl ist oder vom
-        Rohwert abweicht; dasselbe Kürzel außerhalb des "jahr."-Namensraums;
+        Rohwert abweicht; dasselbe Kürzel außerhalb des "jahr."-Namensraums (Ausnahme: abgeleitete
+        Formeln, die ein Jahr liefern, siehe _JAHRWERTIGE_ABGELEITETE);
     (c) kein Rundtrip auf den Rohwert innerhalb der kürzel-eigenen Genauigkeit;
     (d) eine leere Darstellung oder eine, die "undefined", "NaN" oder "Infinity" enthält.
     """
@@ -218,7 +225,11 @@ def _verstoesse(schluessel: str, wert: int | float | None, kuerzel: str) -> list
         )
         return verstoesse
 
-    ist_jahresnamensraum = schluessel == "jahr" or schluessel.startswith("jahr.")
+    ist_jahresnamensraum = (
+        schluessel == "jahr"
+        or schluessel.startswith("jahr.")
+        or schluessel in _JAHRWERTIGE_ABGELEITETE
+    )
     if ist_jahresnamensraum and kuerzel != "jahr":
         verstoesse.append(
             f"{schluessel}|{kuerzel}: Jahresschlüssel ohne Formatkürzel 'jahr' "

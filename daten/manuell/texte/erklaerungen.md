@@ -115,3 +115,37 @@ Quelle: S. 26, S. 51
 Links siehst du, woher das Geld kommt: die Erträge der Gemeinde, bei einem Defizit eine Entnahme aus den Rücklagen und der globale Minderaufwand. Rechts siehst du, wofür es verwendet wird: die Aufgabenbereiche, die Weitergabe an Kreis und Land und die Zinsen. Beide Seiten sind gleich groß.
 
 Der globale Minderaufwand steht links neben dem Defizit, weil er die geplanten Aufwendungen rechnerisch senkt, ohne dass dafür ein Ertrag eingeht. Der Rat plant damit eine pauschale Einsparung, weil erfahrungsgemäß nicht jeder angesetzte Euro ausgegeben wird. Schließt ein Jahr mit einem Überschuss ab, steht rechts stattdessen die Zuführung zur Rücklage.
+
+## bindungsgrad_selbstauskunft
+Titel: Der Bindungsgrad ist eine Selbstauskunft
+Quelle: S. 72, S. 116
+
+Die Verwaltung hat jedem Produkt selbst einen Bindungsgrad zugeordnet: pflichtig, teils pflichtig oder freiwillig. Du findest die Angabe in der Produktbeschreibung jedes Produkts. Es ist die eigene Einordnung der Verwaltung und keine rechtliche Feststellung.
+
+Auch in pflichtigen Produkten gibt es Spielraum bei der Höhe der Ausgaben, zum Beispiel beim Umfang und beim Standard der Leistung. Dass ein Produkt als pflichtig gilt, heißt deshalb nicht, dass jeder Euro darin festgelegt ist.
+
+## ueberschuss_produkte
+Titel: Produkte, die mehr einbringen, als sie kosten
+Quelle: S. 117, S. 121, S. 233
+
+Diese Produkte nehmen mehr ein, als sie kosten. Sie brauchen keinen Zuschuss aus Steuern und allgemeinen Zuweisungen und stehen deshalb nicht im Balken.
+
+Der Überschuss ist kein Gewinn der Gemeinde. Er senkt den Betrag, der für die übrigen Aufgaben aufgebracht werden muss.
+
+## polster
+Titel: Wie lange reicht das Polster?
+Quelle: S. 23, S. 24, S. 311
+
+Die Ausgleichsrücklage fängt Defizite als Erstes auf. Nach dem Haushaltsplan ist sie am Ende des Jahres {{abgeleitet.ausgleichsruecklage_aufgebraucht_jahr|jahr}} aufgebraucht. Die allgemeine Rücklage sinkt bis Ende {{jahr.letztes_jahr|jahr}} auf {{abgeleitet.allgemeine_ruecklage_ende_letztes_jahr|mio}}. Das sind {{abgeleitet.allgemeine_ruecklage_rueckgang_bis_letztes_jahr|prozent}} weniger als zu Beginn des Jahres {{jahr.haushaltsjahr|jahr}}.
+
+Als Bezug nennt der Vorbericht die Schwellen der Haushaltssicherung aus § 76 der Gemeindeordnung NRW: einen Rückgang der allgemeinen Rücklage um mehr als {{meta.vorbericht_werte.hsk_schwelle_ein_jahr|prozent}} in einem Jahr oder um mehr als {{meta.vorbericht_werte.hsk_schwelle_zwei_jahre|prozent}} in zwei aufeinanderfolgenden Jahren. Laut Vorbericht ergibt sich für den Haushalt {{jahr.haushaltsjahr|jahr}} keine Verpflichtung zur Aufstellung eines Haushaltssicherungskonzepts. Laut Vorbericht wird das jedoch nur durch die Erträge aus Grundstücksverkäufen erreicht.
+
+Eine eigene Bewertung nimmt diese App nicht vor. Sie zeigt auch nichts über die Zeit nach {{jahr.letztes_jahr|jahr}}.
+
+## schulden_anstieg
+Titel: Warum der Schuldenstand steigt
+Quelle: S. 63, S. 310
+
+Der Schuldenstand steigt von {{abgeleitet.schulden_gesamt_vorjahr|mio}} Ende {{jahr.vorjahr|jahr}} auf {{abgeleitet.schulden_gesamt_letztes_jahr|mio}} Ende {{jahr.letztes_jahr|jahr}}. Das liegt vor allem daran, dass die Gemeinde von {{jahr.haushaltsjahr|jahr}} bis {{jahr.letztes_jahr|jahr}} Kredite über {{abgeleitet.kreditaufnahme_ab_haushaltsjahr|mio}} aufnimmt, aber nur {{abgeleitet.tilgung_ab_haushaltsjahr|mio}} zurückzahlt.
+
+Gedruckt ist der Schuldenstand nur bis Ende {{jahr.haushaltsjahr|jahr}}. Die späteren Jahre sind aus der Kreditaufnahme und der Tilgung des Gesamtfinanzplans fortgeschrieben und damit berechnet.

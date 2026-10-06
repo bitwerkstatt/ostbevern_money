@@ -37,6 +37,9 @@ export const GLOSSAR_SCHLUESSEL = [
   'nkf',
   'haushaltssicherung',
   'wertart',
+  'nicht_im_haushalt',
+  'vzae',
+  'entgeltgruppen',
 ] as const
 
 export type GlossarSchluessel = (typeof GLOSSAR_SCHLUESSEL)[number]
