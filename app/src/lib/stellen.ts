@@ -7,8 +7,8 @@
 // Summen addiert (D-15). Jahre stammen aus den Daten, nie aus dem Code.
 
 import { vzae } from '@/charts/format'
-import { stellenplan } from '@/data/daten'
-import type { Stellenplan, StellenplanZeile } from '@/data/typen'
+import { haushalt, stellenplan } from '@/data/daten'
+import type { Haushalt, Stellenplan, StellenplanZeile } from '@/data/typen'
 
 export interface TeilInfo {
   /** Wert von `StellenplanZeile.teil`. */
@@ -183,4 +183,27 @@ export function nachwuchs(daten: Stellenplan = stellenplan): Nachwuchs {
     haushaltsjahr: personen(haushaltsjahr),
     pdfSeiten: seiten([...vorjahr, ...haushaltsjahr]),
   }
+}
+
+export interface BereichZeile {
+  /** Zweistelliger Produktbereichscode. */
+  pb: string
+  /** Gedruckter Name des Aufgabenbereichs. */
+  name: string
+  /** Stellen des Haushaltsjahrs in Hundertstel, `null` ohne Zeilen. */
+  stellen: number | null
+  /** Personalaufwand des Haushaltsjahrs in Euro, `null` ohne Wert. */
+  personalaufwand: number | null
+  /** Belegende PDF-Seiten, aufsteigend. */
+  pdfSeiten: number[]
+}
+
+/** Gerüst (RED): die Logik folgt im GREEN-Commit. */
+export function stellenNachBereich(
+  daten: Stellenplan = stellenplan,
+  plan: Haushalt = haushalt,
+): BereichZeile[] {
+  void daten
+  void plan
+  return []
 }

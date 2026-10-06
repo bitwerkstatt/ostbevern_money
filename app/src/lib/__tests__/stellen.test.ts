@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { stellenplan } from '@/data/daten'
-import type { Stellenplan } from '@/data/typen'
+import { haushalt, stellenplan } from '@/data/daten'
+import type { Haushalt, Stellenplan } from '@/data/typen'
 import {
   alsVzae,
   differenzText,
   nachwuchs,
+  stellenNachBereich,
   stellenNachTeil,
   stellenSummen,
   TEILE,
@@ -212,6 +213,130 @@ describe('nachwuchs', () => {
       expect(n.vorjahr).toBe(5)
       expect(n.haushaltsjahr).toBe(6)
       expect(n.pdfSeiten).toEqual([290])
+    })
+  })
+})
+
+// ---------------------------------------------------------------------------------------------
+// Stellen und Personalaufwand je Aufgabenbereich (STEL-02, STEL-03, D-16)
+// ---------------------------------------------------------------------------------------------
+
+const quelltexte = import.meta.glob<string>('/src/lib/stellen.ts', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
+
+const jahrIndex = haushalt.jahre.indexOf(stellenplan.haushaltsjahr)
+
+/** Kopie des Haushalts, in der der Personalaufwand des Aufgabenbereichs `pb` überschrieben ist. */
+function mitPersonalaufwand(pb: string, werte: number[]): Haushalt {
+  const knoten = haushalt.ergebnisplan[pb]
+  if (knoten === undefined) {
+    throw new Error(`Aufgabenbereich ${pb} fehlt`)
+  }
+  return {
+    ...haushalt,
+    ergebnisplan: {
+      ...haushalt.ergebnisplan,
+      [pb]: { ...knoten, zeilen: { ...knoten.zeilen, personalaufwendungen: werte } },
+    },
+  }
+}
+
+describe('stellenNachBereich', () => {
+  const zeilen = stellenNachBereich()
+
+  it('führt nur Aufgabenbereiche: ebene PB, eltern GESAMT, nicht synthetisch (kein KL)', () => {
+    const erlaubt = new Set(
+      haushalt.knoten
+        .filter((k) => k.ebene === 'PB' && k.eltern === 'GESAMT' && !k.synthetisch)
+        .map((k) => k.code),
+    )
+    expect(zeilen.length).toBeGreaterThan(0)
+    for (const zeile of zeilen) {
+      expect(erlaubt.has(zeile.pb)).toBe(true)
+    }
+    expect(zeilen.map((z) => z.pb)).not.toContain('KL')
+  })
+
+  it('sortiert absteigend nach Stellen, Zeilen ohne Stellen zuletzt', () => {
+    const werte = zeilen.map((z) => z.stellen)
+    const ersteLeere = werte.indexOf(null)
+    const mitWert = ersteLeere === -1 ? werte : werte.slice(0, ersteLeere)
+    expect(mitWert).toEqual([...mitWert].sort((a, b) => (b ?? 0) - (a ?? 0)))
+    if (ersteLeere !== -1) {
+      expect(werte.slice(ersteLeere).every((w) => w === null)).toBe(true)
+    }
+  })
+
+  it('summiert die Stellen zur Gesamtsumme, ohne Zeilen doppelt zu zählen', () => {
+    const gesamt = zeilen.reduce((summe, z) => summe + (z.stellen ?? 0), 0)
+    expect(gesamt).toBe(stellenSummen().haushaltsjahr)
+  })
+
+  it('summiert den Personalaufwand zur Zeile personalaufwendungen des Gesamtplans', () => {
+    const gesamt = zeilen.reduce((summe, z) => summe + (z.personalaufwand ?? 0), 0)
+    expect(gesamt).toBe(
+      haushalt.ergebnisplan['GESAMT']?.zeilen['personalaufwendungen']?.[jahrIndex],
+    )
+  })
+
+  it('lässt Aufgabenbereiche ohne Stellen und ohne Personalaufwand weg', () => {
+    const ohneStellen = ohne((z) => z.produktbereich !== '04')
+    const ohneBeides = stellenNachBereich(ohneStellen, mitPersonalaufwand('04', [0, 0, 0, 0, 0, 0]))
+    expect(ohneBeides.map((z) => z.pb)).not.toContain('04')
+  })
+
+  it('behält eine Zeile mit nur einer Seite und zeigt die andere als null (nie 0)', () => {
+    const nurPersonal = stellenNachBereich(ohne((z) => z.produktbereich !== '04'))
+    const zeile = nurPersonal.find((z) => z.pb === '04')
+    expect(zeile).toBeDefined()
+    expect(zeile?.stellen).toBeNull()
+    expect(zeile?.personalaufwand).not.toBeNull()
+    expect(nurPersonal[nurPersonal.length - 1]?.stellen).toBeNull()
+
+    const nurStellen = stellenNachBereich(stellenplan, mitPersonalaufwand('04', []))
+    expect(nurStellen.find((z) => z.pb === '04')?.personalaufwand).toBeNull()
+    expect(nurStellen.find((z) => z.pb === '04')?.stellen).not.toBeNull()
+  })
+
+  it('ändert nichts, wenn die Zeilen ohne Produktbereich fehlen', () => {
+    const nurPb = ohne((z) => z.produktbereich !== null)
+    expect(stellenNachBereich(nurPb)).toEqual(zeilen)
+  })
+
+  it('nennt die belegenden PDF-Seiten aufsteigend und ohne Doppelte', () => {
+    for (const zeile of zeilen) {
+      expect(zeile.pdfSeiten.length).toBeGreaterThan(0)
+      expect(zeile.pdfSeiten).toEqual([...new Set(zeile.pdfSeiten)].sort((a, b) => a - b))
+    }
+  })
+
+  it('bildet keinen Aufwand je Stelle (D-16): kein Export und keine Division', () => {
+    const quelltext = quelltexte['/src/lib/stellen.ts'] ?? ''
+    const ohneKommentare = quelltext.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '')
+    const exportNamen = Array.from(
+      ohneKommentare.matchAll(/export\s+(?:function|const|interface|type)\s+(\w+)/g),
+      (treffer) => treffer[1] ?? '',
+    )
+    const verdaechtig = exportNamen.filter((name) => /personal/i.test(name) && /stelle/i.test(name))
+    expect(verdaechtig).toEqual([])
+    expect(ohneKommentare).not.toMatch(/personalaufwand\w*\s*\/\s*\w*stelle/i)
+    expect(ohneKommentare).not.toMatch(/stelle\w*\s*\/\s*\w*personalaufwand/i)
+    expect(ohneKommentare).not.toMatch(/je\s*stelle/i)
+  })
+
+  describe.runIf(stellenplan.haushaltsjahr === 2026)('Jahrgang 2026', () => {
+    it('Σ Stellen 6291 Hundertstel, Σ Personalaufwand 5.204.054 €', () => {
+      expect(zeilen.reduce((summe, z) => summe + (z.stellen ?? 0), 0)).toBe(6291)
+      expect(zeilen.reduce((summe, z) => summe + (z.personalaufwand ?? 0), 0)).toBe(5204054)
+    })
+
+    it('15 Aufgabenbereiche, Innere Verwaltung (01) mit 2187 Hundertstel vorn', () => {
+      expect(zeilen).toHaveLength(15)
+      expect(zeilen[0]?.pb).toBe('01')
+      expect(zeilen[0]?.stellen).toBe(2187)
     })
   })
 })
