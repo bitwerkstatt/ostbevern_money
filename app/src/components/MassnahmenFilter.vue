@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { euroKurz, zahl } from '@/charts/format'
 import { useSchmalerBildschirm } from '@/lib/bildschirm'
-import { ARTEN, MASSNAHMEN_AUFGABENBEREICHE, useMassnahmenFilter } from '@/lib/investitionen'
+import {
+  ARTEN,
+  ergebnisText,
+  MASSNAHMEN_AUFGABENBEREICHE,
+  useMassnahmenFilter,
+} from '@/lib/investitionen'
 
 // Wert der Auswahl „Alle“; kein Aufgabenbereichscode und keine Art heißt so.
 const ALLE = 'alle'
@@ -19,10 +23,7 @@ const artOptionen = computed(() => [
   ...ARTEN.map((a) => ({ wert: a.art, text: a.text })),
 ])
 
-const summe = computed(() => vorhaben.value.reduce((gesamt, eintrag) => gesamt + eintrag.summe, 0))
-const ergebnis = computed(
-  () => `${zahl(vorhaben.value.length)} Maßnahmen · zusammen ${euroKurz(summe.value)}`,
-)
+const ergebnis = computed(() => ergebnisText(vorhaben.value))
 
 // Das Ereignis kommt vom Web-Awesome-Host (Select bzw. Gruppe); der neue Wert steht in dessen
 // `value`. Die Bibliothek prüft ihn gegen die Allowlist, der Fokus bleibt auf dem Steuerelement.

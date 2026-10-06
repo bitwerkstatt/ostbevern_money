@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest'
 
+import { euroKurz } from '@/charts/format'
 import { haushalt, produkte } from '@/data/daten'
-import { baueBindungsgrad, BINDUNGSGRADE, FINANZIERUNGSPRODUKT, klAnteil } from '@/lib/bindungsgrad'
+import {
+  baueBindungsgrad,
+  BINDUNGSGRADE,
+  FINANZIERUNGSPRODUKT,
+  klAnteil,
+  produkteText,
+  segmentZusammenfassung,
+  type BindungsSegment,
+} from '@/lib/bindungsgrad'
 import { bindungsgradText } from '@/lib/produkt'
 import { ZEITREIHEN_PRODUKT } from '@/lib/zeitreihen'
 
@@ -135,6 +144,85 @@ describe('klAnteil (RAT-02, D-02)', () => {
 
   it('liefert 0 für eine Weitergabe von 0 €', () => {
     expect(klAnteil(0, 2000)).toBe(0)
+  })
+})
+
+describe('produkteText und segmentZusammenfassung (WR-02, RAT-01)', () => {
+  it('nutzt den Singular genau für ein Produkt', () => {
+    expect(produkteText(1)).toBe('1 Produkt')
+  })
+
+  it('nutzt für 0 und für viele den Plural', () => {
+    expect(produkteText(0)).toBe('0 Produkte')
+    expect(produkteText(15)).toBe('15 Produkte')
+  })
+
+  it('schreibt die Zusammenfassung eines Segments mit genau einem Produkt im Singular', () => {
+    const segment: BindungsSegment = {
+      bindungsgrad: 'freiwillig',
+      name: 'freiwillig',
+      bezeichnung: 'Freiwillig',
+      summe: 59900,
+      anzahl: 1,
+      anteil: 1,
+      produkte: [{ code: '000000', name: 'Testprodukt', pb: '01', wert: 59900 }],
+    }
+    expect(segmentZusammenfassung(segment)).toBe(`Freiwillig · ${euroKurz(59900)} · 1 Produkt`)
+  })
+
+  it('setzt die Zusammenfassung jedes echten Segments aus Bezeichnung, Summe und Anzahl zusammen', () => {
+    for (const segment of baueBindungsgrad().segmente) {
+      expect(segmentZusammenfassung(segment)).toBe(
+        `${segment.bezeichnung} · ${euroKurz(segment.summe)} · ${produkteText(segment.anzahl)}`,
+      )
+    }
+  })
+
+  describe.runIf(haushalt.haushaltsjahr === 2026)('Jahrgang 2026', () => {
+    it('endet die Zusammenfassung von „Pflichtig“ auf 29 Produkte', () => {
+      const pflichtig = baueBindungsgrad().segmente.find((s) => s.bindungsgrad === 'pflichtig')
+      expect(pflichtig).toBeDefined()
+      expect(segmentZusammenfassung(pflichtig as BindungsSegment)).toMatch(/ · 29 Produkte$/)
+    })
+  })
+})
+
+describe('Anzahltexte in den Komponenten (WR-02)', () => {
+  const quelltexte = import.meta.glob<string>(
+    [
+      '/src/components/MassnahmenFilter.vue',
+      '/src/components/ProduktBalkenListe.vue',
+      '/src/components/BindungsgradBalken.vue',
+    ],
+    { query: '?raw', import: 'default', eager: true },
+  )
+  const quelltext = (name: string): string => {
+    const treffer = Object.entries(quelltexte).find(([pfad]) => pfad.endsWith(`/${name}`))
+    if (treffer === undefined) {
+      throw new Error(`Quelltext ${name} nicht gefunden`)
+    }
+    return treffer[1]
+  }
+
+  it('findet alle drei Komponenten', () => {
+    expect(Object.keys(quelltexte)).toHaveLength(3)
+  })
+
+  it.each(['MassnahmenFilter.vue', 'ProduktBalkenListe.vue', 'BindungsgradBalken.vue'])(
+    'baut in %s keinen Anzahltext mit festem Plural',
+    (name) => {
+      expect(quelltext(name)).not.toMatch(/\$\{[^}]*\}\s+(Maßnahmen|Produkte)\b/)
+    },
+  )
+
+  it('nutzt in ProduktBalkenListe.vue segmentZusammenfassung()', () => {
+    expect(quelltext('ProduktBalkenListe.vue')).toContain('segmentZusammenfassung(')
+  })
+
+  it('nutzt in BindungsgradBalken.vue produkteText() und definiert es nicht selbst', () => {
+    const text = quelltext('BindungsgradBalken.vue')
+    expect(text).toContain('produkteText(')
+    expect(text).not.toMatch(/function\s+produkteText/)
   })
 })
 

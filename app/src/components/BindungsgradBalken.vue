@@ -10,7 +10,7 @@ import BaseChart from '@/components/BaseChart.vue'
 import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
-import type { BindungsgradModell, BindungsSegment } from '@/lib/bindungsgrad'
+import { produkteText, type BindungsgradModell, type BindungsSegment } from '@/lib/bindungsgrad'
 import { useSchmalerBildschirm } from '@/lib/bildschirm'
 
 // RAT-01, D-01: ein gestapelter Balken, drei Segmente in fester Reihenfolge (pflichtig, teils,
@@ -29,10 +29,6 @@ const istSchmal = useSchmalerBildschirm()
 /** Balkenhöhe und Diagrammhöhe in px (UI-SPEC Chart Contract). */
 const BALKEN_HOEHE = 56
 const DIAGRAMM_HOEHE = '160px'
-
-function produkteText(segment: BindungsSegment): string {
-  return `${String(segment.anzahl)} Produkte`
-}
 
 const option = computed<EChartsOption>(() => {
   const nachName = new Map<string, BindungsSegment>(
@@ -55,7 +51,7 @@ const option = computed<EChartsOption>(() => {
           : tooltipZeilen([
               segment.bezeichnung,
               `${euro(segment.summe)} · ${prozent(segment.anteil)}`,
-              `${produkteText(segment)} · ${props.wertartText}`,
+              `${produkteText(segment.anzahl)} · ${props.wertartText}`,
             ])
       },
     },

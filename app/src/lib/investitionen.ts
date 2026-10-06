@@ -11,7 +11,7 @@
 import { computed, watch } from 'vue'
 import { useRoute, useRouter, type LocationQueryRaw } from 'vue-router'
 
-import { jahr as formatiereJahr } from '@/charts/format'
+import { anzahlText, euroKurz, jahr as formatiereJahr } from '@/charts/format'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import { haushalt, investitionen } from '@/data/daten'
 import type { Massnahme } from '@/data/typen'
@@ -173,6 +173,16 @@ export function baueGruppen(auswahl: Auswahl): Vorhaben[] {
  */
 export function baueVorhaben(auswahl: Auswahl): Vorhaben[] {
   return baueGruppen(auswahl).filter((eintrag) => eintrag.summe !== 0)
+}
+
+/**
+ * Text der aria-live-Ergebniszeile auf `/investitionen` (UI-SPEC Copywriting „Ergebniszeile
+ * Filter“): Anzahl der Maßnahmen, im Singular bei genau einer (WR-02), und die Summe der
+ * gezeigten Vorhaben als gekürzter Euro-Betrag.
+ */
+export function ergebnisText(vorhaben: readonly Vorhaben[]): string {
+  const summe = vorhaben.reduce((gesamt, eintrag) => gesamt + eintrag.summe, 0)
+  return `${anzahlText(vorhaben.length, 'Maßnahme', 'Maßnahmen')} · zusammen ${euroKurz(summe)}`
 }
 
 /** Name des Aufgabenbereichs (PB) einer Maßnahme; ohne Knoten der Code. */

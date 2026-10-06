@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  anzahlText,
   datum,
   euro,
   euroKurz,
@@ -76,6 +77,24 @@ describe('formatiere: sichtbarer Fallback (UI-05, WR-06/IN-01)', () => {
 
   it('wirft bei unbekanntem Formatkürzel und nennt das Kürzel', () => {
     expect(() => formatiere(1, 'unbekannt' as FormatKuerzel)).toThrow(/unbekannt/)
+  })
+})
+
+describe('anzahlText (WR-02)', () => {
+  it('nutzt den Singular genau für 1', () => {
+    expect(anzahlText(1, 'Maßnahme', 'Maßnahmen')).toBe('1 Maßnahme')
+  })
+
+  it('nutzt für 0 den Plural', () => {
+    expect(anzahlText(0, 'Maßnahme', 'Maßnahmen')).toBe('0 Maßnahmen')
+  })
+
+  it('nutzt für 2 den Plural', () => {
+    expect(anzahlText(2, 'Maßnahme', 'Maßnahmen')).toBe('2 Maßnahmen')
+  })
+
+  it('gruppiert große Anzahlen mit Tausenderpunkt', () => {
+    expect(anzahlText(1000, 'Maßnahme', 'Maßnahmen')).toBe('1.000 Maßnahmen')
   })
 })
 

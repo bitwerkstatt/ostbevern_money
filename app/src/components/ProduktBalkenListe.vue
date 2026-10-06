@@ -8,7 +8,7 @@ import { euroKurz } from '@/charts/format'
 import BaseChart from '@/components/BaseChart.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
-import type { BindungsSegment } from '@/lib/bindungsgrad'
+import { segmentZusammenfassung, type BindungsSegment } from '@/lib/bindungsgrad'
 import { useSchmalerBildschirm } from '@/lib/bildschirm'
 import { klickIndex } from '@/lib/investitionen'
 
@@ -36,10 +36,7 @@ function beiOeffnen(ereignis: Event) {
   }
 }
 
-const zusammenfassung = computed(
-  () =>
-    `${props.segment.bezeichnung} · ${euroKurz(props.segment.summe)} · ${String(props.segment.anzahl)} Produkte`,
-)
+const zusammenfassung = computed(() => segmentZusammenfassung(props.segment))
 
 const zeilen = computed<BalkenZeile[]>(() =>
   props.segment.produkte.map((produkt) => ({
