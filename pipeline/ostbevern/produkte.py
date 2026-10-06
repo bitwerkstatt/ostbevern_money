@@ -829,6 +829,13 @@ def lies_personennamen(
     return namen
 
 
+def personenfeld_rechtecke(
+    dokument: PdfDokument, jahrgang: Jahrgang, seiten: pl.DataFrame, hierarchie: pl.DataFrame
+) -> dict[int, tuple[tuple[float, float, float, float], ...]]:
+    """Gerüst (Plan 07-03, RED): noch ohne Schwärzungsrechtecke."""
+    return {}
+
+
 def _baue_produktinfo(
     produkt: str,
     felder: dict[str, list[tuple[int, Textzeile]]],

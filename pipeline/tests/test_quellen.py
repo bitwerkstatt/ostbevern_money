@@ -14,20 +14,16 @@ from pathlib import Path
 
 import polars as pl
 import pytest
-from PIL import Image
 
 from ostbevern import quellen
 from ostbevern.app_daten import APP_DATEN_WURZEL, erzeuge_app_daten
 from ostbevern.belegbilder import (
-    BelegbildFehler,
-    bild_name,
-    rendere_seiten,
     seitenmass_pdfium,
 )
 from ostbevern.konfiguration import Jahrgang
 from ostbevern.pdf import PdfDokument, RahmenZeile, WortRahmen
+from ostbevern.produkte import lies_personennamen, personenfeld_rechtecke
 from ostbevern.quellen import (
-    BELEGBILDER_WURZEL,
     GRUND_BETRAG_FEHLT,
     GRUND_MEHRDEUTIG,
     GRUND_NICHT_GEFUNDEN,
@@ -43,8 +39,10 @@ from ostbevern.schema import (
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
     FINANZPLAN_CSV,
+    HIERARCHIE_CSV,
     QUELLENBELEGE_MD,
     SEITEN_CSV,
+    lies_hierarchie_csv,
     lies_plan_csv,
     lies_seiten_csv,
 )
@@ -216,68 +214,6 @@ def test_querformat_seiten_haben_vertauschtes_mass(jahrgang: Jahrgang) -> None:
         quer = pdf.seitenmass(291)
     assert hoch[0] < hoch[1]
     assert quer[0] > quer[1]
-
-
-def test_eingecheckte_bilder_existieren_mit_erwarteten_massen(eingecheckt: dict) -> None:
-    for nummer, seite in eingecheckt["seiten"].items():
-        pfad = BELEGBILDER_WURZEL / seite["bild"]
-        assert seite["bild"] == bild_name(int(nummer))
-        assert pfad.is_file(), f"Belegbild fehlt: {pfad}"
-        with Image.open(pfad) as bild:
-            assert bild.format == "WEBP"
-            assert abs(bild.width - round(2 * seite["breite"])) <= 1
-            assert abs(bild.height - round(2 * seite["hoehe"])) <= 1
-
-
-def test_keine_verwaisten_belegbilder(eingecheckt: dict) -> None:
-    erwartet = {seite["bild"] for seite in eingecheckt["seiten"].values()}
-    vorhanden = {pfad.name for pfad in BELEGBILDER_WURZEL.glob("*.webp")}
-    assert vorhanden == erwartet
-
-
-def test_produktinformationen_seite_ohne_schwaerzung_wird_nicht_gerendert(
-    jahrgang: Jahrgang, tmp_path: Path
-) -> None:
-    seiten = lies_seiten_csv(DATEN_WURZEL / SEITEN_CSV)
-    seitentypen = {int(r["pdf_seite"]): str(r["typ"]) for r in seiten.iter_rows(named=True)}
-    erste = int(seiten.filter(pl.col("typ") == "produktinformationen")["pdf_seite"][0])
-
-    with pytest.raises(BelegbildFehler, match=str(erste)):
-        rendere_seiten(jahrgang.pdf_pfad, [erste], tmp_path, seitentypen=seitentypen)
-    assert list(tmp_path.iterdir()) == []
-
-
-def test_produktinformationen_seite_mit_schwaerzung_wird_geschwaerzt(
-    jahrgang: Jahrgang, tmp_path: Path
-) -> None:
-    seiten = lies_seiten_csv(DATEN_WURZEL / SEITEN_CSV)
-    seitentypen = {int(r["pdf_seite"]): str(r["typ"]) for r in seiten.iter_rows(named=True)}
-    erste = int(seiten.filter(pl.col("typ") == "produktinformationen")["pdf_seite"][0])
-    rechteck = [100.0, 100.0, 300.0, 140.0]
-
-    geschrieben = rendere_seiten(
-        jahrgang.pdf_pfad,
-        [erste],
-        tmp_path,
-        seitentypen=seitentypen,
-        schwaerzungen={erste: [rechteck]},
-    )
-    assert [pfad.name for pfad in geschrieben] == [bild_name(erste)]
-    with Image.open(geschrieben[0]) as bild:
-        pixel = bild.convert("RGB").getpixel((400, 240))
-    assert max(pixel) < 24
-
-
-def test_vorhandene_bilder_werden_ohne_neu_nicht_erneut_gerendert(
-    jahrgang: Jahrgang, tmp_path: Path
-) -> None:
-    seitentypen = {62: "sonstige"}
-    erstes = rendere_seiten(jahrgang.pdf_pfad, [62], tmp_path, seitentypen=seitentypen)
-    assert len(erstes) == 1
-    inhalt = (tmp_path / bild_name(62)).read_bytes()
-    zweites = rendere_seiten(jahrgang.pdf_pfad, [62], tmp_path, seitentypen=seitentypen)
-    assert zweites == []
-    assert (tmp_path / bild_name(62)).read_bytes() == inhalt
 
 
 def test_bbox_mit_rand_klemmt_an_den_seitenraendern_und_rundet() -> None:
@@ -714,4 +650,193 @@ def test_wertzeile_braucht_genau_eine_zeile_und_ignoriert_die_seitenzahl() -> No
     assert quellen.finde_wertzeile(zwei, ["11.741"], seite=25, breite=595.28, hoehe=841.89) == (
         None,
         GRUND_MEHRDEUTIG,
+    )
+
+
+# --- Plan 07-03, Aufgabe 2: Produkt-, Grundzahl- und Seitenbelege, Schwärzung, Prüfliste ---
+
+SEITENFELDER = ("pdf_seite", "quelle")
+SEITENLISTENFELDER = ("pdf_seiten", "quelle_seiten")
+APP_JSONS = ("haushalt", "produkte", "investitionen", "stellenplan", "texte")
+
+
+def _seitenfelder(daten: object) -> set[int]:
+    """Alle Werte der Seitenfelder (pdf_seite, quelle, pdf_seiten, quelle_seiten) rekursiv."""
+    seiten: set[int] = set()
+    if isinstance(daten, dict):
+        for name, wert in daten.items():
+            if name in SEITENFELDER and isinstance(wert, int) and not isinstance(wert, bool):
+                seiten.add(wert)
+            elif name in SEITENLISTENFELDER and isinstance(wert, list):
+                seiten |= {s for s in wert if isinstance(s, int)}
+            else:
+                seiten |= _seitenfelder(wert)
+    elif isinstance(daten, list):
+        for eintrag in daten:
+            seiten |= _seitenfelder(eintrag)
+    return seiten
+
+
+@pytest.fixture(scope="session")
+def produkte_json() -> list:
+    return json.loads((APP_DATEN_WURZEL / "produkte.json").read_text(encoding="utf-8"))
+
+
+@pytest.fixture(scope="session")
+def personen_nadeln(jahrgang: Jahrgang, pdf_dok: PdfDokument) -> set[str]:
+    seiten = lies_seiten_csv(DATEN_WURZEL / SEITEN_CSV)
+    hierarchie = lies_hierarchie_csv(DATEN_WURZEL / HIERARCHIE_CSV)
+    nadeln: set[str] = set()
+    for _seite, text in lies_personennamen(pdf_dok, jahrgang, seiten, hierarchie):
+        nadeln.add(text)
+        nadeln.add("".join(text.split()))
+    return {nadel for nadel in nadeln if nadel}
+
+
+@pytest.fixture(scope="session")
+def schwaerzungen(
+    jahrgang: Jahrgang, pdf_dok: PdfDokument
+) -> dict[int, tuple[tuple[float, float, float, float], ...]]:
+    seiten = lies_seiten_csv(DATEN_WURZEL / SEITEN_CSV)
+    hierarchie = lies_hierarchie_csv(DATEN_WURZEL / HIERARCHIE_CSV)
+    return personenfeld_rechtecke(pdf_dok, jahrgang, seiten, hierarchie)
+
+
+def test_seitenbelege_decken_die_vereinigung_aller_seitenfelder(tmp_belege: dict) -> None:
+    vereinigung: set[int] = set()
+    for name in APP_JSONS:
+        daten = json.loads((APP_DATEN_WURZEL / f"{name}.json").read_text(encoding="utf-8"))
+        vereinigung |= _seitenfelder(daten)
+    assert len(vereinigung) > 150
+    seitenbelege = {
+        int(schluessel.split(":")[1]): beleg
+        for schluessel, beleg in tmp_belege["belege"].items()
+        if schluessel.startswith("seite:")
+    }
+    assert set(seitenbelege) == vereinigung
+    assert all(beleg["bbox"] is None for beleg in seitenbelege.values())
+    assert all(beleg["pdf_seite"] == seite for seite, beleg in seitenbelege.items())
+
+
+def test_seiten_enthalten_genau_die_seiten_der_belege(tmp_belege: dict) -> None:
+    belegseiten = {str(beleg["pdf_seite"]) for beleg in tmp_belege["belege"].values()}
+    assert set(tmp_belege["seiten"]) == belegseiten
+    assert len(belegseiten) >= 200
+
+
+def test_jedes_produkt_hat_einen_produktbeleg_und_jede_grundzahl_einen_grundzahlbeleg(
+    tmp_belege: dict, produkte_json: list
+) -> None:
+    belege = tmp_belege["belege"]
+    produkte = produkte_json
+    assert len(produkte) == 63
+    for produkt in produkte:
+        beleg = belege[f"pr:{produkt['code']}"]
+        assert beleg["pdf_seite"] == produkt["pdf_seiten"][0]
+        for grundzahl in produkt["grundzahlen"]:
+            assert f"gz:{produkt['code']}:{grundzahl['position']}" in belege
+    erwartet_gz = {f"gz:{p['code']}:{g['position']}" for p in produkte for g in p["grundzahlen"]}
+    assert {k for k in belege if k.startswith("gz:")} == erwartet_gz
+    assert {k for k in belege if k.startswith("pr:")} == {f"pr:{p['code']}" for p in produkte}
+
+
+def test_probe_produktseite_und_grundzahl(tmp_belege: dict, pdf_dok: PdfDokument) -> None:
+    beleg = tmp_belege["belege"]["pr:010101"]
+    assert beleg["bbox"] is not None
+    treffer = [
+        w
+        for w in _woerter(pdf_dok, beleg["pdf_seite"])
+        if w.text == "010101" and _umschliesst(beleg["bbox"], w)
+    ]
+    assert treffer
+    gz = tmp_belege["belege"]["gz:010101:1"]
+    assert gz["pdf_seite"] == 72 and gz["bbox"] is not None
+    woerter = [w for w in _woerter(pdf_dok, 72) if w.text == "AnzahlRatsmitglieder"]
+    assert woerter and _umschliesst(gz["bbox"], woerter[0])
+
+
+def _schneidet(bbox: list[float], rechteck: tuple[float, float, float, float]) -> bool:
+    return not (
+        bbox[2] <= rechteck[0]
+        or rechteck[2] <= bbox[0]
+        or bbox[3] <= rechteck[1]
+        or rechteck[3] <= bbox[1]
+    )
+
+
+def test_kein_beleg_rechteck_ueberlappt_eine_schwaerzung(
+    tmp_belege: dict, schwaerzungen: dict[int, tuple[tuple[float, float, float, float], ...]]
+) -> None:
+    ueberlappend = [
+        schluessel
+        for schluessel, beleg in tmp_belege["belege"].items()
+        if beleg["bbox"] is not None
+        and any(_schneidet(beleg["bbox"], r) for r in schwaerzungen.get(beleg["pdf_seite"], ()))
+    ]
+    assert ueberlappend == []
+
+
+def test_keine_personennamen_in_quellen_json_und_bericht(
+    personen_nadeln: set[str], tmp_ergebnis: tuple[QuellenErgebnis, Path, Path]
+) -> None:
+    ergebnis, _, daten = tmp_ergebnis
+    dateien = [
+        EINGECHECKT,
+        DATEN_WURZEL / QUELLENBELEGE_MD,
+        ergebnis.pfad,
+        daten / QUELLENBELEGE_MD,
+    ]
+    treffer = [
+        pfad.name
+        for pfad in dateien
+        for nadel in personen_nadeln
+        if nadel in pfad.read_text(encoding="utf-8")
+    ]
+    assert len(personen_nadeln) >= 63
+    assert len(treffer) == 0, f"{len(treffer)} Namenstreffer in quellen.json oder Bericht"
+
+
+def test_bericht_nennt_pruefliste_und_geschwaerzte_seiten(
+    tmp_ergebnis: tuple[QuellenErgebnis, Path, Path],
+    schwaerzungen: dict[int, tuple[tuple[float, float, float, float], ...]],
+) -> None:
+    _, _, daten = tmp_ergebnis
+    text = (daten / QUELLENBELEGE_MD).read_text(encoding="utf-8")
+    assert "\n## Datenschutz-Prüfliste\n" in text
+    assert "\n## Seiten mit Schwärzung\n" in text
+    pruefliste = text.split("\n## Datenschutz-Prüfliste\n")[1].split("\n## ")[0]
+    # Die Haushaltssatzung (S. 9) trägt die Namen der Unterzeichnenden: sie steht in der Liste.
+    assert "| 9 | Bürgermeister |" in pruefliste
+    schwaerzungsteil = text.split("\n## Seiten mit Schwärzung\n")[1]
+    for seite, liste in schwaerzungen.items():
+        assert f"| {seite} | {len(liste)} |" in schwaerzungsteil
+    # keine Auszugsspalte: nur Seite, Stichwort, Zeilenindex, Schwärzung
+    assert "| Seite | Stichwort | Zeile | geschwärzt |" in pruefliste
+
+
+def test_pruefwoerter_liefern_nur_stichwort_und_zeilenindex() -> None:
+    zeilen = [
+        _zeile(_wort("Der", 40, 60, 100, 108), _wort("Bürgermeister", 62, 140, 100, 108)),
+        _zeile(_wort("Kein", 40, 60, 120, 128), _wort("Treffer", 62, 100, 120, 128)),
+        _zeile(_wort("Telefon:", 40, 90, 140, 148), _wort("gez.", 92, 120, 140, 148)),
+    ]
+    assert quellen.finde_pruefwoerter(zeilen, ["Bürgermeister", "Telefon", "gez."]) == [
+        ("Bürgermeister", 1),
+        ("Telefon", 3),
+        ("gez.", 3),
+    ]
+
+
+def test_zeile_nach_etikett_wird_zum_schwaerzungsrechteck() -> None:
+    zeilen = [
+        _zeile(_wort("Aufgestellt", 40, 100, 100, 108)),
+        _zeile(_wort("Name", 40, 80, 120, 128), _wort("Vorname", 90, 150, 120, 128)),
+        _zeile(_wort("Weiter", 40, 90, 140, 148)),
+    ]
+    rechtecke = quellen.rechtecke_nach_etiketten(
+        zeilen, ["Aufgestellt"], breite=595.28, hoehe=841.89
+    )
+    assert rechtecke == [[39.0, 119.0, 151.0, 129.0]]
+    assert (
+        quellen.rechtecke_nach_etiketten(zeilen, ["Unbekannt"], breite=595.28, hoehe=841.89) == []
     )

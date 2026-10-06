@@ -21,9 +21,10 @@ from pathlib import Path
 import polars as pl
 import pytest
 
+from ostbevern import produkte as produkte_modul
 from ostbevern.freitext import verbinde_zeilen
 from ostbevern.konfiguration import STANDARD_JAHR, Jahrgang, lade_sollwerte, layout_text
-from ostbevern.pdf import PdfDokument, Textzeile
+from ostbevern.pdf import PdfDokument, Textzeile, Wort
 from ostbevern.produkte import (
     BINDUNGSGRADE,
     KLASSIFIZIERUNGEN,
@@ -36,6 +37,7 @@ from ostbevern.produkte import (
     lies_grundzahlen,
     lies_personennamen,
     lies_produktinformationen,
+    personenfeld_rechtecke,
     pruefe_plausibilitaet,
     zerlege_felder,
 )
@@ -728,3 +730,105 @@ def test_produkte_json_erlaeuterungen_csv_grundzahlen_csv_byte_identisch(
             f"temporär {generiert.stat().st_size} Bytes, "
             f"eingecheckt {original.stat().st_size} Bytes"
         )
+
+
+# --- Plan 07-03: Schwärzungsrechtecke der Personenfelder (T-07-08) ---
+
+
+def test_personenfeld_rechtecke_liefern_nur_geometrie_je_label_seite(
+    jahrgang: Jahrgang, kontext: tuple[pl.DataFrame, pl.DataFrame]
+) -> None:
+    seiten, hierarchie = kontext
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        rechtecke = personenfeld_rechtecke(dokument, jahrgang, seiten, hierarchie)
+        masse = {seite: dokument.seitenmass(seite) for seite in rechtecke}
+
+    assert len(rechtecke) >= jahrgang.anzahlen.produkte
+    for seite, liste in rechtecke.items():
+        assert isinstance(seite, int)
+        assert liste, f"Seite {seite}: keine Rechtecke"
+        breite, hoehe = masse[seite]
+        for rechteck in liste:
+            assert len(rechteck) == 4
+            assert all(type(wert) is float for wert in rechteck)
+            x0, top, x1, bottom = rechteck
+            assert 0 <= x0 < x1 <= breite
+            assert 0 <= top < bottom <= hoehe
+
+
+def test_personenfeld_rechtecke_erste_seite_jedes_produkts(
+    jahrgang: Jahrgang, kontext: tuple[pl.DataFrame, pl.DataFrame]
+) -> None:
+    seiten, hierarchie = kontext
+    pi = seiten.filter(pl.col("produkt").is_not_null() & (pl.col("typ") == "produktinformationen"))
+    erste = set(pi.group_by("produkt").agg(pl.col("pdf_seite").min())["pdf_seite"].to_list())
+    with PdfDokument.oeffne(jahrgang.pdf_pfad) as dokument:
+        rechtecke = personenfeld_rechtecke(dokument, jahrgang, seiten, hierarchie)
+    assert erste <= set(rechtecke)
+    assert set(rechtecke) <= set(pi["pdf_seite"].to_list())
+
+
+class _LeerDokument:
+    """Dokument-Attrappe ohne Wörter (nur für die Fehlerpfade von personenfeld_rechtecke)."""
+
+    def zeilen_fein(self, pdf_seite: int) -> tuple:
+        return ()
+
+    def zeilen_mit_rahmen(self, pdf_seite: int, *, fein: bool = False) -> tuple:
+        return ()
+
+
+def _attrappen_kontext() -> tuple[pl.DataFrame, pl.DataFrame]:
+    seiten = pl.DataFrame(
+        {
+            "pdf_seite": [5],
+            "typ": ["produktinformationen"],
+            "pb": ["01"],
+            "pg": ["0101"],
+            "produkt": ["010101"],
+        }
+    )
+    return seiten, pl.DataFrame()
+
+
+def _label_zeile(pdf_seite: int) -> tuple[int, Textzeile]:
+    label = Wort(text="Label", x0=40.0, x1=100.0, top=100.0, groesse=9.0, fett=True)
+    return pdf_seite, Textzeile(top=100.0, woerter=(label,))
+
+
+def test_personenfeld_ohne_lokalisierbare_wertwoerter_bricht_ab(
+    jahrgang: Jahrgang, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    seiten, hierarchie = _attrappen_kontext()
+    wert = Wort(text="Wert", x0=120.0, x1=160.0, top=100.0, groesse=9.0)
+    zeile = Textzeile(top=100.0, woerter=(_label_zeile(5)[1].woerter[0], wert))
+    monkeypatch.setattr(
+        produkte_modul,
+        "zerlege_felder",
+        lambda *_args, **_kwargs: {"verantwortlich": [(5, zeile)], "sachbearbeiter": [(5, zeile)]},
+    )
+    with pytest.raises(ProdukteFehler, match="5"):
+        personenfeld_rechtecke(_LeerDokument(), jahrgang, seiten, hierarchie)
+
+
+def test_personenfeld_nur_label_ohne_wert_bricht_ab(
+    jahrgang: Jahrgang, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    seiten, hierarchie = _attrappen_kontext()
+    nur_label = [_label_zeile(5)]
+    monkeypatch.setattr(
+        produkte_modul,
+        "zerlege_felder",
+        lambda *_args, **_kwargs: {"verantwortlich": nur_label, "sachbearbeiter": nur_label},
+    )
+    with pytest.raises(ProdukteFehler, match="5"):
+        personenfeld_rechtecke(_LeerDokument(), jahrgang, seiten, hierarchie)
+
+
+def test_erste_seite_ohne_personenfeld_label_bricht_ab(
+    jahrgang: Jahrgang, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    seiten, hierarchie = _attrappen_kontext()
+    monkeypatch.setattr(produkte_modul, "zerlege_felder", lambda *_args, **_kwargs: {})
+    with pytest.raises(ProdukteFehler, match="010101"):
+        personenfeld_rechtecke(_LeerDokument(), jahrgang, seiten, hierarchie)
