@@ -18,6 +18,7 @@ import type { Massnahme } from '@/data/typen'
 import { findeKnoten } from '@/lib/ansicht'
 import { wertartName } from '@/lib/jahr'
 import { jahrSchluessel, type Tabelle } from '@/lib/produkt'
+import { belegSchluessel } from '@/lib/quelle'
 
 /** Filterart der Maßnahmen (D-06). */
 export type Art = 'bau' | 'grundstuecke' | 'ausstattung' | 'sonstige'
@@ -84,7 +85,17 @@ export interface Vorhaben {
   summe: number
   /** 1-basierte PDF-Seite der Maßnahme. */
   pdfSeite: number
+  /**
+   * Belegschlüssel (`inv`): bei mehreren Konten der der Kontozeile mit der größten Auszahlung im
+   * Haushaltsjahr (bei Gleichstand die erste), sonst der des einen Kontos.
+   */
+  beleg: string
+  /** Anzahl der gebündelten Auszahlungszeilen (Konten); über 1 steht der Beleg nur für eine Zeile. */
+  anzahlKonten: number
 }
+
+/** Herleitung für den Beleg einer Maßnahme, die mehrere Konten bündelt (D-03). */
+export const HERLEITUNG_MEHRERE_KONTEN = 'Summe aller Konten dieser Maßnahme'
 
 /** Auswahl der Filter; `null` bedeutet „Alle“. */
 export interface Auswahl {
@@ -100,6 +111,8 @@ const SORTIERUNG = new Intl.Collator('de')
 interface Sammler {
   vorhaben: Vorhaben
   gesehen: Set<Art>
+  /** Größte Auszahlung im Haushaltsjahr unter den bisherigen Zeilen; `null` ohne Wert. */
+  belegWert: number | null
 }
 
 /**
@@ -126,9 +139,26 @@ export function buendeln(zeilen: readonly Massnahme[], ab: number): Vorhaben[] {
         jahre: zeile.werte.slice(ab).map(() => null),
         summe: 0,
         pdfSeite: zeile.pdf_seite,
+        beleg: belegSchluessel.inv(zeile.produkt, zeile.massnahme_id, zeile.konto, zeile.richtung),
+        anzahlKonten: 0,
       },
       gesehen: new Set(),
+      belegWert: zeile.werte[ab] ?? null,
     }
+    if (sammler.has(schluessel)) {
+      // Weitere Zeile derselben Maßnahme: der Beleg wechselt nur zu einer echt größeren Auszahlung.
+      const wert = zeile.werte[ab] ?? null
+      if (wert !== null && (eintrag.belegWert === null || wert > eintrag.belegWert)) {
+        eintrag.belegWert = wert
+        eintrag.vorhaben.beleg = belegSchluessel.inv(
+          zeile.produkt,
+          zeile.massnahme_id,
+          zeile.konto,
+          zeile.richtung,
+        )
+      }
+    }
+    eintrag.vorhaben.anzahlKonten += 1
     sammler.set(schluessel, eintrag)
     eintrag.gesehen.add(filterArt(zeile.art))
     zeile.werte.slice(ab).forEach((wert, i) => {
@@ -204,7 +234,8 @@ export function klickIndex(params: unknown, anzahl: number): number | null {
 /**
  * Tabelle aller Maßnahmen der Auswahl: Maßnahme (die Seite macht daraus den Link auf das
  * Produkt), Aufgabenbereich, Art(en), je Planjahr ein Betrag (Kopf: „{Jahr} {Wertart}“),
- * Summe und PDF-Seite. Fehlende Jahreswerte bleiben `null` und erscheinen als „–“, nie als 0.
+ * Summe und Quelle (Beleg der Kontozeile, bei mehreren Konten mit Herleitung). Fehlende
+ * Jahreswerte bleiben `null` und erscheinen als „–“, nie als 0.
  */
 export function baueMassnahmenTabelle(vorhaben: readonly Vorhaben[]): Tabelle {
   const ab = planAb()
@@ -225,7 +256,7 @@ export function baueMassnahmenTabelle(vorhaben: readonly Vorhaben[]): Tabelle {
       }
     }),
     { schluessel: 'summe', titel: 'Summe', art: 'euro' },
-    { schluessel: 'seite', titel: 'PDF-Seite', art: 'text' },
+    { schluessel: 'quelle', titel: 'Quelle', art: 'quelle' },
   ]
   const zeilen: DatenZeile[] = vorhaben.map((eintrag) => {
     const zeile: Record<string, string | number | null> = {
@@ -239,7 +270,10 @@ export function baueMassnahmenTabelle(vorhaben: readonly Vorhaben[]): Tabelle {
       zeile[jahrSchluessel(j)] = eintrag.jahre[i] ?? null
     })
     zeile.summe = eintrag.summe
-    zeile.seite = String(eintrag.pdfSeite)
+    zeile.quelle = eintrag.beleg
+    if (eintrag.anzahlKonten > 1) {
+      zeile.quelleHerleitung = HERLEITUNG_MEHRERE_KONTEN
+    }
     return zeile
   })
   return { spalten, zeilen }
