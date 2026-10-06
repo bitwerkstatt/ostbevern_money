@@ -8,10 +8,14 @@ import {
 
 import AusgabenPage from '@/pages/AusgabenPage.vue'
 import EinnahmenPage from '@/pages/EinnahmenPage.vue'
+import EntwicklungPage from '@/pages/EntwicklungPage.vue'
 import GeldflussPage from '@/pages/GeldflussPage.vue'
 import GlossarPage from '@/pages/GlossarPage.vue'
+import InvestitionenPage from '@/pages/InvestitionenPage.vue'
 import ProduktPage from '@/pages/ProduktPage.vue'
+import RatEntscheidetPage from '@/pages/RatEntscheidetPage.vue'
 import StartPage from '@/pages/StartPage.vue'
+import StellenplanPage from '@/pages/StellenplanPage.vue'
 import { ansagen } from '@/lib/ansage'
 import { findeProdukt } from '@/lib/ansicht'
 import { elementFuerHash, sprungPosition } from '@/lib/sprungziel'
@@ -71,6 +75,30 @@ const router = createRouter({
       name: 'geldfluss',
       component: GeldflussPage,
       meta: { titel: 'Vom Ertrag zur Ausgabe' },
+    },
+    {
+      path: '/entwicklung',
+      name: 'entwicklung',
+      component: EntwicklungPage,
+      meta: { titel: 'Wie entwickelt sich der Haushalt?' },
+    },
+    {
+      path: '/investitionen',
+      name: 'investitionen',
+      component: InvestitionenPage,
+      meta: { titel: 'Investitionen und Schulden' },
+    },
+    {
+      path: '/rat-entscheidet',
+      name: 'rat-entscheidet',
+      component: RatEntscheidetPage,
+      meta: { titel: 'Worüber entscheidet der Rat?' },
+    },
+    {
+      path: '/stellenplan',
+      name: 'stellenplan',
+      component: StellenplanPage,
+      meta: { titel: 'Wie viele Stellen hat die Verwaltung?' },
     },
     {
       path: '/glossar',
