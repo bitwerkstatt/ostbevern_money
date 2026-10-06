@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { EChartsOption, LineSeriesOption } from 'echarts'
+import type { EChartsOption } from 'echarts'
 
 import { ERTRAG_FARBE } from '@/charts/echartsTheme'
 import { euro, euroKurz, jahr as formatiereJahr, KEIN_WERT } from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
+import { LEGENDE_TEXT, flaechenFarbe, linienSerie } from '@/charts/wertartStil'
 import BaseChart from '@/components/BaseChart.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
@@ -17,7 +18,6 @@ import {
   quellenFussnote,
   zeitreihenOptionen,
   zeitreihenSerien,
-  type ZeitreihenSerie,
 } from '@/lib/zeitreihen'
 
 /** Schlüssel des gewählten Postens (`ZEITREIHEN_POSTEN`); die Seite hält den Zustand. */
@@ -26,7 +26,6 @@ const posten = defineModel<string>({ required: true })
 const istSchmal = useSchmalerBildschirm()
 const optionen = zeitreihenOptionen()
 
-const LEGENDE_TEXT = 'durchgezogen: Ist · gestrichelt: Ansatz · gepunktet: Planung'
 const LEER_TITEL = 'Für diese Auswahl gibt es keine Einzelwerte'
 const LEER_TEXT =
   'Der Haushaltsplan nennt für diese Steuerart keine Werte. Wähle eine andere Steuerart oder öffne die Tabelle.'
@@ -36,54 +35,6 @@ const MIT_ERKLAERTEXT: ReadonlySet<string> = new Set(['gewerbesteuer', 'schluess
 const punkte = computed(() => baueZeitreihe(posten.value))
 const reihe = computed(() => zeitreihenSerien(punkte.value))
 const hatWerte = computed(() => punkte.value.some((punkt) => punkt.wert !== null))
-
-/** Fläche für hohle Marker (Ansatz, Planung): der Token der Kartenfläche, sonst Weiß. */
-function flaechenFarbe(): string {
-  if (typeof document === 'undefined') {
-    return 'white'
-  }
-  const wert = getComputedStyle(document.documentElement)
-    .getPropertyValue('--wa-color-surface-default')
-    .trim()
-  return wert === '' ? 'white' : wert
-}
-
-interface Linienstil {
-  linie: 'solid' | number[]
-  symbol: 'circle' | 'diamond'
-  gefuellt: boolean
-}
-
-// Ist durchgezogen mit gefülltem Kreis, Ansatz gestrichelt mit hohlem Kreis, Planung gepunktet
-// mit hohler Raute: die Wertart ist ohne Farbe erkennbar (UI-SPEC Chart Contract).
-const STILE: ReadonlyMap<string, Linienstil> = new Map([
-  ['ergebnis', { linie: 'solid', symbol: 'circle', gefuellt: true }],
-  ['ansatz', { linie: [6, 4], symbol: 'circle', gefuellt: false }],
-  ['planung', { linie: [2, 4], symbol: 'diamond', gefuellt: false }],
-])
-
-function linienSerie(serie: ZeitreihenSerie, flaeche: string): LineSeriesOption {
-  const stil = STILE.get(serie.wertart)
-  if (stil === undefined) {
-    throw new Error(`Kein Linienstil für die Wertart ${serie.wertart}`)
-  }
-  return {
-    type: 'line',
-    name: wertartName(serie.wertart),
-    // Der von der vorigen Serie übernommene Punkt bleibt ohne Marker, damit er nicht doppelt
-    // gezeichnet wird.
-    data: serie.werte.map((wert, index) =>
-      serie.geteilt[index] === true ? { value: wert, symbol: 'none' } : wert,
-    ),
-    connectNulls: false,
-    symbol: stil.symbol,
-    symbolSize: 8,
-    lineStyle: { color: ERTRAG_FARBE, width: 2, type: stil.linie },
-    itemStyle: stil.gefuellt
-      ? { color: ERTRAG_FARBE }
-      : { color: flaeche, borderColor: ERTRAG_FARBE, borderWidth: 2 },
-  }
-}
 
 const option = computed<EChartsOption>(() => {
   const flaeche = flaechenFarbe()
@@ -120,7 +71,9 @@ const option = computed<EChartsOption>(() => {
       },
     },
     // Ohne Werte keine Serien, damit `BaseChart` den Leerzustand zeigt.
-    series: hatWerte.value ? reihe.value.serien.map((serie) => linienSerie(serie, flaeche)) : [],
+    series: hatWerte.value
+      ? reihe.value.serien.map((serie) => linienSerie(serie, ERTRAG_FARBE, flaeche))
+      : [],
   }
 })
 

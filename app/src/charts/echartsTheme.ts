@@ -7,7 +7,13 @@
 import { registerTheme, use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { BarChart, LineChart, SankeyChart, TreemapChart } from 'echarts/charts'
-import { AriaComponent, GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
+import {
+  AriaComponent,
+  GridComponent,
+  LegendComponent,
+  MarkLineComponent,
+  TooltipComponent,
+} from 'echarts/components'
 import type { TreemapSeriesOption } from 'echarts'
 
 /** Decal-Muster eines Datenpunkts (ECharts exportiert den Typ nicht unter eigenem Namen). */
@@ -17,7 +23,7 @@ export type Decal = Exclude<
 >
 
 // Einzige Stelle, die `use()` aufruft: nur hier registrierte Module stehen den
-// Diagrammen zur Verfügung (Treemap/Balken/Sankey/Linie, Legende, Aria).
+// Diagrammen zur Verfügung (Treemap/Balken/Sankey/Linie, Legende, Aria, Schwellenlinie).
 use([
   CanvasRenderer,
   BarChart,
@@ -28,6 +34,7 @@ use([
   TooltipComponent,
   LegendComponent,
   AriaComponent,
+  MarkLineComponent,
 ])
 
 /**
@@ -220,6 +227,44 @@ export const GEMEINDE_FARBE = token('--wa-color-gray-40', '#545868')
 export const ZINSEN_FARBE = token('--wa-color-gray-60', '#9194a2')
 /** Knoten „Globaler Minderaufwand“ (mit `PUNKT_DECAL`). */
 export const MINDERAUFWAND_FARBE = token('--wa-color-neutral-50', '#717584')
+
+/**
+ * Bindungsgrad-Segmente (RAT-01): eine abgestufte Graureihe, bewusst keine PB-Farben und kein
+ * Gold. Kontrast gegen Weiß 9,50 / 4,59 / 3,02:1; die Segmente tragen immer Text, Farbe ist nie
+ * alleiniger Träger.
+ */
+export const BINDUNG_FARBEN = {
+  pflichtig: token('--wa-color-gray-30', '#424554'),
+  teils: token('--wa-color-gray-50', '#717584'),
+  freiwillig: token('--wa-color-gray-60', '#9194a2'),
+}
+
+/** Schuldenstand-Stapel (INV-04): wie die Bindungsgrad-Reihe, 2-px-Weißtrenner im Diagramm. */
+export const SCHULDEN_FARBEN = {
+  investitionskredite: token('--wa-color-gray-30', '#424554'),
+  nrw_bank: token('--wa-color-gray-50', '#717584'),
+  liquiditaetskredite: token('--wa-color-gray-60', '#9194a2'),
+}
+
+/**
+ * Senkrechte Streifen für berechnete Jahre (INV-04): bewusst verschieden von `KL_DECAL`
+ * (diagonal) und `PUNKT_DECAL` (Punkte), damit „Weitergabe“, „Überschuss/Minderaufwand“ und
+ * „berechnet“ nicht verwechselt werden. Beschriftungen stehen außerhalb der Fläche.
+ */
+export const BERECHNET_DECAL: Decal = {
+  symbol: 'rect',
+  symbolSize: 1,
+  rotation: Math.PI / 2,
+  dashArrayX: [1, 0],
+  dashArrayY: [2, 2],
+  color: mitDeckkraft(token('--wa-color-surface-default', '#ffffff'), 0.45),
+}
+
+/** Schwellenlinie (ENTW-03): ein Bezug, kein Alarm, deshalb nie farbig-rot. */
+export const SCHWELLE_FARBE = token('--wa-color-text-quiet', '#545868')
+
+/** Fläche hohler Säulen (Planung, Stichtagswert): der 2-px-Rand trägt Farbe und Kontrast. */
+export const HOHL_FLAECHE = token('--wa-color-surface-lowered', '#f1f2f3')
 
 /**
  * Diagrammschriftgröße in px: mindestens 14 (UI-SPEC Typography). Nur ein
