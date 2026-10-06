@@ -219,7 +219,7 @@ Plans:
   4. `/stellenplan` zeigt die Stellen 2026 im Vergleich zu 2025 und zu den besetzten Stellen am 30.06.2025, die Verteilung nach Aufgabenbereich und nach Entgelt- bzw. Besoldungsgruppe sowie daneben den Personalaufwand je Aufgabenbereich (TP Z. 11).
   5. Ein Hinweis „Was nicht im Haushalt steht“ erklärt BBO (Hallenbad) und TEO AöR (Abwasser).
 
-**Plans**: 16/17 plans executed
+**Plans**: 17/17 plans executed
 **UI hint**: yes
 
 Plans:
@@ -250,7 +250,7 @@ Plans:
 - [x] 06-16-PLAN.md — WR-03: „berechnet“ an beiden Schuldenkacheln aus dem Datenfeld; WR-05: fehlende Nachwuchs-Personenzahl bleibt null statt 0 (Gap Closure)
 
 **Wave 6** *(gap closure, blocked on Wave 5 completion)*
-- [ ] 06-17-PLAN.md — CI-identisches Gap-Gate (Pipeline- und App-Job), Review-Ledger CR-01 und WR-01 … WR-05 auf fixed, IN-01 … IN-08 bleiben offen (Gap Closure)
+- [x] 06-17-PLAN.md — CI-identisches Gap-Gate (Pipeline- und App-Job), Review-Ledger CR-01 und WR-01 … WR-05 auf fixed, IN-01 … IN-08 bleiben offen (Gap Closure)
 
 ### Phase 7: Feinschliff und Veröffentlichung
 
@@ -279,5 +279,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Details | 5/5 | Complete    | 2026-10-02 |
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
-| 6. Kontext-Seiten | 16/17 | In Progress|  |
+| 6. Kontext-Seiten | 17/17 | In Progress|  |
 | 7. Feinschliff und Veröffentlichung | 0/TBD | Not started | - |
