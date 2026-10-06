@@ -219,7 +219,7 @@ Plans:
   4. `/stellenplan` zeigt die Stellen 2026 im Vergleich zu 2025 und zu den besetzten Stellen am 30.06.2025, die Verteilung nach Aufgabenbereich und nach Entgelt- bzw. Besoldungsgruppe sowie daneben den Personalaufwand je Aufgabenbereich (TP Z. 11).
   5. Ein Hinweis „Was nicht im Haushalt steht“ erklärt BBO (Hallenbad) und TEO AöR (Abwasser).
 
-**Plans**: 3/12 plans executed
+**Plans**: 7/12 plans executed
 **UI hint**: yes
 
 Plans:
@@ -229,10 +229,10 @@ Plans:
 - [x] 06-03-PLAN.md — Hinweisbox „Was nicht im Haushalt steht“ (BBO/TEO) auf /ausgaben und /einnahmen, Kurzvariante vorbereitet (Wave 1)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 06-04-PLAN.md — Texte und Glossar: Formeln (Polster, Schuldenanstieg), RAT-04, Überschuss, Glossar nicht_im_haushalt/vzae/entgeltgruppen, Abnahme-Checkpoint (D-20) (Wave 2, Checkpoint)
-- [ ] 06-05-PLAN.md — Entwicklung I: Erträge/Aufwendungen als Linien, Jahresergebnis nach Minderaufwand als Säulen, fünf Posten-Zeitreihen (Wave 2)
-- [ ] 06-06-PLAN.md — Investitionen I: Maßnahmen gebündelt nach (produkt, massnahme_id), Balken + Tabelle, Filter Aufgabenbereich/Art mit URL-Zustand (Wave 2)
-- [ ] 06-07-PLAN.md — Rat I: Einzelzuschüsse (Kita, KJW, OGS, S. 47), Block „Was der Rat nicht beeinflussen kann“, Kurzhinweis BBO/TEO (Wave 2)
+- [x] 06-04-PLAN.md — Texte und Glossar: Formeln (Polster, Schuldenanstieg), RAT-04, Überschuss, Glossar nicht_im_haushalt/vzae/entgeltgruppen, Abnahme-Checkpoint (D-20) (Wave 2, Checkpoint)
+- [x] 06-05-PLAN.md — Entwicklung I: Erträge/Aufwendungen als Linien, Jahresergebnis nach Minderaufwand als Säulen, fünf Posten-Zeitreihen (Wave 2)
+- [x] 06-06-PLAN.md — Investitionen I: Maßnahmen gebündelt nach (produkt, massnahme_id), Balken + Tabelle, Filter Aufgabenbereich/Art mit URL-Zustand (Wave 2)
+- [x] 06-07-PLAN.md — Rat I: Einzelzuschüsse (Kita, KJW, OGS, S. 47), Block „Was der Rat nicht beeinflussen kann“, Kurzhinweis BBO/TEO (Wave 2)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 06-08-PLAN.md — Entwicklung II: Rücklagen „Bestand zu Jahresbeginn“, Rückgang in % (S. 23) mit HSK-Schwelle, Polster-Text (Wave 3)
@@ -270,5 +270,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Details | 5/5 | Complete    | 2026-10-02 |
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
-| 6. Kontext-Seiten | 3/12 | In Progress|  |
+| 6. Kontext-Seiten | 7/12 | In Progress|  |
 | 7. Feinschliff und Veröffentlichung | 0/TBD | Not started | - |
