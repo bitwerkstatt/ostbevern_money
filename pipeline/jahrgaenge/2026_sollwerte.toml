@@ -82,6 +82,9 @@ pdf_seite = 63
 # Z.31=-123.250 und Z.30=-10.000 auf S. 208: Z.31=Z.29-Z.30); PB 15 = 12.045-202.737 =
 # -190.692 (entspricht der GESAMTSUMME der zwei Produktgruppen 1501+1502 im
 # Haushaltsquerschnitt S. 299, -118.138 + -72.554 = -190.692).
+# Gegenprobe (D-20, frühere Review WR-02): Quelle der Gegenprüfung sind die unabhängig
+# gedruckten Querschnittswerte auf PDF-Seite 296 (PB 09) und PDF-Seite 299 (PB 15), nicht die
+# Formelkette; die Herleitung oben ist nur der Weg zum Sollwert. Die Werte bleiben unverändert.
 [teilergebnisplaene_pb]
 "01" = { ordentliche_ertraege = 1749837, ordentliche_aufwendungen = 4519223, ergebnis_mit_internen_verrechnungen = -2719206 }
 "02" = { ordentliche_ertraege = 281179, ordentliche_aufwendungen = 1370587, ergebnis_mit_internen_verrechnungen = -1090858 }

@@ -70,6 +70,8 @@ from ostbevern.schema import (
     STEUERARTEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
     VE_FAELLIGKEITEN_CSV,
+    VE_UEBERSICHT_CSV,
+    VE_UEBERSICHT_SPALTEN,
     lies_hierarchie_csv,
     lies_investitionen_csv,
     lies_investitionen_pb_csv,
@@ -79,6 +81,7 @@ from ostbevern.schema import (
     lies_seiten_csv,
     lies_stellenplan_csv,
     lies_ve_faelligkeiten_csv,
+    lies_ve_uebersicht_csv,
     lies_vorbericht_csv,
     schreibe_investitionen_csv,
     schreibe_investitionen_pb_csv,
@@ -87,6 +90,7 @@ from ostbevern.schema import (
     schreibe_querschnitte_csv,
     schreibe_seiten_csv,
     schreibe_ve_faelligkeiten_csv,
+    schreibe_ve_uebersicht_csv,
     schreibe_vorbericht_csv,
 )
 from ostbevern.zeilen import FORMELN, plantyp_fuer
@@ -2309,4 +2313,103 @@ def test_regel5_konzessionsabgaben_fehlender_split_wert_bricht_ab(tmp_path: Path
     _setze_meta_wert(tmp_path, "konzessionsabgabe_wasser", delta=None)
 
     with pytest.raises(PruefungsFehler):
+        pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+
+
+# --- Phase 7 / Plan 02 (D-20): Restpunkte der Phase-2-Review ---
+
+
+@pytest.mark.parametrize(
+    ("spalten", "jahre"),
+    [
+        (("Ergebnis 2024", "Ansatz 2025", "Ansatz 2026"), [2024, 2025]),
+        (("Ergebnis 2024", "Ansatz 2025"), [2024, 2025, 2026]),
+    ],
+)
+def test_regel4_b1_laengenabweichung_bricht_mit_beiden_laengen_ab(
+    spalten: tuple[str, ...], jahre: list[int]
+) -> None:
+    sollwerte = {"gesamtergebnisplan": {"jahre": jahre, "zeilen": {"01": [0] * len(jahre)}}}
+    with pytest.raises(PruefungsFehler) as fehler:
+        pruefung._pruefe_regel4_b1(planwerte=None, sollwerte=sollwerte, spalten=spalten)  # type: ignore[arg-type]
+    meldung = str(fehler.value)
+    assert str(len(spalten)) in meldung
+    assert str(len(jahre)) in meldung
+    assert "Spaltenköpfe" in meldung
+
+
+def _befund_zeile_mit_begruendung(begruendung: str) -> str:
+    return _befunde_zeile(
+        regel=4,
+        plan="gesamtergebnisplan",
+        ebene="GESAMT",
+        code="",
+        zeile="02",
+        jahr=STANDARD_JAHR,
+        wertart="ansatz",
+        abweichung=5,
+        pdf_seite=62,
+        begruendung=begruendung,
+    )
+
+
+def test_lies_befunde_unmaskierte_pipe_in_begruendung_nennt_zeilennummer(tmp_path: Path) -> None:
+    pfad = tmp_path / "befunde.md"
+    _schreibe_befunde_md(pfad, zeilen=[_befund_zeile_mit_begruendung("Formel a|b im Text")])
+    with pytest.raises(PruefungsFehler) as fehler:
+        lies_befunde(pfad)
+    meldung = str(fehler.value)
+    assert ":7:" in meldung  # 1-basierte Zeilennummer der Datenzeile
+    assert "Pipe" in meldung
+
+
+def test_lies_befunde_maskierte_pipe_in_begruendung_ist_gueltig(tmp_path: Path) -> None:
+    pfad = tmp_path / "befunde.md"
+    _schreibe_befunde_md(pfad, zeilen=[_befund_zeile_mit_begruendung(r"Formel a\|b im Text")])
+    (befund,) = lies_befunde(pfad)
+    assert befund.begruendung == "Formel a|b im Text"
+
+
+# --- Phase 7 / Plan 02 (D-20): Restpunkte der Phase-4-Review (WR-01) ---
+
+
+def _ve_uebersicht_frame(jahressumme_2027: int) -> pl.DataFrame:
+    zeilen = [
+        (1, "000001", "A", False, 2027, 2000, None, 309),
+        (1, "000001", "A", False, 2028, 1200, None, 309),
+        (2, "000002", "B", False, 2027, 1000, None, 309),
+        (3, None, "Summe (VE-Gesamtbetrag)", True, None, 4200, None, 309),
+        (3, None, "Summe (fällig 2027)", True, 2027, jahressumme_2027, None, 309),
+        (3, None, "Summe (fällig 2028)", True, 2028, 1200, None, 309),
+    ]
+    return pl.DataFrame(zeilen, schema=VE_UEBERSICHT_SPALTEN, orient="row")
+
+
+def test_ve_uebersicht_jahressummen_stimmen_auf_eingecheckten_daten() -> None:
+    pruefung.validiere_ve_uebersicht(lies_ve_uebersicht_csv(DATEN_WURZEL / VE_UEBERSICHT_CSV))
+
+
+def test_ve_uebersicht_jahressummen_synthetisch_gruen() -> None:
+    pruefung.validiere_ve_uebersicht(_ve_uebersicht_frame(3000))
+
+
+def test_ve_uebersicht_abweichende_jahressumme_bricht_mit_jahr_ab() -> None:
+    with pytest.raises(PruefungsFehler, match="2027"):
+        pruefung.validiere_ve_uebersicht(_ve_uebersicht_frame(3001))
+
+
+def test_pruefe_alles_bricht_bei_abweichender_ve_jahressumme_ab(tmp_path: Path) -> None:
+    _kopiere_daten_baum(tmp_path)
+    pfad = tmp_path / VE_UEBERSICHT_CSV
+    df = lies_ve_uebersicht_csv(pfad)
+    bedingung = pl.col("ist_gesamt") & pl.col("faellig_jahr").is_not_null()
+    erstes_jahr = df.filter(bedingung)["faellig_jahr"].min()
+    mutiert = df.with_columns(
+        pl.when(bedingung & (pl.col("faellig_jahr") == erstes_jahr))
+        .then(pl.col("betrag_teur") + 1)
+        .otherwise(pl.col("betrag_teur"))
+        .alias("betrag_teur")
+    )
+    schreibe_ve_uebersicht_csv(mutiert, pfad)
+    with pytest.raises(PruefungsFehler, match=str(erstes_jahr)):
         pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
