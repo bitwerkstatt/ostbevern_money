@@ -475,6 +475,18 @@ def test_meta_json_gueltig() -> None:
     assert meta["kreisumlage"]["brutto"]["berechnet"] is True
 
 
+def test_meta_hsk_schwellen() -> None:
+    """HSK-Schwellen aus dem Vorbericht (S. 23, Zitat § 76 GO NRW, Phase 6 D-14, ENTW-03):
+    ganze Prozentpunkte mit Seitenangabe; die Anmerkung nennt die Bezugsgröße."""
+    werte = lies_meta_json(DATEN_WURZEL / META_JSON)["vorbericht_werte"]
+    ein_jahr = werte["hsk_schwelle_ein_jahr"]
+    zwei_jahre = werte["hsk_schwelle_zwei_jahre"]
+    assert (ein_jahr["wert"], ein_jahr["einheit"], ein_jahr["quelle"]) == (25, "prozent", 23)
+    assert (zwei_jahre["wert"], zwei_jahre["einheit"], zwei_jahre["quelle"]) == (5, "prozent", 23)
+    assert "Schlussbilanz des Vorjahres" in ein_jahr["anmerkung"]
+    assert "Schlussbilanz des Vorjahres" in zwei_jahre["anmerkung"]
+
+
 @pytest.mark.parametrize(
     "mutiere",
     [
