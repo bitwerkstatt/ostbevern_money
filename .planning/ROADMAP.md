@@ -219,8 +219,29 @@ Plans:
   4. `/stellenplan` zeigt die Stellen 2026 im Vergleich zu 2025 und zu den besetzten Stellen am 30.06.2025, die Verteilung nach Aufgabenbereich und nach Entgelt- bzw. Besoldungsgruppe sowie daneben den Personalaufwand je Aufgabenbereich (TP Z. 11).
   5. Ein Hinweis „Was nicht im Haushalt steht“ erklärt BBO (Hallenbad) und TEO AöR (Abwasser).
 
-**Plans**: TBD
+**Plans**: 12 plans
 **UI hint**: yes
+
+Plans:
+**Wave 1**
+- [ ] 06-01-PLAN.md — Pipeline: Einzelzuschüsse S. 47 (CSV, Regel 5 gegen Transferposten, haushalt.json) und HSK-Schwellen S. 23 in meta.json (Wave 1)
+- [ ] 06-02-PLAN.md — App-Fundament: vier Routen mit Seitenrahmen, Menügruppe „Mehr wissen“ (Disclosure + Drawer), MarkLine/Farben, gemeinsames Wertart-Stilmodul (Wave 1)
+- [ ] 06-03-PLAN.md — Hinweisbox „Was nicht im Haushalt steht“ (BBO/TEO) auf /ausgaben und /einnahmen, Kurzvariante vorbereitet (Wave 1)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 06-04-PLAN.md — Texte und Glossar: Formeln (Polster, Schuldenanstieg), RAT-04, Überschuss, Glossar nicht_im_haushalt/vzae/entgeltgruppen, Abnahme-Checkpoint (D-20) (Wave 2, Checkpoint)
+- [ ] 06-05-PLAN.md — Entwicklung I: Erträge/Aufwendungen als Linien, Jahresergebnis nach Minderaufwand als Säulen, fünf Posten-Zeitreihen (Wave 2)
+- [ ] 06-06-PLAN.md — Investitionen I: Maßnahmen gebündelt nach (produkt, massnahme_id), Balken + Tabelle, Filter Aufgabenbereich/Art mit URL-Zustand (Wave 2)
+- [ ] 06-07-PLAN.md — Rat I: Einzelzuschüsse (Kita, KJW, OGS, S. 47), Block „Was der Rat nicht beeinflussen kann“, Kurzhinweis BBO/TEO (Wave 2)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 06-08-PLAN.md — Entwicklung II: Rücklagen „Bestand zu Jahresbeginn“, Rückgang in % (S. 23) mit HSK-Schwelle, Polster-Text (Wave 3)
+- [ ] 06-09-PLAN.md — Investitionen II: Schuldenstand mit „berechnet“, VE nach Fälligkeit, Finanzierung und Kreditaufnahme/Tilgung, Kennzahlen (Wave 3)
+- [ ] 06-10-PLAN.md — Rat II: Bindungsgrad-Balken ohne Finanzierungsprodukt, Produkte je Bindungsgrad, Überschussliste, Selbstauskunft, KL-Vergleich (Wave 3)
+- [ ] 06-11-PLAN.md — Stellenplan: Kacheln 2026/2025/besetzt, Stellen nach Teil, Stellen und Personalaufwand je Aufgabenbereich, Gruppen (Wave 3)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+- [ ] 06-12-PLAN.md — Phasen-Gate: Quelltext-/Hinweis-Tests für die neuen Seiten, volle Pipeline- und App-Kette, Abschlussdurchgang (Wave 4)
 
 ### Phase 7: Feinschliff und Veröffentlichung
 
@@ -249,5 +270,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Details | 5/5 | Complete    | 2026-10-02 |
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
-| 6. Kontext-Seiten | 0/TBD | Not started | - |
+| 6. Kontext-Seiten | 0/12 | Planned | - |
 | 7. Feinschliff und Veröffentlichung | 0/TBD | Not started | - |

@@ -58,6 +58,33 @@ Wird vom Planer je Task befüllt. Anforderungs-Abdeckung laut Research:
 | STEL-03 | Σ Personalaufwand je PB = 5.204.054; kein Aufwand je Stelle | unit | vitest `stellen.test.ts`, `quelltext.test.ts` | ❌ W0 | ⬜ pending |
 | UI-04 | Hinweisbox auf drei Seiten; Glossar-/Textschlüssel `nicht_im_haushalt` | unit | vitest `quelltext.test.ts`, `glossar.test.ts` | ✅ erweitern | ⬜ pending |
 
+### Task-Zuordnung (Planer, 2026-10-06)
+
+App-Kette = `S=$(mktemp -d) && tar --exclude=app/node_modules --exclude=app/dist -cf - app | tar -xf - -C "$S" && npm --prefix "$S/app" ci --no-audit --no-fund && …` (gezielte Datei per `npm --prefix "$S/app" run test -- <datei>`, sonst volle Kette bis `build`).
+
+| Plan / Task | Requirement | Automated Command (Kurzform) | Test-Datei |
+|-------------|-------------|------------------------------|------------|
+| 06-01 T1 | RAT-03 | `alle.py --jahr 2026` + JSON-Assertion Σ = 120.000; `pytest tests/test_app_daten.py tests/test_manuell.py -x -q` | test_app_daten.py |
+| 06-01 T2 | RAT-03 | `pytest tests/test_manuell.py tests/test_pruefung.py tests/test_app_daten.py -x -q`; konsistenz „grün“ | test_manuell.py |
+| 06-01 T3 | ENTW-03 | `pytest -q`; ruff; App-Kette; Reproduzierbarkeitsgate | test_manuell.py (`test_meta_hsk_schwellen`) |
+| 06-02 T1 | D-19 | App-Kette (voll) | quelltext.test.ts |
+| 06-02 T2 | D-19 | App-Kette + `menue.test.ts quelltext.test.ts stiltokens.test.ts` | menue.test.ts |
+| 06-02 T3 | ENTW-01 (Stil) | App-Kette (voll) | wertartStil.test.ts, farben.test.ts |
+| 06-03 T1/T2 | UI-04 | App-Kette + `hinweis.test.ts quelltext.test.ts` / voll | hinweis.test.ts |
+| 06-04 T1 | ENTW-03, INV-04 | `pytest tests/test_texte.py -x -q`; Entwurfsvalidierung mit Vorschau | test_texte.py |
+| 06-04 T2 | RAT-04, UI-04 | Checkpoint (blocking-human, D-20) | — |
+| 06-04 T3 | RAT-04, STEL-02 | `pytest -q`; App-Kette; Reproduzierbarkeitsgate | test_texte.py, glossar.test.ts |
+| 06-05 T1-T3 | ENTW-01, ENTW-02 | App-Kette + `entwicklung.test.ts` / voll | entwicklung.test.ts |
+| 06-06 T1-T2 | INV-01 | App-Kette + `investitionen.test.ts` / voll | investitionen.test.ts |
+| 06-07 T1-T2 | RAT-02, RAT-03, UI-04 | App-Kette + `zuschuesse.test.ts` / voll | zuschuesse.test.ts, hinweis.test.ts |
+| 06-08 T1-T2 | ENTW-03 | App-Kette + `ruecklagen.test.ts` / voll | ruecklagen.test.ts |
+| 06-09 T1-T3 | INV-02, INV-03, INV-04 | App-Kette + `schulden.test.ts` / `finanzierung.test.ts` / voll | schulden.test.ts, finanzierung.test.ts |
+| 06-10 T1-T2 | RAT-01, RAT-04, RAT-02 | App-Kette + `bindungsgrad.test.ts` / voll | bindungsgrad.test.ts |
+| 06-11 T1-T3 | STEL-01, STEL-02, STEL-03 | App-Kette + `stellen.test.ts` / voll | stellen.test.ts |
+| 06-12 T1-T2 | alle | App-Kette + `quelltext hinweis glossar menue`; `pytest -q`; ruff; Reproduzierbarkeitsgate; volle App-Kette | quelltext.test.ts, hinweis.test.ts |
+
+Kein Task ohne `<automated>` außer dem Abnahme-Checkpoint 06-04 T2; keine drei aufeinanderfolgenden Tasks ohne automatische Prüfung.
+
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
 ---
