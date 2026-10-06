@@ -203,3 +203,74 @@ export function veTabelle(eintraege: readonly VeFaelligkeitsjahr[] = veFaelligke
     })),
   }
 }
+
+// ---------------------------------------------------------------------------------------
+// Finanzierung der Investitionen (INV-03, D-08) — Gerüst für den RED-Schritt
+// ---------------------------------------------------------------------------------------
+
+export type FinanzierungsVariante = 'investitionen' | 'kredite'
+
+export interface Finanzierungsreihen {
+  jahre: number[]
+  wertarten: string[]
+  einzahlungen: (number | null)[]
+  auszahlungen: (number | null)[]
+  kreditaufnahme: (number | null)[]
+  tilgung: (number | null)[]
+}
+
+export interface EinzahlungsZeile {
+  schluessel: string
+  nummer: string
+  name: string
+  werte: (number | null)[]
+}
+
+export const FINANZIERUNG_NAMEN: Readonly<
+  Record<FinanzierungsVariante, readonly [string, string]>
+> = {
+  investitionen: ['', ''],
+  kredite: ['', ''],
+}
+
+export function finanzierungsLegende(_variante: FinanzierungsVariante): string {
+  return ''
+}
+
+export function finanzierungsReihen(): Finanzierungsreihen {
+  return {
+    jahre: [],
+    wertarten: [],
+    einzahlungen: [],
+    auszahlungen: [],
+    kreditaufnahme: [],
+    tilgung: [],
+  }
+}
+
+export function einzahlungsAufteilung(): EinzahlungsZeile[] {
+  return []
+}
+
+export function einzahlungsAbweichungen(): { jahr: number; differenz: number }[] {
+  return []
+}
+
+export function finanzierungsOption(
+  _variante: FinanzierungsVariante,
+  _schmal: boolean,
+  _reihen?: Finanzierungsreihen,
+): EChartsOption {
+  return { series: [] }
+}
+
+export function finanzierungsTabelle(
+  _variante: FinanzierungsVariante,
+  _reihen?: Finanzierungsreihen,
+): Tabelle {
+  return { spalten: [], zeilen: [] }
+}
+
+export function einzahlungsTabelle(): Tabelle {
+  return { spalten: [], zeilen: [] }
+}
