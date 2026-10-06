@@ -12,6 +12,7 @@ import StellenNachTeil from '@/components/StellenNachTeil.vue'
 import WertartEtikett from '@/components/WertartEtikett.vue'
 import { haushalt, stellenplan } from '@/data/daten'
 import { wertartFuerJahr } from '@/lib/jahr'
+import { belegSchluessel } from '@/lib/quelle'
 import {
   alsVzae,
   differenzText,
@@ -47,6 +48,12 @@ interface StellenKachel {
   wert: string
   zeile: string
   berechnet: boolean
+  /** Belegschlüssel für „Quelle anzeigen“ (D-01). */
+  quelle: string
+  /** Herleitung eines berechneten Werts (D-03); `null`, wenn die Seite selbst der Beleg ist. */
+  herleitung: string | null
+  /** Zeile für die Wertzeile der Quell-Seitenleiste. */
+  wertart: string
 }
 
 /** Zeile unter dem Wert: optional die berechnete Differenz, dann Quelle mit PDF-Seiten. */
@@ -56,6 +63,12 @@ function kachelZeile(quelle: string, differenz: string | null): string {
 }
 
 const stichtagText = summen.stichtag === null ? null : datum(summen.stichtag)
+
+// Der Stellenplan enthält keine gedruckte Gesamtzeile als Datensatz (`stellenplan.json` hat nur
+// die Stellen je Position); die Summen entstehen aus diesen Zeilen. Jede Kachel zeigt deshalb die
+// erste Seite der Stellenübersicht als Seitenbeleg ohne Markierung, die Seitenleiste nennt dazu
+// den Hinweis „nicht automatisch markiert“ (D-03). Die berechnete Differenz bleibt in der Zeile.
+const seitenBeleg = belegSchluessel.seite(summen.pdfSeiten[0] ?? 0)
 
 // Die Differenzen in Kachel 1 und 3 sind berechnet (nicht im PDF gedruckt) und tragen das
 // Etikett; fehlt ein Vergleichswert, entfällt die Differenzzeile.
@@ -72,6 +85,9 @@ const kacheln: StellenKachel[] = [
       diffVorjahr === null ? null : `${diffVorjahr} gegenüber Stellen ${vorjahr}`,
     ),
     berechnet: diffVorjahr !== null,
+    quelle: seitenBeleg,
+    herleitung: null,
+    wertart: `Stellenplan ${haushaltsjahr}`,
   },
   {
     schluessel: 'vorjahr',
@@ -79,6 +95,9 @@ const kacheln: StellenKachel[] = [
     wert: kachelWert(summen.vorjahr),
     zeile: kachelZeile(`Stellenplan ${vorjahr}`, null),
     berechnet: false,
+    quelle: seitenBeleg,
+    herleitung: null,
+    wertart: `Stellenplan ${vorjahr}`,
   },
   {
     schluessel: 'besetzt',
@@ -89,6 +108,9 @@ const kacheln: StellenKachel[] = [
       diffBesetzt === null ? null : `${diffBesetzt} gegenüber Stellen ${haushaltsjahr}`,
     ),
     berechnet: diffBesetzt !== null,
+    quelle: seitenBeleg,
+    herleitung: null,
+    wertart: stichtagText === null ? 'Stellenplan' : `Stellenplan, Stand ${stichtagText}`,
   },
 ]
 
@@ -139,6 +161,9 @@ const gruppenQuelle = `Stellenplan, ${seitenText(
             :wert="kachel.wert"
             :zeile="kachel.zeile"
             :berechnet="kachel.berechnet"
+            :quelle="kachel.quelle"
+            :herleitung="kachel.herleitung"
+            :wertart="kachel.wertart"
           />
         </li>
       </ul>

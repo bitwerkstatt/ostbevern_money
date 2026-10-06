@@ -17,6 +17,7 @@ import { vePdfSeiten, veGesamt } from '@/lib/finanzierung'
 import { planjahre, useMassnahmenFilter } from '@/lib/investitionen'
 import { wertartFuerJahr, wertartName } from '@/lib/jahr'
 import { quellenZeile } from '@/lib/kennzahlen'
+import { belegSchluessel } from '@/lib/quelle'
 import { baueSchuldenstand, schuldenKacheln } from '@/lib/schulden'
 
 // Die Seite zeigt alle ausgewiesenen Jahre, ohne Jahr-Umschalter (UI-SPEC Routes). Der Lead
@@ -36,18 +37,20 @@ const massnahmenTitel = computed(() => {
 // Kennzahlkacheln zum Schuldenstand am Ende des Vorjahrs (D-10). Beide Schuldenkacheln baut
 // `schuldenKacheln()`; „berechnet“ steht nur, wenn das Datenfeld des Vorjahrs es sagt (WR-03).
 const schuldenstand = baueSchuldenstand()
+const veWertart = wertartName(wertartFuerJahr(haushalt.haushaltsjahr))
 const kacheln = [
   ...schuldenKacheln(),
   {
     schluessel: 'verpflichtungsermaechtigungen',
     bezeichnung: 'Verpflichtungsermächtigungen',
     wert: euroKurz(veGesamt()),
-    zeile: quellenZeile(
-      wertartName(wertartFuerJahr(haushalt.haushaltsjahr)),
-      haushalt.haushaltsjahr,
-      vePdfSeiten(),
-    ),
+    zeile: quellenZeile(veWertart, haushalt.haushaltsjahr, vePdfSeiten()),
     berechnet: false,
+    // Die VE-Summe steht in der VE-Spalte der gedruckten Summenzeile „Auszahlungen aus
+    // Investitionstätigkeit“ des Gesamtfinanzplans; dieselbe Zeile belegt sie, ohne Herleitung.
+    quelle: belegSchluessel.fp('GESAMT', 'auszahlungen_investitionen'),
+    herleitung: null as string | null,
+    wertart: `${veWertart} ${formatiereJahr(haushalt.haushaltsjahr)}`,
   },
 ]
 
@@ -86,6 +89,9 @@ const { vorhaben, zuruecksetzen } = useMassnahmenFilter()
           :wert="kachel.wert"
           :zeile="kachel.zeile"
           :berechnet="kachel.berechnet"
+          :quelle="kachel.quelle"
+          :herleitung="kachel.herleitung"
+          :wertart="kachel.wertart"
         />
       </li>
     </ul>

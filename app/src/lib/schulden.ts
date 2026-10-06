@@ -23,6 +23,7 @@ import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import { haushalt, investitionen } from '@/data/daten'
 import { wertartName } from '@/lib/jahr'
 import { quellenZeile } from '@/lib/kennzahlen'
+import { belegSchluessel } from '@/lib/quelle'
 import type { Tabelle } from '@/lib/produkt'
 
 /** Die Schuldenreihen je Jahr von `haushalt.jahre`, unverändert aus `investitionen.json`. */
@@ -175,6 +176,9 @@ export function schuldenKennzahlen(): SchuldenKennzahlen {
   }
 }
 
+const NAME_INVESTITIONSKREDITE = 'Investitionskredite'
+const NAME_NRW_BANK = 'NRW.Bank'
+
 /** Eine Kennzahlkachel zum Schuldenstand (D-10). */
 export interface SchuldenKachel {
   schluessel: string
@@ -182,6 +186,12 @@ export interface SchuldenKachel {
   wert: string
   zeile: string
   berechnet: boolean
+  /** Belegschlüssel für „Quelle anzeigen“ (D-01): die Reihe der Investitionskredite. */
+  quelle: string
+  /** Wie der Wert aus mehr als der belegten Reihe entsteht (D-03); Namen aus den Konstanten. */
+  herleitung: string
+  /** Zeile „{Wertart} {jahr}“ für die Wertzeile der Quell-Seitenleiste. */
+  wertart: string
 }
 
 /**
@@ -192,6 +202,13 @@ export interface SchuldenKachel {
 export function schuldenKacheln(
   kennzahlen: SchuldenKennzahlen = schuldenKennzahlen(),
 ): SchuldenKachel[] {
+  // Beide Werte stehen nicht als eine gedruckte Zeile da: der Schuldenstand ist Investitionskredite
+  // plus NRW.Bank (Liquiditätskredite zählen nicht), der Pro-Kopf-Wert ist dieser Stand geteilt durch
+  // die Einwohnerzahl. Der Beleg zeigt die Reihe der Investitionskredite auf der Verbindlichkeiten-
+  // Seite, die Herleitung nennt den Rest (D-03).
+  const quelle = belegSchluessel.sd('investitionskredite')
+  const wertart = `${kennzahlen.wertart} ${formatiereJahr(kennzahlen.jahr)}`
+  const stand = `${NAME_INVESTITIONSKREDITE} plus ${NAME_NRW_BANK}`
   return [
     {
       schluessel: 'schuldenstand',
@@ -199,6 +216,9 @@ export function schuldenKacheln(
       wert: euroKurz(kennzahlen.gesamt),
       zeile: quellenZeile(kennzahlen.wertart, kennzahlen.jahr, [kennzahlen.quelle]),
       berechnet: kennzahlen.berechnet,
+      quelle,
+      herleitung: stand,
+      wertart,
     },
     {
       schluessel: 'schulden_je_einwohner',
@@ -206,15 +226,15 @@ export function schuldenKacheln(
       wert: euro(kennzahlen.proKopf),
       zeile: quellenZeile(kennzahlen.wertart, kennzahlen.jahr, kennzahlen.pdfSeiten),
       berechnet: kennzahlen.berechnet,
+      quelle,
+      herleitung: `(${stand}) geteilt durch die Einwohnerzahl (PDF-Seite ${String(kennzahlen.einwohnerQuelle)})`,
+      wertart,
     },
   ]
 }
 
 /** Randbreite der Weißtrenner zwischen den Segmenten (UI-SPEC: 2 px). */
 const TRENNER = 2
-
-const NAME_INVESTITIONSKREDITE = 'Investitionskredite'
-const NAME_NRW_BANK = 'NRW.Bank'
 
 /**
  * Option der gestapelten Säulen: Investitionskredite und NRW.Bank, die Gesamtsumme (aus
