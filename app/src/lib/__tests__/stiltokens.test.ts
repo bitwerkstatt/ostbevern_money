@@ -115,9 +115,12 @@ describe('Typografie der Phase-6-Dateien (UI-SPEC 06)', () => {
     expect(Object.keys(quelltexte)).toEqual(expect.arrayContaining([...PHASE_6_TYPOGRAFIE_DATEIEN]))
   })
 
-  it.each(PHASE_6_TYPOGRAFIE_DATEIEN)('%s benutzt nur erlaubte Schriftgrößen und Gewichte', (pfad) => {
-    expect(verboteneTypografieTokens(quelltexte[pfad] ?? '')).toEqual([])
-  })
+  it.each(PHASE_6_TYPOGRAFIE_DATEIEN)(
+    '%s benutzt nur erlaubte Schriftgrößen und Gewichte',
+    (pfad) => {
+      expect(verboteneTypografieTokens(quelltexte[pfad] ?? '')).toEqual([])
+    },
+  )
 })
 
 describe('Stiltokens der App (G-05-6)', () => {
