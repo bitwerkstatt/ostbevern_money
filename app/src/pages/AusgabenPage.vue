@@ -13,6 +13,7 @@ import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import EbenenTabelle from '@/components/EbenenTabelle.vue'
 import ErklaerText from '@/components/ErklaerText.vue'
 import GlossarBegriff from '@/components/GlossarBegriff.vue'
+import HinweisNichtImHaushalt from '@/components/HinweisNichtImHaushalt.vue'
 import JahrUmschalter from '@/components/JahrUmschalter.vue'
 import KreisumlageCallout from '@/components/KreisumlageCallout.vue'
 import PageIntro from '@/components/PageIntro.vue'
@@ -373,6 +374,8 @@ const gesamtSeite = computed(() => {
       </DatenTabelle>
     </wa-details>
   </ChartCard>
+  <!-- Was nicht im Haushalt steht (BBO, TEO): am Seitenende, nach der Aufwandsart-Karte (D-18). -->
+  <HinweisNichtImHaushalt variante="ausgaben" />
 </template>
 
 <style scoped>
