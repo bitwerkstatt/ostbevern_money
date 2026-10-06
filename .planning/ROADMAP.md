@@ -264,7 +264,7 @@ Plans:
   4. Ein Playwright-Smoke-Test bestätigt, dass jede Route ohne Konsolenfehler rendert und die Diagramme Daten enthalten. Ein Textdurchgang bestätigt, dass alle Texte deutsch und durchgehend in der Du-Anrede sind.
   5. GitHub Actions baut die App und deployt sie auf GitHub Pages (eigener Account), und die App ist unter einer öffentlichen URL erreichbar.
 
-**Plans**: 2/12 plans executed
+**Plans**: 4/12 plans executed
 **UI hint**: yes
 
 Plans:
@@ -273,8 +273,8 @@ Plans:
 - [x] 07-02-PLAN.md — Review-Restpunkte D-20 (Phase 2 und 4, neu triagiert) als Fail-fast-Guards ohne Datenänderung, Ledger aktualisiert (Wave 1)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 07-03-PLAN.md — Belege aller Typen, Schwärzung der Personenfelder, alle Belegseiten, Bericht quellenbelege.md mit Datenschutz-Prüfliste, Schritt 08 in alle.py und CI, Vertragstest TS ↔ quellen.json (Wave 2)
-- [ ] 07-04-PLAN.md — Token-Hygiene D-17/D-18 mit Wächter für alle Dateien, Glossar-Überschrift, veraltete WA-Größen (Wave 2)
+- [x] 07-03-PLAN.md — Belege aller Typen, Schwärzung der Personenfelder, alle Belegseiten, Bericht quellenbelege.md mit Datenschutz-Prüfliste, Schritt 08 in alle.py und CI, Vertragstest TS ↔ quellen.json (Wave 2)
+- [x] 07-04-PLAN.md — Token-Hygiene D-17/D-18 mit Wächter für alle Dateien, Glossar-Überschrift, veraltete WA-Größen (Wave 2)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 07-05-PLAN.md — Konfiguration (Kontakt, Original-PDF, Impressumsfelder), Seite „Über dieses Projekt“, Fußzeilenlink (Wave 3)
@@ -307,4 +307,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
 | 6. Kontext-Seiten | 17/17 | Complete    | 2026-10-06 |
-| 7. Feinschliff und Veröffentlichung | 2/12 | In Progress | - |
+| 7. Feinschliff und Veröffentlichung | 4/12 | In Progress | - |
