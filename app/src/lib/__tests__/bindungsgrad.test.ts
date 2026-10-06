@@ -1,12 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { haushalt, produkte } from '@/data/daten'
-import {
-  baueBindungsgrad,
-  BINDUNGSGRADE,
-  FINANZIERUNGSPRODUKT,
-  klAnteil,
-} from '@/lib/bindungsgrad'
+import { baueBindungsgrad, BINDUNGSGRADE, FINANZIERUNGSPRODUKT, klAnteil } from '@/lib/bindungsgrad'
 import { bindungsgradText } from '@/lib/produkt'
 import { ZEITREIHEN_PRODUKT } from '@/lib/zeitreihen'
 

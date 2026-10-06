@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { euroKurz, jahr as formatJahr } from '@/charts/format'
+import { euroKurz, jahr as formatJahr, prozent } from '@/charts/format'
+import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
 import KennzahlKachel from '@/components/KennzahlKachel.vue'
 import { haushalt } from '@/data/daten'
+import { klAnteil } from '@/lib/bindungsgrad'
 import { wertartFuerJahr, wertartName } from '@/lib/jahr'
 import { quellenZeile } from '@/lib/kennzahlen'
 import { nichtBeeinflussbar } from '@/lib/zuschuesse'
@@ -13,8 +15,13 @@ import { nichtBeeinflussbar } from '@/lib/zuschuesse'
 // Die Kacheln der Weitergabe an Kreis und Land stammen aus `lib/kreisumlage.ts` und zeigen
 // dieselben Werte wie /ausgaben.
 
+const props = defineProps<{
+  /** Summe aller Segmente des Bindungsgrad-Balkens in Euro; ohne Angabe entfällt der Vergleichssatz. */
+  balkenSumme?: number
+}>()
+
 defineSlots<{
-  /** Platz für den Vergleichssatz mit dem Bindungsgrad-Balken (Plan 06-10). */
+  /** Platz für weitere Hinweise unter dem Vergleichssatz. */
   vergleich?(): unknown
 }>()
 
@@ -23,8 +30,22 @@ const wertart = wertartName(wertartFuerJahr(haushalt.haushaltsjahr))
 const lead =
   'Diese Beträge legen Gesetze sowie Kreis und Land fest, der Rat kann sie nicht steuern.'
 
+const posten = computed(() => nichtBeeinflussbar())
+
+// RAT-02, D-02: nur Betrag und Anteil, keine Aussage über die Größenordnung. Ohne Balkensumme
+// (oder bei der Summe 0) gibt es keinen Anteil und damit keinen Satz.
+const vergleich = computed(() => {
+  if (props.balkenSumme === undefined) {
+    return null
+  }
+  const anteil = klAnteil(posten.value.klGesamt, props.balkenSumme)
+  return anteil === null
+    ? null
+    : { betrag: euroKurz(posten.value.klGesamt), anteil: prozent(anteil) }
+})
+
 const kacheln = computed(() =>
-  nichtBeeinflussbar().posten.map((p) => ({
+  posten.value.posten.map((p) => ({
     schluessel: p.schluessel,
     bezeichnung: p.name,
     wert: p.wert === null ? '' : `rd. ${euroKurz(p.wert)}`,
@@ -52,6 +73,10 @@ const kacheln = computed(() =>
       </li>
     </ul>
     <div class="om-nicht-beeinflussbar__vergleich">
+      <p v-if="vergleich !== null" class="om-nicht-beeinflussbar__satz">
+        Die Weitergabe an Kreis und Land beträgt {{ vergleich.betrag }}. Das entspricht
+        {{ vergleich.anteil }}<BerechnetEtikett /> der Summe im Balken oben.
+      </p>
       <slot name="vergleich" />
     </div>
   </section>
@@ -90,6 +115,13 @@ const kacheln = computed(() =>
 
 .om-nicht-beeinflussbar__raster > li {
   min-width: 0;
+}
+
+.om-nicht-beeinflussbar__satz {
+  margin: 0;
+  line-height: var(--wa-line-height-normal);
+  hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 .om-nicht-beeinflussbar__vergleich:not(:empty) {

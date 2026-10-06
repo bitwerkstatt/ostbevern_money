@@ -131,6 +131,10 @@ export function baueBindungsgrad(): BindungsgradModell {
   return { segmente, ueberschuss: ueberschuss.sort((a, b) => a.wert - b.wert), summe }
 }
 
+/**
+ * Anteil der Weitergabe an Kreis und Land an der Summe im Balken (RAT-02, D-02); `null` bei einer
+ * Balkensumme von 0, weil dann kein Anteil definiert ist.
+ */
 export function klAnteil(klGesamt: number, balkenSumme: number): number | null {
-  return klGesamt + balkenSumme < 0 ? null : -1
+  return balkenSumme === 0 ? null : klGesamt / balkenSumme
 }

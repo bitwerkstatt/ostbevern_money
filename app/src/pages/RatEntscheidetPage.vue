@@ -7,6 +7,8 @@ import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import HinweisNichtImHaushalt from '@/components/HinweisNichtImHaushalt.vue'
 import NichtBeeinflussbarBlock from '@/components/NichtBeeinflussbarBlock.vue'
 import PageIntro from '@/components/PageIntro.vue'
+import ProduktBalkenListe from '@/components/ProduktBalkenListe.vue'
+import UeberschussListe from '@/components/UeberschussListe.vue'
 import WertartEtikett from '@/components/WertartEtikett.vue'
 import ZuschussListe from '@/components/ZuschussListe.vue'
 import { haushalt } from '@/data/daten'
@@ -54,7 +56,26 @@ if (finanzierungsName === undefined) {
         <p>Was der <GlossarBegriff schluessel="bindungsgrad" /> bedeutet, steht im Glossar.</p>
       </wa-callout>
     </section>
-    <NichtBeeinflussbarBlock />
+    <section
+      v-if="bindungsgrad.segmente.length > 0"
+      class="om-rat-entscheidet__abschnitt om-rat-entscheidet__produkte"
+      aria-labelledby="om-rat-entscheidet-produkte"
+    >
+      <h2 id="om-rat-entscheidet-produkte" class="om-rat-entscheidet__titel">
+        Die Produkte hinter dem Balken
+      </h2>
+      <p class="om-rat-entscheidet__lead">
+        Öffne einen Bindungsgrad, um seine Produkte mit dem Zuschussbedarf zu sehen.
+      </p>
+      <ProduktBalkenListe
+        v-for="segment in bindungsgrad.segmente"
+        :key="segment.bindungsgrad"
+        :segment="segment"
+        :wertart-text="wertartText"
+      />
+    </section>
+    <UeberschussListe :produkte="bindungsgrad.ueberschuss" :wertart-text="wertartText" />
+    <NichtBeeinflussbarBlock :balken-summe="bindungsgrad.summe" />
     <ZuschussListe />
     <HinweisNichtImHaushalt variante="kurz" />
   </div>
@@ -71,6 +92,26 @@ if (finanzierungsName === undefined) {
   flex-direction: column;
   gap: var(--wa-space-m);
   min-width: 0;
+}
+
+.om-rat-entscheidet__produkte {
+  margin-block-start: var(--wa-space-xl);
+}
+
+.om-rat-entscheidet__titel {
+  margin: 0;
+  font-size: var(--wa-font-size-xl);
+  font-weight: var(--wa-font-weight-bold);
+  line-height: var(--wa-line-height-condensed);
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.om-rat-entscheidet__lead {
+  margin: 0;
+  line-height: var(--wa-line-height-normal);
+  hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 .om-rat-entscheidet__hinweis {
