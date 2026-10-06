@@ -59,7 +59,15 @@ _JAHRNEUTRAL_SCHLUESSEL = {
     "ueberschuss_ruecklage",
     "geldfluss_lesehilfe",
 }
-_ERKLAERUNGEN_SCHLUESSEL = _PHASE4_SCHLUESSEL | _JAHRNEUTRAL_SCHLUESSEL
+
+# Phase 6 (Plan 06-04, D-20): vier abgenommene Erklärtexte. Die ersten beiden sind
+# jahrneutral (ohne Platzhalter), polster und schulden_anstieg ziehen ihre Zahlen aus den
+# ABGELEITET-Formeln.
+_PHASE6_JAHRNEUTRAL = {"bindungsgrad_selbstauskunft", "ueberschuss_produkte"}
+_PHASE6_SCHLUESSEL = _PHASE6_JAHRNEUTRAL | {"polster", "schulden_anstieg"}
+# Phase 6: drei neue Glossarbegriffe (D-17, D-18), alle ohne Platzhalter.
+_PHASE6_GLOSSAR = {"nicht_im_haushalt", "vzae", "entgeltgruppen"}
+_ERKLAERUNGEN_SCHLUESSEL = _PHASE4_SCHLUESSEL | _JAHRNEUTRAL_SCHLUESSEL | _PHASE6_SCHLUESSEL
 
 # GLOS-01 / Spez. 6.14: die 22 Pflichtbegriffe des Glossars unter stabilen Schlüsseln.
 _GLOSSAR_PFLICHT = {
@@ -720,6 +728,38 @@ def test_jahrneutrale_erklaerungen_ohne_platzhalter(
             assert "{{" not in absatz, f"{schluessel}: Platzhalter in jahrneutralem Text"
 
 
+def test_phase6_texte_ohne_platzhalter(echte_erklaerungen: list[Erklaertext]) -> None:
+    """bindungsgrad_selbstauskunft und ueberschuss_produkte gelten für jedes Jahr."""
+    je_schluessel = {text.schluessel: text for text in echte_erklaerungen}
+    for schluessel in _PHASE6_JAHRNEUTRAL:
+        for absatz in je_schluessel[schluessel].absaetze:
+            assert "{{" not in absatz, f"{schluessel}: Platzhalter in jahrneutralem Text"
+
+
+def test_polster_ohne_rechtliche_bewertung(echte_erklaerungen: list[Erklaertext]) -> None:
+    """D-14: Der Polster-Text nennt keine eigene Verpflichtung, keine Drohung und keine
+    Prognose; jede Jahreszahl darin ist ein Platzhalter."""
+    je_schluessel = {text.schluessel: text for text in echte_erklaerungen}
+    absaetze = je_schluessel["polster"].absaetze
+    for wort in ("muss", "müssen", "droht", "drohen", "Prognose"):
+        for absatz in absaetze:
+            assert wort not in absatz, f"polster: Wort '{wort}' ist nicht zulässig (D-14)"
+    for absatz in absaetze:
+        ohne_platzhalter = re.sub(r"\{\{.*?\}\}", "", absatz)
+        assert not re.search(r"\b(?:19|20)\d{2}\b", ohne_platzhalter), (
+            "polster: Jahreszahl nicht als Platzhalter"
+        )
+
+
+def test_schulden_anstieg_richtung(werte: dict[str, int | float]) -> None:
+    """UI-SPEC: Das Verb 'steigt' in schulden_anstieg folgt den Daten. Fällt der Schuldenstand,
+    muss der Text neu formuliert werden."""
+    assert (
+        werte["abgeleitet.schulden_gesamt_letztes_jahr"]
+        > werte["abgeleitet.schulden_gesamt_vorjahr"]
+    )
+
+
 def test_d02_keine_euro_grundzahl_ab_erstem_planjahr(
     echte_erklaerungen: list[Erklaertext],
     echtes_glossar: list[Erklaertext],
@@ -748,6 +788,16 @@ def test_glossar_pflichtbegriffe(echtes_glossar: list[Erklaertext]) -> None:
     assert len(schluessel) == len(set(schluessel)), "doppelter Glossarschlüssel"
     fehlend = _GLOSSAR_PFLICHT - set(schluessel)
     assert not fehlend, f"Pflichtbegriffe fehlen: {sorted(fehlend)}"
+
+
+def test_glossar_phase6_begriffe(echtes_glossar: list[Erklaertext]) -> None:
+    """D-17, D-18: drei neue Begriffe, jahrneutral und ohne Platzhalter."""
+    je_schluessel = {text.schluessel: text for text in echtes_glossar}
+    fehlend = _PHASE6_GLOSSAR - set(je_schluessel)
+    assert not fehlend, f"Phase-6-Glossarbegriffe fehlen: {sorted(fehlend)}"
+    for schluessel in _PHASE6_GLOSSAR:
+        for absatz in je_schluessel[schluessel].absaetze:
+            assert "{{" not in absatz, f"{schluessel}: Platzhalter in Glossarbegriff"
 
 
 def test_glossar_keine_nackten_ziffern(echtes_glossar: list[Erklaertext]) -> None:

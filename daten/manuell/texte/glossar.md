@@ -191,3 +191,27 @@ Quelle: S. 27
 Die Wertart sagt, woher eine Zahl stammt: Ist ist ein bereits abgerechnetes Ergebnis, Ansatz ist der beschlossene Plan, Planung ist die Finanzplanung für die Folgejahre.
 
 Für das erste Jahr der Tabellen, den Rückblick, nennt der Vorbericht die Werte vorläufiges Rechnungsergebnis (vorl. RE). Ansätze und Planung sind Schätzungen und können von dem abweichen, was am Ende tatsächlich eintritt.
+
+## nicht_im_haushalt
+Titel: Was nicht im Haushalt steht
+Quelle: S. 14, S. 33, S. 46, S. 48
+
+Manche Aufgaben der Gemeinde stehen nicht im Kernhaushalt, weil Einrichtungen mit eigenen Wirtschaftsplänen sie erledigen.
+
+Die Bäder- und Beteiligungsgesellschaft Ostbevern mbH (BBO) betreibt zum Beispiel das Hallenbad, der Technische Eigenbetrieb Ostbevern AöR (TEO) ist unter anderem für das Abwasser zuständig. Beide führen eigene Bücher, ihre Wirtschaftspläne sind dem Haushaltsplan nur beigefügt. Im Kernhaushalt tauchen sie vor allem dort auf, wo die Gemeinde einen Verlust übernimmt. Deshalb fehlen zum Beispiel die Abwassergebühren in den Einnahmen.
+
+## vzae
+Titel: Vollzeitäquivalent (VZÄ)
+Quelle: S. 285
+
+Ein Vollzeitäquivalent (VZÄ) misst Stellen in Vollzeitstellen: Zwei halbe Stellen zählen zusammen als eine volle Stelle.
+
+Der Stellenplan nennt Stellen deshalb mit Nachkommastellen. Die Zahl der VZÄ ist nicht die Zahl der Beschäftigten, denn eine Person in Teilzeit zählt nur mit ihrem Anteil.
+
+## entgeltgruppen
+Titel: Besoldungs-, Entgelt- und S-Gruppen
+Quelle: S. 284, S. 285, S. 286
+
+Der Stellenplan ordnet jede Stelle einer Gruppe zu, die die Anforderungen der Stelle beschreibt.
+
+Besoldungsgruppen (A und B) gelten für Beamtinnen und Beamte, Entgeltgruppen für Beschäftigte nach dem Tarifvertrag und S-Gruppen für den Sozial- und Erziehungsdienst, zum Beispiel an Schulen. Eine höhere Gruppe steht in der Regel für anspruchsvollere Aufgaben. Wie viel jemand verdient, lässt sich aus der Gruppe allein nicht ablesen. Der Stellenplan nennt keine Gehälter, und diese App zeigt keine.
