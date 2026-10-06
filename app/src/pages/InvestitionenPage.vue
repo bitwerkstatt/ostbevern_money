@@ -10,7 +10,11 @@ import MassnahmenFilter from '@/components/MassnahmenFilter.vue'
 import MassnahmenListe from '@/components/MassnahmenListe.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import SchuldenstandDiagramm from '@/components/SchuldenstandDiagramm.vue'
+import VeFaelligkeiten from '@/components/VeFaelligkeiten.vue'
+import { haushalt } from '@/data/daten'
+import { vePdfSeiten, veGesamt } from '@/lib/finanzierung'
 import { planjahre, useMassnahmenFilter } from '@/lib/investitionen'
+import { wertartFuerJahr, wertartName } from '@/lib/jahr'
 import { quellenZeile } from '@/lib/kennzahlen'
 import { baueSchuldenstand, schuldenKennzahlen } from '@/lib/schulden'
 
@@ -47,7 +51,20 @@ const kacheln = [
     zeile: quellenZeile(schulden.wertart, schulden.jahr, schulden.pdfSeiten),
     berechnet: schulden.berechnet,
   },
+  {
+    schluessel: 'verpflichtungsermaechtigungen',
+    bezeichnung: 'Verpflichtungsermächtigungen',
+    wert: euroKurz(veGesamt()),
+    zeile: quellenZeile(
+      wertartName(wertartFuerJahr(haushalt.haushaltsjahr)),
+      haushalt.haushaltsjahr,
+      vePdfSeiten(),
+    ),
+    berechnet: false,
+  },
 ]
+
+const veQuelle = `Haushaltsplan, PDF-Seiten ${vePdfSeiten().join(', ')}`
 
 const schuldenTitel = (() => {
   const erstes = schuldenstand.jahre[0]
@@ -70,7 +87,11 @@ const { vorhaben, zuruecksetzen } = useMassnahmenFilter()
         >Finanzplan</GlossarBegriff
       >), nicht Erträge und Aufwendungen.
     </p>
-    <ul class="om-investitionen__kacheln" role="list" aria-label="Kennzahlen zu Schulden">
+    <ul
+      class="om-investitionen__kacheln"
+      role="list"
+      aria-label="Kennzahlen zu Schulden und Verpflichtungen"
+    >
       <li v-for="kachel in kacheln" :key="kachel.schluessel">
         <KennzahlKachel
           :bezeichnung="kachel.bezeichnung"
@@ -97,6 +118,20 @@ const { vorhaben, zuruecksetzen } = useMassnahmenFilter()
         </wa-button>
       </div>
     </section>
+    <section class="om-investitionen__abschnitt" aria-labelledby="om-investitionen-ve">
+      <h2 id="om-investitionen-ve">Verpflichtungsermächtigungen</h2>
+      <ErklaerText schluessel="verpflichtungsermaechtigungen" />
+      <p class="om-investitionen__erklaerung">
+        Die Säulen zeigen
+        <GlossarBegriff schluessel="verpflichtungsermaechtigung"
+          >Verpflichtungsermächtigungen</GlossarBegriff
+        >
+        nach dem Jahr, in dem sie fällig werden.
+      </p>
+      <ChartCard titel="Verpflichtungsermächtigungen nach Fälligkeit" :quelle="veQuelle">
+        <VeFaelligkeiten />
+      </ChartCard>
+    </section>
     <section class="om-investitionen__abschnitt" aria-labelledby="om-investitionen-schulden">
       <h2 id="om-investitionen-schulden">Schulden</h2>
       <ChartCard :titel="schuldenTitel" :pdf="{ seite: schuldenstand.pdfSeite }">
@@ -115,6 +150,12 @@ const { vorhaben, zuruecksetzen } = useMassnahmenFilter()
 
 .om-investitionen__hinweis {
   margin: 0 0 var(--wa-space-l);
+  font-size: var(--wa-font-size-s);
+  color: var(--wa-color-text-quiet);
+}
+
+.om-investitionen__erklaerung {
+  margin: 0;
   font-size: var(--wa-font-size-s);
   color: var(--wa-color-text-quiet);
 }
