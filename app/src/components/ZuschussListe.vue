@@ -48,7 +48,7 @@ const wertartText = `${wertartName(wertartFuerJahr(haushalt.haushaltsjahr))} ${f
 const spalten: DatenSpalte[] = [
   { schluessel: 'name', titel: 'Empfänger', art: 'text' },
   { schluessel: 'betrag', titel: `Zuschuss (${wertartText})`, art: 'text' },
-  { schluessel: 'seite', titel: 'Quelle', art: 'text' },
+  { schluessel: 'quelle', titel: 'Quelle', art: 'quelle' },
 ]
 
 function seitenText(seiten: readonly number[]): string {
@@ -91,7 +91,7 @@ function gruppeAnsicht(
     tabelle: posten.map((p) => ({
       name: p.name,
       betrag: betragText(p.wert),
-      seite: p.pdfSeite === null ? null : `PDF-Seite ${String(p.pdfSeite)}`,
+      quelle: p.beleg,
     })),
     beschriftung,
   }
