@@ -18,6 +18,7 @@ import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import ErklaerText from '@/components/ErklaerText.vue'
 import ErtragsBalken from '@/components/ErtragsBalken.vue'
 import GlossarBegriff from '@/components/GlossarBegriff.vue'
+import HinweisNichtImHaushalt from '@/components/HinweisNichtImHaushalt.vue'
 import JahrUmschalter from '@/components/JahrUmschalter.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import SteuerZeitreihe from '@/components/SteuerZeitreihe.vue'
@@ -413,6 +414,8 @@ const investivSeite = computed(() => {
       </ChartCard>
     </section>
   </div>
+  <!-- Was nicht im Haushalt steht (Abwasser, TEO): am Seitenende, nach Investive Einnahmen (D-18). -->
+  <HinweisNichtImHaushalt variante="einnahmen" />
 </template>
 
 <style scoped>
