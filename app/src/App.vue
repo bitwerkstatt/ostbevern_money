@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, type RouteLocationRaw } from 'vue-router'
 
 import { datum, jahr, KEIN_WERT } from '@/charts/format'
+import MenueGruppe from '@/components/MenueGruppe.vue'
 import { KONTAKT_EMAIL, ORIGINAL_PDF_URL } from '@/config'
 import { haushalt } from '@/data/daten'
 import { useSchmalerBildschirm } from '@/lib/bildschirm'
 import { useJahr } from '@/lib/jahr'
-import { MENUE, type MenueEintrag } from '@/lib/menue'
+import { MENUE, type MenueLink } from '@/lib/menue'
 
 // Datenstand (D-18): das Haushaltsjahr und der Tag des Satzungsbeschlusses, beides aus den
 // Daten; kein Erstellungsdatum.
@@ -17,9 +18,14 @@ const beschlussDatum = typeof beschluss?.wert === 'string' ? datum(beschluss.wer
 
 // Kopfmenü (D-13): Die Links zu Woher?, Wofür? und Geldfluss behalten das gewählte Jahr (D-10).
 const { jahrLink } = useJahr()
-function menueZiel(eintrag: MenueEintrag): RouteLocationRaw {
+function menueZiel(eintrag: MenueLink): RouteLocationRaw {
   return eintrag.mitJahr ? jahrLink({ name: eintrag.name }) : { name: eintrag.name }
 }
+
+// Eine leere Gruppe wird nicht gerendert (D-19, UI-SPEC E12 zero-one-many).
+const menue = computed(() =>
+  MENUE.filter((eintrag) => eintrag.typ === 'link' || eintrag.eintraege.length > 0),
+)
 
 // Mobiles Menü: Bis 699 px ersetzt ein Drawer die horizontale Liste.
 const route = useRoute()
@@ -119,8 +125,12 @@ onBeforeUnmount(() => {
 
       <nav v-if="!schmal" aria-label="Hauptnavigation" class="om-nav">
         <ul>
-          <li v-for="eintrag in MENUE" :key="eintrag.name">
-            <RouterLink :to="menueZiel(eintrag)">{{ eintrag.text }}</RouterLink>
+          <li
+            v-for="eintrag in menue"
+            :key="eintrag.typ === 'gruppe' ? eintrag.text : eintrag.name"
+          >
+            <MenueGruppe v-if="eintrag.typ === 'gruppe'" :gruppe="eintrag" :ziel="menueZiel" />
+            <RouterLink v-else :to="menueZiel(eintrag)">{{ eintrag.text }}</RouterLink>
           </li>
         </ul>
       </nav>
@@ -149,8 +159,21 @@ onBeforeUnmount(() => {
         >
           <nav aria-label="Hauptnavigation" class="om-nav om-nav-drawer">
             <ul>
-              <li v-for="eintrag in MENUE" :key="eintrag.name">
-                <RouterLink :to="menueZiel(eintrag)">{{ eintrag.text }}</RouterLink>
+              <li
+                v-for="(eintrag, nummer) in menue"
+                :key="eintrag.typ === 'gruppe' ? eintrag.text : eintrag.name"
+              >
+                <template v-if="eintrag.typ === 'gruppe'">
+                  <span :id="`om-drawer-gruppe-${nummer}`" class="om-nav-gruppe__titel">{{
+                    eintrag.text
+                  }}</span>
+                  <ul class="om-nav-gruppe__liste" :aria-labelledby="`om-drawer-gruppe-${nummer}`">
+                    <li v-for="link in eintrag.eintraege" :key="link.name">
+                      <RouterLink :to="menueZiel(link)">{{ link.text }}</RouterLink>
+                    </li>
+                  </ul>
+                </template>
+                <RouterLink v-else :to="menueZiel(eintrag)">{{ eintrag.text }}</RouterLink>
               </li>
             </ul>
           </nav>
@@ -250,6 +273,21 @@ onBeforeUnmount(() => {
 .om-nav-drawer a {
   display: flex;
   width: 100%;
+}
+
+.om-nav-gruppe__titel {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: var(--wa-font-size-s);
+  font-weight: var(--wa-font-weight-bold);
+  line-height: var(--wa-line-height-condensed);
+  color: var(--wa-color-text-quiet);
+}
+
+/* Im Drawer ist die Gruppe nie eingeklappt: die vier Links stehen eingerückt unter der Überschrift. */
+.om-nav-drawer .om-nav-gruppe__liste {
+  padding-inline-start: var(--wa-space-m);
 }
 
 .om-menue-schalter {
