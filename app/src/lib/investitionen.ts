@@ -231,3 +231,39 @@ export function baueMassnahmenTabelle(vorhaben: readonly Vorhaben[]): Tabelle {
   })
   return { spalten, zeilen }
 }
+
+// ---------------------------------------------------------------------------------------
+// Filter und URL-Zustand (D-06)
+// ---------------------------------------------------------------------------------------
+
+/** Ein Aufgabenbereich, der Auszahlungs-Maßnahmen hat. */
+export interface MassnahmenAufgabenbereich {
+  code: string
+  name: string
+}
+
+/** Gerüst, wird mit der Implementierung ersetzt. */
+export const MASSNAHMEN_AUFGABENBEREICHE: readonly MassnahmenAufgabenbereich[] = []
+
+/** Validierter Filterzustand aus der URL. */
+export interface MassnahmenFilter {
+  pb: string | null
+  art: Art | null
+  /** `true`, wenn die URL unbrauchbare Teile trug, die entfernt werden sollen. */
+  bereinigt: boolean
+}
+
+export function leseMassnahmenFilter(_query: Readonly<Record<string, unknown>>): MassnahmenFilter {
+  return { pb: null, art: null, bereinigt: false }
+}
+
+export function bereinigteMassnahmenQuery<W>(
+  query: Readonly<Record<string, W>>,
+  _filter: MassnahmenFilter,
+): Record<string, W | string> {
+  return { ...query }
+}
+
+export function useMassnahmenFilter(): never {
+  throw new Error('nicht implementiert')
+}

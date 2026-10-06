@@ -1,3 +1,5 @@
+import { createApp, nextTick } from 'vue'
+import { createMemoryHistory, createRouter } from 'vue-router'
 import { describe, expect, it } from 'vitest'
 
 import { farbeFuerPb } from '@/charts/echartsTheme'
@@ -8,11 +10,15 @@ import {
   baueGruppen,
   baueMassnahmenTabelle,
   baueVorhaben,
+  bereinigteMassnahmenQuery,
   buendeln,
   filterArt,
   GROESSTE_ANZAHL,
   klickIndex,
+  leseMassnahmenFilter,
+  MASSNAHMEN_AUFGABENBEREICHE,
   planjahre,
+  useMassnahmenFilter,
   type Art,
 } from '@/lib/investitionen'
 
@@ -295,3 +301,189 @@ describe.runIf(haushalt.haushaltsjahr === 2026)(
     })
   },
 )
+
+describe('MASSNAHMEN_AUFGABENBEREICHE (D-06, Pitfall 8)', () => {
+  const codes = MASSNAHMEN_AUFGABENBEREICHE.map((b) => b.code)
+  const pbMitMassnahmen = new Set(baueVorhaben({ pb: null, art: null }).map((e) => e.pb))
+
+  it('nennt genau die Aufgabenbereiche mit Auszahlungs-Maßnahmen', () => {
+    expect(codes.length).toBeGreaterThan(0)
+    expect(new Set(codes)).toEqual(pbMitMassnahmen)
+  })
+
+  it('führt nur echte Aufgabenbereiche, nie KL oder synthetische Knoten', () => {
+    for (const bereich of MASSNAHMEN_AUFGABENBEREICHE) {
+      const knoten = haushalt.knoten.find((k) => k.code === bereich.code)
+      expect(knoten).toMatchObject({ ebene: 'PB', eltern: 'GESAMT', synthetisch: false })
+      expect(bereich.name).toBe(knoten?.name)
+    }
+    expect(codes).not.toContain('KL')
+  })
+
+  it('folgt der Reihenfolge der Knoten', () => {
+    const reihenfolge = haushalt.knoten.map((k) => k.code)
+    const positionen = codes.map((c) => reihenfolge.indexOf(c))
+    expect(positionen).toEqual([...positionen].sort((a, b) => a - b))
+  })
+
+  describe.runIf(haushalt.haushaltsjahr === 2026)('Jahrgang 2026', () => {
+    it('hat elf Aufgabenbereiche', () => {
+      expect(codes).toEqual(['01', '02', '03', '04', '06', '08', '09', '10', '12', '13', '15'])
+    })
+  })
+})
+
+describe('leseMassnahmenFilter (D-06, T-06-14)', () => {
+  const pb = MASSNAHMEN_AUFGABENBEREICHE[0]?.code ?? ''
+
+  it('liefert ohne Query „Alle“ ohne Bereinigung', () => {
+    expect(leseMassnahmenFilter({})).toEqual({ pb: null, art: null, bereinigt: false })
+  })
+
+  it('behält gültige Werte', () => {
+    expect(pb).not.toBe('')
+    expect(leseMassnahmenFilter({ art: 'bau', pb })).toEqual({ pb, art: 'bau', bereinigt: false })
+  })
+
+  it.each(['bau', 'grundstuecke', 'ausstattung', 'sonstige'] as const)(
+    'akzeptiert die Art %s',
+    (art) => {
+      expect(leseMassnahmenFilter({ art })).toMatchObject({ art, bereinigt: false })
+    },
+  )
+
+  it('verwirft eine unbekannte Art und meldet Bereinigung', () => {
+    expect(leseMassnahmenFilter({ art: 'xyz' })).toEqual({ pb: null, art: null, bereinigt: true })
+  })
+
+  it.each(['__proto__', 'constructor', 'toString', 'KL', '16', '', 'xyz'])(
+    'verwirft den Aufgabenbereich „%s“',
+    (wert) => {
+      expect(leseMassnahmenFilter({ pb: wert })).toEqual({ pb: null, art: null, bereinigt: true })
+    },
+  )
+
+  it('verwirft Prototyp-Schlüssel auch bei der Art', () => {
+    expect(leseMassnahmenFilter({ art: '__proto__' })).toMatchObject({ art: null, bereinigt: true })
+    expect(leseMassnahmenFilter({ art: 'hasOwnProperty' })).toMatchObject({
+      art: null,
+      bereinigt: true,
+    })
+  })
+
+  it('nimmt bei Arrays nur das erste Element', () => {
+    expect(leseMassnahmenFilter({ art: ['grundstuecke', 'bau'] })).toMatchObject({
+      art: 'grundstuecke',
+      bereinigt: false,
+    })
+    expect(leseMassnahmenFilter({ art: ['xyz', 'bau'] })).toMatchObject({
+      art: null,
+      bereinigt: true,
+    })
+  })
+
+  it('behandelt einen leeren Wert (?art ohne Wert) als ungültig', () => {
+    expect(leseMassnahmenFilter({ art: null, pb: null })).toEqual({
+      pb: null,
+      art: null,
+      bereinigt: true,
+    })
+  })
+
+  it('ignoriert das globale jahr und andere fremde Schlüssel', () => {
+    expect(leseMassnahmenFilter({ jahr: '1999', foo: 'bar' })).toEqual({
+      pb: null,
+      art: null,
+      bereinigt: false,
+    })
+  })
+})
+
+describe('bereinigteMassnahmenQuery', () => {
+  const pb = MASSNAHMEN_AUFGABENBEREICHE[0]?.code ?? ''
+
+  it('behält fremde Schlüssel und gültige Filter und entfernt nur ungültige', () => {
+    const query = { jahr: '2025', art: 'xyz', pb }
+    expect(bereinigteMassnahmenQuery(query, leseMassnahmenFilter(query))).toEqual({
+      jahr: '2025',
+      pb,
+    })
+  })
+
+  it('entfernt beide ungültigen Filter', () => {
+    const query = { pb: '__proto__', art: 'xyz', jahr: '2025' }
+    expect(bereinigteMassnahmenQuery(query, leseMassnahmenFilter(query))).toEqual({
+      jahr: '2025',
+    })
+  })
+
+  it('schreibt ein Array auf den ersten gültigen Wert zurück', () => {
+    const query = { art: ['bau', 'grundstuecke'] }
+    expect(bereinigteMassnahmenQuery(query, leseMassnahmenFilter(query))).toEqual({ art: 'bau' })
+  })
+})
+
+describe('useMassnahmenFilter (D-06, Router-Zustand)', () => {
+  const pb = MASSNAHMEN_AUFGABENBEREICHE[0]?.code ?? ''
+
+  const abwarten = () => new Promise((fertig) => setTimeout(fertig, 0))
+
+  async function aufbau(ziel: string) {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: '/investitionen', name: 'investitionen', component: { render: () => null } },
+        { path: '/anders', name: 'anders', component: { render: () => null } },
+      ],
+    })
+    const app = createApp({ render: () => null })
+    app.use(router)
+    await router.push(ziel)
+    const zustand = app.runWithContext(() => useMassnahmenFilter())
+    await nextTick()
+    await abwarten()
+    return { router, zustand }
+  }
+
+  it('entfernt ungültige Werte per replace und behält fremde Schlüssel und den Hash', async () => {
+    const { router } = await aufbau('/investitionen?art=xyz&jahr=2025#anker')
+    expect(router.currentRoute.value.query).toEqual({ jahr: '2025' })
+    expect(router.currentRoute.value.hash).toBe('#anker')
+  })
+
+  it('setzt Aufgabenbereich und Art per replace, ohne neuen Verlaufseintrag', async () => {
+    const { router, zustand } = await aufbau('/investitionen?jahr=2025')
+    const vorher = router.options.history.state.position
+    zustand.setzePb(pb)
+    await abwarten()
+    zustand.setzeArt('bau')
+    await abwarten()
+    expect(router.currentRoute.value.query).toEqual({ jahr: '2025', pb, art: 'bau' })
+    expect(zustand.filter.value).toEqual({ pb, art: 'bau', bereinigt: false })
+    expect(router.options.history.state.position).toBe(vorher)
+  })
+
+  it('ignoriert ungültige Werte beim Setzen', async () => {
+    const { router, zustand } = await aufbau('/investitionen')
+    zustand.setzePb('__proto__')
+    zustand.setzePb('KL')
+    zustand.setzeArt('xyz' as never)
+    await abwarten()
+    expect(router.currentRoute.value.query).toEqual({})
+  })
+
+  it('setzt „Alle“ und mit zuruecksetzen beide Filter zurück', async () => {
+    const { router, zustand } = await aufbau(`/investitionen?pb=${pb}&art=bau&jahr=2025`)
+    zustand.setzeArt(null)
+    await abwarten()
+    expect(router.currentRoute.value.query).toEqual({ pb, jahr: '2025' })
+    zustand.zuruecksetzen()
+    await abwarten()
+    expect(router.currentRoute.value.query).toEqual({ jahr: '2025' })
+  })
+
+  it('liefert die Maßnahmen der Auswahl', async () => {
+    const { zustand } = await aufbau(`/investitionen?pb=${pb}&art=bau`)
+    expect(zustand.vorhaben.value).toEqual(baueVorhaben({ pb, art: 'bau' }))
+  })
+})
