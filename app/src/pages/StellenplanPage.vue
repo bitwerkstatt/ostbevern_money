@@ -7,11 +7,19 @@ import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import KennzahlKachel from '@/components/KennzahlKachel.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import StellenNachBereich from '@/components/StellenNachBereich.vue'
+import StellenNachGruppe from '@/components/StellenNachGruppe.vue'
 import StellenNachTeil from '@/components/StellenNachTeil.vue'
 import WertartEtikett from '@/components/WertartEtikett.vue'
 import { haushalt, stellenplan } from '@/data/daten'
 import { wertartFuerJahr } from '@/lib/jahr'
-import { alsVzae, differenzText, nachwuchs, stellenSummen } from '@/lib/stellen'
+import {
+  alsVzae,
+  differenzText,
+  nachwuchs,
+  stellenNachGruppe,
+  stellenSummen,
+  TEILE,
+} from '@/lib/stellen'
 
 // Die Seite zeigt das Haushaltsjahr, ohne Jahr-Umschalter (UI-SPEC Routes). Jahr und Wertart
 // kommen aus den Daten.
@@ -107,6 +115,14 @@ const nachwuchsSatz = computed(() => {
 })
 
 const teilQuelle = `Stellenplan, ${seitenText(summen.pdfSeiten)}`
+
+// Je Teil ein Abschnitt; Teile ohne Zeilen entfallen samt Überschrift (UI-SPEC E10 zero-one-many).
+const gruppenTeile = TEILE.filter((teil) => stellenNachGruppe(teil.teil).length > 0)
+const gruppenQuelle = `Stellenplan, ${seitenText(
+  [
+    ...new Set(gruppenTeile.flatMap((teil) => stellenNachGruppe(teil.teil).map((z) => z.pdfSeite))),
+  ].sort((a, b) => a - b),
+)}`
 </script>
 
 <template>
@@ -152,6 +168,28 @@ const teilQuelle = `Stellenplan, ${seitenText(summen.pdfSeiten)}`
         </p>
       </ChartCard>
     </div>
+
+    <div v-if="gruppenTeile.length > 0" class="om-stellenplan__abschnitt">
+      <ChartCard titel="Stellen nach Gruppe" :quelle="gruppenQuelle">
+        <p class="om-stellenplan__text">
+          Jede Stelle gehört zu einer Gruppe. Was
+          <GlossarBegriff schluessel="entgeltgruppen"
+            >Besoldungs-, Entgelt- und S-Gruppen</GlossarBegriff
+          >
+          bedeuten, steht im Glossar. Die Gruppen laufen in jedem Diagramm von der niedrigen zur
+          hohen Gruppe.
+        </p>
+        <section
+          v-for="teil in gruppenTeile"
+          :key="teil.teil"
+          class="om-stellenplan__gruppe"
+          :aria-labelledby="`om-stellenplan-gruppe-${teil.teil}`"
+        >
+          <h3 :id="`om-stellenplan-gruppe-${teil.teil}`">{{ teil.gruppenTitel }}</h3>
+          <StellenNachGruppe :teil="teil.teil" />
+        </section>
+      </ChartCard>
+    </div>
   </div>
 </template>
 
@@ -190,6 +228,26 @@ const teilQuelle = `Stellenplan, ${seitenText(summen.pdfSeiten)}`
 
 .om-stellenplan__hinweis p + p {
   margin-block-start: var(--wa-space-xs);
+}
+
+.om-stellenplan__text {
+  margin: 0 0 var(--wa-space-m);
+  line-height: var(--wa-line-height-normal);
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.om-stellenplan__gruppe + .om-stellenplan__gruppe {
+  margin-block-start: var(--wa-space-l);
+}
+
+.om-stellenplan__gruppe h3 {
+  margin: 0 0 var(--wa-space-s);
+  font-size: var(--wa-font-size-m);
+  font-weight: var(--wa-font-weight-bold);
+  line-height: var(--wa-line-height-condensed);
+  hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 .om-stellenplan__hinweis-text {

@@ -399,6 +399,27 @@ describe('stellenNachGruppe', () => {
     }
   })
 
+  it('stellt Pauschal- und Sonderzeilen ans Ende der Achse (UI-SPEC)', () => {
+    const vorlage = stellenplan.zeilen.find(
+      (z) =>
+        z.teil === 'tarif' &&
+        z.produktbereich === null &&
+        z.merkmal === 'stellen' &&
+        z.jahr === stellenplan.haushaltsjahr,
+    )
+    if (vorlage === undefined) {
+      throw new Error('Keine Tarifzeile gefunden')
+    }
+    // Die Sonderzeile erhält die höchste Position und stünde nach Position ganz vorn.
+    const mit: Stellenplan = {
+      ...stellenplan,
+      zeilen: [...stellenplan.zeilen, { ...vorlage, gruppe: 'pauschal', position: 99, stellen: 1 }],
+    }
+    const gruppen = stellenNachGruppe('tarif', mit).map((z) => z.gruppe)
+    expect(gruppen[gruppen.length - 1]).toBe('pauschal')
+    expect(gruppen.slice(0, -1)).toEqual(stellenNachGruppe('tarif').map((z) => z.gruppe))
+  })
+
   it('liefert eine leere Liste für einen Teil ohne Zeilen und für einen unbekannten Teil', () => {
     const ohneSozial = ohne((z) => z.teil !== 'sozial_erziehungsdienst')
     expect(stellenNachGruppe('sozial_erziehungsdienst', ohneSozial)).toEqual([])

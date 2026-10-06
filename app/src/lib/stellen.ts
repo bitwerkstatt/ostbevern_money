@@ -275,9 +275,29 @@ export interface GruppenZeile {
   pdfSeite: number
 }
 
-/** Gerüst (RED): die Logik folgt im GREEN-Commit. */
+/** Pauschal- oder Sonderzeilen (z. B. „pauschal“) stehen am Ende der Achse (UI-SPEC). */
+function istSonderzeile(zeile: StellenplanZeile): boolean {
+  return /^pauschal/i.test(zeile.gruppe)
+}
+
+/**
+ * Stellen des Haushaltsjahrs je Gruppe eines Teils (STEL-02, D-17): die Teil-A/B-Zeilen ohne
+ * Produktbereich mit dem Merkmal „stellen“. Sortiert wird absteigend nach der gedruckten
+ * `position`: der Druck führt die höchste Gruppe zuerst (Tarif: Position 1 = „14“, Beamte:
+ * Position 1 = „B 3“), die Anzeige läuft dadurch von der niedrigen zur hohen Gruppe (1 → 14,
+ * A 8 → B 3, S 11 → S 12). Das weicht bewusst vom Wortlaut „aufsteigend nach position“ ab
+ * (RESEARCH Pitfall 7). Die Gruppenbezeichnung bleibt wie gedruckt; ein Teil ohne Zeilen liefert
+ * eine leere Liste.
+ */
 export function stellenNachGruppe(teil: string, daten: Stellenplan = stellenplan): GruppenZeile[] {
-  void teil
-  void daten
-  return []
+  return stellenZeilen(daten, daten.haushaltsjahr)
+    .filter((zeile) => zeile.teil === teil)
+    .sort(
+      (a, b) => Number(istSonderzeile(a)) - Number(istSonderzeile(b)) || b.position - a.position,
+    )
+    .map((zeile) => ({
+      gruppe: zeile.gruppe,
+      stellen: hundertstel(zeile),
+      pdfSeite: zeile.pdf_seite,
+    }))
 }
