@@ -7,6 +7,7 @@ import {
   differenzText,
   nachwuchs,
   stellenNachBereich,
+  stellenNachGruppe,
   stellenNachTeil,
   stellenSummen,
   TEILE,
@@ -337,6 +338,122 @@ describe('stellenNachBereich', () => {
       expect(zeilen).toHaveLength(15)
       expect(zeilen[0]?.pb).toBe('01')
       expect(zeilen[0]?.stellen).toBe(2187)
+    })
+  })
+})
+
+// ---------------------------------------------------------------------------------------------
+// Stellen nach Besoldungs-, Entgelt- und S-Gruppe (STEL-02, D-17)
+// ---------------------------------------------------------------------------------------------
+
+describe('stellenNachGruppe', () => {
+  it('liefert je Teil Zeilen {gruppe, stellen, pdfSeite} mit Stellen in Hundertstel', () => {
+    for (const { teil } of TEILE) {
+      const gruppen = stellenNachGruppe(teil)
+      expect(gruppen.length).toBeGreaterThan(0)
+      for (const zeile of gruppen) {
+        expect(zeile.gruppe).not.toBe('')
+        expect(Number.isInteger(zeile.stellen)).toBe(true)
+        expect(zeile.pdfSeite).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('sortiert absteigend nach der gedruckten Position (RESEARCH Pitfall 7)', () => {
+    for (const { teil } of TEILE) {
+      const positionen = new Map(
+        stellenplan.zeilen
+          .filter(
+            (z) =>
+              z.teil === teil &&
+              z.produktbereich === null &&
+              z.merkmal === 'stellen' &&
+              z.jahr === stellenplan.haushaltsjahr,
+          )
+          .map((z) => [z.gruppe, z.position]),
+      )
+      const reihenfolge = stellenNachGruppe(teil).map((z) => positionen.get(z.gruppe) ?? Number.NaN)
+      expect(reihenfolge).toEqual([...reihenfolge].sort((a, b) => b - a))
+    }
+  })
+
+  it('summiert je Teil zur Teilsumme, über alle Teile zur Gesamtsumme und zur Summe je Bereich', () => {
+    const teile = stellenNachTeil()
+    for (const teil of teile) {
+      const summe = stellenNachGruppe(teil.teil).reduce((gesamt, z) => gesamt + z.stellen, 0)
+      expect(summe).toBe(teil.haushaltsjahr)
+    }
+    const ueberGruppen = TEILE.flatMap(({ teil }) => stellenNachGruppe(teil)).reduce(
+      (gesamt, z) => gesamt + z.stellen,
+      0,
+    )
+    const ueberBereiche = stellenNachBereich().reduce((gesamt, z) => gesamt + (z.stellen ?? 0), 0)
+    expect(ueberGruppen).toBe(stellenSummen().haushaltsjahr)
+    expect(ueberBereiche).toBe(ueberGruppen)
+  })
+
+  it('zählt keine Zeilen mit Produktbereich, kein Vorjahr und kein besetzt', () => {
+    const nurTeilA = ohne((z) => z.produktbereich === null && z.merkmal === 'stellen')
+    for (const { teil } of TEILE) {
+      expect(stellenNachGruppe(teil, nurTeilA)).toEqual(stellenNachGruppe(teil))
+    }
+  })
+
+  it('liefert eine leere Liste für einen Teil ohne Zeilen und für einen unbekannten Teil', () => {
+    const ohneSozial = ohne((z) => z.teil !== 'sozial_erziehungsdienst')
+    expect(stellenNachGruppe('sozial_erziehungsdienst', ohneSozial)).toEqual([])
+    expect(stellenNachGruppe('gibt_es_nicht')).toEqual([])
+  })
+
+  it('zeigt einen Teil mit einer einzigen Gruppe als eine Zeile (UI-SPEC E10 zero-one-many)', () => {
+    const eine = stellenNachGruppe(
+      'sozial_erziehungsdienst',
+      ohne((z) => z.teil !== 'sozial_erziehungsdienst' || z.gruppe === 'S 12'),
+    )
+    expect(eine.map((z) => z.gruppe)).toEqual(['S 12'])
+  })
+
+  describe.runIf(stellenplan.haushaltsjahr === 2026)('Jahrgang 2026', () => {
+    it('Beamte A 8 → B 3', () => {
+      expect(stellenNachGruppe('beamte').map((z) => z.gruppe)).toEqual([
+        'A 8',
+        'A 10',
+        'A 12',
+        'A 13',
+        'A 14',
+        'B 3',
+      ])
+    })
+
+    it('Tarif 1 → 14 mit 9a, 9b, 9c in dieser Reihenfolge', () => {
+      expect(stellenNachGruppe('tarif').map((z) => z.gruppe)).toEqual([
+        '1',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9a',
+        '9b',
+        '9c',
+        '11',
+        '12',
+        '14',
+      ])
+    })
+
+    it('Sozial- und Erziehungsdienst S 11 → S 12', () => {
+      expect(stellenNachGruppe('sozial_erziehungsdienst').map((z) => z.gruppe)).toEqual([
+        'S 11',
+        'S 12',
+      ])
+    })
+
+    it('Einzelwerte: A 8 mit 200, Tarif 6 mit 1895, S 12 mit 214 Hundertstel', () => {
+      const wert = (teil: string, gruppe: string): number | undefined =>
+        stellenNachGruppe(teil).find((z) => z.gruppe === gruppe)?.stellen
+      expect(wert('beamte', 'A 8')).toBe(200)
+      expect(wert('tarif', '6')).toBe(1895)
+      expect(wert('sozial_erziehungsdienst', 'S 12')).toBe(214)
     })
   })
 })

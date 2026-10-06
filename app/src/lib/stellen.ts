@@ -265,3 +265,19 @@ export function stellenNachBereich(
       a.pb.localeCompare(b.pb),
   )
 }
+
+export interface GruppenZeile {
+  /** Gruppenbezeichnung wie gedruckt, z. B. „A 14“, „9c“, „S 12“. */
+  gruppe: string
+  /** Stellen des Haushaltsjahrs in Hundertstel. */
+  stellen: number
+  /** 1-basierte PDF-Seite der Zeile. */
+  pdfSeite: number
+}
+
+/** Gerüst (RED): die Logik folgt im GREEN-Commit. */
+export function stellenNachGruppe(teil: string, daten: Stellenplan = stellenplan): GruppenZeile[] {
+  void teil
+  void daten
+  return []
+}
