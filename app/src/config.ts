@@ -25,19 +25,19 @@ export const ORIGINAL_PDF_URL =
 /**
  * Name der verantwortlichen Person im Impressum (D-08).
  *
- * Bis der Text-Checkpoint (07-10, D-15) den echten Namen setzt, steht hier ein Platzhalter
- * auf `.invalid`. `istImpressumPlatzhalter` erkennt ihn, damit ein unfertiges Impressum nie
- * deployt wird.
+ * Der Wert ist seit dem Text-Checkpoint (07-10, D-15) festgelegt. `istImpressumPlatzhalter`
+ * bleibt als Wächter bestehen: `config.test.ts` weist das Deployment ab, falls hier je wieder
+ * ein Platzhalter auf `.invalid` steht.
  */
-export const IMPRESSUM_NAME = 'name-noch-nicht-festgelegt.invalid'
+export const IMPRESSUM_NAME = 'Thomas Manthey'
 
 /**
  * Anschrift im Impressum als Zeilenliste, eine Zeile je Eintrag (1 bis n Zeilen, D-08).
  *
- * Bis der Text-Checkpoint (07-10, D-15) die echte Anschrift setzt, steht hier ein Platzhalter
- * auf `.invalid`. `istAnschriftPlatzhalter` erkennt ihn, auch bei einer halb gefüllten Anschrift.
+ * Der Wert ist seit dem Text-Checkpoint (07-10, D-15) festgelegt. `istAnschriftPlatzhalter`
+ * bleibt als Wächter bestehen, auch für eine halb gefüllte Anschrift.
  */
-export const IMPRESSUM_ANSCHRIFT: readonly string[] = ['anschrift-noch-nicht-festgelegt.invalid']
+export const IMPRESSUM_ANSCHRIFT: readonly string[] = ['Lehmbrock 1', '48346 Ostbevern']
 
 function istInvalidHost(host: string): boolean {
   const klein = host.toLowerCase()

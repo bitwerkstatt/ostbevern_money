@@ -81,7 +81,9 @@ const haushaltsjahr = jahr(haushalt.haushaltsjahr)
       <h2 id="om-ueber-datenschutz">Datenschutz</h2>
       <p>
         Diese Seite setzt keine Cookies und verwendet kein Tracking. Beim Aufruf werden keine Daten
-        an Drittanbieter geschickt. Die Seite wird bei GitHub Pages gehostet.
+        an Drittanbieter geschickt. Die Seite wird bei GitHub Pages gehostet. Beim Aufruf
+        verarbeitet GitHub Pages technisch bedingt deine IP-Adresse; mehr dazu in der
+        Datenschutzerklärung von GitHub.
       </p>
     </section>
   </div>

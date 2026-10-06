@@ -87,11 +87,21 @@ describe('istAnschriftPlatzhalter (E4 partial, zero-one-many)', () => {
     expect(istAnschriftPlatzhalter(['Hauptstraße 1'])).toBe(false)
     expect(istAnschriftPlatzhalter(['Hauptstraße 1', '59227 Ostbevern'])).toBe(false)
   })
+})
 
-  it('liefert bis zum Text-Checkpoint (07-10) erkennbare Platzhalter für Name und Anschrift', () => {
-    expect(istImpressumPlatzhalter(IMPRESSUM_NAME)).toBe(true)
-    expect(istAnschriftPlatzhalter(IMPRESSUM_ANSCHRIFT)).toBe(true)
+describe('veröffentlichungsbereit (E4, D-07, D-08, T-07-23)', () => {
+  it('hält keine der vier Konfigurationswerte für einen Platzhalter', () => {
+    expect(istPlatzhalter(KONTAKT_EMAIL)).toBe(false)
+    expect(istPlatzhalter(ORIGINAL_PDF_URL)).toBe(false)
+    expect(istImpressumPlatzhalter(IMPRESSUM_NAME)).toBe(false)
+    expect(istAnschriftPlatzhalter(IMPRESSUM_ANSCHRIFT)).toBe(false)
+  })
+
+  it('führt mindestens eine Anschriftzeile und keine leere Zeile', () => {
     expect(IMPRESSUM_ANSCHRIFT.length).toBeGreaterThan(0)
+    for (const zeile of IMPRESSUM_ANSCHRIFT) {
+      expect(istImpressumPlatzhalter(zeile)).toBe(false)
+    }
   })
 })
 
@@ -184,6 +194,12 @@ describe('UeberPage.vue (Über dieses Projekt, D-08, T-07-14, T-07-16)', () => {
     // Prettier bricht den Fließtext um; der Vergleich ignoriert Zeilenumbrüche und Einrückung.
     expect(quelle.replace(/\s+/g, ' ')).toContain(
       'Diese Seite setzt keine Cookies und verwendet kein Tracking. Beim Aufruf werden keine Daten an Drittanbieter geschickt. Die Seite wird bei GitHub Pages gehostet.',
+    )
+  })
+
+  it('nennt die IP-Verarbeitung durch GitHub Pages (Abnahme 07-10)', () => {
+    expect(quelle.replace(/\s+/g, ' ')).toContain(
+      'Beim Aufruf verarbeitet GitHub Pages technisch bedingt deine IP-Adresse; mehr dazu in der Datenschutzerklärung von GitHub.',
     )
   })
 
