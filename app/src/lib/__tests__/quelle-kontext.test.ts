@@ -6,7 +6,9 @@
 
 import { describe, expect, it } from 'vitest'
 
+import { baueMassnahmenTabelle, baueVorhaben } from '@/lib/investitionen'
 import { findeBeleg } from '@/lib/quelle'
+import { stellenNachGruppe, TEILE } from '@/lib/stellen'
 import { kitaZuschuesse, nichtBeeinflussbar, weitereZuschuesse } from '@/lib/zuschuesse'
 
 const quelltexte = import.meta.glob<string>('/src/**/*.vue', {
@@ -15,8 +17,16 @@ const quelltexte = import.meta.glob<string>('/src/**/*.vue', {
   eager: true,
 })
 
+const tsQuelltexte = import.meta.glob<string>('/src/lib/*.ts', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
+
 function quelltext(name: string): string {
-  const treffer = Object.entries(quelltexte).find(([pfad]) => pfad.endsWith(`/${name}`))
+  const treffer = Object.entries({ ...quelltexte, ...tsQuelltexte }).find(([pfad]) =>
+    pfad.endsWith(`/${name}`),
+  )
   if (treffer === undefined) {
     throw new Error(`Quelltext ${name} nicht gefunden`)
   }
@@ -112,5 +122,44 @@ describe('/rat-entscheidet: Was der Rat nicht beeinflussen kann', () => {
 
   it('NichtBeeinflussbarBlock bindet :quelle an die Kacheln', () => {
     expect(quelltext('NichtBeeinflussbarBlock.vue')).toContain(':quelle=')
+  })
+})
+
+describe('/investitionen: Maßnahmen', () => {
+  const tabelle = baueMassnahmenTabelle(baueVorhaben({ pb: null, art: null }))
+
+  it('jede Zeile der Maßnahmentabelle trägt einen auflösbaren inv-Schlüssel', () => {
+    expect(tabelle.zeilen.length).toBeGreaterThan(0)
+    for (const zeile of tabelle.zeilen) {
+      expect(findeBeleg(String(zeile['quelle'])), String(zeile['quelle'])).not.toBeNull()
+    }
+  })
+
+  it('lib/investitionen.ts hat keine Seitenspalte mit Art text', () => {
+    const text = quelltext('investitionen.ts')
+    expect(text).toContain('belegSchluessel.inv')
+    expect(SEITENSPALTE_ALS_TEXT.test(text)).toBe(false)
+  })
+})
+
+describe('/stellenplan: Stellen nach Gruppe', () => {
+  it('jede Gruppenzeile trägt einen auflösbaren sp-Schlüssel', () => {
+    for (const { teil } of TEILE) {
+      const zeilen = stellenNachGruppe(teil)
+      expect(zeilen.length, teil).toBeGreaterThan(0)
+      for (const zeile of zeilen) {
+        expect(findeBeleg(zeile.beleg), zeile.beleg).not.toBeNull()
+      }
+    }
+  })
+
+  it('StellenNachGruppe hat eine Quelle-Spalte der Art quelle und keine Seitenspalte als Text', () => {
+    const text = quelltext('StellenNachGruppe.vue')
+    expect(text).toContain("art: 'quelle'")
+    expect(SEITENSPALTE_ALS_TEXT.test(text)).toBe(false)
+  })
+
+  it('lib/stellen.ts baut die Schlüssel über belegSchluessel.sp', () => {
+    expect(quelltext('stellen.ts')).toContain('belegSchluessel.sp')
   })
 })

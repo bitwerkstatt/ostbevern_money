@@ -6,6 +6,7 @@ import { farbeFuerPb } from '@/charts/echartsTheme'
 import { euroKurz } from '@/charts/format'
 import { haushalt, investitionen, produkte } from '@/data/daten'
 import type { Massnahme } from '@/data/typen'
+import { belegSchluessel, findeBeleg } from '@/lib/quelle'
 import {
   ARTEN,
   baueGruppen,
@@ -264,6 +265,66 @@ describe('baueMassnahmenTabelle', () => {
     expect(tabelle.zeilen.every((z) => typeof z['produkt'] === 'string')).toBe(true)
   })
 
+  it('endet mit einer Quelle-Spalte der Art quelle und hat keine Textspalte PDF-Seite mehr', () => {
+    expect(tabelle.spalten.at(-1)).toEqual({
+      schluessel: 'quelle',
+      titel: 'Quelle',
+      art: 'quelle',
+    })
+    expect(tabelle.spalten.some((s) => s.titel === 'PDF-Seite')).toBe(false)
+  })
+
+  it('jede Zeile trägt einen auflösbaren inv-Schlüssel', () => {
+    for (const zeile of tabelle.zeilen) {
+      const schluessel = String(zeile['quelle'])
+      expect(schluessel.startsWith('inv:'), schluessel).toBe(true)
+      expect(findeBeleg(schluessel), schluessel).not.toBeNull()
+    }
+  })
+
+  it('eine Maßnahme mit mehreren Konten nennt die Herleitung, eine mit einem Konto nicht', () => {
+    const kontenJe = new Map<string, number>()
+    for (const m of investitionen.massnahmen.filter((z) => z.richtung === 'auszahlung')) {
+      const schluessel = `${m.produkt}/${m.massnahme_id}`
+      kontenJe.set(schluessel, (kontenJe.get(schluessel) ?? 0) + 1)
+    }
+    expect([...kontenJe.values()].some((n) => n > 1)).toBe(true)
+    for (const zeile of tabelle.zeilen) {
+      const n = kontenJe.get(String(zeile['schluessel'])) ?? 0
+      expect(n, String(zeile['schluessel'])).toBeGreaterThan(0)
+      if (n > 1) {
+        expect(zeile['quelleHerleitung'], String(zeile['schluessel'])).toBe(
+          'Summe aller Konten dieser Maßnahme',
+        )
+      } else {
+        expect(zeile['quelleHerleitung'], String(zeile['schluessel'])).toBeUndefined()
+      }
+    }
+  })
+
+  it('bei mehreren Konten gilt der Schlüssel der Zeile mit der größten Auszahlung im Haushaltsjahr', () => {
+    const werte = (haushaltsjahr: number | null): (number | null)[] =>
+      haushalt.jahre.map((_, i) => (i === planAb ? haushaltsjahr : null))
+    const [eintrag] = buendeln(
+      [
+        massnahme({ konto: '781000', werte: werte(100) }),
+        massnahme({ konto: '782000', werte: werte(900) }),
+        massnahme({ konto: '783000', werte: werte(null) }),
+      ],
+      planAb,
+    )
+    const zeile = baueMassnahmenTabelle(eintrag === undefined ? [] : [eintrag]).zeilen[0]
+    expect(zeile?.['quelle']).toBe(belegSchluessel.inv('000000', 'TEST1', '782000', 'auszahlung'))
+    expect(zeile?.['quelleHerleitung']).toBe('Summe aller Konten dieser Maßnahme')
+  })
+
+  it('eine Maßnahme mit einem Konto trägt den Schlüssel ihres Kontos ohne Herleitung', () => {
+    const [eintrag] = buendeln([massnahme({ konto: '785111' })], planAb)
+    const zeile = baueMassnahmenTabelle(eintrag === undefined ? [] : [eintrag]).zeilen[0]
+    expect(zeile?.['quelle']).toBe(belegSchluessel.inv('000000', 'TEST1', '785111', 'auszahlung'))
+    expect(zeile?.['quelleHerleitung']).toBeUndefined()
+  })
+
   it('lässt fehlende Jahreswerte leer (null) statt 0', () => {
     const [eintrag] = buendeln([massnahme({ werte: [null, 5] })], 0)
     expect(eintrag).toBeDefined()
@@ -285,6 +346,8 @@ describe('ergebnisText (WR-02, INV-01)', () => {
       jahre: [summe],
       summe,
       pdfSeite: 1,
+      beleg: 'inv:000000:T:780000:auszahlung',
+      anzahlKonten: 1,
     }
   }
 
