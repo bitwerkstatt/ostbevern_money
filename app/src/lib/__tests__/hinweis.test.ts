@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
+import { texte } from '@/data/daten'
+import { GLOSSAR_SCHLUESSEL } from '@/lib/glossar'
 import { findeText } from '@/lib/texte'
 
 // Strukturprüfung der Hinweisbox „Was nicht im Haushalt steht“ (UI-04, D-18). Die Quelltexte
@@ -134,5 +136,34 @@ describe('HinweisNichtImHaushalt auf /ausgaben (UI-04, D-18)', () => {
     )
     expect(saetze.length).toBeGreaterThan(0)
     expect(saetze.filter((satz) => /\d/.test(satz))).toEqual([])
+  })
+})
+
+describe('Glossaranker nicht_im_haushalt (UI-04, D-18)', () => {
+  it('steht im Tupel GLOSSAR_SCHLUESSEL', () => {
+    const bekannt: readonly string[] = GLOSSAR_SCHLUESSEL
+    expect(bekannt).toContain('nicht_im_haushalt')
+  })
+
+  it('steht als Begriff in texte.glossar und nennt mindestens eine PDF-Seite', () => {
+    const begriff = texte.glossar.find((eintrag) => eintrag.schluessel === 'nicht_im_haushalt')
+    expect(begriff).toBeDefined()
+    expect(begriff?.quelle_seiten.length ?? 0).toBeGreaterThan(0)
+  })
+
+  it('die Kurzform und die langen Varianten der Seiten verlinken denselben Anker', () => {
+    // Die drei Platzierungen (ausgaben, einnahmen, kurz) teilen sich eine Komponente und damit
+    // einen Anker; die Seitenprüfungen oben belegen die Platzierung je Seite.
+    const plaetze = [
+      ['/src/pages/AusgabenPage.vue', 'variante="ausgaben"'],
+      ['/src/pages/EinnahmenPage.vue', 'variante="einnahmen"'],
+      ['/src/pages/RatEntscheidetPage.vue', 'variante="kurz"'],
+    ] as const
+    for (const [pfad, variante] of plaetze) {
+      const seite = quelltext(pfad)
+      expect(seite, pfad).toContain('<HinweisNichtImHaushalt')
+      expect(seite, pfad).toContain(variante)
+    }
+    expect(quelltext(KOMPONENTE)).toContain('#nicht_im_haushalt')
   })
 })
