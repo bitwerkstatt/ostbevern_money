@@ -230,7 +230,7 @@ function beschreibung(gruppe: GruppeAnsicht): string {
 
 .om-zuschuesse__untertitel {
   margin: 0;
-  font-size: var(--wa-font-size-m);
+  font-size: var(--wa-font-size-l);
   font-weight: var(--wa-font-weight-bold);
   line-height: var(--wa-line-height-condensed);
   hyphens: auto;

@@ -29,7 +29,10 @@ const sprungmarken = glossarBegriffe().map((begriff) => ({
     </ul>
   </nav>
 
-  <GlossarListe />
+  <section aria-labelledby="glossar-begriffe">
+    <h2 id="glossar-begriffe" class="om-glossar-produkte">Begriffe</h2>
+    <GlossarListe />
+  </section>
 
   <wa-divider class="om-glossar-trenner"></wa-divider>
 
@@ -59,8 +62,8 @@ const sprungmarken = glossarBegriffe().map((begriff) => ({
 
 .om-glossar-produkte {
   margin: 0 0 var(--wa-space-l);
-  font-size: var(--wa-font-size-xl);
-  font-weight: var(--wa-font-weight-semibold);
+  font-size: var(--wa-font-size-l);
+  font-weight: var(--wa-font-weight-bold);
   line-height: var(--wa-line-height-condensed);
 }
 

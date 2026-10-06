@@ -238,7 +238,7 @@ onBeforeUnmount(() => {
 
 .om-site-name {
   font-size: var(--wa-font-size-l);
-  font-weight: 600;
+  font-weight: var(--wa-font-weight-bold);
   text-decoration: none;
   overflow-wrap: anywhere;
 }
@@ -263,7 +263,7 @@ onBeforeUnmount(() => {
 /* Der aktive Eintrag fällt nie nur durch die Farbe auf: Gewicht und Unterstreichung kommen dazu. */
 .om-nav a[aria-current='page'] {
   color: var(--wa-color-brand-40);
-  font-weight: 600;
+  font-weight: var(--wa-font-weight-bold);
   text-decoration: underline;
   text-underline-offset: 0.25em;
 }
@@ -318,7 +318,7 @@ onBeforeUnmount(() => {
   align-items: flex-start;
   gap: var(--wa-space-2xs);
   font-size: var(--wa-font-size-s);
-  font-weight: var(--wa-font-weight-body);
+  font-weight: var(--wa-font-weight-normal);
   line-height: 1.5;
   color: var(--wa-color-text-quiet);
 }
@@ -334,7 +334,7 @@ onBeforeUnmount(() => {
 }
 
 .om-extern-icon {
-  margin-inline-start: var(--wa-space-3xs);
+  margin-inline-start: var(--wa-space-2xs);
   vertical-align: -0.125em;
 }
 

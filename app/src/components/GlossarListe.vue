@@ -44,7 +44,7 @@ function fokussiereUeberschrift(ereignis: FocusEvent) {
 .om-glossar-liste {
   display: flex;
   flex-direction: column;
-  gap: var(--wa-space-2xl);
+  gap: var(--wa-space-xl);
 }
 
 .om-glossar-liste__begriff {
@@ -65,7 +65,7 @@ function fokussiereUeberschrift(ereignis: FocusEvent) {
 .om-glossar-liste__begriff h3 {
   margin: 0;
   font-size: var(--wa-font-size-l);
-  font-weight: var(--wa-font-weight-semibold);
+  font-weight: var(--wa-font-weight-bold);
   line-height: var(--wa-line-height-condensed);
   hyphens: auto;
   overflow-wrap: break-word;
@@ -74,7 +74,7 @@ function fokussiereUeberschrift(ereignis: FocusEvent) {
 /* Ziel-Begriff: sichtbarer Fokusrahmen von 2 px, auch nach Mausklick auf einen Sprunglink. */
 .om-glossar-liste__begriff h3:focus {
   outline: 2px solid var(--wa-color-focus);
-  outline-offset: var(--wa-space-3xs);
+  outline-offset: var(--wa-space-2xs);
   border-radius: var(--wa-border-radius-s);
 }
 
