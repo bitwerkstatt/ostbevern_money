@@ -4,7 +4,7 @@
 // Schlüssel in den Daten, wirft die Funktion mit dem Namen des Schlüssels statt still auf 0 oder
 // eine Ersatzzahl zu fallen.
 
-import { euro, euroKurz, KEIN_WERT } from '@/charts/format'
+import { euro, euroKurz, KEIN_WERT, prozent } from '@/charts/format'
 import { haushalt } from '@/data/daten'
 
 /** Ein Wert je Jahr mit Wertart und Quellseite; die Reihen liegen in der Reihenfolge von `haushalt.jahre`. */
@@ -183,25 +183,117 @@ export interface EntwicklungPosten {
   erklaertext: string | null
 }
 
-/** Die fünf Posten (Gerüst, folgt im GREEN-Commit). */
-export const ENTWICKLUNG_POSTEN: readonly EntwicklungPosten[] = []
+/**
+ * Die fünf Posten in der Reihenfolge der Seite (D-12). Dieselben Quellen wie /einnahmen und
+ * /ausgaben für dasselbe Jahr: Gewerbesteuer und Schlüsselzuweisung aus dem Vorbericht, die
+ * Kreisumlage aus der Vorbericht-Tabelle der Transferaufwendungen (dieselbe Abschrift wie der
+ * Unterposten der Weitergabe an Kreis und Land), Personal und Zinsen eurogenau aus dem
+ * Gesamtergebnisplan. Der Erklärtext der Kreisumlage nennt Brutto und Netto (Pitfall 6).
+ */
+export const ENTWICKLUNG_POSTEN: readonly EntwicklungPosten[] = [
+  {
+    schluessel: 'kreisumlage',
+    titel: 'Kreisumlage',
+    quelle: { art: 'vorbericht', tabelle: 'transferaufwendungen', posten: 'kreisumlage' },
+    erklaertext: 'kreisumlage',
+  },
+  {
+    schluessel: 'gewerbesteuer',
+    titel: 'Gewerbesteuer',
+    quelle: { art: 'vorbericht', tabelle: 'steuerarten', posten: 'gewerbesteuer' },
+    erklaertext: null,
+  },
+  {
+    schluessel: 'schluesselzuweisung',
+    titel: 'Schlüsselzuweisung',
+    quelle: { art: 'vorbericht', tabelle: 'zuwendungen', posten: 'schluesselzuweisung' },
+    erklaertext: null,
+  },
+  {
+    schluessel: 'personal',
+    titel: 'Personalaufwand',
+    quelle: { art: 'gep', zeile: 'personalaufwendungen' },
+    erklaertext: null,
+  },
+  {
+    schluessel: 'zinsen',
+    titel: 'Zinsen',
+    quelle: { art: 'gep', zeile: 'zinsaufwendungen' },
+    erklaertext: null,
+  },
+]
 
-/** Jahresreihe eines Postens (Gerüst, folgt im GREEN-Commit). */
-export function bauePostenReihe(_schluessel: string): Jahreswert[] {
-  return []
+/**
+ * Jahreswerte eines Postens, je Jahr aus `haushalt.jahre` einer (nie ein Grundzahl-Jahr, D-12).
+ * Vorbericht-Werte sind T€ × 1000 und tragen `gerundet`; GEP-Zeilen sind eurogenau.
+ */
+export function bauePostenReihe(schluessel: string): Jahreswert[] {
+  const posten = ENTWICKLUNG_POSTEN.find((eintrag) => eintrag.schluessel === schluessel)
+  if (posten === undefined) {
+    throw new Error(`Unbekannter Entwicklungs-Posten: ${schluessel}`)
+  }
+  const quelle = posten.quelle
+  if (quelle.art === 'gep') {
+    return gepZeile(quelle.zeile)
+  }
+  const tabelle = haushalt.vorbericht[quelle.tabelle]
+  if (tabelle === undefined) {
+    throw new Error(`Vorberichtstabelle „${quelle.tabelle}“ fehlt in haushalt.json`)
+  }
+  const eintrag = tabelle.posten.find((kandidat) => kandidat.posten === quelle.posten)
+  if (eintrag === undefined) {
+    throw new Error(`Posten ${quelle.posten} fehlt in vorbericht.${quelle.tabelle}`)
+  }
+  return jahresreihe(
+    `vorbericht.${quelle.tabelle}.${quelle.posten}`,
+    eintrag.werte,
+    eintrag.quelle,
+    eintrag.gerundet,
+  )
 }
 
-/** Relative Veränderung erstes zu letztes Jahr (Gerüst, folgt im GREEN-Commit). */
-export function veraenderung(_reihe: readonly Jahreswert[]): number | null {
-  return Number.NaN
+/**
+ * Relative Veränderung vom ersten zum letzten Jahr der Reihe: (letzter − erster) / erster.
+ * `null`, wenn der Ausgangswert fehlt oder 0 ist oder der Endwert fehlt, damit nie NaN oder ∞ entsteht.
+ */
+export function veraenderung(reihe: readonly Jahreswert[]): number | null {
+  const erster = reihe[0]?.wert
+  const letzter = reihe[reihe.length - 1]?.wert
+  if (erster === undefined || erster === null || erster === 0) {
+    return null
+  }
+  if (letzter === undefined || letzter === null) {
+    return null
+  }
+  return (letzter - erster) / erster
 }
 
-/** Anzeige der Veränderung (Gerüst, folgt im GREEN-Commit). */
-export function veraenderungText(_wert: number | null): string {
-  return ''
+/**
+ * Anzeige der Veränderung: „+14,2 %“, „−5 %“ (Minuszeichen U+2212), „–“ ohne Wert. Ergibt der
+ * Betrag in der Anzeige 0, steht keine Richtung davor.
+ */
+export function veraenderungText(wert: number | null): string {
+  if (wert === null || !Number.isFinite(wert)) {
+    return KEIN_WERT
+  }
+  const betrag = prozent(Math.abs(wert))
+  const zeigtNull = Number(betrag.replace(/[\s%]/g, '').replace(',', '.')) === 0
+  if (zeigtNull) {
+    return betrag
+  }
+  return `${wert > 0 ? '+' : '−'}${betrag}`
 }
 
-/** Quellenzeile eines Postens (Gerüst, folgt im GREEN-Commit). */
-export function postenFussnote(_posten: EntwicklungPosten, _reihe: readonly Jahreswert[]): string {
-  return ''
+const QUELLEN_NAMEN: Readonly<Record<PostenQuelle['art'], string>> = {
+  vorbericht: 'Vorbericht',
+  gep: 'Gesamtergebnisplan',
+}
+
+/** Quellenzeile eines Postens: „Quelle: Vorbericht, PDF-Seite {n}“ bzw. Gesamtergebnisplan. */
+export function postenFussnote(posten: EntwicklungPosten, reihe: readonly Jahreswert[]): string {
+  const seite = reihe.find((eintrag) => eintrag.pdfSeite !== null)?.pdfSeite
+  const name = QUELLEN_NAMEN[posten.quelle.art]
+  return seite === undefined || seite === null
+    ? `Quelle: ${name}`
+    : `Quelle: ${name}, PDF-Seite ${String(seite)}`
 }

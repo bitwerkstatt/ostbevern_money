@@ -7,7 +7,8 @@ import ErklaerText from '@/components/ErklaerText.vue'
 import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import { haushalt } from '@/data/daten'
-import { baueErgebnisReihen } from '@/lib/entwicklung'
+import PostenZeitreihe from '@/components/PostenZeitreihe.vue'
+import { ENTWICKLUNG_POSTEN, baueErgebnisReihen, bauePostenReihe } from '@/lib/entwicklung'
 
 // Die Seite zeigt immer alle ausgewiesenen Jahre, ohne Jahr-Umschalter (UI-SPEC Routes).
 // Erstes und letztes Jahr kommen aus den Daten, nie aus dem Quelltext.
@@ -24,6 +25,14 @@ const ERGEBNIS_UNTERTITEL =
 
 const ergebnisplanSeite = baueErgebnisReihen().ertraege[0]?.pdfSeite
 const ergebnisplanQuelle = ergebnisplanSeite == null ? undefined : { seite: ergebnisplanSeite }
+
+/** Die fünf Posten-Karten mit ihrer Quellseite (erste Seite, die die Reihe nennt). */
+const karten = ENTWICKLUNG_POSTEN.map((posten) => {
+  const seite = bauePostenReihe(posten.schluessel).find(
+    (punkt) => punkt.pdfSeite !== null,
+  )?.pdfSeite
+  return { posten, pdf: seite == null ? undefined : { seite } }
+})
 </script>
 
 <template>
@@ -55,6 +64,20 @@ const ergebnisplanQuelle = ergebnisplanSeite == null ? undefined : { seite: erge
         <ErklaerText schluessel="globaler_minderaufwand" :ueberschrift="false" />
       </wa-callout>
     </section>
+
+    <section class="om-entwicklung__abschnitt" aria-labelledby="om-entwicklung-posten">
+      <h2 id="om-entwicklung-posten">Wichtige Posten im Verlauf</h2>
+      <div class="om-entwicklung__raster">
+        <ChartCard
+          v-for="karte in karten"
+          :key="karte.posten.schluessel"
+          :titel="karte.posten.titel"
+          :pdf="karte.pdf"
+        >
+          <PostenZeitreihe :posten="karte.posten" />
+        </ChartCard>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -71,6 +94,23 @@ const ergebnisplanQuelle = ergebnisplanSeite == null ? undefined : { seite: erge
   display: flex;
   flex-direction: column;
   gap: var(--wa-space-m);
+}
+
+.om-entwicklung__raster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--wa-space-m);
+}
+
+/* Ab 700 px laufen die Karten in zwei oder mehr Spalten, darunter in einer. */
+@media (min-width: 700px) {
+  .om-entwicklung__raster {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+.om-entwicklung__raster > * {
+  min-width: 0;
 }
 
 .om-entwicklung__callout {
