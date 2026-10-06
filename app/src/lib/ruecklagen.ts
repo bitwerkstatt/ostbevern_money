@@ -13,6 +13,7 @@
 // deckt, zuzüglich der Verrechnung der Bilanzierungshilfe (im Druck negativ gebucht). Er gehört zu
 // dem Jahr, dessen Spalte ihn berechnet, und wird auf den Bestand zu Jahresbeginn bezogen. Die
 // Regel ist dieselbe wie `_allgemeine_ruecklage_abbau` in `pipeline/ostbevern/texte.py`.
+// `rueckgangFormelText()` beschreibt diese Regel für die Fußnote auf /entwicklung aus denselben Konstanten.
 
 import { haushalt } from '@/data/daten'
 import type { Meta, VorberichtTabelle } from '@/data/typen'
@@ -36,7 +37,7 @@ export interface Ruecklagenzeile {
   allgemeine: number | null
   /** Ausgleichsrücklage, Bestand zu Jahresbeginn; `null` ohne Wert, eine echte 0 bleibt 0. */
   ausgleich: number | null
-  /** Summe der beiden Rücklagen (Wert über der Säule); `null`, wenn beide fehlen. */
+  /** Summe der beiden Rücklagen (Wert über der Säule); `null`, wenn eine der beiden Rücklagen fehlt; nie eine Teilsumme (WR-04). */
   summe: number | null
 }
 
@@ -80,8 +81,7 @@ export function baueRuecklagen(
       wertart: wertartAn(index),
       allgemeine,
       ausgleich,
-      summe:
-        allgemeine === null && ausgleich === null ? null : (allgemeine ?? 0) + (ausgleich ?? 0),
+      summe: allgemeine === null || ausgleich === null ? null : allgemeine + ausgleich,
     }
   })
 }
@@ -120,6 +120,36 @@ export function rueckgang(
     return null
   }
   return verlust / bestand
+}
+
+/** Gedruckter Name eines Postens; ein fehlender Posten ist ein Datenfehler und nennt seinen Schlüssel. */
+function postenName(tabelle: VorberichtTabelle, schluessel: string): string {
+  const eintrag = tabelle.posten.find((kandidat) => kandidat.posten === schluessel)
+  if (eintrag === undefined) {
+    throw new Error(`eigenkapital.posten.${schluessel} fehlt in haushalt.json`)
+  }
+  return eintrag.name
+}
+
+/** Wahr, wenn mindestens ein Jahr eine Verrechnung der Bilanzierungshilfe ungleich 0 trägt. */
+function hatVerrechnung(tabelle: VorberichtTabelle): boolean {
+  return postenWerte(tabelle, VERRECHNUNG).some((wert) => wert !== null && wert !== 0)
+}
+
+/**
+ * Die Beschreibung von `abbau()` und `rueckgang()` für die Fußnote der Rücklagentabelle (CR-01, S. 23,
+ * S. 311): ein Satzteil ohne Zahlen, der jeden Term der Formel nennt. Er entsteht neben der Formel
+ * aus denselben Posten-Konstanten, damit Text und Rechnung nicht auseinanderlaufen. Die Verrechnung
+ * erscheint genau dann, wenn die Daten sie in mindestens einem Jahr ungleich 0 führen, und mit dem
+ * gedruckten Postennamen der Eigenkapitalübersicht.
+ */
+export function rueckgangFormelText(tabelle: VorberichtTabelle = haushalt.eigenkapital): string {
+  // Immer lesen, damit ein fehlender Posten auch ohne Verrechnung als Datenfehler auffällt.
+  const verrechnungsName = postenName(tabelle, VERRECHNUNG)
+  const verrechnung = hatVerrechnung(tabelle)
+    ? `, zuzüglich der Verrechnung aus der Zeile „${verrechnungsName}“`
+    : ''
+  return `der Fehlbetrag des Jahres, soweit die Ausgleichsrücklage ihn nicht deckt${verrechnung}, geteilt durch die allgemeine Rücklage zu Jahresbeginn.`
 }
 
 export interface HskSchwellen {
