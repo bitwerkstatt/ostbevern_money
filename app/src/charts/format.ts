@@ -49,6 +49,10 @@ export function zahl(wert: number): string {
   return ZAHL_FORMAT.format(wert)
 }
 
+export function anzahlText(_anzahl: number, _einzahl: string, _mehrzahl: string): string {
+  return ''
+}
+
 /** Jahreszahl ohne Tausendertrennung, z. B. "2026" (nicht "2.026", CR-01). */
 export function jahr(wert: number): string {
   return JAHR_FORMAT.format(wert)

@@ -3,6 +3,7 @@ import { createMemoryHistory, createRouter } from 'vue-router'
 import { describe, expect, it } from 'vitest'
 
 import { farbeFuerPb } from '@/charts/echartsTheme'
+import { euroKurz } from '@/charts/format'
 import { haushalt, investitionen, produkte } from '@/data/daten'
 import type { Massnahme } from '@/data/typen'
 import {
@@ -12,6 +13,7 @@ import {
   baueVorhaben,
   bereinigteMassnahmenQuery,
   buendeln,
+  ergebnisText,
   filterArt,
   GROESSTE_ANZAHL,
   klickIndex,
@@ -20,6 +22,7 @@ import {
   planjahre,
   useMassnahmenFilter,
   type Art,
+  type Vorhaben,
 } from '@/lib/investitionen'
 
 // Alle Erwartungen stammen aus den App-Daten (Finanzplan-Zeilen, Planjahre), nicht aus
@@ -267,6 +270,66 @@ describe('baueMassnahmenTabelle', () => {
     const zeilen = baueMassnahmenTabelle(eintrag === undefined ? [] : [eintrag]).zeilen
     const jahresSchluessel = tabelle.spalten[3]?.schluessel ?? ''
     expect(zeilen[0]?.[jahresSchluessel]).toBeNull()
+  })
+})
+
+describe('ergebnisText (WR-02, INV-01)', () => {
+  function vorhabenMit(summe: number): Vorhaben {
+    return {
+      schluessel: `000000/T${summe}`,
+      produkt: '000000',
+      massnahmeId: `T${summe}`,
+      name: 'Testmaßnahme',
+      pb: '01',
+      arten: ['bau'],
+      jahre: [summe],
+      summe,
+      pdfSeite: 1,
+    }
+  }
+
+  it('nennt für keine Maßnahme den Plural', () => {
+    expect(ergebnisText([])).toBe(`0 Maßnahmen · zusammen ${euroKurz(0)}`)
+  })
+
+  it('nennt für genau eine Maßnahme den Singular', () => {
+    expect(ergebnisText([vorhabenMit(500000)])).toBe(`1 Maßnahme · zusammen ${euroKurz(500000)}`)
+  })
+
+  it('nennt für zwei Maßnahmen den Plural mit der Summe', () => {
+    expect(ergebnisText([vorhabenMit(500000), vorhabenMit(1500000)])).toBe(
+      `2 Maßnahmen · zusammen ${euroKurz(2000000)}`,
+    )
+  })
+
+  it('nutzt für jede echte Filterkombination den Singular nur bei genau einer Maßnahme', () => {
+    const pbs: (string | null)[] = [null, ...MASSNAHMEN_AUFGABENBEREICHE.map((b) => b.code)]
+    const arten: (Art | null)[] = [null, ...ARTEN.map((a) => a.art)]
+    for (const pb of pbs) {
+      for (const art of arten) {
+        const vorhaben = baueVorhaben({ pb, art })
+        const text = ergebnisText(vorhaben)
+        const kontext = `pb=${String(pb)} art=${String(art)}`
+        if (vorhaben.length === 1) {
+          expect(text, kontext).toMatch(/^1 Maßnahme ·/)
+        } else {
+          expect(text, kontext).toContain(' Maßnahmen ·')
+        }
+      }
+    }
+  })
+
+  describe.runIf(haushalt.haushaltsjahr === 2026)('Jahrgang 2026', () => {
+    it.each([
+      [{ pb: '04', art: null }],
+      [{ pb: '15', art: null }],
+      [{ pb: '13', art: 'grundstuecke' }],
+      [{ pb: '06', art: 'bau' }],
+    ] as const)('liest bei genau einer Maßnahme „1 Maßnahme“ (%j)', (auswahl) => {
+      const vorhaben = baueVorhaben({ pb: auswahl.pb, art: auswahl.art })
+      expect(vorhaben).toHaveLength(1)
+      expect(ergebnisText(vorhaben)).toMatch(/^1 Maßnahme ·/)
+    })
   })
 })
 

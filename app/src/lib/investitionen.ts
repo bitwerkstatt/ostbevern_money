@@ -175,6 +175,10 @@ export function baueVorhaben(auswahl: Auswahl): Vorhaben[] {
   return baueGruppen(auswahl).filter((eintrag) => eintrag.summe !== 0)
 }
 
+export function ergebnisText(_vorhaben: readonly Vorhaben[]): string {
+  return ''
+}
+
 /** Name des Aufgabenbereichs (PB) einer Maßnahme; ohne Knoten der Code. */
 export function aufgabenbereichName(pb: string): string {
   return findeKnoten(pb)?.name ?? pb
