@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } fro
 import { useRoute, type RouteLocationRaw } from 'vue-router'
 
 import type { MenueGruppe, MenueLink } from '@/lib/menue'
+import { listenVersatz, randAusMaximalbreite } from '@/lib/menueVersatz'
 
 // Disclosure-Gruppe im Kopfmenü (D-19): ein Schalter mit `aria-expanded` und eine Linkliste
 // aus echten Links. Bewusst keine Menü-Rolle und kein `wa-dropdown`: es ist Seitennavigation,
@@ -30,23 +31,28 @@ function schliesse() {
   offen.value = false
 }
 
-/** Hält die geöffnete Liste innerhalb des Fensters (`max-width` der Liste legt den Rand fest). */
+/**
+ * Hält die geöffnete Liste innerhalb des Fensters (`max-width` der Liste legt den Rand fest).
+ * Misst einmal und weist den absoluten Versatz zu, unabhängig vom vorherigen (WR-01): das
+ * gemessene Rechteck trägt den inline gesetzten Versatz (`style.left`) auch dann, wenn Vue
+ * einen neueren reaktiven Wert noch nicht geschrieben hat.
+ */
 function positioniere() {
   const element = liste.value
   if (element === null) {
     return
   }
-  versatz.value = 0
   const breite = document.documentElement.clientWidth
-  const maximal = parseFloat(getComputedStyle(element).maxWidth)
-  const rand = Number.isNaN(maximal) ? 0 : (breite - maximal) / 2
+  const rand = randAusMaximalbreite(breite, getComputedStyle(element).maxWidth)
+  const angewandt = parseFloat(element.style.left)
   const kasten = element.getBoundingClientRect()
-  if (kasten.right > breite - rand) {
-    versatz.value = breite - rand - kasten.right
-  }
-  if (kasten.left + versatz.value < rand) {
-    versatz.value = rand - kasten.left
-  }
+  versatz.value = listenVersatz({
+    links: kasten.left,
+    rechts: kasten.right,
+    angewandterVersatz: Number.isNaN(angewandt) ? 0 : angewandt,
+    fensterbreite: breite,
+    rand,
+  })
 }
 
 async function wechsle() {
