@@ -243,7 +243,7 @@ const gruppenQuelle = `Stellenplan, ${seitenText(
 
 .om-stellenplan__gruppe h3 {
   margin: 0 0 var(--wa-space-s);
-  font-size: var(--wa-font-size-m);
+  font-size: var(--wa-font-size-l);
   font-weight: var(--wa-font-weight-bold);
   line-height: var(--wa-line-height-condensed);
   hyphens: auto;

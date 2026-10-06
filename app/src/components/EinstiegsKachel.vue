@@ -24,7 +24,7 @@ defineProps<{
         <wa-button
           class="om-einstieg__cta"
           variant="brand"
-          size="large"
+          size="l"
           :href="href"
           @click="navigate"
           >{{ cta }}</wa-button

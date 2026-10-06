@@ -66,61 +66,153 @@ describe('verwendeteTokens und definierteTokens (Fail-first)', () => {
   })
 })
 
-// Typografie-Vertrag der Phase 6: UI-SPEC 06 §Typography erlaubt nur vier Schriftgrößen und zwei
-// Gewichte (Befund aus 06-UI-REVIEW, Säule 4). Die Phase-5-Dateien GlossarPage.vue,
-// GlossarListe.vue und EinnahmenPage.vue fehlen hier mit Absicht, ihre Bereinigung ist Phase 7.
-const PHASE_6_TYPOGRAFIE_DATEIEN = [
-  '/src/pages/EntwicklungPage.vue',
-  '/src/pages/InvestitionenPage.vue',
-  '/src/pages/RatEntscheidetPage.vue',
-  '/src/components/ZuschussListe.vue',
-  '/src/components/UeberschussListe.vue',
-  '/src/components/NichtBeeinflussbarBlock.vue',
-] as const
+// Typografie- und Abstandsvertrag (UI-SPEC 06 und 07, Befund aus 05-/06-UI-REVIEW, D-17): Die
+// App kennt vier Schriftgrößen und zwei Gewichte. Der Wächter prüft die Style-Blöcke jeder
+// .vue-Datei und jede .css-Datei unter src/, nicht eine Liste benannter Dateien. .ts-Dateien
+// bleiben draußen: Die ECharts-Option `fontSize` ist kein CSS.
+const ERLAUBTE_SCHRIFTGROESSEN: readonly string[] = ['s', 'm', 'l', '2xl']
+const ERLAUBTE_GEWICHTE: readonly string[] = ['normal', 'bold']
+const VERBOTENE_SPACING_TOKENS: readonly string[] = [
+  '--wa-space-3xs',
+  '--wa-space-2xl',
+  '--wa-space-5xl',
+]
 
-const VERBOTENE_TYPOGRAFIE_TOKENS: ReadonlySet<string> = new Set([
-  '--wa-font-size-xl',
-  '--wa-font-weight-semibold',
-])
-
-/** Die verbotenen Größen- und Gewichts-Tokens, die der Text benutzt (sortiert, ohne Doppelte). */
-function verboteneTypografieTokens(text: string): string[] {
-  return Array.from(new Set(verwendeteTokens(text)))
-    .filter((name) => VERBOTENE_TYPOGRAFIE_TOKENS.has(name))
-    .sort()
+/** Der Inhalt aller `<style>`-Blöcke einer Vue-Datei (Template und Script bleiben unberücksichtigt). */
+function styleBloecke(vueText: string): string {
+  return Array.from(
+    vueText.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g),
+    (treffer) => treffer[1]!,
+  ).join('\n')
 }
 
-describe('verboteneTypografieTokens (Fail-first)', () => {
-  it('meldet die verbotene Größe und das verbotene Gewicht', () => {
-    const text = 'font-size: var(--wa-font-size-xl); font-weight: var(--wa-font-weight-semibold)'
-    expect(verboteneTypografieTokens(text)).toEqual([
-      '--wa-font-size-xl',
-      '--wa-font-weight-semibold',
-    ])
+/** Die CSS-Teile einer Datei: bei .vue die Style-Blöcke, bei .css der ganze Text. */
+function cssTeil(pfad: string, text: string): string {
+  return pfad.endsWith('.vue') ? styleBloecke(text) : text
+}
+
+/** Die Deklarationswerte einer Eigenschaft (`font-size`, nicht `--x-font-size`). */
+function deklarationen(css: string, eigenschaft: string): string[] {
+  const muster = new RegExp(`(?<![-\\w])${eigenschaft}\\s*:\\s*([^;}]+)`, 'g')
+  return Array.from(css.matchAll(muster), (treffer) => treffer[1]!.trim())
+}
+
+/** Ob der Wert genau `var(--wa-<familie>-<stufe>)` mit einer erlaubten Stufe ist. */
+function istErlaubterToken(wert: string, familie: string, erlaubt: readonly string[]): boolean {
+  const treffer = new RegExp(`^var\\(\\s*--wa-${familie}-([a-z0-9]+)\\s*\\)$`).exec(wert)
+  return treffer !== null && erlaubt.includes(treffer[1]!)
+}
+
+/** Alle Verstöße gegen den Typografie- und Abstandsvertrag in einem CSS-Text. */
+function verstoesse(css: string): string[] {
+  const meldungen: string[] = []
+  for (const wert of deklarationen(css, 'font-size')) {
+    if (!istErlaubterToken(wert, 'font-size', ERLAUBTE_SCHRIFTGROESSEN)) {
+      meldungen.push(`font-size: ${wert}`)
+    }
+  }
+  for (const wert of deklarationen(css, 'font-weight')) {
+    if (!istErlaubterToken(wert, 'font-weight', ERLAUBTE_GEWICHTE)) {
+      meldungen.push(`font-weight: ${wert}`)
+    }
+  }
+  for (const token of VERBOTENE_SPACING_TOKENS) {
+    if (new RegExp(`var\\(\\s*${token}(?![a-z0-9-])`).test(css)) {
+      meldungen.push(token)
+    }
+  }
+  return meldungen
+}
+
+describe('styleBloecke (Fail-first)', () => {
+  it('liefert nur den Inhalt der Style-Blöcke', () => {
+    const text = [
+      '<script setup lang="ts">const a = "font-size: 18px"</script>',
+      '<template><p style="font-size: 18px">x</p></template>',
+      '<style scoped>.a { gap: var(--wa-space-s); }</style>',
+      '<style>.b { color: red; }</style>',
+    ].join('\n')
+    const css = styleBloecke(text)
+    expect(css).toContain('gap: var(--wa-space-s)')
+    expect(css).toContain('color: red')
+    expect(css).not.toContain('18px')
   })
 
-  it('lässt die erlaubten Tokens durch, auch --wa-font-size-2xl', () => {
-    const text = [
-      'font-size: var(--wa-font-size-2xl)',
-      'font-size: var(--wa-font-size-l)',
-      'font-size: var(--wa-font-size-m)',
-      'font-weight: var(--wa-font-weight-bold)',
-    ].join('; ')
-    expect(verboteneTypografieTokens(text)).toEqual([])
+  it('liefert für eine Datei ohne Style-Block einen leeren Text', () => {
+    expect(styleBloecke('<template><p>x</p></template>')).toBe('')
   })
 })
 
-describe('Typografie der Phase-6-Dateien (UI-SPEC 06)', () => {
-  it('findet alle sechs Phase-6-Dateien in den Quelltexten', () => {
-    expect(Object.keys(quelltexte)).toEqual(expect.arrayContaining([...PHASE_6_TYPOGRAFIE_DATEIEN]))
+describe('verstoesse (Fail-first)', () => {
+  it('meldet ein Schriftgrößen-Literal', () => {
+    expect(verstoesse('font-size: 18px')).toEqual(['font-size: 18px'])
   })
 
-  it.each(PHASE_6_TYPOGRAFIE_DATEIEN)(
-    '%s benutzt nur erlaubte Schriftgrößen und Gewichte',
-    (pfad) => {
-      expect(verboteneTypografieTokens(quelltexte[pfad] ?? '')).toEqual([])
+  it('meldet ein Gewichts-Literal', () => {
+    expect(verstoesse('font-weight: 600')).toEqual(['font-weight: 600'])
+  })
+
+  it('meldet das Schlüsselwort bold als Gewichts-Literal', () => {
+    expect(verstoesse('font-weight: bold')).toEqual(['font-weight: bold'])
+  })
+
+  it.each([
+    ['font-size: var(--wa-font-size-xl)', 'font-size: var(--wa-font-size-xl)'],
+    ['font-weight: var(--wa-font-weight-semibold)', 'font-weight: var(--wa-font-weight-semibold)'],
+    ['font-weight: var(--wa-font-weight-body)', 'font-weight: var(--wa-font-weight-body)'],
+  ])('meldet den nicht erlaubten Token in %s', (css, meldung) => {
+    expect(verstoesse(css)).toEqual([meldung])
+  })
+
+  it.each(['--wa-space-2xl', '--wa-space-3xs', '--wa-space-5xl'])(
+    'meldet den Abstands-Token %s',
+    (token) => {
+      expect(verstoesse(`gap: var(${token})`)).toEqual([token])
     },
   )
+
+  it('lässt die erlaubten Tokens durch, auch --wa-font-size-2xl und --wa-space-s', () => {
+    const css =
+      'font-size: var(--wa-font-size-2xl); font-weight: var(--wa-font-weight-bold); gap: var(--wa-space-s)'
+    expect(verstoesse(css)).toEqual([])
+  })
+
+  it('hält eine Custom Property mit font-size im Namen nicht für die Eigenschaft', () => {
+    expect(verstoesse('--om-font-size: 18px')).toEqual([])
+  })
+})
+
+describe('Typografie und Abstände aller Dateien (D-17, UI-SPEC 07)', () => {
+  const cssDateien = appDateien
+    .filter(([pfad]) => pfad.endsWith('.vue') || pfad.endsWith('.css'))
+    .map(([pfad, text]) => [pfad, cssTeil(pfad, text)] as const)
+    .sort(([a], [b]) => a.localeCompare(b))
+
+  it('sieht alle .vue- und .css-Dateien der App', () => {
+    expect(cssDateien.length).toBeGreaterThan(40)
+  })
+
+  it.each(cssDateien)('%s hält Schriftgrößen, Gewichte und Abstände ein', (_pfad, css) => {
+    expect(verstoesse(css)).toEqual([])
+  })
+})
+
+describe('Überschriften-Rolle der Unterüberschriften (D-18)', () => {
+  /** Der Regelrumpf zu einem Selektor in einem CSS-Text. */
+  function regelrumpf(css: string, selektor: string): string {
+    const anfang = css.indexOf(`${selektor} {`)
+    return anfang === -1 ? '' : css.slice(anfang, css.indexOf('}', anfang))
+  }
+
+  it.each([
+    ['/src/pages/StellenplanPage.vue', '.om-stellenplan__gruppe h3'],
+    ['/src/components/ZuschussListe.vue', '.om-zuschuesse__untertitel'],
+  ])('%s: %s hat die Überschriften-Rolle', (pfad, selektor) => {
+    const regel = regelrumpf(styleBloecke(quelltexte[pfad] ?? ''), selektor)
+    expect(regel).toContain('font-size: var(--wa-font-size-l)')
+    expect(regel).toContain('font-weight: var(--wa-font-weight-bold)')
+    expect(regel).toContain('line-height: var(--wa-line-height-condensed)')
+  })
 })
 
 describe('Stiltokens der App (G-05-6)', () => {
