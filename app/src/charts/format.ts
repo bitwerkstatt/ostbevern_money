@@ -49,8 +49,13 @@ export function zahl(wert: number): string {
   return ZAHL_FORMAT.format(wert)
 }
 
-export function anzahlText(_anzahl: number, _einzahl: string, _mehrzahl: string): string {
-  return ''
+/**
+ * Anzahl mit passendem Substantiv, z. B. "1 Maßnahme" oder "15 Maßnahmen". Der Singular
+ * gilt nur für genau 1; 0 und jede andere Anzahl stehen im Plural (WR-02). Für Texte in
+ * Live-Regionen und Zusammenfassungen, damit die Zahl wie überall über zahl() entsteht.
+ */
+export function anzahlText(anzahl: number, einzahl: string, mehrzahl: string): string {
+  return `${zahl(anzahl)} ${anzahl === 1 ? einzahl : mehrzahl}`
 }
 
 /** Jahreszahl ohne Tausendertrennung, z. B. "2026" (nicht "2.026", CR-01). */
