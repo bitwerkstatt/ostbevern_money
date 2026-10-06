@@ -89,7 +89,73 @@ describe('randAusMaximalbreite', () => {
   })
 })
 
+interface Basis {
+  links: number
+  rechts: number
+}
+
+/** Messung einer Liste, die mit `versatz` verschoben ist: das Rechteck trägt den Versatz. */
+function gemessen(basis: Basis, versatz: number, fensterbreite: number) {
+  return {
+    links: basis.links + versatz,
+    rechts: basis.rechts + versatz,
+    angewandterVersatz: versatz,
+    fensterbreite,
+    rand: 16,
+  }
+}
+
+describe('Resize und Fixpunkt (WR-01)', () => {
+  const liste: Basis = { links: 600, rechts: 800 }
+
+  it('Resize-Spur: Fenster wird breiter, der Versatz fällt auf 0', () => {
+    expect(listenVersatz(gemessen(liste, -36, 780))).toBe(-36)
+    expect(listenVersatz(gemessen(liste, -36, 1200))).toBe(0)
+  })
+
+  it('Resize-Spur: Fenster wird schmaler, die rechte Kante landet am Rand', () => {
+    expect(listenVersatz(gemessen(liste, -36, 700))).toBe(700 - 16 - 800)
+  })
+
+  const rechtecke: Basis[] = [
+    { links: 600, rechts: 800 },
+    { links: 4, rechts: 300 },
+    { links: 600, rechts: 1100 },
+  ]
+  const veralteteVersaetze = [-584, -200, -36, 0, 12, 50, 300]
+  const fensterbreiten = [520, 780, 1200]
+
+  const faelle = rechtecke.flatMap((basis) =>
+    veralteteVersaetze.flatMap((versatz) =>
+      fensterbreiten.map((breite) => ({ basis, versatz, breite })),
+    ),
+  )
+
+  it.each(faelle)(
+    'Fixpunkt: Rechteck $basis.links/$basis.rechts, veralteter Versatz $versatz, Fenster $breite',
+    ({ basis, versatz, breite }) => {
+      const frisch = listenVersatz(gemessen(basis, 0, breite))
+      expect(listenVersatz(gemessen(basis, versatz, breite))).toBe(frisch)
+    },
+  )
+
+  it.each(faelle)(
+    'Idempotenz: Rechteck $basis.links/$basis.rechts, Fenster $breite (Start $versatz)',
+    ({ basis, versatz, breite }) => {
+      const ergebnis = listenVersatz(gemessen(basis, versatz, breite))
+      expect(listenVersatz(gemessen(basis, ergebnis, breite))).toBe(ergebnis)
+    },
+  )
+})
+
 describe('Verdrahtung in MenueGruppe.vue', () => {
+  it('erreicht positioniere() aus wechsle() und dem Resize-Handler und liest style.left', () => {
+    const aufrufe = gruppenQuelltext.match(/positioniere\(\)/g) ?? []
+    // Eine Definition (`function positioniere()`) plus mindestens zwei Aufrufe.
+    expect(aufrufe.length).toBeGreaterThanOrEqual(3)
+    expect(gruppenQuelltext).toContain('style.left')
+  })
+
   it('delegiert an listenVersatz und randAusMaximalbreite', () => {
     expect(gruppenQuelltext).toContain('listenVersatz(')
     expect(gruppenQuelltext).toContain('randAusMaximalbreite(')
