@@ -170,3 +170,38 @@ export function ergebnisTabelle(): ErgebnisZeile[] {
     ergebnisNach: reihen.ergebnisNach[index]?.wert ?? null,
   }))
 }
+
+/** Woher die Jahreswerte eines Postens stammen: eine Vorberichtstabelle oder eine GEP-Zeile. */
+export type PostenQuelle =
+  { art: 'vorbericht'; tabelle: string; posten: string } | { art: 'gep'; zeile: string }
+
+export interface EntwicklungPosten {
+  schluessel: string
+  titel: string
+  quelle: PostenQuelle
+  /** Schlüssel eines geprüften Erklärtexts in `texte.json`, `null` ohne Text. */
+  erklaertext: string | null
+}
+
+/** Die fünf Posten (Gerüst, folgt im GREEN-Commit). */
+export const ENTWICKLUNG_POSTEN: readonly EntwicklungPosten[] = []
+
+/** Jahresreihe eines Postens (Gerüst, folgt im GREEN-Commit). */
+export function bauePostenReihe(_schluessel: string): Jahreswert[] {
+  return []
+}
+
+/** Relative Veränderung erstes zu letztes Jahr (Gerüst, folgt im GREEN-Commit). */
+export function veraenderung(_reihe: readonly Jahreswert[]): number | null {
+  return Number.NaN
+}
+
+/** Anzeige der Veränderung (Gerüst, folgt im GREEN-Commit). */
+export function veraenderungText(_wert: number | null): string {
+  return ''
+}
+
+/** Quellenzeile eines Postens (Gerüst, folgt im GREEN-Commit). */
+export function postenFussnote(_posten: EntwicklungPosten, _reihe: readonly Jahreswert[]): string {
+  return ''
+}
