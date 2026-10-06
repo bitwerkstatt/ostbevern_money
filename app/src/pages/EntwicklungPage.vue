@@ -2,6 +2,9 @@
 import { jahr as formatiereJahr } from '@/charts/format'
 import ChartCard from '@/components/ChartCard.vue'
 import EntwicklungsDiagramm from '@/components/EntwicklungsDiagramm.vue'
+import ErgebnisBalken from '@/components/ErgebnisBalken.vue'
+import ErklaerText from '@/components/ErklaerText.vue'
+import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import { haushalt } from '@/data/daten'
 import { baueErgebnisReihen } from '@/lib/entwicklung'
@@ -13,6 +16,11 @@ const letztesJahr = formatiereJahr(
   haushalt.jahre[haushalt.jahre.length - 1] ?? haushalt.haushaltsjahr,
 )
 const lead = `Hier siehst du, wie sich Erträge, Aufwendungen und Ergebnis der Gemeinde bis ${letztesJahr} entwickeln und wie lange die Rücklagen als Polster reichen.`
+
+// Das Jahresergebnis steht nach dem globalen Minderaufwand, wie in der Haushaltssatzung und auf der
+// Startseite (Entscheidung 1 der Phase); die Linien zeigen die Werte davor.
+const ERGEBNIS_UNTERTITEL =
+  'Jahresergebnis nach globalem Minderaufwand, wie in der Haushaltssatzung. Die Linien oben zeigen Erträge und Aufwendungen vor diesem Abzug. Ein Defizit liegt unter der Nulllinie.'
 
 const ergebnisplanSeite = baueErgebnisReihen().ertraege[0]?.pdfSeite
 const ergebnisplanQuelle = ergebnisplanSeite == null ? undefined : { seite: ergebnisplanSeite }
@@ -30,6 +38,22 @@ const ergebnisplanQuelle = ergebnisplanSeite == null ? undefined : { seite: erge
       >
         <EntwicklungsDiagramm />
       </ChartCard>
+      <ChartCard
+        :titel="`Jahresergebnis ${erstesJahr}–${letztesJahr}`"
+        :beschreibung="ERGEBNIS_UNTERTITEL"
+        :pdf="ergebnisplanQuelle"
+      >
+        <ErgebnisBalken />
+      </ChartCard>
+      <wa-callout variant="neutral" class="om-entwicklung__callout">
+        <wa-icon slot="icon" name="circle-info"></wa-icon>
+        <strong
+          ><GlossarBegriff schluessel="globaler_minderaufwand"
+            >Globaler Minderaufwand</GlossarBegriff
+          ></strong
+        >
+        <ErklaerText schluessel="globaler_minderaufwand" :ueberschrift="false" />
+      </wa-callout>
     </section>
   </div>
 </template>
@@ -47,6 +71,16 @@ const ergebnisplanQuelle = ergebnisplanSeite == null ? undefined : { seite: erge
   display: flex;
   flex-direction: column;
   gap: var(--wa-space-m);
+}
+
+.om-entwicklung__callout {
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.om-entwicklung__callout strong {
+  display: block;
+  margin-block-end: var(--wa-space-xs);
 }
 
 .om-entwicklung__abschnitt > h2 {

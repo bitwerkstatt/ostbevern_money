@@ -4,6 +4,7 @@
 // Schlüssel in den Daten, wirft die Funktion mit dem Namen des Schlüssels statt still auf 0 oder
 // eine Ersatzzahl zu fallen.
 
+import { euro, euroKurz, KEIN_WERT } from '@/charts/format'
 import { haushalt } from '@/data/daten'
 
 /** Ein Wert je Jahr mit Wertart und Quellseite; die Reihen liegen in der Reihenfolge von `haushalt.jahre`. */
@@ -123,9 +124,23 @@ export function baueErgebnisReihen(): ErgebnisReihen {
   }
 }
 
-/** Beschriftung einer Ergebnissäule (Gerüst, folgt im GREEN-Commit). */
-export function ergebnisBeschriftung(_wert: number | null): string {
-  return ''
+/**
+ * Beschriftung einer Ergebnissäule: „Defizit {Betrag}“ unter der Nulllinie, „Überschuss {Betrag}“
+ * darüber, jeweils ohne Vorzeichen. Ohne Wert steht „–“, bei genau 0 nur der Betrag. Der Betrag
+ * steht gekürzt (`euroKurz`, für die Säule) oder mit `genau` auf den Euro genau (Tooltip).
+ */
+export function ergebnisBeschriftung(wert: number | null, genau = false): string {
+  if (wert === null) {
+    return KEIN_WERT
+  }
+  const betrag = genau ? euro : euroKurz
+  if (wert < 0) {
+    return `Defizit ${betrag(Math.abs(wert))}`
+  }
+  if (wert > 0) {
+    return `Überschuss ${betrag(wert)}`
+  }
+  return betrag(wert)
 }
 
 export interface ErgebnisZeile {
@@ -138,7 +153,20 @@ export interface ErgebnisZeile {
   ergebnisNach: number | null
 }
 
-/** Tabellenzeilen je Jahr (Gerüst, folgt im GREEN-Commit). */
+/**
+ * Eine Zeile je Jahr aus `haushalt.jahre`: Erträge, Aufwendungen, Ergebnis vor Minderaufwand, der
+ * globale Minderaufwand (positive Kürzung) und das Ergebnis nach Minderaufwand. Fehlende Werte
+ * bleiben `null`.
+ */
 export function ergebnisTabelle(): ErgebnisZeile[] {
-  return []
+  const reihen = baueErgebnisReihen()
+  return haushalt.jahre.map((jahr, index) => ({
+    jahr,
+    wertart: wertartAn(index),
+    ertraege: reihen.ertraege[index]?.wert ?? null,
+    aufwendungen: reihen.aufwendungen[index]?.wert ?? null,
+    ergebnisVor: reihen.ergebnisVor[index]?.wert ?? null,
+    minderaufwand: reihen.minderaufwand[index]?.wert ?? null,
+    ergebnisNach: reihen.ergebnisNach[index]?.wert ?? null,
+  }))
 }

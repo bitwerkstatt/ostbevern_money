@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { euroKurz } from '@/charts/format'
+import { euro, euroKurz } from '@/charts/format'
 import { haushalt } from '@/data/daten'
 import { baueKennzahlen } from '@/lib/kennzahlen'
 import {
@@ -134,6 +134,11 @@ describe('ergebnisBeschriftung (ENTW-01, Säulenbeschriftung)', () => {
 
   it('nennt ein Ergebnis von genau 0 weder Defizit noch Überschuss', () => {
     expect(ergebnisBeschriftung(0)).toBe(euroKurz(0))
+  })
+
+  it('nennt mit genau=true den Betrag auf den Euro genau (Tooltip)', () => {
+    expect(ergebnisBeschriftung(-3557700, true)).toBe(`Defizit ${euro(3557700)}`)
+    expect(ergebnisBeschriftung(191990, true)).toBe(`Überschuss ${euro(191990)}`)
   })
 })
 
