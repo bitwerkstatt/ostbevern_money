@@ -155,6 +155,14 @@ def test_ordentliche_ertraege_bbox_enthaelt_zeilennummer_und_betrag(
 )
 def test_jede_gesamtzeile_hat_einen_beleg(csv: Path, praefix: str, eingecheckt: dict) -> None:
     plan = lies_plan_csv(DATEN_WURZEL / csv).filter(pl.col("ebene") == "GESAMT")
+    # Beleg nur für Zeilen, die die App als Datensatz kennt (ab Plan 07-03 verlangt der
+    # Vertragstest, dass jeder Schlüssel auf einen Datensatz zeigt): die nachrichtlichen GEP-Zeilen
+    # unter Z. 28 stehen nicht in `haushalt.ergebnisplan.GESAMT.zeilen`.
+    haushalt = json.loads((APP_DATEN_WURZEL / "haushalt.json").read_text(encoding="utf-8"))
+    app_zeilen = set(
+        haushalt["ergebnisplan" if praefix == "ep" else "finanzplan"]["GESAMT"]["zeilen"]
+    )
+    plan = plan.filter(pl.col("zeile_kanonisch").is_in(app_zeilen))
     erwartet = {f"{praefix}:GESAMT:{zeile}" for zeile in plan["zeile_kanonisch"].unique()}
     assert erwartet
     assert erwartet <= set(eingecheckt["belege"])
@@ -535,6 +543,13 @@ def _zeilenidentitaet(schluessel: str) -> tuple[str, ...]:
     return (schluessel,)
 
 
+# Zwei verschiedene Werte, die dieselbe gedruckte Zeile belegen (Vorbericht S. 46: die Kreisumlage
+# steht in der Transferaufwendungen-Tabelle und ist zugleich der Nettowert in `meta`).
+GLEICHE_GEDRUCKTE_ZEILE = [
+    frozenset({"meta:kreisumlage.netto", "vb:transferaufwendungen:kreisumlage"})
+]
+
+
 def test_keine_zwei_belege_teilen_dieselbe_bbox_ohne_dieselbe_zeile(tmp_belege: dict) -> None:
     gruppen: dict[tuple[int, tuple[float, ...]], list[str]] = {}
     for schluessel, beleg in tmp_belege["belege"].items():
@@ -543,7 +558,9 @@ def test_keine_zwei_belege_teilen_dieselbe_bbox_ohne_dieselbe_zeile(tmp_belege: 
     zweifelhaft = [
         sorted(schluessel)
         for schluessel in gruppen.values()
-        if len(schluessel) > 1 and len({_zeilenidentitaet(s) for s in schluessel}) > 1
+        if len(schluessel) > 1
+        and len({_zeilenidentitaet(s) for s in schluessel}) > 1
+        and frozenset(schluessel) not in GLEICHE_GEDRUCKTE_ZEILE
     ]
     assert zweifelhaft == []
 
@@ -560,7 +577,7 @@ def test_bericht_listet_jeden_beleg_ohne_bbox_ausser_seiten(
         for schluessel, beleg in tmp_belege["belege"].items()
         if beleg["bbox"] is None and not schluessel.startswith("seite:")
     ]
-    assert ohne, "mindestens ein Wert ohne Markierung erwartet (Fläche in ha ist nicht gedruckt)"
+    assert ohne, "mindestens ein Wert ohne Markierung erwartet (z. B. berechnete Werte)"
     for schluessel in ohne:
         assert f"`{schluessel}`" in text, schluessel
     assert ergebnis.anzahl_ohne_bbox == len(ohne)

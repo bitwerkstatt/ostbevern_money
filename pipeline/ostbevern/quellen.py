@@ -1,10 +1,10 @@
 """Schritt 08: Quellenbelege (Phase 7, DATA-04, Spez. 4.4 und 5.6).
 
 Findet für gedruckte Werte die Zeile auf der PDF-Seite (Rechteck `bbox`), rendert die
-referenzierten Seiten als WebP (`belegbilder`) und schreibt `app/src/data/quellen.json`.
+referenzierten Seiten als WebP (`belegbilder`) und schreibt `app/src/data/quellen.json` sowie
+den Bericht `daten/pruefberichte/quellenbelege.md` (alle Belege ohne Rechteck).
 
-Schlüsselgrammatik (identisch in `app/src/lib/quelle.ts`; dieser Plan baut `ep` und `fp`,
-die übrigen Arten folgen mit den Konsumentenplänen):
+Schlüsselgrammatik (identisch in `app/src/lib/quelle.ts`):
 
 - `ep:{code}:{zeile}`: Ergebnisplanzeile eines Knotens
   (`haushalt.ergebnisplan[code].zeilen[zeile]`); Codes mit `KL` sind ausgeschlossen
@@ -26,32 +26,57 @@ die übrigen Arten folgen mit den Konsumentenplänen):
 `quellen.json`: `{haushaltsjahr, seiten: {"<n>": {bild, breite, hoehe}}, belege: {"<schluessel>":
 {pdf_seite, bild, bbox}}}`. `bbox` ist `[x0, top, x1, bottom]` in PDF-Punkten, Ursprung oben
 links, mit 2 pt Rand, auf die Seite begrenzt und auf zwei Dezimalstellen gerundet, oder `null`.
-Ein Rechteck wird nie geraten: Ohne eindeutigen Treffer (Zeilennummer und Betrag) ist `bbox`
-`null`.
+Ein Rechteck wird nie geraten: Jede Suche prüft Bezeichnung (bzw. Zeilennummer, Konto) und den
+Betrag des Haushaltsjahrs; ohne genau einen Treffer ist `bbox` `null`, mit einem Grund im
+Bericht (D-03). Die Suche liest nur die App-JSONs und die CSVs und ändert sie nie.
 """
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
-from dataclasses import dataclass
+import json
+import re
+from collections import defaultdict
+from collections.abc import Callable, Iterable, Mapping, Sequence
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import polars as pl
 
-from ostbevern.app_daten import APP_DATEN_WURZEL, schreibe_app_json
+from ostbevern.app_daten import (
+    APP_DATEN_WURZEL,
+    HAUSHALT_JSON,
+    INVESTITIONEN_JSON,
+    STELLENPLAN_JSON,
+    schreibe_app_json,
+)
 from ostbevern.belegbilder import bild_name, rendere_seiten
-from ostbevern.konfiguration import PROJEKT_WURZEL, Jahrgang, lade_jahrgang
+from ostbevern.konfiguration import PROJEKT_WURZEL, Jahrgang, lade_jahrgang, layout_text
 from ostbevern.pdf import PdfDokument, RahmenZeile, WortRahmen
+from ostbevern.plaene import lies_abschnitte
+from ostbevern.pruefung import zerlege_weitere_vorberichtstabellen
 from ostbevern.schema import (
     DATEN_WURZEL,
+    EIGENKAPITAL_CSV,
     ERGEBNISPLAN_CSV,
     FINANZPLAN_CSV,
+    INVESTITIONSZUWENDUNGEN_CSV,
+    KITA_ZUSCHUESSE_CSV,
+    QUELLENBELEGE_MD,
     SEITEN_CSV,
+    STEUERARTEN_CSV,
+    TRANSFERAUFWENDUNGEN_CSV,
+    VERBINDLICHKEITEN_CSV,
+    WEITERE_VORBERICHTSTABELLEN_CSV,
+    ZUSCHUESSE_LFD_ZWECKE_CSV,
+    ZUWENDUNGEN_CSV,
+    lies_eigenkapital_csv,
     lies_plan_csv,
     lies_seiten_csv,
+    lies_vorbericht_csv,
     zerlege_spaltenkopf,
 )
-from ostbevern.zahlen import ZahlenFehler, lies_betrag
+from ostbevern.zahlen import ZahlenFehler, lies_betrag, lies_kennzahl
+from ostbevern.zeilen import normalisiere_bezeichnung
 
 BELEGBILDER_WURZEL = PROJEKT_WURZEL / "app" / "public" / "quellen"
 QUELLEN_JSON = Path("quellen.json")
@@ -59,11 +84,44 @@ QUELLEN_JSON = Path("quellen.json")
 GRUND_NICHT_GEFUNDEN = "nicht_gefunden"
 GRUND_MEHRDEUTIG = "mehrdeutig"
 GRUND_BETRAG_FEHLT = "betrag_fehlt"
+GRUND_BERECHNET = "berechnet"
 
 # Ebene des Gesamtplans in den Plan-CSVs; zugleich der Knotencode in den Schlüsseln.
 _GESAMT = "GESAMT"
 # Wertart, die nur eine Verpflichtungsermächtigungs-Spalte beschreibt (nie das Haushaltsjahr).
 _WERTART_VE = "ve"
+# Der Knotencode der synthetischen Weitergabe an Kreis und Land beginnt mit diesem Präfix.
+_KL_PRAEFIX = "KL"
+# Toleranz beim Vergleich gedruckter Zahlen mit Euro-Werten: Cent-Beträge (Eigenkapital) sind in
+# den Daten kaufmännisch auf ganze Euro gerundet.
+_ZAHL_TOLERANZ = 0.51
+# Zeilenabstand (Punkte), bis zu dem eine Folgezeile noch zur selben gedruckten Zeile gehört.
+_UMBRUCH_ABSTAND = 14.0
+
+# Zuordnung der Schuldenstandsreihen zu den Posten in `verbindlichkeiten.csv` (fachliche
+# Regel, identisch zu `app_daten.baue_investitionen_json`).
+_SCHULDENSTAND_POSTEN: dict[str, str] = {
+    "investitionskredite": "kredite_investitionen",
+    "nrw_bank": "transferleistungen",
+    "liquiditaetskredite": "liquiditaetskredite",
+}
+
+_NUMMER_MUSTER = re.compile(r"^\d+(?:\.\d+)*\.?")
+_PRODUKTBEREICH_MUSTER = re.compile(r"^\d{2}$")
+
+_ART_TITEL: dict[str, str] = {
+    "ep": "Ergebnisplanzeilen",
+    "fp": "Finanzplanzeilen",
+    "vb": "Vorberichtsposten",
+    "meta": "Meta-Werte",
+    "gz": "Grundzahlen",
+    "pr": "Produktseiten",
+    "inv": "Investitionsmaßnahmen",
+    "ve": "VE-Fälligkeiten",
+    "sd": "Schuldenstand",
+    "sp": "Stellenplan",
+    "seite": "Seitenbelege",
+}
 
 
 class QuellenFehler(ValueError):
@@ -80,6 +138,10 @@ class QuellenErgebnis:
     seiten: tuple[int, ...]
     neu_gerendert: int
     ohne_bbox: dict[str, str]
+    bericht: Path
+
+
+Suche = tuple[list[float] | None, str | None]
 
 
 def schluessel_ep(code: str, zeile: str) -> str:
@@ -90,6 +152,56 @@ def schluessel_ep(code: str, zeile: str) -> str:
 def schluessel_fp(code: str, zeile: str) -> str:
     """Belegschlüssel einer Finanzplanzeile: `fp:{code}:{zeile}`."""
     return f"fp:{code}:{zeile}"
+
+
+def schluessel_vb(tabelle: str, posten: str) -> str:
+    """Belegschlüssel eines Vorberichtspostens: `vb:{tabelle}:{posten}`."""
+    return f"vb:{tabelle}:{posten}"
+
+
+def schluessel_vb_gesamt(tabelle: str) -> str:
+    """Belegschlüssel der gedruckten Gesamtzeile einer Vorberichtstabelle."""
+    return f"vb:{tabelle}:gesamt"
+
+
+def schluessel_meta(pfad: str) -> str:
+    """Belegschlüssel eines MetaWerts: `meta:{pfad}` (Pfad gepunktet)."""
+    return f"meta:{pfad}"
+
+
+def schluessel_gz(produkt: str, position: int | str) -> str:
+    """Belegschlüssel einer Grundzahl: `gz:{produkt}:{position}`."""
+    return f"gz:{produkt}:{position}"
+
+
+def schluessel_pr(produkt: str) -> str:
+    """Belegschlüssel der Startseite eines Produkts: `pr:{produkt}`."""
+    return f"pr:{produkt}"
+
+
+def schluessel_inv(produkt: str, massnahme_id: str, konto: str, richtung: str) -> str:
+    """Belegschlüssel einer Maßnahme: `inv:{produkt}:{massnahme_id}:{konto}:{richtung}`."""
+    return f"inv:{produkt}:{massnahme_id}:{konto}:{richtung}"
+
+
+def schluessel_ve(produkt: str, massnahme_id: str, konto: str) -> str:
+    """Belegschlüssel einer VE-Kontozeile: `ve:{produkt}:{massnahme_id}:{konto}`."""
+    return f"ve:{produkt}:{massnahme_id}:{konto}"
+
+
+def schluessel_sd(reihe: str) -> str:
+    """Belegschlüssel einer Schuldenstandsreihe: `sd:{reihe}`."""
+    return f"sd:{reihe}"
+
+
+def schluessel_sp(teil: str, position: int | str, produktbereich: str | None) -> str:
+    """Belegschlüssel einer Stellenplanzeile: `sp:{teil}:{position}:{produktbereich oder -}`."""
+    return f"sp:{teil}:{position}:{produktbereich or '-'}"
+
+
+def schluessel_seite(pdf_seite: int) -> str:
+    """Belegschlüssel eines Seitenbelegs ohne Zeile: `seite:{n}`."""
+    return f"seite:{pdf_seite}"
 
 
 def bbox_mit_rand(
@@ -116,6 +228,29 @@ def _parse_betrag(text: str) -> int | None:
         return None
 
 
+def _zahl(text: str) -> float | None:
+    """Liest ein gedrucktes Zahlwort (deutsches Tausenderformat, Komma-Dezimalteil).
+
+    Umschließende Klammern (`(2.000.000)`) und ein angehängtes Satzzeichen werden ignoriert;
+    jeder andere Text (auch `2.4.1` oder ein Datum) ist keine Zahl.
+    """
+    kandidat = text.strip("()").rstrip(",;:")
+    try:
+        ergebnis = lies_kennzahl(kandidat)
+    except ZahlenFehler:
+        return None
+    return None if ergebnis is None else ergebnis[0]
+
+
+def _wort_norm(text: str) -> str:
+    """Wort ohne umschließende Klammern, Anführungszeichen und angehängte Satzzeichen."""
+    return text.strip('()„“"').rstrip(",;:.")
+
+
+def _gleich(gedruckt: float, soll: float) -> bool:
+    return abs(gedruckt - soll) <= _ZAHL_TOLERANZ
+
+
 def finde_planzeile(
     zeilen: Sequence[RahmenZeile],
     nummer: str,
@@ -123,7 +258,7 @@ def finde_planzeile(
     *,
     breite: float,
     hoehe: float,
-) -> tuple[list[float] | None, str | None]:
+) -> Suche:
     """Sucht die gedruckte Planzeile `nummer` mit dem Haushaltsjahrbetrag `betrag`.
 
     Eine Zeile gilt als gefunden, wenn ihr erstes Wort die gedruckte Zeilennummer ist und
@@ -145,6 +280,383 @@ def finde_planzeile(
     return bbox_mit_rand(kandidaten[0].woerter, breite, hoehe), None
 
 
+def _norm(text: str) -> str:
+    return normalisiere_bezeichnung(text)
+
+
+def _zeilentext(zeile: RahmenZeile) -> str:
+    """Wörter der Zeile ohne Trennzeichen, normalisiert (Leerzeichen und Bindestriche entfernt)."""
+    return _norm("".join(wort.text for wort in zeile.woerter))
+
+
+def _zerlege_tabellenzeile(zeile: RahmenZeile) -> tuple[str, list[float]]:
+    """Trennt eine Tabellenzeile in Beschriftung (Wörter vor der ersten Zahl) und Zahlen."""
+    erste_zahl = next((i for i, w in enumerate(zeile.woerter) if _zahl(w.text) is not None), None)
+    if erste_zahl is None:
+        return " ".join(w.text for w in zeile.woerter), []
+    label = " ".join(w.text for w in zeile.woerter[:erste_zahl])
+    zahlen = [z for w in zeile.woerter[erste_zahl:] if (z := _zahl(w.text)) is not None]
+    return label, zahlen
+
+
+def _label_passt(zeilenlabel: str, bezeichnung: str) -> bool:
+    """Gleichheit, Präfix oder Suffix der normalisierten Beschriftungen (Umbruch, Nummerierung).
+
+    Eine führende Gliederungsnummer der gedruckten Zeile (`9.`, `2.5.1`) bleibt außer Acht. Ein
+    Präfix oder Suffix zählt nur ab vier Zeichen, damit ein kurzer Rest keine fremde Zeile trifft.
+    """
+    gedruckt = _NUMMER_MUSTER.sub("", _norm(zeilenlabel))
+    soll = _norm(bezeichnung)
+    if not gedruckt or not soll:
+        return False
+    if gedruckt == soll:
+        return True
+    kurz, lang = sorted((gedruckt, soll), key=len)
+    return len(kurz) >= 4 and (lang.startswith(kurz) or lang.endswith(kurz))
+
+
+def _ist_teilfolge(soll: Sequence[float], ist: Sequence[float]) -> bool:
+    position = 0
+    for wert in soll:
+        while position < len(ist) and not _gleich(ist[position], wert):
+            position += 1
+        if position == len(ist):
+            return False
+        position += 1
+    return True
+
+
+def finde_tabellenzeile(
+    zeilen: Sequence[RahmenZeile],
+    bezeichnung: str,
+    werte: Sequence[float | None],
+    *,
+    ziel_index: int,
+    breite: float,
+    hoehe: float,
+) -> Suche:
+    """Sucht die Tabellenzeile `bezeichnung` mit dem Wert des Haushaltsjahrs (`werte[ziel_index]`).
+
+    `werte` stehen in der gedruckten Einheit (T€ oder Euro), `None` für ein Jahr ohne Wert.
+    Beschriftung und Zielwert müssen zusammen eine Zeile ergeben; bei mehreren Zeilen entscheidet
+    die vollständige Folge aller gedruckten Werte. Ohne Zielwert zählt die Beschriftung allein.
+    Zwei oder mehr Treffer ergeben `mehrdeutig`, keiner `nicht_gefunden` bzw. `betrag_fehlt`.
+    """
+    kandidaten: list[tuple[RahmenZeile, list[float]]] = []
+    for zeile in zeilen:
+        label, zahlen = _zerlege_tabellenzeile(zeile)
+        if _label_passt(label, bezeichnung):
+            kandidaten.append((zeile, zahlen))
+    if not kandidaten:
+        return None, GRUND_NICHT_GEFUNDEN
+    ziel = werte[ziel_index]
+    if ziel is not None:
+        kandidaten = [(z, b) for z, b in kandidaten if any(_gleich(x, ziel) for x in b)]
+        if not kandidaten:
+            return None, GRUND_BETRAG_FEHLT
+        if len(kandidaten) > 1:
+            gedruckt = [w for w in werte if w is not None]
+            vollstaendig = [(z, b) for z, b in kandidaten if _ist_teilfolge(gedruckt, b)]
+            if vollstaendig:
+                kandidaten = vollstaendig
+    if len(kandidaten) > 1:
+        return None, GRUND_MEHRDEUTIG
+    return bbox_mit_rand(kandidaten[0][0].woerter, breite, hoehe), None
+
+
+def _deutsch(zahl: int) -> str:
+    """Ganzzahl im deutschen Tausenderformat (`11.741`)."""
+    return f"{zahl:,}".replace(",", ".")
+
+
+def _dezimal(zahl: float) -> str:
+    """Zahl mit Komma als Dezimaltrennzeichen und ohne überflüssige Nachkommastellen."""
+    text = f"{zahl:.4f}".rstrip("0").rstrip(".")
+    ganz, _, rest = text.partition(".")
+    gruppiert = _deutsch(int(ganz)) if ganz.lstrip("-").isdigit() else ganz
+    return gruppiert + ("," + rest if rest else "")
+
+
+def meta_kandidaten(wert: int | float | str, einheit: str, gerundet: bool) -> list[str]:
+    """Gedruckte Schreibweisen eines MetaWerts (deutsches Format, Datum `tt.mm.jjjj`).
+
+    Ein gerundeter Eurobetrag steht im Vorbericht oft in T€ (`315.000` und `315`); Promille
+    erscheinen als Prozent mit Komma (363 als `36,3`), Hektar als Quadratkilometer (8960 als
+    `89,6`).
+    """
+    if isinstance(wert, str):
+        if einheit == "datum":
+            jahr, monat, tag = wert.split("-")
+            return [f"{tag}.{monat}.{jahr}"]
+        return [wert]
+    if isinstance(wert, float) and not wert.is_integer():
+        return [_dezimal(wert)]
+    ganz = int(wert)
+    formen = [_deutsch(ganz)]
+    if gerundet and ganz % 1000 == 0 and ganz != 0:
+        formen.append(_deutsch(ganz // 1000))
+    if einheit == "promille":
+        formen.append(_dezimal(ganz / 10))
+    if einheit == "ha":
+        formen.append(_dezimal(ganz / 100))
+    return formen
+
+
+def finde_wertzeile(
+    zeilen: Sequence[RahmenZeile],
+    kandidaten: Sequence[str],
+    *,
+    seite: int,
+    breite: float,
+    hoehe: float,
+) -> Suche:
+    """Sucht die eine Zeile, in der ein Wort genau einer der gedruckten Schreibweisen entspricht.
+
+    Die Zeile, die nur die Seitenzahl enthält, zählt nicht. Mehrere Zeilen ergeben `mehrdeutig`.
+    """
+    treffer = []
+    for zeile in zeilen:
+        if len(zeile.woerter) == 1 and zeile.woerter[0].text == str(seite):
+            continue
+        woerter = {_wort_norm(w.text) for w in zeile.woerter}
+        if any(kandidat in woerter for kandidat in kandidaten):
+            treffer.append(zeile)
+    if not treffer:
+        return None, GRUND_NICHT_GEFUNDEN
+    if len(treffer) > 1:
+        return None, GRUND_MEHRDEUTIG
+    return bbox_mit_rand(treffer[0].woerter, breite, hoehe), None
+
+
+@dataclass(frozen=True)
+class KontozeilenText:
+    """Gedruckte Texte, die eine Kontozeile begrenzen (`layout.investitionen`)."""
+
+    summen: tuple[str, ...]
+    kassenwirksamkeit: str
+
+
+def _kontozeilen_block(
+    zeilen: Sequence[RahmenZeile],
+    index: int,
+    texte: KontozeilenText,
+    *,
+    mit_kassenwirksamkeit: bool,
+) -> list[RahmenZeile]:
+    """Die Kontozeile ab `index` samt Umbruchzeilen (Beschriftung, `(Kassenwirksamkeit)`)."""
+    block = [zeilen[index]]
+    for zeile in zeilen[index + 1 :]:
+        text = _zeilentext(zeile)
+        if zeile.top - block[-1].bottom > _UMBRUCH_ABSTAND:
+            break
+        if any(text.startswith(summe) for summe in texte.summen):
+            break
+        if re.match(r"\d{6}", zeile.woerter[0].text):
+            break
+        if text.startswith(texte.kassenwirksamkeit):
+            if mit_kassenwirksamkeit:
+                block.append(zeile)
+            break
+        if any(_zahl(w.text) is not None for w in zeile.woerter):
+            break
+        block.append(zeile)
+    return block
+
+
+def finde_kontozeile(
+    zeilen: Sequence[RahmenZeile],
+    massnahme_id: str,
+    konto: str,
+    betrag: float | None,
+    *,
+    texte: KontozeilenText,
+    mit_kassenwirksamkeit: bool,
+    pflicht_betraege: Sequence[float] = (),
+    breite: float,
+    hoehe: float,
+) -> Suche:
+    """Sucht die Kontozeile `konto` einer Maßnahme (Kontowort plus Betrag).
+
+    Kandidaten sind Zeilen, deren erstes Wort mit dem sechsstelligen `konto` beginnt, mit dem
+    `betrag` des Haushaltsjahrs (bei `None` ohne Betragsprüfung) und, für VE-Zeilen, mit allen
+    `pflicht_betraege` in der Zeile samt Umbruch (`(Kassenwirksamkeit)`-Zeile). Mehrere Konten
+    gleicher Nummer auf der Seite löst die Lage zwischen der Maßnahmen-Kopfzeile und ihrer
+    Saldozeile; sonst `mehrdeutig`. Das Rechteck umschließt die Zeile samt Umbruchzeilen.
+    """
+    indizes = [i for i, z in enumerate(zeilen) if z.woerter[0].text.startswith(konto)]
+    if not indizes:
+        return None, GRUND_NICHT_GEFUNDEN
+    if betrag is not None:
+        indizes = [
+            i
+            for i in indizes
+            if any(
+                (zahl := _zahl(w.text)) is not None and _gleich(zahl, betrag)
+                for w in zeilen[i].woerter[1:]
+            )
+        ]
+        if not indizes:
+            return None, GRUND_BETRAG_FEHLT
+    if pflicht_betraege:
+        indizes = [
+            i
+            for i in indizes
+            if all(
+                any(
+                    (zahl := _zahl(w.text)) is not None and _gleich(zahl, soll)
+                    for zeile in _kontozeilen_block(zeilen, i, texte, mit_kassenwirksamkeit=True)
+                    for w in zeile.woerter
+                )
+                for soll in pflicht_betraege
+            )
+        ]
+        if not indizes:
+            return None, GRUND_BETRAG_FEHLT
+    if len(indizes) > 1:
+        indizes = _in_massnahme(zeilen, massnahme_id, indizes) or indizes
+    if len(indizes) != 1:
+        return None, GRUND_MEHRDEUTIG
+    block = _kontozeilen_block(
+        zeilen, indizes[0], texte, mit_kassenwirksamkeit=mit_kassenwirksamkeit
+    )
+    return bbox_mit_rand((w for zeile in block for w in zeile.woerter), breite, hoehe), None
+
+
+def _in_massnahme(
+    zeilen: Sequence[RahmenZeile], massnahme_id: str, indizes: list[int]
+) -> list[int]:
+    """Kandidaten zwischen der Kopfzeile der Maßnahme und ihrer Saldozeile."""
+    kennung = _norm(massnahme_id)
+    kopf = next(
+        (
+            i
+            for i, z in enumerate(zeilen)
+            if _zeilentext(z).startswith(kennung) and not _zeilentext(z).startswith("Saldo")
+        ),
+        None,
+    )
+    if kopf is None:
+        return indizes
+    ende = next(
+        (i for i in range(kopf + 1, len(zeilen)) if _zeilentext(zeilen[i]).startswith("Saldo")),
+        len(zeilen),
+    )
+    return [i for i in indizes if kopf < i < ende]
+
+
+def _stellen_formen(wert: float) -> set[str]:
+    """Gedruckte Schreibweisen einer Stellenzahl (`2,00`, `2`, `0,41`, `0,5`)."""
+    return {f"{wert:.2f}".replace(".", ","), f"{wert:g}".replace(".", ",")}
+
+
+def _beginnt_mit_woertern(zeile: RahmenZeile, text: str) -> bool:
+    """True, wenn die ersten Wörter der Zeile zusammen genau `text` (normalisiert) ergeben."""
+    soll = _norm(text)
+    for k in range(1, min(len(zeile.woerter), 8) + 1):
+        if _norm("".join(w.text for w in zeile.woerter[:k])) == soll:
+            return True
+    return False
+
+
+def _ohne_seitenzahl(zeilen: Sequence[RahmenZeile], seite: int) -> list[RahmenZeile]:
+    """Entfernt die am Zeilenanfang verschmolzene Seitenzahl (Querformat, gedreht gedruckt)."""
+    bereinigt: list[RahmenZeile] = []
+    for zeile in zeilen:
+        if len(zeile.woerter) > 1 and zeile.woerter[0].text == str(seite):
+            woerter = zeile.woerter[1:]
+            zeile = RahmenZeile(
+                top=min(w.top for w in woerter),
+                bottom=max(w.bottom for w in woerter),
+                woerter=woerter,
+            )
+        bereinigt.append(zeile)
+    return bereinigt
+
+
+def _enthaelt_stellen(woerter: Iterable[WortRahmen], formen: set[str]) -> bool:
+    return any(_wort_norm(w.text) in formen for w in woerter)
+
+
+def finde_stellenzeile(
+    zeilen: Sequence[RahmenZeile],
+    *,
+    teil: str,
+    gruppe: str,
+    amtsbezeichnung: str | None,
+    verguetung: str | None,
+    produktbereich: str | None,
+    stellen: float | None,
+    seite: int,
+    breite: float,
+    hoehe: float,
+) -> Suche:
+    """Sucht die gedruckte Stellenplanzeile (Teil A/B, Nachwuchs oder Stellenübersicht).
+
+    Teil A/B: die Zeile beginnt mit Amtsbezeichnung und Gruppe bzw. der Entgeltgruppe; bei einem
+    Stellenwert des Haushaltsjahrs muss er (als Dezimalzahl mit Komma) in der Zeile stehen.
+    Nachwuchskräfte: erstes Wort der Bezeichnung plus Art der Vergütung. Stellenübersicht: die
+    Zeile des Produktbereichs samt Umbruchzeile; alle Zellen der Zeile teilen sich ihr Rechteck.
+    """
+    zeilen = _ohne_seitenzahl(zeilen, seite) if breite > hoehe else list(zeilen)
+    formen = _stellen_formen(stellen) if stellen is not None else None
+
+    if produktbereich is not None:
+        kandidaten = []
+        for index, zeile in enumerate(zeilen):
+            if zeile.woerter[0].text != produktbereich:
+                continue
+            block = [zeile]
+            for folge in zeilen[index + 1 :]:
+                erstes = folge.woerter[0].text
+                if (
+                    folge.top - block[-1].bottom > _UMBRUCH_ABSTAND
+                    or _PRODUKTBEREICH_MUSTER.match(erstes)
+                    or _norm(erstes) in ("Summe", "insgesamt")
+                ):
+                    break
+                block.append(folge)
+            kandidaten.append(block)
+        if formen is not None:
+            kandidaten = [
+                b
+                for b in kandidaten
+                if _enthaelt_stellen((w for z in b for w in z.woerter), formen)
+            ]
+            fehlt = GRUND_BETRAG_FEHLT
+        else:
+            fehlt = GRUND_NICHT_GEFUNDEN
+        return _eindeutiger_block(kandidaten, breite, hoehe, fehlt)
+
+    if teil == "nachwuchs":
+        erstes_wort = _norm(gruppe.split()[0])
+        art = _norm(verguetung or "")
+        kandidaten = [
+            [z]
+            for z in zeilen
+            if _norm(z.woerter[0].text).startswith(erstes_wort) and art in _zeilentext(z)
+        ]
+        return _eindeutiger_block(kandidaten, breite, hoehe, GRUND_NICHT_GEFUNDEN)
+
+    beschriftung = _norm(amtsbezeichnung or "") + _norm(gruppe)
+    kandidaten = [[z] for z in zeilen if _beginnt_mit_woertern(z, beschriftung)]
+    if formen is not None:
+        kandidaten = [b for b in kandidaten if _enthaelt_stellen(b[0].woerter, formen)]
+        fehlt = GRUND_BETRAG_FEHLT
+    else:
+        fehlt = GRUND_NICHT_GEFUNDEN
+    return _eindeutiger_block(kandidaten, breite, hoehe, fehlt)
+
+
+def _eindeutiger_block(
+    kandidaten: Sequence[Sequence[RahmenZeile]], breite: float, hoehe: float, fehlt: str
+) -> Suche:
+    if not kandidaten:
+        return None, fehlt
+    if len(kandidaten) > 1:
+        return None, GRUND_MEHRDEUTIG
+    return bbox_mit_rand((w for z in kandidaten[0] for w in z.woerter), breite, hoehe), None
+
+
 def _haushaltsjahr_wertart(jahrgang: Jahrgang, plantyp: str) -> str:
     """Wertart der Spalte des Haushaltsjahrs (ohne VE-Spalte) aus `jahrgang.spalten`."""
     wertarten: list[str] = []
@@ -162,33 +674,39 @@ def _haushaltsjahr_wertart(jahrgang: Jahrgang, plantyp: str) -> str:
 
 @dataclass(frozen=True)
 class _Planzeile:
-    praefix: str
+    ebene: str
+    code: str
     zeile: str
     zeile_kanonisch: str
     betrag: int
     pdf_seite: int
 
 
-def _lies_gesamt_zeilen(
-    daten_wurzel: Path, jahrgang: Jahrgang, csv: Path, plantyp: str, praefix: str
+def _lies_planzeilen(
+    daten_wurzel: Path, jahrgang: Jahrgang, csv: Path, plantyp: str, *, nur_gesamt: bool
 ) -> list[_Planzeile]:
-    """Liest die GESAMT-Zeilen einer Plan-CSV für die Haushaltsjahr-Spalte, je Zeile genau eine."""
+    """Liest die Haushaltsjahr-Zeilen einer Plan-CSV, je (Ebene, Code, Zeile) genau eine."""
     wertart = _haushaltsjahr_wertart(jahrgang, plantyp)
-    df = lies_plan_csv(daten_wurzel / csv).filter(pl.col("ebene") == _GESAMT)
+    df = lies_plan_csv(daten_wurzel / csv)
+    if nur_gesamt:
+        df = df.filter(pl.col("ebene") == _GESAMT)
     haushaltsjahr = df.filter(
         (pl.col("jahr") == jahrgang.haushaltsjahr) & (pl.col("wertart") == wertart)
-    ).sort("zeile")
-    kanonisch = df["zeile_kanonisch"].unique().to_list()
-    if haushaltsjahr.height != len(kanonisch) or haushaltsjahr["zeile_kanonisch"].n_unique() != (
-        haushaltsjahr.height
-    ):
-        raise QuellenFehler(
-            f"{csv}: {haushaltsjahr.height} Haushaltsjahr-Zeilen für {len(kanonisch)} "
-            "GESAMT-Zeilen (je Zeile wird genau ein Wert erwartet)"
-        )
+    ).sort(["ebene", "code", "zeile"])
+    schluessel = haushaltsjahr.select("ebene", "code", "zeile_kanonisch").unique().height
+    if schluessel != haushaltsjahr.height:
+        raise QuellenFehler(f"{csv}: Haushaltsjahr-Zeilen sind nicht eindeutig je Knoten und Zeile")
+    if nur_gesamt:
+        erwartet = df["zeile_kanonisch"].n_unique()
+        if haushaltsjahr.height != erwartet:
+            raise QuellenFehler(
+                f"{csv}: {haushaltsjahr.height} Haushaltsjahr-Zeilen für {erwartet} "
+                "GESAMT-Zeilen (je Zeile wird genau ein Wert erwartet)"
+            )
     return [
         _Planzeile(
-            praefix=praefix,
+            ebene=zeile["ebene"],
+            code=_GESAMT if zeile["ebene"] == _GESAMT else zeile["code"],
             zeile=zeile["zeile"],
             zeile_kanonisch=zeile["zeile_kanonisch"],
             betrag=zeile["betrag"],
@@ -196,6 +714,401 @@ def _lies_gesamt_zeilen(
         )
         for zeile in haushaltsjahr.iter_rows(named=True)
     ]
+
+
+class _Seiten:
+    """Gemeinsamer Zugriff auf Zeilen, Abschnitte und Maße der PDF-Seiten (mit Zwischenspeicher)."""
+
+    def __init__(self, pdf: PdfDokument, jahrgang: Jahrgang) -> None:
+        self._pdf = pdf
+        self._jahrgang = jahrgang
+        self._masse: dict[int, tuple[float, float]] = {}
+        self._teilergebnisplan: dict[int, tuple[RahmenZeile, ...]] = {}
+
+    def masse(self, seite: int) -> tuple[float, float]:
+        if seite not in self._masse:
+            self._masse[seite] = self._pdf.seitenmass(seite)
+        return self._masse[seite]
+
+    @property
+    def alle_masse(self) -> dict[int, tuple[float, float]]:
+        return dict(sorted(self._masse.items()))
+
+    def zeilen(self, seite: int) -> tuple[RahmenZeile, ...]:
+        return self._pdf.zeilen_mit_rahmen(seite)
+
+    def teilergebnisplan(self, seite: int) -> tuple[RahmenZeile, ...]:
+        """Nur die Zeilen des Teilergebnisplan-Abschnitts der Seite (nie Teilfinanzplan)."""
+        if seite not in self._teilergebnisplan:
+            tops = {
+                zeile.top
+                for abschnitt in lies_abschnitte(self._pdf.zeilen(seite), self._jahrgang, seite)
+                if abschnitt.plantyp == "teilergebnisplan"
+                for zeile in abschnitt.zeilen
+            }
+            self._teilergebnisplan[seite] = tuple(
+                z for z in self._pdf.zeilen_mit_rahmen(seite) if z.top in tops
+            )
+        return self._teilergebnisplan[seite]
+
+
+@dataclass
+class _Sammler:
+    """Sammelt die Belege einer Erzeugung und merkt sich die Gründe fehlender Rechtecke."""
+
+    seiten: _Seiten
+    belege: dict[str, dict[str, object]] = field(default_factory=dict)
+    ohne_bbox: dict[str, str] = field(default_factory=dict)
+
+    def eintragen(
+        self, schluessel: str, seite: int, bbox: list[float] | None, grund: str | None
+    ) -> None:
+        if schluessel in self.belege:
+            raise QuellenFehler(f"Beleg {schluessel} doppelt vergeben")
+        self.seiten.masse(seite)
+        self.belege[schluessel] = {"pdf_seite": seite, "bild": bild_name(seite), "bbox": bbox}
+        if bbox is None:
+            self.ohne_bbox[schluessel] = grund or GRUND_NICHT_GEFUNDEN
+
+    def suche(self, schluessel: str, seite: int, finder: Callable[[float, float], Suche]) -> None:
+        """Trägt den Beleg ein; `finder(breite, hoehe)` liefert `(bbox, grund)`."""
+        breite, hoehe = self.seiten.masse(seite)
+        bbox, grund = finder(breite, hoehe)
+        self.eintragen(schluessel, seite, bbox, grund)
+
+
+def _lies_app_json(app_daten_wurzel: Path, datei: Path) -> dict:
+    pfad = app_daten_wurzel / datei
+    if not pfad.is_file():
+        raise QuellenFehler(f"{pfad}: App-JSON fehlt (Schritt 07 muss vor Schritt 08 laufen)")
+    return json.loads(pfad.read_text(encoding="utf-8"))
+
+
+def _sammle_plaene(
+    sammler: _Sammler, jahrgang: Jahrgang, daten_wurzel: Path, haushalt: Mapping[str, object]
+) -> None:
+    """ep für jede gedruckte Zeile jedes Knotens (außer KL), fp für jede GESAMT-Zeile."""
+    app_zeilen = {code: set(werte["zeilen"]) for code, werte in haushalt["ergebnisplan"].items()}
+    for csv, plantyp, art in (
+        (ERGEBNISPLAN_CSV, "ergebnisplan", "ep"),
+        (FINANZPLAN_CSV, "finanzplan", "fp"),
+    ):
+        planzeilen = _lies_planzeilen(daten_wurzel, jahrgang, csv, plantyp, nur_gesamt=art == "fp")
+        for planzeile in planzeilen:
+            if art == "ep":
+                if planzeile.code.startswith(_KL_PRAEFIX):
+                    continue
+                if planzeile.zeile_kanonisch not in app_zeilen.get(planzeile.code, ()):
+                    continue
+                schluessel = schluessel_ep(planzeile.code, planzeile.zeile_kanonisch)
+            else:
+                schluessel = schluessel_fp(planzeile.code, planzeile.zeile_kanonisch)
+            seite = planzeile.pdf_seite
+            zeilen = (
+                sammler.seiten.zeilen(seite)
+                if planzeile.ebene == _GESAMT
+                else sammler.seiten.teilergebnisplan(seite)
+            )
+            sammler.suche(
+                schluessel,
+                seite,
+                lambda breite, hoehe, z=zeilen, p=planzeile: finde_planzeile(
+                    z, p.zeile, p.betrag, breite=breite, hoehe=hoehe
+                ),
+            )
+
+
+def _lies_vorbericht_tabellen(daten_wurzel: Path) -> dict[str, pl.DataFrame]:
+    """Die manuellen Vorberichtstabellen wie in `app_daten.erzeuge_app_daten` (nur lesend)."""
+    return {
+        "steuerarten": lies_vorbericht_csv(daten_wurzel / STEUERARTEN_CSV),
+        "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
+        "transferaufwendungen": lies_vorbericht_csv(daten_wurzel / TRANSFERAUFWENDUNGEN_CSV),
+        "kita_zuschuesse": lies_vorbericht_csv(daten_wurzel / KITA_ZUSCHUESSE_CSV),
+        "zuschuesse_lfd_zwecke": lies_vorbericht_csv(daten_wurzel / ZUSCHUESSE_LFD_ZWECKE_CSV),
+        "investitionszuwendungen": lies_vorbericht_csv(daten_wurzel / INVESTITIONSZUWENDUNGEN_CSV),
+        **zerlege_weitere_vorberichtstabellen(
+            lies_vorbericht_csv(daten_wurzel / WEITERE_VORBERICHTSTABELLEN_CSV)
+        ),
+        "eigenkapital": lies_eigenkapital_csv(daten_wurzel / EIGENKAPITAL_CSV),
+    }
+
+
+def _haushaltsjahr_index(jahrgang: Jahrgang, jahre: Sequence[int]) -> int:
+    if jahrgang.haushaltsjahr not in jahre:
+        raise QuellenFehler(
+            f"Haushaltsjahr {jahrgang.haushaltsjahr} fehlt in den App-Jahren {jahre}"
+        )
+    return list(jahre).index(jahrgang.haushaltsjahr)
+
+
+def _sammle_vorbericht(
+    sammler: _Sammler, jahrgang: Jahrgang, daten_wurzel: Path, haushalt: Mapping[str, object]
+) -> None:
+    """vb für jeden Posten und jede gedruckte Gesamtzeile mit Quellseite (inkl. Eigenkapital)."""
+    tabellen_df = _lies_vorbericht_tabellen(daten_wurzel)
+    index = _haushaltsjahr_index(jahrgang, haushalt["jahre"])
+    tabellen = {**haushalt["vorbericht"], "eigenkapital": haushalt["eigenkapital"]}
+    for tabelle, daten in tabellen.items():
+        df = tabellen_df[tabelle]
+        teiler = 1000 if daten["quelle_einheit"] == "teur" else 1
+
+        def _gedruckt(werte: Sequence[int | None], t: int = teiler) -> list[float | None]:
+            return [None if w is None else w / t for w in werte]
+
+        for posten in daten["posten"]:
+            seite = posten["quelle"]
+            if seite is None:
+                continue
+            schluessel = schluessel_vb(tabelle, posten["posten"])
+            if posten["berechnet"]:
+                sammler.eintragen(schluessel, seite, None, GRUND_BERECHNET)
+                continue
+            sammler.suche(
+                schluessel,
+                seite,
+                lambda breite, hoehe, s=seite, p=posten, g=_gedruckt: finde_tabellenzeile(
+                    sammler.seiten.zeilen(s),
+                    p["name"],
+                    g(p["werte"]),
+                    ziel_index=index,
+                    breite=breite,
+                    hoehe=hoehe,
+                ),
+            )
+        gesamt = daten["gesamt_vorbericht"]
+        if gesamt["quelle"] is not None:
+            gesamt_df = df.filter(pl.col("ist_gesamt"))
+            bezeichnung = gesamt_df["posten_name"][0]
+            sammler.suche(
+                schluessel_vb_gesamt(tabelle),
+                gesamt["quelle"],
+                lambda breite, hoehe, g=gesamt, b=bezeichnung, f=_gedruckt: finde_tabellenzeile(
+                    sammler.seiten.zeilen(g["quelle"]),
+                    b,
+                    f(g["werte"]),
+                    ziel_index=index,
+                    breite=breite,
+                    hoehe=hoehe,
+                ),
+            )
+
+
+def _meta_eintraege(meta: Mapping[str, object]) -> list[tuple[str, Mapping[str, object]]]:
+    """Alle MetaWerte (Blätter mit `wert`) mit gepunktetem Pfad."""
+    eintraege: list[tuple[str, Mapping[str, object]]] = []
+    for name, eintrag in meta.items():
+        if "wert" in eintrag:
+            eintraege.append((name, eintrag))
+        else:
+            eintraege.extend((f"{name}.{unter}", wert) for unter, wert in eintrag.items())
+    return eintraege
+
+
+def _sammle_meta(sammler: _Sammler, haushalt: Mapping[str, object]) -> None:
+    for pfad, meta in _meta_eintraege(haushalt["meta"]):
+        seite = meta["quelle"]
+        schluessel = schluessel_meta(pfad)
+        if meta.get("berechnet"):
+            sammler.eintragen(schluessel, seite, None, GRUND_BERECHNET)
+            continue
+        kandidaten = meta_kandidaten(meta["wert"], meta["einheit"], bool(meta.get("gerundet")))
+        sammler.suche(
+            schluessel,
+            seite,
+            lambda breite, hoehe, s=seite, k=kandidaten: finde_wertzeile(
+                sammler.seiten.zeilen(s), k, seite=s, breite=breite, hoehe=hoehe
+            ),
+        )
+
+
+def _sammle_schuldenstand(
+    sammler: _Sammler,
+    jahrgang: Jahrgang,
+    daten_wurzel: Path,
+    haushalt: Mapping[str, object],
+    investitionen: Mapping[str, object],
+) -> None:
+    verbindlichkeiten = lies_vorbericht_csv(daten_wurzel / VERBINDLICHKEITEN_CSV).filter(
+        pl.col("tabelle") == "verbindlichkeiten"
+    )
+    jahre = haushalt["jahre"]
+    index = _haushaltsjahr_index(jahrgang, jahre)
+    seite = investitionen["schuldenstand"]["quelle"]
+    for reihe, posten in _SCHULDENSTAND_POSTEN.items():
+        teil = verbindlichkeiten.filter(pl.col("posten") == posten)
+        if teil.height == 0:
+            raise QuellenFehler(f"verbindlichkeiten.csv: Posten {posten!r} fehlt")
+        name = teil["posten_name"][0]
+        je_jahr = {z["jahr"]: float(z["betrag_teur"]) for z in teil.iter_rows(named=True)}
+        werte = [je_jahr.get(jahr) for jahr in jahre]
+        sammler.suche(
+            schluessel_sd(reihe),
+            seite,
+            lambda breite, hoehe, n=name, w=werte: finde_tabellenzeile(
+                sammler.seiten.zeilen(seite), n, w, ziel_index=index, breite=breite, hoehe=hoehe
+            ),
+        )
+
+
+def _kontozeilen_texte(jahrgang: Jahrgang) -> KontozeilenText:
+    return KontozeilenText(
+        summen=(
+            _norm(layout_text(jahrgang, "investitionen", "einzahlungen_summe")),
+            _norm(layout_text(jahrgang, "investitionen", "auszahlungen_summe")),
+            _norm(layout_text(jahrgang, "investitionen", "saldo_praefix")),
+        ),
+        kassenwirksamkeit=_norm(layout_text(jahrgang, "investitionen", "kassenwirksamkeit")),
+    )
+
+
+def _sammle_investitionen(
+    sammler: _Sammler,
+    jahrgang: Jahrgang,
+    haushalt: Mapping[str, object],
+    investitionen: Mapping[str, object],
+) -> None:
+    index = _haushaltsjahr_index(jahrgang, haushalt["jahre"])
+    texte = _kontozeilen_texte(jahrgang)
+    for massnahme in investitionen["massnahmen"]:
+        seite = massnahme["pdf_seite"]
+        betrag = massnahme["werte"][index]
+        sammler.suche(
+            schluessel_inv(
+                massnahme["produkt"],
+                massnahme["massnahme_id"],
+                massnahme["konto"],
+                massnahme["richtung"],
+            ),
+            seite,
+            lambda breite, hoehe, m=massnahme, s=seite, b=betrag: finde_kontozeile(
+                sammler.seiten.zeilen(s),
+                m["massnahme_id"],
+                m["konto"],
+                b,
+                texte=texte,
+                mit_kassenwirksamkeit=False,
+                breite=breite,
+                hoehe=hoehe,
+            ),
+        )
+    faelligkeiten: dict[tuple[str, str, str], list[dict[str, object]]] = defaultdict(list)
+    for ve in investitionen["ve_faelligkeiten"]:
+        faelligkeiten[(ve["produkt"], ve["massnahme_id"], ve["konto"])].append(ve)
+    for (produkt, massnahme_id, konto), zeilen in sorted(faelligkeiten.items()):
+        seiten = {ve["pdf_seite"] for ve in zeilen}
+        if len(seiten) != 1:
+            raise QuellenFehler(f"VE {produkt}/{massnahme_id}/{konto}: mehrere PDF-Seiten {seiten}")
+        seite = int(next(iter(seiten)))
+        betraege = [float(ve["betrag"]) for ve in zeilen]
+        sammler.suche(
+            schluessel_ve(produkt, massnahme_id, konto),
+            seite,
+            lambda breite, hoehe, m=massnahme_id, k=konto, s=seite, b=betraege: finde_kontozeile(
+                sammler.seiten.zeilen(s),
+                m,
+                k,
+                None,
+                texte=texte,
+                mit_kassenwirksamkeit=True,
+                pflicht_betraege=b,
+                breite=breite,
+                hoehe=hoehe,
+            ),
+        )
+
+
+def _sammle_stellenplan(
+    sammler: _Sammler, jahrgang: Jahrgang, stellenplan: Mapping[str, object]
+) -> None:
+    gruppen: dict[str, list[dict[str, object]]] = defaultdict(list)
+    for zeile in stellenplan["zeilen"]:
+        gruppen[schluessel_sp(zeile["teil"], zeile["position"], zeile["produktbereich"])].append(
+            zeile
+        )
+    for schluessel, zeilen in gruppen.items():
+        erste = zeilen[0]
+        seiten = {z["pdf_seite"] for z in zeilen}
+        if len(seiten) != 1:
+            raise QuellenFehler(f"{schluessel}: mehrere PDF-Seiten {seiten}")
+        seite = int(erste["pdf_seite"])
+        stellen = next(
+            (
+                z["stellen"]
+                for z in zeilen
+                if z["merkmal"] == "stellen" and z["jahr"] == jahrgang.haushaltsjahr
+            ),
+            None,
+        )
+        sammler.suche(
+            schluessel,
+            seite,
+            lambda breite, hoehe, e=erste, st=stellen, s=seite: finde_stellenzeile(
+                sammler.seiten.zeilen(s),
+                teil=e["teil"],
+                gruppe=e["gruppe"],
+                amtsbezeichnung=e["amtsbezeichnung"],
+                verguetung=e["verguetung"],
+                produktbereich=e["produktbereich"],
+                stellen=st,
+                seite=s,
+                breite=breite,
+                hoehe=hoehe,
+            ),
+        )
+
+
+def _art(schluessel: str) -> str:
+    return schluessel.split(":", 1)[0]
+
+
+def schreibe_quellenbericht(
+    belege: Mapping[str, Mapping[str, object]],
+    gruende: Mapping[str, str],
+    pfad: Path,
+) -> None:
+    """Schreibt den Bericht aller Belege ohne Rechteck (D-03), deterministisch sortiert.
+
+    Seitenbelege (`seite:{n}`) stehen nie in den Tabellen: sie haben absichtlich kein Rechteck.
+    """
+    je_art: dict[str, list[str]] = defaultdict(list)
+    for schluessel in belege:
+        je_art[_art(schluessel)].append(schluessel)
+    reihenfolge = [art for art in _ART_TITEL if art in je_art] + sorted(
+        art for art in je_art if art not in _ART_TITEL
+    )
+
+    zeilen = [
+        "# Quellenbelege – Werte ohne Markierung",
+        "",
+        "Schritt 08 (`pipeline/08_quellenbelege.py`) sucht zu jedem Wert mit PDF-Seite die Zeile",
+        "auf der Seite (Beschriftung oder Zeilennummer plus Betrag des Haushaltsjahrs). Ohne genau",
+        "einen Treffer bekommt der Beleg kein Rechteck; die App zeigt dann die Seite ohne",
+        "Markierung mit einem Hinweis. Diese Datei wird bei jedem Lauf neu geschrieben.",
+        "",
+        "## Überblick",
+        "",
+        "| Art | Belege | ohne Markierung |",
+        "|---|---|---|",
+    ]
+    ohne_je_art: dict[str, list[str]] = {}
+    for art in reihenfolge:
+        ohne = sorted(s for s in je_art[art] if belege[s]["bbox"] is None and art != "seite")
+        ohne_je_art[art] = ohne
+        anzahl = "–" if art == "seite" else str(len(ohne))
+        zeilen.append(f"| {art} ({_ART_TITEL.get(art, art)}) | {len(je_art[art])} | {anzahl} |")
+    for art in reihenfolge:
+        ohne = ohne_je_art[art]
+        if not ohne:
+            continue
+        zeilen += ["", f"## {art} – {_ART_TITEL.get(art, art)}", ""]
+        zeilen += ["| Schlüssel | PDF-Seite | Grund |", "|---|---|---|"]
+        for schluessel in ohne:
+            grund = gruende.get(schluessel, GRUND_NICHT_GEFUNDEN)
+            zeilen.append(f"| `{schluessel}` | {belege[schluessel]['pdf_seite']} | {grund} |")
+    pfad.parent.mkdir(parents=True, exist_ok=True)
+    with pfad.open("w", encoding="utf-8", newline="\n") as datei:
+        datei.write("\n".join(zeilen) + "\n")
 
 
 def erzeuge_quellen(
@@ -207,46 +1120,29 @@ def erzeuge_quellen(
     rendern: bool = True,
     neu_rendern: bool = False,
 ) -> QuellenErgebnis:
-    """Erzeugt `quellen.json` (und, mit `rendern`, die fehlenden WebP-Seiten) für `jahr`.
+    """Erzeugt `quellen.json`, den Bericht und (mit `rendern`) die fehlenden WebP-Seiten.
 
-    Zeilen des Gesamtergebnisplans (`ep:GESAMT:*`) und des Gesamtfinanzplans (`fp:GESAMT:*`)
-    werden auf ihrer `pdf_seite` gesucht (Zeilennummer plus Haushaltsjahrbetrag). Ein Wert
-    ohne eindeutigen Treffer bekommt `bbox: null` und steht in `QuellenErgebnis.ohne_bbox`.
+    Liest die App-JSONs aus `app_daten_wurzel` (Schritt 07 muss vorher gelaufen sein) und die
+    CSVs aus `daten_wurzel`. Jeder Wert ohne eindeutigen Treffer bekommt `bbox: null` und steht
+    in `QuellenErgebnis.ohne_bbox` und im Bericht `pruefberichte/quellenbelege.md`.
     """
     jahrgang = lade_jahrgang(jahr)
-    planzeilen = _lies_gesamt_zeilen(
-        daten_wurzel, jahrgang, ERGEBNISPLAN_CSV, "ergebnisplan", "ep"
-    ) + _lies_gesamt_zeilen(daten_wurzel, jahrgang, FINANZPLAN_CSV, "finanzplan", "fp")
-
-    belege: dict[str, dict[str, object]] = {}
-    masse: dict[int, tuple[float, float]] = {}
-    ohne_bbox: dict[str, str] = {}
+    haushalt = _lies_app_json(app_daten_wurzel, HAUSHALT_JSON)
+    investitionen = _lies_app_json(app_daten_wurzel, INVESTITIONEN_JSON)
+    stellenplan = _lies_app_json(app_daten_wurzel, STELLENPLAN_JSON)
 
     with PdfDokument.oeffne(jahrgang.pdf_pfad) as pdf:
-        for planzeile in planzeilen:
-            schluessel = (
-                schluessel_ep(_GESAMT, planzeile.zeile_kanonisch)
-                if planzeile.praefix == "ep"
-                else schluessel_fp(_GESAMT, planzeile.zeile_kanonisch)
-            )
-            if schluessel in belege:
-                raise QuellenFehler(f"Beleg {schluessel} doppelt vergeben")
-            seite = planzeile.pdf_seite
-            if seite not in masse:
-                masse[seite] = pdf.seitenmass(seite)
-            breite, hoehe = masse[seite]
-            bbox, grund = finde_planzeile(
-                pdf.zeilen_mit_rahmen(seite),
-                planzeile.zeile,
-                planzeile.betrag,
-                breite=breite,
-                hoehe=hoehe,
-            )
-            if bbox is None and grund is not None:
-                ohne_bbox[schluessel] = grund
-            belege[schluessel] = {"pdf_seite": seite, "bild": bild_name(seite), "bbox": bbox}
+        sammler = _Sammler(_Seiten(pdf, jahrgang))
+        _sammle_plaene(sammler, jahrgang, daten_wurzel, haushalt)
+        _sammle_vorbericht(sammler, jahrgang, daten_wurzel, haushalt)
+        _sammle_meta(sammler, haushalt)
+        _sammle_schuldenstand(sammler, jahrgang, daten_wurzel, haushalt, investitionen)
+        _sammle_investitionen(sammler, jahrgang, haushalt, investitionen)
+        _sammle_stellenplan(sammler, jahrgang, stellenplan)
+        masse = sammler.seiten.alle_masse
 
-    seiten_sortiert = tuple(sorted(masse))
+    belege = sammler.belege
+    seiten_sortiert = tuple(masse)
     neu_gerendert = 0
     if rendern:
         seitentypen = {
@@ -278,11 +1174,15 @@ def erzeuge_quellen(
     pfad = app_daten_wurzel / QUELLEN_JSON
     schreibe_app_json(daten, pfad, praefix="quellen")
 
+    bericht = daten_wurzel / QUELLENBELEGE_MD
+    schreibe_quellenbericht(belege, sammler.ohne_bbox, bericht)
+
     return QuellenErgebnis(
         pfad=pfad,
         anzahl_belege=len(belege),
-        anzahl_ohne_bbox=len(ohne_bbox),
+        anzahl_ohne_bbox=len(sammler.ohne_bbox),
         seiten=seiten_sortiert,
         neu_gerendert=neu_gerendert,
-        ohne_bbox=dict(sorted(ohne_bbox.items())),
+        ohne_bbox=dict(sorted(sammler.ohne_bbox.items())),
+        bericht=bericht,
     )
