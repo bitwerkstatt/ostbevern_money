@@ -8,6 +8,7 @@ import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import { haushalt } from '@/data/daten'
 import PostenZeitreihe from '@/components/PostenZeitreihe.vue'
+import RuecklagenBalken from '@/components/RuecklagenBalken.vue'
 import { ENTWICKLUNG_POSTEN, baueErgebnisReihen, bauePostenReihe } from '@/lib/entwicklung'
 
 // Die Seite zeigt immer alle ausgewiesenen Jahre, ohne Jahr-Umschalter (UI-SPEC Routes).
@@ -33,6 +34,10 @@ const karten = ENTWICKLUNG_POSTEN.map((posten) => {
   )?.pdfSeite
   return { posten, pdf: seite == null ? undefined : { seite } }
 })
+
+// Die Rücklagen stehen in der Eigenkapitalübersicht des Vorberichts (Quellseite aus den Daten).
+const eigenkapitalSeite = haushalt.eigenkapital.gesamt_vorbericht.quelle
+const eigenkapitalQuelle = eigenkapitalSeite === null ? undefined : { seite: eigenkapitalSeite }
 </script>
 
 <template>
@@ -77,6 +82,13 @@ const karten = ENTWICKLUNG_POSTEN.map((posten) => {
           <PostenZeitreihe :posten="karte.posten" />
         </ChartCard>
       </div>
+    </section>
+
+    <section class="om-entwicklung__abschnitt" aria-labelledby="om-entwicklung-polster">
+      <h2 id="om-entwicklung-polster">Wie lange reicht das Polster?</h2>
+      <ChartCard :titel="`Rücklagen ${erstesJahr}–${letztesJahr}`" :pdf="eigenkapitalQuelle">
+        <RuecklagenBalken />
+      </ChartCard>
     </section>
   </div>
 </template>
