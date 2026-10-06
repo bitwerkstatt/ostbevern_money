@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 
-import { bboxProzent, bildUrl, type AufgeloesterBeleg } from '@/lib/quelle'
+import { bboxProzent, bildUrl, quellAltText, type AufgeloesterBeleg } from '@/lib/quelle'
 
 // Bild einer PDF-Seite samt Zeilenmarkierung (D-02). Wird von der Seitenleiste nur gerendert,
 // solange sie geöffnet ist (kein Vorabladen) und je Auslösung neu aufgebaut (`:key`).
@@ -43,12 +43,9 @@ const platzhalterStil = computed(() => ({
   aspectRatio: `${String(props.beleg.breite)} / ${String(props.beleg.hoehe)}`,
 }))
 
-const altText = computed(() => {
-  const basis = `Ausschnitt des Haushaltsplans, PDF-Seite ${String(props.beleg.pdfSeite)}.`
-  return props.beleg.bbox === null
-    ? basis
-    : `${basis} Die markierte Zeile gehört zu: ${props.bezeichnung}.`
-})
+const altText = computed(() =>
+  quellAltText(props.beleg.pdfSeite, props.bezeichnung, props.beleg.bbox !== null),
+)
 
 function beiLaden() {
   geladen.value = true

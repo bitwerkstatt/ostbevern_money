@@ -16,6 +16,7 @@
 
 import { reactive, readonly } from 'vue'
 
+import { ORIGINAL_PDF_URL } from '@/config'
 import { quellen } from '@/data/daten'
 import type { Beleg } from '@/data/typen'
 
@@ -136,6 +137,61 @@ export function bboxProzent(
 /** URL eines Belegbilds relativ zur App-Basis; nie ein Pfad mit führendem `/` (D-05). */
 export function bildUrl(bild: string): string {
   return `${import.meta.env.BASE_URL}quellen/${bild}`
+}
+
+export type HinweisArt = 'markiert' | 'ohne_markierung' | 'berechnet'
+
+export interface BelegHinweis {
+  art: HinweisArt
+  /** Fettgedruckter Titel, nur bei berechneten Werten. */
+  titel?: string
+  text: string
+}
+
+const HINWEIS_MARKIERT = 'Die markierte Zeile ist umrandet.'
+const HINWEIS_OHNE_MARKIERUNG =
+  'Zeile nicht automatisch markiert. Der Wert steht auf dieser Seite, vielleicht in anderer Schreibweise, zum Beispiel gerundet in Tausend Euro.'
+const HERLEITUNG_FEHLT = 'aus den Planwerten'
+
+/**
+ * Hinweis über dem Seitenbild (D-03, UI-SPEC „Seitenleiste im Einzelnen“). Eine Herleitung
+ * (auch der leere Text) kennzeichnet einen berechneten Wert, der nicht im PDF steht; `null` oder
+ * `undefined` einen gedruckten Wert. Ohne Herleitung entscheidet das Rechteck: mit Rechteck die
+ * Caption „umrandet“, ohne Rechteck der Hinweis „nicht automatisch markiert“.
+ */
+export function belegHinweis(
+  beleg: Pick<AufgeloesterBeleg, 'bbox'>,
+  herleitung: string | null | undefined,
+): BelegHinweis {
+  if (herleitung !== null && herleitung !== undefined) {
+    const woraus = herleitung === '' ? HERLEITUNG_FEHLT : herleitung
+    return {
+      art: 'berechnet',
+      titel: 'Berechneter Wert',
+      text: `Dieser Wert steht nicht im PDF. Er wird berechnet: ${woraus}. Die Seite zeigt die Ausgangswerte.`,
+    }
+  }
+  if (beleg.bbox === null) {
+    return { art: 'ohne_markierung', text: HINWEIS_OHNE_MARKIERUNG }
+  }
+  return { art: 'markiert', text: HINWEIS_MARKIERT }
+}
+
+/**
+ * Link auf die Seite im Original-PDF (D-06): `#page=` am festen `ORIGINAL_PDF_URL`, nur mit einer
+ * ganzen Seitenzahl ab 1 (Schutz vor einem manipulierten Fragment, T-07-04).
+ */
+export function originalSeitenUrl(seite: number): string {
+  if (!Number.isInteger(seite) || seite < 1) {
+    throw new RangeError(`Ungültige PDF-Seite: ${String(seite)}`)
+  }
+  return `${ORIGINAL_PDF_URL}#page=${String(seite)}`
+}
+
+/** Bildbeschreibung der Belegseite; mit Markierung nennt sie die markierte Zeile. */
+export function quellAltText(seite: number, bezeichnung: string, markiert: boolean): string {
+  const basis = `Ausschnitt des Haushaltsplans, PDF-Seite ${String(seite)}.`
+  return markiert ? `${basis} Die markierte Zeile gehört zu: ${bezeichnung}.` : basis
 }
 
 /** Was der Auslöser der Seitenleiste mitgibt (Wertzeile und Hinweis). */

@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createSSRApp } from 'vue'
+import { renderToString } from 'vue/server-renderer'
 
+import DatenTabelle from '@/components/DatenTabelle.vue'
+import QuelleKnopf from '@/components/QuelleKnopf.vue'
 import quelleKnopfQuelltext from '@/components/QuelleKnopf.vue?raw'
 import quelleSeiteQuelltext from '@/components/QuelleSeite.vue?raw'
 import quelleSeitenleisteQuelltext from '@/components/QuelleSeitenleiste.vue?raw'
@@ -142,9 +146,9 @@ describe('keine Drittanbieter- oder Absolutpfade in den Beleg-Komponenten (D-05)
     expect(quelltext).not.toMatch(/src="\//)
   })
 
-  it('die Seitenleiste nennt den Originallink nur über ORIGINAL_PDF_URL', () => {
+  it('die Seitenleiste nennt den Originallink nur über originalSeitenUrl', () => {
     expect(quelleSeitenleisteQuelltext).not.toMatch(/https?:\/\//)
-    expect(quelleSeitenleisteQuelltext).toContain('ORIGINAL_PDF_URL')
+    expect(quelleSeitenleisteQuelltext).toContain('originalSeitenUrl(')
   })
 })
 
@@ -248,5 +252,81 @@ describe('sichtbareSpalten (Spalte „Quelle“ der DatenTabelle)', () => {
     ])
     const ohneQuelle = spalten.slice(0, 2)
     expect(sichtbareSpalten(ohneQuelle, [{ name: 'a', betrag: 1 }], hatBeleg)).toEqual(ohneQuelle)
+  })
+})
+
+describe('QuelleKnopf und DatenTabelle-Spalte „Quelle“ (Server-Rendering ohne DOM)', () => {
+  const gueltig = belegSchluessel.ep('GESAMT', 'steuern')
+  const spalten: DatenSpalte[] = [
+    { schluessel: 'name', titel: 'Name', art: 'text' },
+    { schluessel: 'beleg', titel: 'Quelle', art: 'quelle' },
+  ]
+
+  async function rendere(komponente: object, props: Record<string, unknown>): Promise<string> {
+    return renderToString(createSSRApp(komponente, props))
+  }
+
+  it('QuelleKnopf rendert für einen unbekannten Schlüssel nichts (kein toter Knopf)', async () => {
+    const html = await rendere(QuelleKnopf, {
+      schluessel: 'ep:GESAMT:gibt_es_nicht',
+      bezeichnung: 'Erträge',
+      variante: 'kachel',
+    })
+    expect(html).not.toContain('<button')
+    expect(html).not.toContain('Quelle anzeigen')
+  })
+
+  it('QuelleKnopf nennt in der Variante kachel „Quelle anzeigen“ und den vollen Namen', async () => {
+    const html = await rendere(QuelleKnopf, {
+      schluessel: gueltig,
+      bezeichnung: 'Erträge',
+      variante: 'kachel',
+    })
+    expect(html).toContain('aria-label="Quelle anzeigen: Erträge, PDF-Seite 62"')
+    expect(html).toContain('>Quelle anzeigen<')
+    expect(html).toContain('name="file-lines"')
+  })
+
+  it('QuelleKnopf zeigt in der Variante zeile „PDF-Seite {n}“ ohne Icon', async () => {
+    const html = await rendere(QuelleKnopf, {
+      schluessel: gueltig,
+      bezeichnung: 'Steuern',
+      variante: 'zeile',
+    })
+    expect(html).toContain('aria-label="Quelle anzeigen: Steuern, PDF-Seite 62"')
+    expect(html).toMatch(/>PDF-Seite 62</)
+    expect(html).not.toContain('file-lines')
+  })
+
+  it('DatenTabelle zeichnet je belegter Zeile einen Knopf und lässt andere Zellen leer', async () => {
+    const html = await rendere(DatenTabelle, {
+      beschriftung: 'Probe',
+      spalten,
+      zeilen: [
+        { name: 'Steuern', beleg: gueltig },
+        { name: 'Ohne Beleg', beleg: null },
+        { name: 'Unbekannt', beleg: 'ep:GESAMT:gibt_es_nicht' },
+      ],
+    })
+    expect(html.match(/<button/g)).toHaveLength(1)
+    expect(html).toContain('aria-label="Quelle anzeigen: Steuern, PDF-Seite 62"')
+    expect(html).toMatch(/<th scope="col"[^>]*>Quelle<\/th>/)
+    expect(html).not.toContain('kein Wert')
+    // Die beiden Zeilen ohne auflösbaren Beleg haben eine leere Zelle (ohne Strich, ohne Text).
+    expect(html.match(/<td class="om-tabelle__quelle"[^>]*><!----><\/td>/g)).toHaveLength(2)
+  })
+
+  it('DatenTabelle zeigt ohne auflösbaren Beleg keine Quelle-Spalte', async () => {
+    const html = await rendere(DatenTabelle, {
+      beschriftung: 'Probe',
+      spalten,
+      zeilen: [
+        { name: 'Ohne Beleg', beleg: null },
+        { name: 'Unbekannt', beleg: 'ep:GESAMT:gibt_es_nicht' },
+      ],
+    })
+    expect(html).not.toContain('Quelle')
+    expect(html).not.toContain('<button')
+    expect(html).not.toContain('om-tabelle__quelle')
   })
 })

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue'
 import { EURO_OPTIONEN, KEIN_WERT } from '@/charts/format'
-import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
+import QuelleKnopf from '@/components/QuelleKnopf.vue'
+import { sichtbareSpalten, type DatenSpalte, type DatenZeile } from '@/components/datenTabelle'
+import { findeBeleg } from '@/lib/quelle'
 
 const props = withDefaults(
   defineProps<{
@@ -38,6 +40,27 @@ defineSlots<{
 }>()
 
 const istDatenModus = computed(() => props.zeilen !== undefined)
+
+// Eine Spalte `art: 'quelle'` (Phase 7, D-01) erscheint nur, wenn mindestens eine Zeile einen
+// auflösbaren Beleg hat; die Tabelle zeichnet ihre Zelle selbst (außerhalb des Slots `zelle`),
+// damit auch Tabellen mit eigenem Zellen-Slot den Knopf ohne Slotänderung bekommen.
+function hatBeleg(wert: string | number | null): boolean {
+  return typeof wert === 'string' && findeBeleg(wert) !== null
+}
+
+const sichtbar = computed(() => sichtbareSpalten(props.spalten ?? [], props.zeilen ?? [], hatBeleg))
+
+/** Bezeichnung des Werts für den Namen des Knopfes: der Wert der ersten sichtbaren Spalte. */
+function zeilenBezeichnung(zeile: DatenZeile): string {
+  const erste = sichtbar.value[0]
+  const wert = erste === undefined ? null : zeile[erste.schluessel]
+  return wert === null || wert === undefined ? '' : String(wert)
+}
+
+function herleitungVon(zeile: DatenZeile, spalte: DatenSpalte): string | null {
+  const wert = zeile[`${spalte.schluessel}Herleitung`]
+  return typeof wert === 'string' ? wert : null
+}
 const istLeer = computed(() => istDatenModus.value && (props.zeilen?.length ?? 0) === 0)
 
 // `spalten` ist unabhängig von `zeilen` optional, wird im Datenmodus aber
@@ -137,14 +160,14 @@ function alsZahl(wert: string | number | null | undefined): number {
       </caption>
       <thead>
         <tr>
-          <th v-for="spalte in spalten" :key="spalte.schluessel" scope="col">
+          <th v-for="spalte in sichtbar" :key="spalte.schluessel" scope="col">
             {{ spalte.titel }}
           </th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(zeile, index) in zeilen" :key="index">
-          <template v-for="(spalte, spaltenIndex) in spalten" :key="spalte.schluessel">
+          <template v-for="(spalte, spaltenIndex) in sichtbar" :key="spalte.schluessel">
             <th v-if="spaltenIndex === 0" scope="row" class="om-tabelle__label">
               <slot
                 name="zelle"
@@ -160,6 +183,15 @@ function alsZahl(wert: string | number | null | undefined): number {
               </slot>
               <slot name="zeilenzusatz" :zeile="zeile" />
             </th>
+            <td v-else-if="spalte.art === 'quelle'" class="om-tabelle__quelle">
+              <QuelleKnopf
+                v-if="hatBeleg(zeile[spalte.schluessel] ?? null)"
+                :schluessel="String(zeile[spalte.schluessel])"
+                :bezeichnung="zeilenBezeichnung(zeile)"
+                variante="zeile"
+                :herleitung="herleitungVon(zeile, spalte)"
+              />
+            </td>
             <td v-else :class="{ 'om-zahl': spalte.art !== 'text' }">
               <slot
                 name="zelle"
@@ -272,6 +304,10 @@ function alsZahl(wert: string | number | null | undefined): number {
 
 .om-tabelle tbody tr:nth-child(even) {
   background: var(--wa-color-surface-lowered);
+}
+
+.om-tabelle__quelle {
+  white-space: nowrap;
 }
 
 .om-tabelle__fussnote {

@@ -3,9 +3,15 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import QuelleSeite from '@/components/QuelleSeite.vue'
-import { ORIGINAL_PDF_URL } from '@/config'
 import { useSchmalerBildschirm } from '@/lib/bildschirm'
-import { findeBeleg, fokusNachSchliessen, schliesseQuelle, useQuelle } from '@/lib/quelle'
+import {
+  belegHinweis,
+  findeBeleg,
+  fokusNachSchliessen,
+  originalSeitenUrl,
+  schliesseQuelle,
+  useQuelle,
+} from '@/lib/quelle'
 
 // Die eine globale Quell-Seitenleiste (D-02, D-04), gesteuert über `lib/quelle.ts`. Kein
 // URL-Zustand. Das Bild lädt erst, wenn die Leiste geöffnet wird (`v-if` auf der Anfrage).
@@ -63,9 +69,11 @@ watch(
 // Der Satz der UI-SPEC, der den Schließen-Knopf als Fokusziel nennt, wird beim Checkpoint in
 // Plan 07-10 neu bewertet.
 
-// Tracer-Hinweise; Plan 07-01 Aufgabe 2 zieht sie in reine, getestete Funktionen.
-const hinweisKeinRechteck =
-  'Zeile nicht automatisch markiert. Der Wert steht auf dieser Seite, vielleicht in anderer Schreibweise, zum Beispiel gerundet in Tausend Euro.'
+const hinweis = computed(() =>
+  beleg.value === null || anfrage.value === null
+    ? null
+    : belegHinweis(beleg.value, anfrage.value.herleitung),
+)
 </script>
 
 <template>
@@ -91,25 +99,19 @@ const hinweisKeinRechteck =
         </p>
       </div>
 
-      <wa-callout v-if="anfrage.herleitung" variant="neutral">
-        <wa-icon slot="icon" name="circle-info" aria-hidden="true"></wa-icon>
-        <strong class="om-quelle-hinweis__titel">Berechneter Wert</strong>
-        <p class="om-quelle-hinweis__text">
-          Dieser Wert steht nicht im PDF. Er wird berechnet: {{ anfrage.herleitung }}. Die Seite
-          zeigt die Ausgangswerte.
-        </p>
-      </wa-callout>
-      <wa-callout v-else-if="beleg.bbox === null" variant="neutral">
-        <wa-icon slot="icon" name="circle-info" aria-hidden="true"></wa-icon>
-        <p class="om-quelle-hinweis__text">{{ hinweisKeinRechteck }}</p>
-      </wa-callout>
-      <p v-else class="om-quelle-wertzeile__wertart">Die markierte Zeile ist umrandet.</p>
+      <template v-if="hinweis !== null">
+        <wa-callout v-if="hinweis.art !== 'markiert'" variant="neutral">
+          <wa-icon slot="icon" name="circle-info" aria-hidden="true"></wa-icon>
+          <strong v-if="hinweis.titel !== undefined" class="om-quelle-hinweis__titel">{{
+            hinweis.titel
+          }}</strong>
+          <p class="om-quelle-hinweis__text">{{ hinweis.text }}</p>
+        </wa-callout>
+        <p v-else class="om-quelle-wertzeile__wertart">{{ hinweis.text }}</p>
+      </template>
 
       <p class="om-quelle-link">
-        <a
-          :href="`${ORIGINAL_PDF_URL}#page=${beleg.pdfSeite}`"
-          target="_blank"
-          rel="noopener noreferrer"
+        <a :href="originalSeitenUrl(beleg.pdfSeite)" target="_blank" rel="noopener noreferrer"
           >Seite {{ beleg.pdfSeite }} im Original-PDF öffnen<wa-icon
             name="arrow-up-right-from-square"
             class="om-extern-icon"
