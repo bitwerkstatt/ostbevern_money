@@ -496,9 +496,13 @@ describe('Quelle-Spalte der Produkttabellen (D-01, UI-02)', () => {
     expect(geprueft).toBe(investitionen.massnahmen.length)
   })
 
-  it('jeder Schlüssel, den ein Produkt in seinen drei Tabellen liefert, löst auf', () => {
+  it('jeder Schlüssel einer Tabellenzeile löst auf, außer bei Planzeilen ohne Wert, die das PDF nicht druckt', () => {
+    // „Ordentliche Erträge“ zeigt der Teilergebnisplan immer; hat ein Produkt keine Erträge, druckt
+    // der Haushaltsplan die Zeile nicht und quellen.json hat keinen Beleg (leere Zelle, kein Knopf).
+    const ungedruckt: string[] = []
     const unaufgeloest: string[] = []
     for (const produkt of produkte) {
+      const werte = ergebnisplanVon(produkt.code)
       const tabellen = [
         baueTeilergebnisplan(produkt.code),
         baueGrundzahlen(produkt.code),
@@ -507,12 +511,21 @@ describe('Quelle-Spalte der Produkttabellen (D-01, UI-02)', () => {
       for (const tabelle of tabellen) {
         for (const zeile of tabelle?.zeilen ?? []) {
           const schluessel = zeile.quelle
-          if (typeof schluessel === 'string' && findeBeleg(schluessel) === null) {
+          if (typeof schluessel !== 'string' || findeBeleg(schluessel) !== null) {
+            continue
+          }
+          const reihe = werte.zeilen[String(zeile.schluessel)]
+          if (reihe !== undefined && reihe.every((wert) => wert === 0)) {
+            ungedruckt.push(schluessel)
+          } else {
             unaufgeloest.push(schluessel)
           }
         }
       }
     }
     expect(unaufgeloest).toEqual([])
+    expect(ungedruckt.every((schluessel) => schluessel.endsWith(':ordentliche_ertraege'))).toBe(
+      true,
+    )
   })
 })

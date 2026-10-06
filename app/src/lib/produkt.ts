@@ -11,6 +11,7 @@ import type { Grundzahl, KnotenWerte, Massnahme, Produkt } from '@/data/typen'
 import { findeKnoten, findeProdukt, leseAnsicht } from '@/lib/ansicht'
 import { proKopf } from '@/lib/berechnung'
 import { wertartFuerJahr, wertartName } from '@/lib/jahr'
+import { belegSchluessel } from '@/lib/quelle'
 
 const BINDUNGSGRAD_TEXTE: ReadonlyMap<string, string> = new Map([
   ['pflichtig', 'pflichtig'],
@@ -192,15 +193,20 @@ export function baueTeilergebnisplan(code: unknown): Teilergebnisplan | null {
   const spalten: DatenSpalte[] = [
     { schluessel: 'name', titel: 'Zeile', art: 'text' },
     ...jahre.map((j) => jahrSpalte(j, wertartFuerJahr(j), 'euro')),
+    // Letzte Spalte (D-01): der Zellwert ist ein Belegschlüssel oder `null`.
+    { schluessel: 'quelle', titel: 'Quelle', art: 'quelle' },
   ]
 
+  // Gedruckte Zeilen tragen den Beleg der Planzeile dieses Produkts; die beiden berechneten
+  // Zeilen stehen nicht im PDF und haben keinen (leere Zelle).
   const zeile = (
     schluessel: string,
     name: string,
     etikett: string | null,
     reihe: readonly (number | null)[],
+    quelle: string | null,
   ): DatenZeile => {
-    const eintrag: ZeilenWerte = { schluessel, name, etikett }
+    const eintrag: ZeilenWerte = { schluessel, name, etikett, quelle }
     jahre.forEach((j, index) => {
       eintrag[jahrSchluessel(j)] = reihe[index] ?? null
     })
@@ -214,19 +220,28 @@ export function baueTeilergebnisplan(code: unknown): Teilergebnisplan | null {
       continue
     }
     if (reihe.some((wert) => wert !== 0) || IMMER_ZEIGEN.has(gedruckt.schluessel)) {
-      zeilen.push(zeile(gedruckt.schluessel, gedruckt.name, null, reihe))
+      zeilen.push(
+        zeile(
+          gedruckt.schluessel,
+          gedruckt.name,
+          null,
+          reihe,
+          belegSchluessel.ep(treffer.produkt.code, gedruckt.schluessel),
+        ),
+      )
     }
   }
 
   const einwohner = einwohnerzahl()
   const zuschussbedarf = werte.berechnet.zuschussbedarf
   zeilen.push(
-    zeile('zuschussbedarf', 'Zuschussbedarf (berechnet)', BERECHNET, zuschussbedarf),
+    zeile('zuschussbedarf', 'Zuschussbedarf (berechnet)', BERECHNET, zuschussbedarf, null),
     zeile(
       'zuschussbedarf_je_einwohner',
       'Zuschussbedarf je Einwohner (berechnet)',
       BERECHNET,
       zuschussbedarf.map((betrag) => proKopf(betrag, einwohner)),
+      null,
     ),
   )
 
@@ -351,6 +366,8 @@ export function baueGrundzahlen(code: unknown): GrundzahlenTabelle | null {
       titel: formatiereJahr(j),
       art: dezimal ? 'dezimal' : 'zahl',
     })),
+    // Letzte Spalte (D-01): der Zellwert ist ein Belegschlüssel oder `null`.
+    { schluessel: 'quelle', titel: 'Quelle', art: 'quelle' },
   ]
 
   const zeilen: DatenZeile[] = grundzahlen.map((grundzahl) => {
@@ -362,6 +379,7 @@ export function baueGrundzahlen(code: unknown): GrundzahlenTabelle | null {
           : `${grundzahl.gruppe}: ${grundzahl.bezeichnung}`,
       einheit: grundzahl.einheit,
       etikett: null,
+      quelle: belegSchluessel.gz(produkt.code, grundzahl.position),
     }
     for (const j of jahre) {
       eintrag[jahrSchluessel(j)] = grundzahl.werte.find((w) => w.jahr === j)?.wert ?? null
@@ -378,6 +396,7 @@ export function baueGrundzahlen(code: unknown): GrundzahlenTabelle | null {
       name: `Zuschussbedarf je ${bezug.einheitText} (berechnet)`,
       einheit: 'EUR',
       etikett: BERECHNET,
+      quelle: null,
     }
     for (const j of jahre) {
       const planIndex = haushalt.jahre.indexOf(j)
@@ -417,6 +436,8 @@ export function baueInvestitionenTabelle(massnahmen: readonly Massnahme[]): Tabe
     ...investitionen.jahre.map((j, index) =>
       jahrSpalte(j, investitionen.wertarten[index] ?? wertartFuerJahr(j), 'euro'),
     ),
+    // Letzte Spalte (D-01): der Zellwert ist ein Belegschlüssel oder `null`.
+    { schluessel: 'quelle', titel: 'Quelle', art: 'quelle' },
   ]
   const zeilen: DatenZeile[] = massnahmen.map((massnahme) => {
     const eintrag: ZeilenWerte = {
@@ -424,6 +445,12 @@ export function baueInvestitionenTabelle(massnahmen: readonly Massnahme[]): Tabe
       name: massnahme.massnahme_name,
       konto: massnahme.konto_name,
       richtung: RICHTUNG_TEXTE.get(massnahme.richtung) ?? massnahme.richtung,
+      quelle: belegSchluessel.inv(
+        massnahme.produkt,
+        massnahme.massnahme_id,
+        massnahme.konto,
+        massnahme.richtung,
+      ),
     }
     investitionen.jahre.forEach((j, index) => {
       eintrag[jahrSchluessel(j)] = massnahme.werte[index] ?? null
