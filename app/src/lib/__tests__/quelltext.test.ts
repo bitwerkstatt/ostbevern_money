@@ -10,16 +10,26 @@ const quelltexte = import.meta.glob<string>('/src/**/*.vue', {
   eager: true,
 })
 
-/** Die fünf Inhaltsseiten, auf denen Glossarbegriffe im Fließtext verlinkt sein müssen (D-16). */
+/**
+ * Die neun Inhaltsseiten, auf denen Glossarbegriffe im Fließtext verlinkt sein müssen: die fünf
+ * aus Phase 5 (D-16) und die vier aus Phase 6 (D-14, D-17).
+ */
 const INHALTSSEITEN = [
   'StartPage',
   'EinnahmenPage',
   'AusgabenPage',
   'GeldflussPage',
   'ProduktPage',
+  'EntwicklungPage',
+  'InvestitionenPage',
+  'RatEntscheidetPage',
+  'StellenplanPage',
 ] as const
 
-/** Schlüssel, die zusammen auf den Inhaltsseiten verlinkt sein müssen (GLOS-03, D-16). */
+/**
+ * Schlüssel, die zusammen auf den Inhaltsseiten verlinkt sein müssen (GLOS-03, D-16, D-17): die
+ * Pflichtbegriffe aus Phase 5, dann die vier aus Phase 6.
+ */
 const PFLICHT_SCHLUESSEL = [
   'ergebnisplan',
   'finanzplan',
@@ -34,6 +44,10 @@ const PFLICHT_SCHLUESSEL = [
   'globaler_minderaufwand',
   'bindungsgrad',
   'produkt',
+  'haushaltssicherung',
+  'verpflichtungsermaechtigung',
+  'vzae',
+  'entgeltgruppen',
 ] as const
 
 /** Der Inhalt zwischen dem ersten `<template>` und dem letzten `</template>` einer Vue-Datei. */
@@ -68,7 +82,7 @@ function seitenQuelltext(seite: string): string {
   return quelltext
 }
 
-describe('Glossarverlinkung auf den Inhaltsseiten (GLOS-03, D-16)', () => {
+describe('Glossarverlinkung auf den Inhaltsseiten (GLOS-03, D-16, D-17)', () => {
   it.each(INHALTSSEITEN)('%s enthält mindestens einen GlossarBegriff im Fließtext', (seite) => {
     expect(glossarVerwendungen(seitenQuelltext(seite)).length).toBeGreaterThan(0)
   })
