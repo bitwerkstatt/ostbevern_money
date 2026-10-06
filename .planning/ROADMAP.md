@@ -219,14 +219,14 @@ Plans:
   4. `/stellenplan` zeigt die Stellen 2026 im Vergleich zu 2025 und zu den besetzten Stellen am 30.06.2025, die Verteilung nach Aufgabenbereich und nach Entgelt- bzw. Besoldungsgruppe sowie daneben den Personalaufwand je Aufgabenbereich (TP Z. 11).
   5. Ein Hinweis „Was nicht im Haushalt steht“ erklärt BBO (Hallenbad) und TEO AöR (Abwasser).
 
-**Plans**: 12 plans
+**Plans**: 3/12 plans executed
 **UI hint**: yes
 
 Plans:
 **Wave 1**
-- [ ] 06-01-PLAN.md — Pipeline: Einzelzuschüsse S. 47 (CSV, Regel 5 gegen Transferposten, haushalt.json) und HSK-Schwellen S. 23 in meta.json (Wave 1)
-- [ ] 06-02-PLAN.md — App-Fundament: vier Routen mit Seitenrahmen, Menügruppe „Mehr wissen“ (Disclosure + Drawer), MarkLine/Farben, gemeinsames Wertart-Stilmodul (Wave 1)
-- [ ] 06-03-PLAN.md — Hinweisbox „Was nicht im Haushalt steht“ (BBO/TEO) auf /ausgaben und /einnahmen, Kurzvariante vorbereitet (Wave 1)
+- [x] 06-01-PLAN.md — Pipeline: Einzelzuschüsse S. 47 (CSV, Regel 5 gegen Transferposten, haushalt.json) und HSK-Schwellen S. 23 in meta.json (Wave 1)
+- [x] 06-02-PLAN.md — App-Fundament: vier Routen mit Seitenrahmen, Menügruppe „Mehr wissen“ (Disclosure + Drawer), MarkLine/Farben, gemeinsames Wertart-Stilmodul (Wave 1)
+- [x] 06-03-PLAN.md — Hinweisbox „Was nicht im Haushalt steht“ (BBO/TEO) auf /ausgaben und /einnahmen, Kurzvariante vorbereitet (Wave 1)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 06-04-PLAN.md — Texte und Glossar: Formeln (Polster, Schuldenanstieg), RAT-04, Überschuss, Glossar nicht_im_haushalt/vzae/entgeltgruppen, Abnahme-Checkpoint (D-20) (Wave 2, Checkpoint)
@@ -270,5 +270,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Details | 5/5 | Complete    | 2026-10-02 |
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
-| 6. Kontext-Seiten | 0/12 | Planned | - |
+| 6. Kontext-Seiten | 3/12 | In Progress|  |
 | 7. Feinschliff und Veröffentlichung | 0/TBD | Not started | - |
