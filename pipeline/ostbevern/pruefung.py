@@ -53,6 +53,7 @@ from ostbevern.schema import (
     VERBINDLICHKEITEN_CSV,
     WEITERE_VORBERICHTSTABELLEN_CSV,
     WERTARTEN,
+    ZUSCHUESSE_LFD_ZWECKE_CSV,
     ZUWENDUNGEN_CSV,
     lies_eigenkapital_csv,
     lies_hierarchie_csv,
@@ -989,8 +990,9 @@ def _pruefe_regel4(
 # Regel 5 (PRUEF-05, D-05 bis D-07): manuelle Vorberichtstabelle (schema.py-Tabellenname,
 # z. B. "steuerarten") -> Gesamtergebnisplan-Zeile, gegen die die gedruckte Gesamtzeile der
 # Tabelle in Stufe (b) geprüft wird (fachliche Regel, nicht jede Tabelle hat eine GEP-Zeile;
-# kita_zuschuesse hat bewusst keine — sie wird stattdessen gegen einen Transferaufwendungen-
-# Posten geprüft, siehe REGEL5_KITA_POSTEN).
+# kita_zuschuesse und zuschuesse_lfd_zwecke haben bewusst keine — sie werden stattdessen gegen
+# einen Transferaufwendungen-Posten geprüft, siehe REGEL5_KITA_POSTEN und
+# REGEL5_LFD_ZWECKE_POSTEN).
 REGEL5_GEP_ZEILEN: dict[str, str] = {
     "steuerarten": "01",
     "zuwendungen": "02",
@@ -1038,51 +1040,88 @@ WEITERGABE_POSTEN: tuple[str, ...] = (
 # kita_zuschuesse (D-07): Posten in transferaufwendungen.csv, gegen den die Kita-Gesamtzeile
 # desselben Jahres geprüft wird.
 REGEL5_KITA_POSTEN = "zuschuesse_kindertageseinrichtungen"
+# zuschuesse_lfd_zwecke (Phase 6 D-03, RAT-03): Posten "Zuschüsse für lfd. Zwecke" in
+# transferaufwendungen.csv (S. 46), den die Tabelle auf S. 47 in acht Einzelposten aufteilt.
+REGEL5_LFD_ZWECKE_POSTEN = "zuschuesse_laufende_zwecke"
 
 
-def _pruefe_regel5_kita_gegen_transfer(
-    *, kita_df: pl.DataFrame, transfer_df: pl.DataFrame
+def _pruefe_regel5_einjahrestabelle_gegen_transfer(
+    *,
+    tabelle_df: pl.DataFrame,
+    transfer_df: pl.DataFrame,
+    transfer_posten: str,
+    plan: str,
+    zeile: str,
 ) -> tuple[int, list[Pruefpunkt]]:
-    """Kita-Gesamtzeile je Jahr == Transferaufwendungen-Posten REGEL5_KITA_POSTEN desselben
-    Jahres (D-07). Ein fehlender Posten oder ein fehlendes Jahr auf der Transfer-Seite ist
-    strukturell (kein Rundungsfehler) und bricht mit PruefungsFehler ab."""
-    transfer_posten_df = transfer_df.filter(pl.col("posten") == REGEL5_KITA_POSTEN)
+    """Gesamtzeile einer Einjahres-Aufschlüsselung je Jahr == Transferaufwendungen-Posten
+    `transfer_posten` desselben Jahres. Ein fehlender Posten oder ein fehlendes Jahr auf der
+    Transfer-Seite ist strukturell (kein Rundungsfehler) und bricht mit PruefungsFehler ab."""
+    transfer_posten_df = transfer_df.filter(pl.col("posten") == transfer_posten)
     if transfer_posten_df.height == 0:
         raise PruefungsFehler(
-            f"Regel 5: Posten {REGEL5_KITA_POSTEN!r} fehlt in transferaufwendungen.csv"
+            f"Regel 5: Posten {transfer_posten!r} fehlt in transferaufwendungen.csv"
         )
     transfer_nach_jahr = {
-        zeile["jahr"]: zeile for zeile in transfer_posten_df.iter_rows(named=True)
+        zeile_transfer["jahr"]: zeile_transfer
+        for zeile_transfer in transfer_posten_df.iter_rows(named=True)
     }
 
     geprueft = 0
     abweichungen: list[Pruefpunkt] = []
-    for jahr in sorted(kita_df.filter(pl.col("ist_gesamt"))["jahr"].unique().to_list()):
-        kita_gesamt = kita_df.filter(pl.col("ist_gesamt") & (pl.col("jahr") == jahr)).row(
+    for jahr in sorted(tabelle_df.filter(pl.col("ist_gesamt"))["jahr"].unique().to_list()):
+        gesamt = tabelle_df.filter(pl.col("ist_gesamt") & (pl.col("jahr") == jahr)).row(
             0, named=True
         )
         transfer_zeile = transfer_nach_jahr.get(jahr)
         if transfer_zeile is None:
             raise PruefungsFehler(
                 f"Regel 5: transferaufwendungen.csv hat keinen Posten "
-                f"{REGEL5_KITA_POSTEN!r} für Jahr {jahr}"
+                f"{transfer_posten!r} für Jahr {jahr}"
             )
         geprueft += 1
         punkt = Pruefpunkt(
             regel=5,
-            plan="vorbericht_kita_zuschuesse",
+            plan=plan,
             ebene="GESAMT",
             code="",
-            zeile="transfer_kita",
+            zeile=zeile,
             jahr=jahr,
-            wertart=kita_gesamt["wertart"],
+            wertart=gesamt["wertart"],
             soll=transfer_zeile["betrag_teur"] * 1000,
-            ist=kita_gesamt["betrag_teur"] * 1000,
-            pdf_seite=kita_gesamt["quelle"],
+            ist=gesamt["betrag_teur"] * 1000,
+            pdf_seite=gesamt["quelle"],
         )
         if abs(punkt.abweichung) > TOLERANZ_EURO:
             abweichungen.append(punkt)
     return geprueft, abweichungen
+
+
+def _pruefe_regel5_kita_gegen_transfer(
+    *, kita_df: pl.DataFrame, transfer_df: pl.DataFrame
+) -> tuple[int, list[Pruefpunkt]]:
+    """Kita-Gesamtzeile je Jahr == Transferaufwendungen-Posten REGEL5_KITA_POSTEN desselben
+    Jahres (D-07)."""
+    return _pruefe_regel5_einjahrestabelle_gegen_transfer(
+        tabelle_df=kita_df,
+        transfer_df=transfer_df,
+        transfer_posten=REGEL5_KITA_POSTEN,
+        plan="vorbericht_kita_zuschuesse",
+        zeile="transfer_kita",
+    )
+
+
+def _pruefe_regel5_lfd_zwecke_gegen_transfer(
+    *, lfd_df: pl.DataFrame, transfer_df: pl.DataFrame
+) -> tuple[int, list[Pruefpunkt]]:
+    """Gesamtzeile der Einzelzuschüsse für laufende Zwecke (S. 47) je Jahr ==
+    Transferaufwendungen-Posten REGEL5_LFD_ZWECKE_POSTEN desselben Jahres (Phase 6 D-03)."""
+    return _pruefe_regel5_einjahrestabelle_gegen_transfer(
+        tabelle_df=lfd_df,
+        transfer_df=transfer_df,
+        transfer_posten=REGEL5_LFD_ZWECKE_POSTEN,
+        plan="vorbericht_zuschuesse_lfd_zwecke",
+        zeile="transfer_lfd_zwecke",
+    )
 
 
 def _pruefe_regel5_weitergabe(
@@ -1358,7 +1397,9 @@ def _pruefe_regel5(
     bleiben "GESAMT"/"" (Research Pattern 3 — Vorbericht-Tabellen sind kein PB/PG/P-Knoten),
     der fachliche Kontext steht in `plan` (`vorbericht_{tabelle}`), der Posten-/Vergleichs-
     schlüssel in `zeile` ("summe_posten" bzw. "gep_{nr}"). Zusätzlich, nur wenn vorhanden:
-    der Kita/Transfer-Kreuzvergleich (`_pruefe_regel5_kita_gegen_transfer`) und die
+    der Kita/Transfer-Kreuzvergleich (`_pruefe_regel5_kita_gegen_transfer`), der Kreuzvergleich
+    der Einzelzuschüsse für lfd. Zwecke gegen den Transferposten
+    (`_pruefe_regel5_lfd_zwecke_gegen_transfer`, Phase 6 D-03) und die
     Weitergabe an Kreis und Land (`_pruefe_regel5_weitergabe`, D-01).
 
     Phase 5: Tabellen aus `REGEL5_GFP_ZEILEN` (investitionszuwendungen, S. 52) laufen in
@@ -1464,6 +1505,14 @@ def _pruefe_regel5(
         )
         geprueft += geprueft_kita
         abweichungen += abweichungen_kita
+
+    if "zuschuesse_lfd_zwecke" in vorbericht and "transferaufwendungen" in vorbericht:
+        geprueft_lfd, abweichungen_lfd = _pruefe_regel5_lfd_zwecke_gegen_transfer(
+            lfd_df=vorbericht["zuschuesse_lfd_zwecke"],
+            transfer_df=vorbericht["transferaufwendungen"],
+        )
+        geprueft += geprueft_lfd
+        abweichungen += abweichungen_lfd
 
     if "transferaufwendungen" in vorbericht:
         produkt = layout_text(jahrgang, "weitergabe_kreis_land", "produkt")
@@ -2547,6 +2596,7 @@ def pruefe_alles(
         "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
         "transferaufwendungen": lies_vorbericht_csv(daten_wurzel / TRANSFERAUFWENDUNGEN_CSV),
         "kita_zuschuesse": lies_vorbericht_csv(daten_wurzel / KITA_ZUSCHUESSE_CSV),
+        "zuschuesse_lfd_zwecke": lies_vorbericht_csv(daten_wurzel / ZUSCHUESSE_LFD_ZWECKE_CSV),
         "investitionszuwendungen": lies_vorbericht_csv(daten_wurzel / INVESTITIONSZUWENDUNGEN_CSV),
         **zerlege_weitere_vorberichtstabellen(
             lies_vorbericht_csv(daten_wurzel / WEITERE_VORBERICHTSTABELLEN_CSV)
