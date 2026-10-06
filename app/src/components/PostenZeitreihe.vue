@@ -101,6 +101,10 @@ const option = computed<EChartsOption>(() => {
   }
 })
 
+// Bildbeschreibung (A11Y-01): ohne Zahl, die Werte stehen in der Tabelle darunter.
+const BESCHREIBUNG =
+  'Liniendiagramm: der Betrag dieses Postens je Jahr. Dieselben Werte stehen in der Tabelle darunter.'
+
 const spalten: DatenSpalte[] = [
   { schluessel: 'jahr', titel: 'Jahr', art: 'text' },
   { schluessel: 'betrag', titel: 'Betrag', art: 'euro' },
@@ -126,7 +130,13 @@ const fussnote = computed(() => postenFussnote(props.posten, reihe.value))
       <BerechnetEtikett v-if="aenderung !== null" />
     </p>
 
-    <BaseChart :option="option" hoehe="240px" :leer-titel="LEER_TITEL" :leer-text="LEER_TEXT" />
+    <BaseChart
+      :option="option"
+      hoehe="240px"
+      :beschreibung="BESCHREIBUNG"
+      :leer-titel="LEER_TITEL"
+      :leer-text="LEER_TEXT"
+    />
     <p class="om-posten__legende">{{ LEGENDE_TEXT }}</p>
 
     <wa-details summary="Tabelle anzeigen">

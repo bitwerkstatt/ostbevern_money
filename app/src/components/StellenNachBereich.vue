@@ -217,7 +217,9 @@ const fussnote = computed(() => {
       Reihenfolge der Zeilen.
     </p>
 
-    <wa-details summary="Tabelle anzeigen">
+    <!-- Eine Tabelle trägt die Werte beider Diagramme (je eine Spalte); das Inventar (e2e/inventar.spec.ts)
+         zählt sie deshalb für zwei Diagramme. -->
+    <wa-details summary="Tabelle anzeigen" data-om-deckt-diagramme="2">
       <DatenTabelle
         beschriftung="Stellen und Personalaufwand nach Aufgabenbereich"
         :spalten="spalten"

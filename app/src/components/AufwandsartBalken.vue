@@ -25,6 +25,10 @@ const option = computed(() =>
   }),
 )
 
+// Bildbeschreibung (A11Y-01): ohne Zahl, die Werte stehen in der Tabelle darunter.
+const BESCHREIBUNG =
+  'Balkendiagramm: ein waagerechter Balken je Aufwandsart, die Länge zeigt den Betrag. Dieselben Werte stehen in der Tabelle darunter.'
+
 const hoehe = computed(() =>
   props.zeilen.length === 0 ? '160px' : balkenHoehe(props.zeilen.length),
 )
@@ -34,6 +38,7 @@ const hoehe = computed(() =>
   <BaseChart
     :option="option"
     :hoehe="hoehe"
+    :beschreibung="BESCHREIBUNG"
     :leer-titel="leerTitel"
     leer-text="Der Haushaltsplan nennt für dieses Jahr keine Aufschlüsselung. Wähle ein anderes Jahr oder öffne die Tabelle."
   />
