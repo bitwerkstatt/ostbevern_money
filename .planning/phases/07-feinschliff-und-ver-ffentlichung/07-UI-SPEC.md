@@ -1,7 +1,8 @@
 ---
 phase: "7"
 slug: "feinschliff-und-veroeffentlichung"
-status: draft
+status: approved
+reviewed_at: "2026-10-06"
 shadcn_initialized: false
 preset: none
 created: "2026-10-06"
@@ -348,36 +349,60 @@ Diese Punkte stammen aus dem Abgleich von `07-CONTEXT.md` mit dem Bestand. Der P
 
 ## UI Considerations
 
-Probe: `ui-consideration-probe` über 7 Elemente, **von der Researcherin klassifiziert, nicht beim Nutzer bestätigt** (E1 `QuelleKnopf`, E2 `QuelleSeitenleiste` mit Seitenbild, E3 Zeilenmarkierung, E4 Seite `/ueber`, E5 Fußzeilenlink, E6 Tabellenalternative je Diagramm, E7 alle Routen bei 360 px). Elementarten (Heuristik): E1 interactive-control, E2 media+static-content+interactive-control, E3 media, E4 static-content, E5 nav, E6 list-collection+media, E7 static-content. Empty-/Error-**Texte** stehen im Copywriting Contract, dieser Abschnitt bildet nur die Zustandsabdeckung ab. Einige Zeilen (E3 partial) liegen außerhalb der Kategorien, die die Probe für die Elementart rechnet; sie stehen zusätzlich, weil sie fachlich nötig sind.
+Probe: `ui-consideration-probe` über 7 Elemente, ausgeführt nach der Checker-Freigabe. Die Elementarten hat der Nutzer bestätigt, für E2 hat er `overflow` und `long-text` ergänzt. Die Elemente sind: E1 `QuelleKnopf`, E2 `QuelleSeitenleiste` mit Seitenbild, E3 Zeilenmarkierung, E4 Seite `/ueber` mit Impressum, E5 Fußzeilenlink, E6 Tabellenalternative je Diagramm, E7 alle Routen bei 360 px. Empty- und Error-**Texte** stehen im Copywriting Contract. Dieser Abschnitt bildet nur die Zustandsabdeckung ab.
 
-Applicable state considerations resolved: 16 covered, 5 backstop, 0 unresolved, 3 dismissed mit Begründung (24 Zeilen).
+Applicable state considerations resolved: 33 covered, 9 backstop, 0 unresolved, 6 dismissed mit Begründung (48 Zeilen, 0 unclassified).
 
 | Category | Element(s) | Status | Resolution / Reason |
 |----------|------------|--------|---------------------|
-| loading | E1 `QuelleKnopf` | ⬜ dismissed | Reason: Der Knopf öffnet die Leiste synchron aus bereits geladenen Daten; das Laden des Bildes gehört zu E2. |
-| error | E1 `QuelleKnopf` | ✅ covered | Gibt es für den Schlüssel keinen Eintrag in `quellen.json`, wird der Knopf nicht gerendert (kein toter Knopf). Ein Test listet Werte mit `pdf_seite`, aber ohne Eintrag, und lässt den Lauf scheitern, damit die Lücke nicht stillschweigend bleibt. |
-| long-text | E1 `QuelleKnopf` | ✅ covered | Sichtbarer Text „Quelle anzeigen“ darf bei 360 px (innere Kachelbreite 124 px) auf zwei Zeilen umbrechen, nie mit Auslassungspunkten. Die lange Bezeichnung steckt nur im versteckten Namen und beeinflusst das Layout nicht. |
-| loading | E2 `QuelleSeitenleiste` | ✅ covered | Bis `load` steht ein `wa-skeleton` im Seitenverhältnis des Bildes (aus den Daten) an der Stelle des Bildes, `aria-busy="true"`; es gibt keinen Layoutsprung. |
-| error | E2 `QuelleSeitenleiste` | ✅ covered | Schlägt das Bild fehl, ersetzt ein `wa-callout variant="warning"` das Bild („Die Seite konnte nicht geladen werden. Du findest sie im Original-PDF.“), der Link ins Original bleibt. |
-| empty | E2 `QuelleSeitenleiste` | ✅ covered | Es gibt keine Leiste ohne Beleg: ohne Eintrag kein Knopf (siehe E1 error). Ein Beleg ohne Rechteck zeigt die Seite ohne Markierung mit dem Hinweis aus D-03. |
-| populated | E2 `QuelleSeitenleiste` | 🧪 backstop | `{ statement: "Die Seitenleiste zeigt Titel, Wertzeile, Link ins Original und das Seitenbild, der Fokus liegt beim Öffnen in der Leiste und kehrt beim Schließen zum Auslöser zurück", verification: backstop }`, Nachweis in der UAT (D-12: nicht im Smoke-Test). |
-| overflow | E2 `QuelleSeitenleiste` | ✅ covered | Mindestmaßstab 1 px je PDF-Punkt: Hochformat füllt die Leiste, Querformat und 360 px scrollen waagerecht im eigenen Bildbereich (`tabindex="0"`, benannt); die Seite scrollt nie waagerecht, die Leiste ist höchstens `100vw` breit. |
-| long-text | E2 `QuelleSeitenleiste` | ✅ covered | Bezeichnung und Herleitungstext brechen um (`hyphens: auto`), der Link-Text darf umbrechen; nichts wird abgeschnitten. |
-| partial | E3 Zeilenmarkierung | ✅ covered | Ohne `bbox` entfällt die Markierung, die Seite bleibt oben, und der Hinweis „Zeile nicht automatisch markiert“ (bzw. bei berechneten Werten die Herleitung) steht über dem Bild. |
-| populated | E3 Zeilenmarkierung | 🧪 backstop | `{ statement: "Die Markierung sitzt auf der Zeile des Werts: die bbox wird in Prozent der Seitengröße umgerechnet, die Ansicht scrollt zur Markierung und die Markierung wird bei Hoch- und Querformat nicht abgeschnitten", verification: backstop }`, Nachweis durch Komponententest der Prozentumrechnung und drei Stichproben in der UAT. |
-| overflow | E4 Seite `/ueber` | ✅ covered | Prosa begrenzt auf `max-width: 40rem`, lange Adresszeilen und die E-Mail-Adresse brechen um (`overflow-wrap: anywhere`); bei 360 px kein waagerechtes Scrollen. |
-| long-text | E4 Seite `/ueber` | ✅ covered | Lange Anschrift als Zeilenliste in `<address>`, jede Zeile bricht für sich um; Überschriften brechen mit `hyphens: auto`. |
-| empty | E4 Impressum | 🧪 backstop | `{ statement: "Die Impressumsfelder (Name, Anschrift) sind keine Platzhalter, sobald deployt wird", verification: backstop }`, Nachweis durch `config.test.ts` und den Platzhalter-Schritt im Smoke-Test (D-07, D-11). |
-| overflow | E5 Fußzeilenlink | ✅ covered | Der Link steht auf eigener Zeile, bricht um, bleibt ≥ 44 px hoch und verlässt auf 360 px nie die Fußzeile. |
-| long-text | E5 Fußzeilenlink | ✅ covered | „Über dieses Projekt, Impressum und Datenschutz“ umbricht, wird nie gekürzt. |
-| loading | E5 Fußzeilenlink | ⬜ dismissed | Reason: Statischer Router-Link, nichts wird nachgeladen. |
-| error | E5 Fußzeilenlink | ⬜ dismissed | Reason: Die Route ist statisch und im Router deklariert; unbekannte Pfade fängt die bestehende Weiterleitung. |
-| empty | E6 Tabellenalternative | ✅ covered | Ein Diagramm ohne Daten zeigt den Leerzustand von `BaseChart`, die zugehörige Tabelle den Leerzustand von `DatenTabelle`; beide Zustände erscheinen zusammen, nie nur einer. |
-| partial | E6 Tabellenalternative | ✅ covered | Fehlende Werte stehen in der Tabelle als „–“ (Screenreader „kein Wert“), nie als 0. Die Tabelle enthält alle Werte des Diagramms. |
-| populated | E6 Tabellenalternative | 🧪 backstop | `{ statement: "Jede ChartCard mit Diagramm enthält eine DatenTabelle und trägt eine beschreibung; Ausnahmen stehen in einer geschlossenen, begründeten Liste im Test", verification: backstop }`, Nachweis durch den Inventar-Test (D-16). |
-| zero-one-many | E6 Tabellenalternative | ✅ covered | Eine Karte mit zwei Diagrammen hat zwei Tabellen (oder eine Tabelle mit allen Werten); der Test zählt Diagramme und Tabellen je Karte. Eine Karte mit einem Diagramm behält dasselbe Layout. |
-| overflow | E6 Tabellenalternative | ✅ covered | Breite Tabellen scrollen in ihrem eigenen benannten Container (`DatenTabelle`, bestehend), nie die Seite. |
-| overflow | E7 alle Routen bei 360 px | 🧪 backstop | `{ statement: "Auf allen 11 Routen entsteht bei 360 px kein waagerechtes Scrollen der Seite, auch nicht mit geöffneter Quell-Leiste oder Menü-Drawer, und alle Ziele sind mindestens 44 px groß", verification: backstop }`, Nachweis durch Komponententests der Layoutregeln und die UAT-Liste (D-12). |
+| empty | E1 `QuelleKnopf` | ✅ covered | Fehlt der Schlüssel in `quellen.json`, wird der Knopf nicht gerendert. Es gibt keinen toten Knopf und keinen Platzhaltertext. |
+| loading | E1 `QuelleKnopf` | ⬜ dismissed | Reason: Der Knopf öffnet die Leiste synchron aus bereits geladenen Daten. Das Laden des Bildes gehört zu E2. |
+| error | E1 `QuelleKnopf` | ✅ covered | Ein Test listet Werte mit `pdf_seite`, aber ohne Eintrag in `quellen.json`, und lässt den Lauf scheitern. So bleibt keine Lücke stillschweigend bestehen. |
+| populated | E1 `QuelleKnopf` | ✅ covered | Variante `kachel` und `produkt`: Icon `file-lines` und „Quelle anzeigen“. Variante `zeile`: „PDF-Seite {n}“. Der zugängliche Name lautet immer „Quelle anzeigen: {Bezeichnung}, PDF-Seite {n}“. Trefferfläche ≥ 44 px. |
+| partial | E1 `QuelleKnopf` | ✅ covered | Eine Kachel ohne Eintrag zeigt keinen Knopf, behält aber ihre Textzeile mit der PDF-Seite. Eine Tabellenzeile ohne Beleg hat eine leere Zelle „Quelle“, ohne „–“. |
+| overflow | E1 `QuelleKnopf` | ✅ covered | In der Variante `zeile` bricht der Text nicht um (`nowrap`), die Tabelle scrollt in ihrem eigenen Container. In der Variante `kachel` darf der Text bei 360 px auf zwei Zeilen umbrechen, ohne Auslassungspunkte. |
+| zero-one-many | E1 `QuelleKnopf` | ✅ covered | Eine Tabelle ohne Belege bekommt keine Spalte „Quelle“. Hat mindestens eine Zeile einen Beleg, gibt es eine Spalte mit einem Knopf je belegter Zeile. Gibt es schon eine Spalte „PDF-Seite“, wird diese Zelle zum Knopf, es kommt keine zweite Spalte dazu. |
+| long-text | E1 `QuelleKnopf` | ✅ covered | Die lange Bezeichnung steckt nur im versteckten Namen (`om-visually-hidden`) und beeinflusst das Layout nicht. |
+| empty | E2 `QuelleSeitenleiste` | ✅ covered | Ohne Beleg gibt es keine Leiste, weil ohne Eintrag kein Knopf erscheint (siehe E1 empty). Ein Beleg ohne Rechteck zeigt die Seite ohne Markierung und mit dem Hinweis aus D-03. |
+| loading | E2 `QuelleSeitenleiste` | ✅ covered | Bis `load` steht ein `wa-skeleton` im Seitenverhältnis des Bildes (aus den Daten) an der Stelle des Bildes, mit `aria-busy="true"`. Es gibt keinen Layoutsprung. |
+| error | E2 `QuelleSeitenleiste` | ✅ covered | Schlägt das Bild fehl, ersetzt ein `wa-callout variant="warning"` das Bild. Der Link ins Original bleibt davor stehen. |
+| populated | E2 `QuelleSeitenleiste` | 🧪 backstop | `{ statement: "Die Seitenleiste zeigt Titel, Wertzeile, Link ins Original und das Seitenbild, der Fokus liegt beim Öffnen in der Leiste und kehrt beim Schließen zum Auslöser zurück", verification: backstop }`. Nachweis in der UAT, laut D-12 nicht im Smoke-Test. |
+| overflow | E2 `QuelleSeitenleiste` | ✅ covered | Mindestmaßstab 1 px je PDF-Punkt. Hochformat füllt die Leiste. Querformat und 360 px scrollen waagerecht im eigenen Bildbereich (`tabindex="0"`, benannt). Die Seite scrollt nie waagerecht, die Leiste ist höchstens `100vw` breit. |
+| long-text | E2 `QuelleSeitenleiste` | ✅ covered | Bezeichnung und Herleitungstext brechen um (`hyphens: auto`), auch der Linktext darf umbrechen. Nichts wird abgeschnitten. |
+| empty | E3 Zeilenmarkierung | ✅ covered | Ist `bbox === null`, wird kein Markierungselement gerendert. Siehe E3 partial. |
+| loading | E3 Zeilenmarkierung | ✅ covered | Die Markierung erscheint erst zusammen mit dem Bild. Solange das Skeleton steht, wird keine Markierung gerendert. Gescrollt wird erst nach `load` und `wa-after-show`. |
+| error | E3 Zeilenmarkierung | ✅ covered | Schlägt das Bild fehl, entfällt die Markierung mit ihm, und es gilt der Fehler-Callout aus E2. |
+| populated | E3 Zeilenmarkierung | 🧪 backstop | `{ statement: "Die Markierung sitzt auf der Zeile des Werts: die bbox wird in Prozent der Seitengröße umgerechnet, die Ansicht scrollt zur Markierung und die Markierung wird bei Hoch- und Querformat nicht abgeschnitten", verification: backstop }`. Nachweis durch einen Komponententest der Prozentumrechnung und drei Stichproben in der UAT. |
+| partial | E3 Zeilenmarkierung | ✅ covered | Ohne `bbox` entfällt die Markierung und die Seite bleibt oben. Über dem Bild steht der Hinweis „Zeile nicht automatisch markiert“, bei berechneten Werten die Herleitung. |
+| overflow | E3 Zeilenmarkierung | ✅ covered | Der Rand liegt innen (`outline-offset: -2px`), deshalb wird er am Bildrand nicht abgeschnitten. `min-height: 8px`. Liegt die Zeile außerhalb des sichtbaren Bereichs, scrollt `scrollIntoView` mit `behavior: 'auto'` zu ihr. |
+| zero-one-many | E3 Zeilenmarkierung | ✅ covered | Ein Beleg hat höchstens ein Rechteck, also 0 oder 1. Mehrere Rechtecke je Beleg sind nicht vorgesehen. Braucht ein Wert zwei Zeilen, bekommt er zwei Belege. |
+| empty | E4 Impressum | 🧪 backstop | `{ statement: "Die Impressumsfelder (Name, Anschrift) sind keine Platzhalter, sobald deployt wird", verification: backstop }`. Nachweis durch `config.test.ts` und den Platzhalter-Schritt im Smoke-Test (D-07, D-11). |
+| loading | E4 Seite `/ueber` | ⬜ dismissed | Reason: Die Seite ist statisch, ihr Inhalt stammt aus dem Komponentencode und `config.ts`. Es werden keine Daten nachgeladen. |
+| error | E4 Seite `/ueber` | ⬜ dismissed | Reason: Es gibt keine Laufzeitdatenquelle, die fehlschlagen kann. Fehlende Werte sind Platzhalter und fallen in E4 empty bzw. partial. |
+| populated | E4 Seite `/ueber` | ✅ covered | `h1` „Über dieses Projekt“ und Lead, dann vier Abschnitte in fester Reihenfolge: Ein inoffizielles Projekt, Dank, Impressum (`dl`) und Datenschutz. Fokus auf `h1` beim Routenwechsel. |
+| partial | E4 Impressum | ✅ covered | Ist nur ein Teil der Impressumsfelder gesetzt, etwa der Name ohne Anschrift, scheitert der Platzhaltertest genauso. Ein halb gefülltes Impressum wird nicht deployt. |
+| overflow | E4 Seite `/ueber` | ✅ covered | Die Prosa ist auf `max-width: 40rem` begrenzt. Lange Adresszeilen und die E-Mail-Adresse brechen um (`overflow-wrap: anywhere`). Bei 360 px gibt es kein waagerechtes Scrollen. |
+| zero-one-many | E4 Impressum | ✅ covered | Die Anschrift ist eine Zeilenliste mit 1 bis n Zeilen, die als je eigene Zeile in `<address>` stehen. Bei einer Zeile ändert sich das Layout nicht. |
+| long-text | E4 Seite `/ueber` | ✅ covered | Eine lange Anschrift steht als Zeilenliste in `<address>`, jede Zeile bricht für sich um. Überschriften brechen mit `hyphens: auto`. |
+| loading | E5 Fußzeilenlink | ⬜ dismissed | Reason: Statischer Router-Link, es wird nichts nachgeladen. |
+| error | E5 Fußzeilenlink | ⬜ dismissed | Reason: Die Route ist statisch und im Router deklariert. Unbekannte Pfade fängt die bestehende Weiterleitung ab. |
+| overflow | E5 Fußzeilenlink | ✅ covered | Der Link steht auf einer eigenen Zeile und bricht um. Er bleibt ≥ 44 px hoch und verlässt auch bei 360 px die Fußzeile nicht. |
+| long-text | E5 Fußzeilenlink | ✅ covered | „Über dieses Projekt, Impressum und Datenschutz“ bricht um und wird nie gekürzt. |
+| empty | E6 Tabellenalternative | ✅ covered | Ein Diagramm ohne Daten zeigt den Leerzustand von `BaseChart`, die zugehörige Tabelle den Leerzustand von `DatenTabelle`. Beide Zustände erscheinen zusammen, nie nur einer. |
+| loading | E6 Tabellenalternative | 🧪 backstop | `{ statement: "Solange laedt gesetzt ist, zeigen BaseChart und DatenTabelle ein wa-skeleton statt einer leeren Fläche", verification: backstop }`. Nachweis durch vitest-Komponententests von `BaseChart` und `DatenTabelle`. Damit wird die Zusage aus 01/05/06-UI-SPEC eingelöst (Offene Annahme 4). |
+| error | E6 Tabellenalternative | 🧪 backstop | `{ statement: "Im Fehlerfall zeigen BaseChart und DatenTabelle einen Fehlertext statt einer leeren Fläche", verification: backstop }`. Nachweis durch dieselben vitest-Komponententests mit erzwungenem Fehler (Offene Annahme 4). |
+| populated | E6 Tabellenalternative | 🧪 backstop | `{ statement: "Jede ChartCard mit Diagramm enthält eine DatenTabelle und trägt eine beschreibung; Ausnahmen stehen in einer geschlossenen, begründeten Liste im Test", verification: backstop }`. Nachweis durch den Inventar-Test (D-16). |
+| partial | E6 Tabellenalternative | ✅ covered | Fehlende Werte stehen in der Tabelle als „–“ (Screenreader: „kein Wert“), nie als 0. Die Tabelle enthält alle Werte des Diagramms. |
+| overflow | E6 Tabellenalternative | ✅ covered | Breite Tabellen scrollen in ihrem eigenen benannten Container (bestehende `DatenTabelle`), nie die Seite. |
+| zero-one-many | E6 Tabellenalternative | ✅ covered | Eine Karte mit zwei Diagrammen hat zwei Tabellen oder eine Tabelle mit allen Werten, der Test zählt Diagramme und Tabellen je Karte. Eine Karte mit einem Diagramm behält dasselbe Layout. |
+| long-text | E6 Tabellenalternative | ✅ covered | Lange Bezeichnungen in Zeilenköpfen brechen um (bestehende `DatenTabelle`). Zahlenzellen bleiben einzeilig (`om-zahl`, `tabular-nums`). |
+| empty | E7 alle Routen bei 360 px | ✅ covered | Leerzustände folgen E6 empty und dürfen bei 360 px ebenfalls nicht waagerecht überlaufen. |
+| loading | E7 alle Routen bei 360 px | 🧪 backstop | `{ statement: "Ladezustände (wa-skeleton) behalten bei 360 px die Breite ihres Containers und erzeugen kein waagerechtes Scrollen der Seite", verification: backstop }`. Nachweis durch die UAT-Liste bei 360 px. |
+| error | E7 alle Routen bei 360 px | 🧪 backstop | `{ statement: "Fehler-Callouts brechen bei 360 px um und erzeugen kein waagerechtes Scrollen der Seite", verification: backstop }`. Nachweis durch die UAT-Liste bei 360 px. |
+| populated | E7 alle Routen bei 360 px | ✅ covered | Der Smoke-Test (QUAL-02) bestätigt je Route, dass die Seite rendert und die Diagramme Daten enthalten. Die UAT prüft dieselben Routen bei 360 × 640. |
+| partial | E7 alle Routen bei 360 px | ✅ covered | Einzelne fehlende Werte erscheinen als „–“ (siehe E6 partial) und ändern das Layout nicht. |
+| overflow | E7 alle Routen bei 360 px | 🧪 backstop | `{ statement: "Auf allen 11 Routen entsteht bei 360 px kein waagerechtes Scrollen der Seite, auch nicht mit geöffneter Quell-Leiste oder Menü-Drawer, und alle Ziele sind mindestens 44 px groß", verification: backstop }`. Nachweis durch Komponententests der Layoutregeln und die UAT-Liste (D-12). |
+| zero-one-many | E7 alle Routen bei 360 px | ⬜ dismissed | Reason: E7 ist ein Querschnittskriterium über alle Routen und keine Sammlung. Wie viele Elemente eine Seite hat, regeln E1 und E6. |
 
 ---
 
@@ -392,12 +417,12 @@ Applicable state considerations resolved: 16 covered, 5 backstop, 0 unresolved, 
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
-- [ ] Dimension 7 Inventory Provenance: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
+- [x] Dimension 7 Inventory Provenance: PASS
 
-**Approval:** pending
+**Approval:** approved 2026-10-06
