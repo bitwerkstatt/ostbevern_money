@@ -20,11 +20,14 @@ const props = defineProps<{
 
 const beleg = computed(() => findeBeleg(props.schluessel))
 
-// Der sichtbare Text bleibt im zugänglichen Namen „Quelle anzeigen: {Bezeichnung}, PDF-Seite {n}“
-// enthalten (WCAG 2.5.3); der Rest steht als versteckte Textspanne daneben.
-const versteckterAnfang = computed(() => `Quelle anzeigen: ${props.bezeichnung}, `)
-const versteckterRest = computed(() =>
-  beleg.value === null ? '' : `: ${props.bezeichnung}, PDF-Seite ${String(beleg.value.pdfSeite)}`,
+// Zugänglicher Name: „Quelle anzeigen: {Bezeichnung}, PDF-Seite {n}“. Er beginnt mit dem
+// sichtbaren Text („Quelle anzeigen“ bzw. „PDF-Seite {n}“ ist darin enthalten, WCAG 2.5.3). Als
+// `aria-label` statt als versteckte Textspanne, weil Chromium zwischen sichtbarem Text und einer
+// absolut positionierten Spanne ein Leerzeichen einfügt („Quelle anzeigen : Erträge“).
+const zugaenglicherName = computed(() =>
+  beleg.value === null
+    ? ''
+    : `Quelle anzeigen: ${props.bezeichnung}, PDF-Seite ${String(beleg.value.pdfSeite)}`,
 )
 
 function beiKlick(ereignis: MouseEvent) {
@@ -46,18 +49,16 @@ function beiKlick(ereignis: MouseEvent) {
     type="button"
     class="om-quelle-knopf"
     :class="`om-quelle-knopf--${variante}`"
+    :aria-label="zugaenglicherName"
     aria-haspopup="dialog"
     @click="beiKlick"
   >
-    <template v-if="variante === 'zeile'">
-      <span class="om-visually-hidden">{{ versteckterAnfang }}</span>
-      <span class="om-quelle-knopf__text">PDF-Seite {{ beleg.pdfSeite }}</span>
-    </template>
+    <span v-if="variante === 'zeile'" class="om-quelle-knopf__text"
+      >PDF-Seite {{ beleg.pdfSeite }}</span
+    >
     <template v-else>
       <wa-icon name="file-lines" aria-hidden="true"></wa-icon>
-      <span class="om-quelle-knopf__text"
-        >Quelle anzeigen<span class="om-visually-hidden">{{ versteckterRest }}</span></span
-      >
+      <span class="om-quelle-knopf__text">Quelle anzeigen</span>
     </template>
   </button>
 </template>
