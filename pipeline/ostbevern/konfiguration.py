@@ -356,7 +356,7 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
 
     # [layout.*] (Phase 3): generische Tabellen gedruckter Texte/Muster der Detailseiten.
     # Optional, Standard ist eine leere Zuordnung. Jeder Wert ist entweder ein nicht-
-    # leerer String oder eine nicht-leere Liste paarweise verschiedener, nicht-leerer
+    # leerer String oder eine Liste paarweise verschiedener, nicht-leerer
     # Strings (als Tupel gespeichert); ein Schlüssel, der auf "_muster" endet, muss ein
     # einzelner String sein, der mit re.compile kompiliert.
     layout_rohdaten = rohdaten.get("layout", {})
@@ -381,10 +381,12 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
                     )
                 bereich_werte[schluessel] = wert
             elif isinstance(wert, list):
-                if not wert or not all(isinstance(w, str) and w for w in wert):
+                # Eine leere Liste ist erlaubt ("bewusst keine Einträge", z. B. schwaerzen_nach);
+                # jeder vorhandene Eintrag ist ein nicht-leerer String.
+                if not all(isinstance(w, str) and w for w in wert):
                     raise KonfigurationsFehler(
-                        f"Jahrgangsdatei {pfad}: {pfad_hinweis} ist eine leere Liste oder "
-                        "enthält leere bzw. nicht-String-Einträge"
+                        f"Jahrgangsdatei {pfad}: {pfad_hinweis} enthält leere bzw. "
+                        "nicht-String-Einträge"
                     )
                 if len(set(wert)) != len(wert):
                     raise KonfigurationsFehler(

@@ -5,8 +5,11 @@ PDF-Punkt) und Qualität (60) sind Konstanten aus Spez. 5.6, keine Jahrgangswert
 
 Datenschutz: Eine Seite des Typs `produktinformationen` trägt Personenfelder
 (Verantwortliche, Sachbearbeitung). Sie wird nur gerendert, wenn für sie Schwärzungsrechtecke
-übergeben werden; sonst bricht `rendere_seiten` mit `BelegbildFehler` ab, bevor irgendein Bild
-geschrieben wird.
+übergeben werden (eine leere Liste zählt nicht) oder der Aufrufer sie ausdrücklich als Seite
+ohne Personenfelder freigibt (Fortsetzungsseite); sonst bricht `rendere_seiten` mit
+`BelegbildFehler` ab, bevor irgendein Bild geschrieben wird. Die Rechtecke werden schwarz
+gefüllt, mit einem Überstand von `SCHWAERZUNG_UEBERSTAND_PX`, damit die verlustbehaftete
+WebP-Kompression keine hellen Pixel in das Rechteck selbst trägt.
 """
 
 from __future__ import annotations
@@ -22,6 +25,8 @@ RENDER_MASSSTAB = 2
 WEBP_QUALITAET = 60
 WEBP_METHODE = 6
 _SCHWAERZUNG_FARBE = (0, 0, 0)
+# Die schwarze Fläche reicht so viele Pixel über das übergebene Rechteck hinaus.
+SCHWAERZUNG_UEBERSTAND_PX = 2
 _PERSONEN_SEITENTYP = "produktinformationen"
 
 
@@ -57,18 +62,24 @@ def rendere_seiten(
     seitentypen: Mapping[int, str],
     neu: bool = False,
     schwaerzungen: Mapping[int, Sequence[Sequence[float]]] | None = None,
+    ohne_personenfelder: Collection[int] = (),
 ) -> list[Path]:
     """Rendert `seiten` nach `ziel_wurzel/s{nnn}.webp`; liefert die geschriebenen Pfade.
 
     Eine Seite wird nur gerendert, wenn ihre Datei fehlt oder `neu` gesetzt ist (die WebP-Bytes
     sind über Plattformen hinweg nicht als identisch belegt, deshalb gibt es kein stilles
-    Neurendern). Seiten des Typs `produktinformationen` verlangen Einträge in `schwaerzungen`
-    (Rechtecke `[x0, top, x1, bottom]` in PDF-Punkten); fehlen sie, löst die Funktion
-    `BelegbildFehler` aus, bevor ein Bild geschrieben wird.
+    Neurendern). Seiten des Typs `produktinformationen` verlangen mindestens ein Rechteck in
+    `schwaerzungen` (Rechtecke `[x0, top, x1, bottom]` in PDF-Punkten) oder einen Eintrag in
+    `ohne_personenfelder` (Seiten, für die der Aufrufer geprüft hat, dass sie kein Personenfeld
+    zeigen); sonst löst die Funktion `BelegbildFehler` aus, bevor ein Bild geschrieben wird.
     """
     schwaerzungen = schwaerzungen or {}
     for seite in sorted(seiten):
-        if seitentypen.get(seite) == _PERSONEN_SEITENTYP and not schwaerzungen.get(seite):
+        if (
+            seitentypen.get(seite) == _PERSONEN_SEITENTYP
+            and not schwaerzungen.get(seite)
+            and seite not in ohne_personenfelder
+        ):
             raise BelegbildFehler(
                 f"PDF-Seite {seite} ist eine Produktinformationen-Seite mit Personenfeldern; "
                 "ohne Schwärzungsrechtecke wird sie nicht gerendert"
@@ -92,10 +103,10 @@ def rendere_seiten(
                 for x0, top, x1, bottom in rechtecke:
                     zeichner.rectangle(
                         (
-                            x0 * RENDER_MASSSTAB,
-                            top * RENDER_MASSSTAB,
-                            x1 * RENDER_MASSSTAB,
-                            bottom * RENDER_MASSSTAB,
+                            x0 * RENDER_MASSSTAB - SCHWAERZUNG_UEBERSTAND_PX,
+                            top * RENDER_MASSSTAB - SCHWAERZUNG_UEBERSTAND_PX,
+                            x1 * RENDER_MASSSTAB + SCHWAERZUNG_UEBERSTAND_PX,
+                            bottom * RENDER_MASSSTAB + SCHWAERZUNG_UEBERSTAND_PX,
                         ),
                         fill=_SCHWAERZUNG_FARBE,
                     )

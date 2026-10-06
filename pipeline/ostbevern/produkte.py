@@ -5,7 +5,9 @@ Beschreibung, Leistungen, Auftragsgrundlage, Bindungsgrad, Klassifizierung, Ziel
 Ziele) und schreibt `produkte.json` (EXTR-06). Personenfelder ("Verantwortliche/r",
 "Sachbearbeiter/innen") werden beim Parsen als Felder erkannt, um die Feldstruktur der
 Seite zu verstehen, aber sofort danach verworfen und erreichen nie einen Datensatz,
-ein Dict oder eine Datei (D-09, Datenschutz, da `daten/` eingecheckt wird).
+ein Dict oder eine Datei (D-09, Datenschutz, da `daten/` eingecheckt wird). Die einzige
+Ausnahme ist `personenfeld_rechtecke` (Phase 7, Quellenbelege): Sie liefert nur die
+Geometrie der Personenfeld-Werte (Zahlen für Schwärzungsrechtecke), nie ihren Text.
 
 Liest außerdem die Erläuterungsblöcke der Teilergebnisplan-Seiten (EXTR-08, D-01 bis
 D-04) und schreibt `erlaeuterungen.csv` sowie eine Einbettung unter `erlaeuterungen` in
@@ -24,7 +26,7 @@ import polars as pl
 
 from ostbevern.freitext import ersetze_eurozeichen, verbinde_zeilen
 from ostbevern.konfiguration import Jahrgang, layout_text
-from ostbevern.pdf import PdfDokument, Textzeile, Wort
+from ostbevern.pdf import PdfDokument, Textzeile, Wort, WortRahmen
 from ostbevern.schema import (
     DATEN_WURZEL,
     ERGEBNISPLAN_CSV,
@@ -829,11 +831,81 @@ def lies_personennamen(
     return namen
 
 
+# Rand (PDF-Punkte) um die Wörter eines Personenfeld-Werts, damit die Schwärzung Unterlängen
+# und Antialiasing sicher deckt (Plan 07-03, T-07-08).
+_SCHWAERZUNG_RAND = 1.0
+
+
 def personenfeld_rechtecke(
     dokument: PdfDokument, jahrgang: Jahrgang, seiten: pl.DataFrame, hierarchie: pl.DataFrame
 ) -> dict[int, tuple[tuple[float, float, float, float], ...]]:
-    """Gerüst (Plan 07-03, RED): noch ohne Schwärzungsrechtecke."""
-    return {}
+    """Schwärzungsrechtecke der Personenfelder (Verantwortliche/r, Sachbearbeiter/innen).
+
+    Liefert je Produktinformationen-Seite mit Personenfeld die Rechtecke `(x0, top, x1,
+    bottom)` in PDF-Punkten (Ursprung oben links, wie `PdfDokument.zeilen_mit_rahmen`): je Zeile
+    eines Personenfelds eines, um alle Wertwörter der Zeile (ohne das Label-Wort) mit
+    `_SCHWAERZUNG_RAND` Rand. Der Rückgabewert enthält ausschließlich Zahlen, nie einen Text
+    (D-09, Datenschutz); die Funktion ist der einzige Produktionscode, der Personenfelder liest.
+
+    Bricht mit `ProdukteFehler` ab, wenn die erste Produktinformationen-Seite eines Produkts
+    eines der beiden Personenfelder nicht zeigt (die Schwärzung würde dort nichts decken) oder
+    wenn ein Personenfeld mit Label keine lokalisierbaren Wertwörter hat. Seiten ohne
+    Personenfeld (Fortsetzungsseiten wie die zweite Seite von 010901) fehlen im Ergebnis.
+    `hierarchie` wird wie bei `lies_personennamen` angenommen, aber nicht gebraucht.
+    """
+    pi_seiten = seiten.filter(
+        pl.col("produkt").is_not_null() & (pl.col("typ") == "produktinformationen")
+    ).sort(["produkt", "pdf_seite"])
+
+    rechtecke: dict[int, list[tuple[float, float, float, float]]] = {}
+    kaesten_je_seite: dict[int, dict[tuple[float, float, str], WortRahmen]] = {}
+
+    def _kasten(seite: int, wort: Wort) -> WortRahmen:
+        if seite not in kaesten_je_seite:
+            kaesten_je_seite[seite] = {
+                (round(w.top, 3), round(w.x0, 3), w.text): w
+                for zeile in dokument.zeilen_mit_rahmen(seite, fein=True)
+                for w in zeile.woerter
+            }
+        kasten = kaesten_je_seite[seite].get((round(wort.top, 3), round(wort.x0, 3), wort.text))
+        if kasten is None:
+            raise ProdukteFehler(
+                f"S. {seite}: Wertwörter eines Personenfelds lassen sich nicht lokalisieren"
+            )
+        return kasten
+
+    for produkt in sorted(pi_seiten["produkt"].unique().to_list()):
+        pdf_seiten = tuple(pi_seiten.filter(pl.col("produkt") == produkt)["pdf_seite"].to_list())
+        seiten_zeilen = tuple((seite, dokument.zeilen_fein(seite)) for seite in pdf_seiten)
+        felder = zerlege_felder(seiten_zeilen, jahrgang)
+        for feld in PERSONENFELDER:
+            eintraege = felder.get(feld)
+            if not eintraege or eintraege[0][0] != pdf_seiten[0]:
+                raise ProdukteFehler(
+                    f"Produkt {produkt}: Personenfeld {feld} fehlt auf der ersten "
+                    f"Produktinformationen-Seite {pdf_seiten[0]}; Schwärzung würde nichts decken"
+                )
+            gefunden = 0
+            for index, (seite, zeile) in enumerate(eintraege):
+                wertwoerter = zeile.woerter[1:] if index == 0 else zeile.woerter
+                if not wertwoerter:
+                    continue
+                kaesten = [_kasten(seite, wort) for wort in wertwoerter]
+                rechtecke.setdefault(seite, []).append(
+                    (
+                        max(0.0, min(k.x0 for k in kaesten) - _SCHWAERZUNG_RAND),
+                        max(0.0, min(k.top for k in kaesten) - _SCHWAERZUNG_RAND),
+                        max(k.x1 for k in kaesten) + _SCHWAERZUNG_RAND,
+                        max(k.bottom for k in kaesten) + _SCHWAERZUNG_RAND,
+                    )
+                )
+                gefunden += 1
+            if gefunden == 0:
+                raise ProdukteFehler(
+                    f"S. {pdf_seiten[0]}: Personenfeld {feld} mit Label, aber ohne Wertwörter "
+                    "(nichts zu schwärzen)"
+                )
+    return {seite: tuple(sorted(set(liste))) for seite, liste in sorted(rechtecke.items())}
 
 
 def _baue_produktinfo(

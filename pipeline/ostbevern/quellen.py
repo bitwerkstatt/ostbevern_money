@@ -46,19 +46,29 @@ from ostbevern.app_daten import (
     APP_DATEN_WURZEL,
     HAUSHALT_JSON,
     INVESTITIONEN_JSON,
+    PRODUKTE_APP_JSON,
     STELLENPLAN_JSON,
+    TEXTE_JSON,
     schreibe_app_json,
 )
 from ostbevern.belegbilder import bild_name, rendere_seiten
-from ostbevern.konfiguration import PROJEKT_WURZEL, Jahrgang, lade_jahrgang, layout_text
+from ostbevern.konfiguration import (
+    PROJEKT_WURZEL,
+    Jahrgang,
+    lade_jahrgang,
+    layout_liste,
+    layout_text,
+)
 from ostbevern.pdf import PdfDokument, RahmenZeile, WortRahmen
 from ostbevern.plaene import lies_abschnitte
+from ostbevern.produkte import personenfeld_rechtecke
 from ostbevern.pruefung import zerlege_weitere_vorberichtstabellen
 from ostbevern.schema import (
     DATEN_WURZEL,
     EIGENKAPITAL_CSV,
     ERGEBNISPLAN_CSV,
     FINANZPLAN_CSV,
+    HIERARCHIE_CSV,
     INVESTITIONSZUWENDUNGEN_CSV,
     KITA_ZUSCHUESSE_CSV,
     QUELLENBELEGE_MD,
@@ -70,6 +80,7 @@ from ostbevern.schema import (
     ZUSCHUESSE_LFD_ZWECKE_CSV,
     ZUWENDUNGEN_CSV,
     lies_eigenkapital_csv,
+    lies_hierarchie_csv,
     lies_plan_csv,
     lies_seiten_csv,
     lies_vorbericht_csv,
@@ -85,6 +96,7 @@ GRUND_NICHT_GEFUNDEN = "nicht_gefunden"
 GRUND_MEHRDEUTIG = "mehrdeutig"
 GRUND_BETRAG_FEHLT = "betrag_fehlt"
 GRUND_BERECHNET = "berechnet"
+GRUND_SCHWAERZUNG = "ueberlappt_schwaerzung"
 
 # Ebene des Gesamtplans in den Plan-CSVs; zugleich der Knotencode in den Schlüsseln.
 _GESAMT = "GESAMT"
@@ -92,6 +104,12 @@ _GESAMT = "GESAMT"
 _WERTART_VE = "ve"
 # Der Knotencode der synthetischen Weitergabe an Kreis und Land beginnt mit diesem Präfix.
 _KL_PRAEFIX = "KL"
+# Höchstzahl an Zeichen hinter der Beschriftung einer Grundzahl-Zeile (gedruckte Einheit).
+_EINHEIT_MAX_ZEICHEN = 15
+# Namen der Seitenfelder in den App-JSONs (Seitenzahl bzw. Liste von Seitenzahlen).
+_SEITENFELD = ("pdf_seite", "quelle")
+_SEITENLISTENFELD = ("pdf_seiten", "quelle_seiten")
+_SEITENTYP_PRODUKTINFORMATIONEN = "produktinformationen"
 # Toleranz beim Vergleich gedruckter Zahlen mit Euro-Werten: Cent-Beträge (Eigenkapital) sind in
 # den Daten kaufmännisch auf ganze Euro gerundet.
 _ZAHL_TOLERANZ = 0.51
@@ -142,6 +160,7 @@ class QuellenErgebnis:
 
 
 Suche = tuple[list[float] | None, str | None]
+Rechteck = tuple[float, float, float, float]
 
 
 def schluessel_ep(code: str, zeile: str) -> str:
@@ -657,6 +676,108 @@ def _eindeutiger_block(
     return bbox_mit_rand((w for z in kandidaten[0] for w in z.woerter), breite, hoehe), None
 
 
+def _gleich_stellen(gedruckt: float, soll: float, nachkommastellen: int) -> bool:
+    """Gleichheit auf die gedruckten Nachkommastellen genau (Grundzahlen: Gebühren, Quoten)."""
+    return abs(gedruckt - soll) < 0.5 * 10 ** (-nachkommastellen)
+
+
+def finde_grundzahlzeile(
+    zeilen: Sequence[RahmenZeile],
+    bezeichnung: str,
+    wert: float,
+    nachkommastellen: int,
+    *,
+    breite: float,
+    hoehe: float,
+) -> Suche:
+    """Sucht die Grundzahl-Zeile mit der Beschriftung `bezeichnung` und dem Wert `wert`.
+
+    Die Beschriftung (normalisiert) muss am Zeilenanfang stehen, dahinter höchstens die
+    gedruckte Einheit; ein über mehrere Zeilen umbrochener Name findet keine Zeile und ergibt
+    `nicht_gefunden`. Der Wert muss unter den gedruckten Zahlen der Zeile vorkommen.
+    """
+    soll = _norm(bezeichnung)
+    kandidaten: list[tuple[RahmenZeile, list[float]]] = []
+    for zeile in zeilen:
+        label, zahlen = _zerlege_tabellenzeile(zeile)
+        gedruckt = _norm(label)
+        if gedruckt.startswith(soll) and len(gedruckt) - len(soll) <= _EINHEIT_MAX_ZEICHEN:
+            kandidaten.append((zeile, zahlen))
+    if not kandidaten:
+        return None, GRUND_NICHT_GEFUNDEN
+    kandidaten = [
+        (z, b) for z, b in kandidaten if any(_gleich_stellen(x, wert, nachkommastellen) for x in b)
+    ]
+    if not kandidaten:
+        return None, GRUND_BETRAG_FEHLT
+    if len(kandidaten) > 1:
+        return None, GRUND_MEHRDEUTIG
+    return bbox_mit_rand(kandidaten[0][0].woerter, breite, hoehe), None
+
+
+# Folgezeilen mit höchstens diesem Abstand (Punkte) gehören noch zu einer umbrochenen Überschrift.
+_UEBERSCHRIFT_ABSTAND = 6.0
+
+
+def finde_produktzeile(
+    zeilen: Sequence[RahmenZeile], produkt: str, kopf_muster: str, *, breite: float, hoehe: float
+) -> Suche:
+    """Sucht die Kopfzeile `Produkt {code} {Name}` (Muster `kopfzeilen.produkt`) der Seite.
+
+    Eine eng folgende Umbruchzeile des Namens gehört zum Rechteck. Genau eine Kopfzeile des
+    Produkts auf der Seite ist nötig.
+    """
+    muster = re.compile(kopf_muster)
+    indizes = []
+    for index, zeile in enumerate(zeilen):
+        treffer = muster.match(zeile.text)
+        if treffer is not None and treffer.group(1) == produkt:
+            indizes.append(index)
+    if not indizes:
+        return None, GRUND_NICHT_GEFUNDEN
+    if len(indizes) > 1:
+        return None, GRUND_MEHRDEUTIG
+    block = [zeilen[indizes[0]]]
+    for folge in zeilen[indizes[0] + 1 :]:
+        if folge.top - block[-1].bottom > _UEBERSCHRIFT_ABSTAND:
+            break
+        block.append(folge)
+    return bbox_mit_rand((w for z in block for w in z.woerter), breite, hoehe), None
+
+
+def finde_pruefwoerter(
+    zeilen: Sequence[RahmenZeile], pruefwoerter: Sequence[str]
+) -> list[tuple[str, int]]:
+    """Stichwörter der Datenschutz-Prüfliste je Zeile: `(Stichwort, 1-basierter Zeilenindex)`.
+
+    Liefert nie den Text der Zeile. Verglichen wird auf dem normalisierten, zusammengezogenen
+    Zeilentext, damit auch die eng gesetzten Wörter des PDFs (`Bürgermeister`) treffen.
+    """
+    treffer: list[tuple[str, int]] = []
+    normalisiert = [(wort, _norm(wort)) for wort in pruefwoerter]
+    for index, zeile in enumerate(zeilen, start=1):
+        text = _zeilentext(zeile)
+        treffer.extend((wort, index) for wort, kurz in normalisiert if kurz and kurz in text)
+    return treffer
+
+
+def rechtecke_nach_etiketten(
+    zeilen: Sequence[RahmenZeile], etiketten: Sequence[str], *, breite: float, hoehe: float
+) -> list[list[float]]:
+    """Schwärzungsrechtecke für die Zeile direkt nach einer Etikettzeile (`schwaerzen_nach`).
+
+    Eine Etikettzeile ist eine Zeile, deren normalisierter Text genau dem Etikett entspricht.
+    Das Rechteck umschließt alle Wörter der Folgezeile mit 1 pt Rand.
+    """
+    rechtecke: list[list[float]] = []
+    for etikett in etiketten:
+        soll = _norm(etikett)
+        for index, zeile in enumerate(zeilen[:-1]):
+            if _zeilentext(zeile) == soll:
+                rechtecke.append(bbox_mit_rand(zeilen[index + 1].woerter, breite, hoehe, rand=1.0))
+    return rechtecke
+
+
 def _haushaltsjahr_wertart(jahrgang: Jahrgang, plantyp: str) -> str:
     """Wertart der Spalte des Haushaltsjahrs (ohne VE-Spalte) aus `jahrgang.spalten`."""
     wertarten: list[str] = []
@@ -752,11 +873,47 @@ class _Seiten:
         return self._teilergebnisplan[seite]
 
 
+class _Schwaerzung:
+    """Schwärzungsrechtecke je Seite: Personenfelder plus Zeilen nach Etiketten."""
+
+    def __init__(
+        self, seiten: _Seiten, personen: Mapping[int, Sequence[Rechteck]], etiketten: Sequence[str]
+    ) -> None:
+        self._seiten = seiten
+        self._personen = personen
+        self._etiketten = etiketten
+        self._zwischenspeicher: dict[int, tuple[Rechteck, ...]] = {}
+
+    def fuer(self, seite: int) -> tuple[Rechteck, ...]:
+        if seite not in self._zwischenspeicher:
+            rechtecke = {tuple(r) for r in self._personen.get(seite, ())}
+            if self._etiketten:
+                breite, hoehe = self._seiten.masse(seite)
+                rechtecke |= {
+                    (r[0], r[1], r[2], r[3])
+                    for r in rechtecke_nach_etiketten(
+                        self._seiten.zeilen(seite), self._etiketten, breite=breite, hoehe=hoehe
+                    )
+                }
+            self._zwischenspeicher[seite] = tuple(sorted(rechtecke))
+        return self._zwischenspeicher[seite]
+
+
+def _schneidet(bbox: Sequence[float], rechteck: Rechteck) -> bool:
+    return not (
+        bbox[2] <= rechteck[0]
+        or rechteck[2] <= bbox[0]
+        or bbox[3] <= rechteck[1]
+        or rechteck[3] <= bbox[1]
+    )
+
+
 @dataclass
 class _Sammler:
     """Sammelt die Belege einer Erzeugung und merkt sich die Gründe fehlender Rechtecke."""
 
     seiten: _Seiten
+    schwaerzung: _Schwaerzung
     belege: dict[str, dict[str, object]] = field(default_factory=dict)
     ohne_bbox: dict[str, str] = field(default_factory=dict)
 
@@ -771,9 +928,15 @@ class _Sammler:
             self.ohne_bbox[schluessel] = grund or GRUND_NICHT_GEFUNDEN
 
     def suche(self, schluessel: str, seite: int, finder: Callable[[float, float], Suche]) -> None:
-        """Trägt den Beleg ein; `finder(breite, hoehe)` liefert `(bbox, grund)`."""
+        """Trägt den Beleg ein; `finder(breite, hoehe)` liefert `(bbox, grund)`.
+
+        Ein Rechteck, das eine Schwärzung berührt, wird verworfen (`ueberlappt_schwaerzung`):
+        Die Markierung darf nie über geschwärzten Text laufen.
+        """
         breite, hoehe = self.seiten.masse(seite)
         bbox, grund = finder(breite, hoehe)
+        if bbox is not None and any(_schneidet(bbox, r) for r in self.schwaerzung.fuer(seite)):
+            bbox, grund = None, GRUND_SCHWAERZUNG
         self.eintragen(schluessel, seite, bbox, grund)
 
 
@@ -1058,6 +1221,77 @@ def _sammle_stellenplan(
         )
 
 
+def seitenfelder(daten: object) -> set[int]:
+    """Alle Seitenzahlen in den Seitenfeldern (`pdf_seite`, `quelle`, `pdf_seiten`,
+    `quelle_seiten`) einer geladenen App-JSON-Struktur, rekursiv."""
+    seiten: set[int] = set()
+    if isinstance(daten, dict):
+        for name, wert in daten.items():
+            if name in _SEITENFELD and isinstance(wert, int) and not isinstance(wert, bool):
+                seiten.add(wert)
+            elif name in _SEITENLISTENFELD and isinstance(wert, list):
+                seiten |= {s for s in wert if isinstance(s, int) and not isinstance(s, bool)}
+            else:
+                seiten |= seitenfelder(wert)
+    elif isinstance(daten, list):
+        for eintrag in daten:
+            seiten |= seitenfelder(eintrag)
+    return seiten
+
+
+def _sammle_produkte(sammler: _Sammler, jahrgang: Jahrgang, produkte: Sequence[dict]) -> None:
+    """pr für die Startseite jedes Produkts, gz für jede Grundzahl."""
+    for produkt in produkte:
+        code = produkt["code"]
+        seite = produkt["pdf_seiten"][0]
+        sammler.suche(
+            schluessel_pr(code),
+            seite,
+            lambda breite, hoehe, c=code, s=seite: finde_produktzeile(
+                sammler.seiten.zeilen(s),
+                c,
+                jahrgang.kopfzeilen.produkt,
+                breite=breite,
+                hoehe=hoehe,
+            ),
+        )
+        for grundzahl in produkt["grundzahlen"]:
+            werte = {w["jahr"]: w["wert"] for w in grundzahl["werte"]}
+            if not werte:
+                raise QuellenFehler(f"Grundzahl {code}/{grundzahl['position']} hat keinen Wert")
+            ziel_jahr = jahrgang.haushaltsjahr if jahrgang.haushaltsjahr in werte else max(werte)
+            seite_gz = grundzahl["pdf_seite"]
+            sammler.suche(
+                schluessel_gz(code, grundzahl["position"]),
+                seite_gz,
+                lambda breite, hoehe, g=grundzahl, w=werte[ziel_jahr], s=seite_gz: (
+                    finde_grundzahlzeile(
+                        sammler.seiten.zeilen(s),
+                        g["bezeichnung"],
+                        w,
+                        g["nachkommastellen"],
+                        breite=breite,
+                        hoehe=hoehe,
+                    )
+                ),
+            )
+
+
+def _sammle_seiten(sammler: _Sammler, jahrgang: Jahrgang, app_json: Sequence[object]) -> None:
+    """seite:{n} für die Vereinigung aller Seitenfelder der App-JSONs (nie mit Rechteck)."""
+    vereinigung: set[int] = set()
+    for daten in app_json:
+        vereinigung |= seitenfelder(daten)
+    ausserhalb = sorted(s for s in vereinigung if not 1 <= s <= jahrgang.anzahlen.pdf_seiten)
+    if ausserhalb:
+        raise QuellenFehler(
+            f"App-JSONs verweisen auf PDF-Seiten außerhalb von 1..{jahrgang.anzahlen.pdf_seiten}: "
+            f"{ausserhalb}"
+        )
+    for seite in sorted(vereinigung):
+        sammler.eintragen(schluessel_seite(seite), seite, None, None)
+
+
 def _art(schluessel: str) -> str:
     return schluessel.split(":", 1)[0]
 
@@ -1066,10 +1300,16 @@ def schreibe_quellenbericht(
     belege: Mapping[str, Mapping[str, object]],
     gruende: Mapping[str, str],
     pfad: Path,
+    *,
+    pruefliste: Sequence[tuple[int, str, int]] | None = None,
+    schwaerzungen: Mapping[int, int] | None = None,
 ) -> None:
     """Schreibt den Bericht aller Belege ohne Rechteck (D-03), deterministisch sortiert.
 
     Seitenbelege (`seite:{n}`) stehen nie in den Tabellen: sie haben absichtlich kein Rechteck.
+    Mit `pruefliste` (`(Seite, Stichwort, Zeilenindex)`) und `schwaerzungen` (Seite -> Anzahl
+    Rechtecke) folgen die Datenschutz-Prüfliste und die Liste der geschwärzten Seiten, jeweils
+    ohne Textauszug.
     """
     je_art: dict[str, list[str]] = defaultdict(list)
     for schluessel in belege:
@@ -1106,6 +1346,36 @@ def schreibe_quellenbericht(
         for schluessel in ohne:
             grund = gruende.get(schluessel, GRUND_NICHT_GEFUNDEN)
             zeilen.append(f"| `{schluessel}` | {belege[schluessel]['pdf_seite']} | {grund} |")
+
+    if pruefliste is not None:
+        geschwaerzt = schwaerzungen or {}
+        zeilen += [
+            "",
+            "## Datenschutz-Prüfliste",
+            "",
+            "Belegseiten, deren Text eines der Stichwörter aus `layout.quellenbelege.pruefwoerter`",
+            "enthält (Seite, Stichwort, 1-basierter Zeilenindex auf der Seite; bewusst ohne",
+            "Textauszug). Namen außerhalb der Personenfelder der Produktseiten werden nicht",
+            "automatisch geschwärzt: Wer ein Etikett vor der zu schwärzenden Zeile kennt, trägt es",
+            "in `layout.quellenbelege.schwaerzen_nach` ein.",
+            "",
+            "| Seite | Stichwort | Zeile | geschwärzt |",
+            "|---|---|---|---|",
+        ]
+        for seite, wort, index in sorted(pruefliste):
+            markiert = "ja" if seite in geschwaerzt else "nein"
+            zeilen.append(f"| {seite} | {wort} | {index} | {markiert} |")
+        zeilen += [
+            "",
+            "## Seiten mit Schwärzung",
+            "",
+            "Seiten, deren Belegbild schwarze Rechtecke über Personenfeldern trägt.",
+            "",
+            "| Seite | Rechtecke |",
+            "|---|---|",
+        ]
+        zeilen += [f"| {seite} | {anzahl} |" for seite, anzahl in sorted(geschwaerzt.items())]
+
     pfad.parent.mkdir(parents=True, exist_ok=True)
     with pfad.open("w", encoding="utf-8", newline="\n") as datei:
         datei.write("\n".join(zeilen) + "\n")
@@ -1123,32 +1393,62 @@ def erzeuge_quellen(
     """Erzeugt `quellen.json`, den Bericht und (mit `rendern`) die fehlenden WebP-Seiten.
 
     Liest die App-JSONs aus `app_daten_wurzel` (Schritt 07 muss vorher gelaufen sein) und die
-    CSVs aus `daten_wurzel`. Jeder Wert ohne eindeutigen Treffer bekommt `bbox: null` und steht
-    in `QuellenErgebnis.ohne_bbox` und im Bericht `pruefberichte/quellenbelege.md`.
+    CSVs aus `daten_wurzel`. Belege gibt es für jeden Wert mit Seitenfeld in den App-JSONs
+    (Zeilenrechteck, sonst `bbox: null` mit Grund im Bericht) und je Seite einen `seite:{n}`.
+    Jede referenzierte Seite wird gerendert, Produktinformationen-Seiten mit geschwärzten
+    Personenfeldern; der Bericht `pruefberichte/quellenbelege.md` trägt auch die
+    Datenschutz-Prüfliste.
     """
     jahrgang = lade_jahrgang(jahr)
     haushalt = _lies_app_json(app_daten_wurzel, HAUSHALT_JSON)
     investitionen = _lies_app_json(app_daten_wurzel, INVESTITIONEN_JSON)
     stellenplan = _lies_app_json(app_daten_wurzel, STELLENPLAN_JSON)
+    produkte = _lies_app_json(app_daten_wurzel, PRODUKTE_APP_JSON)
+    texte = _lies_app_json(app_daten_wurzel, TEXTE_JSON)
+    seiten_df = lies_seiten_csv(daten_wurzel / SEITEN_CSV)
+    hierarchie_df = lies_hierarchie_csv(daten_wurzel / HIERARCHIE_CSV)
+    pruefwoerter = layout_liste(jahrgang, "quellenbelege", "pruefwoerter")
+    schwaerzen_nach = layout_liste(jahrgang, "quellenbelege", "schwaerzen_nach")
 
     with PdfDokument.oeffne(jahrgang.pdf_pfad) as pdf:
-        sammler = _Sammler(_Seiten(pdf, jahrgang))
+        zugriff = _Seiten(pdf, jahrgang)
+        personen = personenfeld_rechtecke(pdf, jahrgang, seiten_df, hierarchie_df)
+        schwaerzung = _Schwaerzung(zugriff, personen, schwaerzen_nach)
+        sammler = _Sammler(zugriff, schwaerzung)
         _sammle_plaene(sammler, jahrgang, daten_wurzel, haushalt)
         _sammle_vorbericht(sammler, jahrgang, daten_wurzel, haushalt)
         _sammle_meta(sammler, haushalt)
         _sammle_schuldenstand(sammler, jahrgang, daten_wurzel, haushalt, investitionen)
         _sammle_investitionen(sammler, jahrgang, haushalt, investitionen)
         _sammle_stellenplan(sammler, jahrgang, stellenplan)
-        masse = sammler.seiten.alle_masse
+        _sammle_produkte(sammler, jahrgang, produkte)
+        _sammle_seiten(sammler, jahrgang, [haushalt, produkte, investitionen, stellenplan, texte])
+        masse = zugriff.alle_masse
+        pruefliste = [
+            (seite, wort, index)
+            for seite in masse
+            for wort, index in finde_pruefwoerter(zugriff.zeilen(seite), pruefwoerter)
+        ]
+        schwaerzungen = {
+            seite: len(rechtecke) for seite in masse if (rechtecke := schwaerzung.fuer(seite))
+        }
 
     belege = sammler.belege
     seiten_sortiert = tuple(masse)
     neu_gerendert = 0
     if rendern:
         seitentypen = {
-            int(zeile["pdf_seite"]): str(zeile["typ"])
-            for zeile in lies_seiten_csv(daten_wurzel / SEITEN_CSV).iter_rows(named=True)
+            int(zeile["pdf_seite"]): str(zeile["typ"]) for zeile in seiten_df.iter_rows(named=True)
         }
+        # Fortsetzungsseiten der Produktinformationen (z. B. die zweite Seite von 010901) zeigen
+        # kein Personenfeld; personenfeld_rechtecke hat geprüft, dass die erste Seite jedes
+        # Produkts beide Felder trägt.
+        ohne_personenfelder = [
+            seite
+            for seite in seiten_sortiert
+            if seitentypen.get(seite) == _SEITENTYP_PRODUKTINFORMATIONEN
+            and seite not in schwaerzungen
+        ]
         neu_gerendert = len(
             rendere_seiten(
                 jahrgang.pdf_pfad,
@@ -1156,6 +1456,8 @@ def erzeuge_quellen(
                 bild_wurzel,
                 seitentypen=seitentypen,
                 neu=neu_rendern,
+                schwaerzungen={seite: schwaerzung.fuer(seite) for seite in schwaerzungen},
+                ohne_personenfelder=ohne_personenfelder,
             )
         )
 
@@ -1175,12 +1477,14 @@ def erzeuge_quellen(
     schreibe_app_json(daten, pfad, praefix="quellen")
 
     bericht = daten_wurzel / QUELLENBELEGE_MD
-    schreibe_quellenbericht(belege, sammler.ohne_bbox, bericht)
+    schreibe_quellenbericht(
+        belege, sammler.ohne_bbox, bericht, pruefliste=pruefliste, schwaerzungen=schwaerzungen
+    )
 
     return QuellenErgebnis(
         pfad=pfad,
         anzahl_belege=len(belege),
-        anzahl_ohne_bbox=len(sammler.ohne_bbox),
+        anzahl_ohne_bbox=len({k for k in sammler.ohne_bbox if not k.startswith("seite:")}),
         seiten=seiten_sortiert,
         neu_gerendert=neu_gerendert,
         ohne_bbox=dict(sorted(sammler.ohne_bbox.items())),

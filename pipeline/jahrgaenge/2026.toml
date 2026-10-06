@@ -198,3 +198,13 @@ spalten_nachwuchs = ["gruppe", "verguetung", "vorgesehen", "beschaeftigt", "verm
 sozial_erziehungsdienst_kopf_praefix = "S "
 sozial_erziehungsdienst_pauschal_kopf = "P"
 sozial_erziehungsdienst_pauschal = "pauschal"
+
+# [layout.quellenbelege] (Phase 7, Plan 07-03, DATA-04, T-07-09): Datenschutz der Belegseiten.
+# `pruefwoerter` sind Stichwörter, die auf einer Belegseite auf Namen oder Kontaktdaten
+# hinweisen können; Schritt 08 listet jede Seite mit Treffer (Seite, Stichwort, Zeilenindex,
+# nie den Text) in daten/pruefberichte/quellenbelege.md. `schwaerzen_nach` nennt gedruckte
+# Beschriftungen, deren Folgezeile geschwärzt wird (Zeile direkt nach einer Zeile, deren Text
+# genau dem Etikett entspricht); bewusst leer, wird nur auf Wunsch am Checkpoint 07-10 gefüllt.
+[layout.quellenbelege]
+pruefwoerter = ["Bürgermeister", "Bürgermeisterin", "Kämmerer", "Kämmerin", "gez.", "Telefon", "E-Mail", "Ansprechpartner", "Sachbearbeit", "Verantwortlich"]
+schwaerzen_nach = []
