@@ -14,6 +14,7 @@ import {
   bindungsgradText,
   jahrSchluessel,
 } from '@/lib/produkt'
+import { belegSchluessel, findeBeleg } from '@/lib/quelle'
 import { zeilenName } from '@/lib/zeilen'
 
 // Alle Testdaten kommen aus den App-Daten, nicht aus Literalen.
@@ -163,9 +164,9 @@ describe('baueTeilergebnisplan (AUSG-05, D-23)', () => {
   it('beschriftet die Spalten mit Wertart und Jahr aus den Daten', () => {
     const plan = baueTeilergebnisplan(erstes?.code ?? '')
     const erwartet = haushalt.jahre.map((j) => `${wertartName(wertartFuerJahr(j))} ${j}`)
-    expect(plan?.spalten.slice(1).map((s) => s.titel)).toEqual(erwartet)
+    expect(plan?.spalten.slice(1, -1).map((s) => s.titel)).toEqual(erwartet)
     expect(plan?.spalten[0]?.art).toBe('text')
-    expect(plan?.spalten.slice(1).every((s) => s.art === 'euro')).toBe(true)
+    expect(plan?.spalten.slice(1, -1).every((s) => s.art === 'euro')).toBe(true)
     const erstesJahr = haushalt.jahre[0]
     const letztesJahr = haushalt.jahre.at(-1)
     expect(plan?.titel).toBe(`Teilergebnisplan ${erstesJahr}–${letztesJahr}`)
@@ -282,7 +283,7 @@ describe('baueGrundzahlen (AUSG-05)', () => {
   it('wählt dezimale Spalten genau dann, wenn eine Grundzahl Nachkommastellen hat', () => {
     for (const produkt of produkte.filter((p) => p.grundzahlen.length > 0)) {
       const mitKomma = produkt.grundzahlen.some((g) => g.nachkommastellen > 0)
-      const jahrSpalten = baueGrundzahlen(produkt.code)?.spalten.slice(2) ?? []
+      const jahrSpalten = baueGrundzahlen(produkt.code)?.spalten.slice(2, -1) ?? []
       expect(jahrSpalten.length).toBeGreaterThan(0)
       expect(jahrSpalten.every((s) => s.art === (mitKomma ? 'dezimal' : 'zahl'))).toBe(true)
     }
@@ -296,7 +297,7 @@ describe('baueGrundzahlen (AUSG-05)', () => {
       const tabelle = baueGrundzahlen(bezug.produkt)
       const zeile = tabelle?.zeilen.find((z) => z.etikett === 'berechnet')
       expect(zeile?.name).toBe(`Zuschussbedarf je ${bezug.einheitText} (berechnet)`)
-      const jahrSpalten = tabelle?.spalten.slice(2) ?? []
+      const jahrSpalten = tabelle?.spalten.slice(2, -1) ?? []
       for (const spalte of jahrSpalten) {
         const j = Number(spalte.schluessel.slice(1))
         const planIndex = haushalt.jahre.indexOf(j)
@@ -429,5 +430,102 @@ describe('Probe AUSG-05: alle 63 Produkte', () => {
         expect(ERLAUBTE_PRODUKT_FELDER.has(feld)).toBe(true)
       }
     }
+  })
+})
+
+const QUELLE_SPALTE = { schluessel: 'quelle', titel: 'Quelle', art: 'quelle' }
+
+describe('Quelle-Spalte der Produkttabellen (D-01, UI-02)', () => {
+  it('der Teilergebnisplan hat als letzte Spalte „Quelle“ mit ep-Schlüsseln je gedruckter Zeile', () => {
+    for (const produkt of produkte) {
+      const plan = baueTeilergebnisplan(produkt.code)
+      expect(plan?.spalten.at(-1)).toEqual(QUELLE_SPALTE)
+      for (const zeile of plan?.zeilen ?? []) {
+        expect(zeile.quelle).toBe(
+          zeile.etikett === 'berechnet'
+            ? null
+            : belegSchluessel.ep(produkt.code, String(zeile.schluessel)),
+        )
+      }
+    }
+  })
+
+  it('die beiden berechneten Zeilen des Teilergebnisplans haben keine Quelle', () => {
+    const berechnet = (baueTeilergebnisplan(erstes?.code ?? '')?.zeilen ?? []).filter(
+      (zeile) => zeile.etikett === 'berechnet',
+    )
+    expect(berechnet).toHaveLength(2)
+    expect(berechnet.every((zeile) => zeile.quelle === null)).toBe(true)
+  })
+
+  it('die Grundzahlen haben als letzte Spalte „Quelle“ mit gz-Schlüsseln, berechnete Zeilen ohne', () => {
+    let berechnete = 0
+    for (const produkt of produkte.filter((p) => p.grundzahlen.length > 0)) {
+      const tabelle = baueGrundzahlen(produkt.code)
+      expect(tabelle?.spalten.at(-1)).toEqual(QUELLE_SPALTE)
+      const gedruckte = (tabelle?.zeilen ?? []).filter((zeile) => zeile.etikett === null)
+      expect(gedruckte.map((zeile) => zeile.quelle)).toEqual(
+        produkt.grundzahlen.map((g) => belegSchluessel.gz(produkt.code, g.position)),
+      )
+      for (const zeile of (tabelle?.zeilen ?? []).filter((z) => z.etikett === 'berechnet')) {
+        expect(zeile.quelle).toBeNull()
+        berechnete += 1
+      }
+    }
+    expect(berechnete).toBeGreaterThan(0)
+  })
+
+  it('die Investitionen haben als letzte Spalte „Quelle“ mit inv-Schlüsseln', () => {
+    let geprueft = 0
+    for (const produkt of produkte) {
+      const liste = baueProduktInvestitionen(produkt.code)
+      const tabelle = baueInvestitionenTabelle(liste)
+      expect(tabelle.spalten.at(-1)).toEqual(QUELLE_SPALTE)
+      liste.forEach((massnahme, index) => {
+        expect(tabelle.zeilen[index]?.quelle).toBe(
+          belegSchluessel.inv(
+            massnahme.produkt,
+            massnahme.massnahme_id,
+            massnahme.konto,
+            massnahme.richtung,
+          ),
+        )
+        geprueft += 1
+      })
+    }
+    expect(geprueft).toBe(investitionen.massnahmen.length)
+  })
+
+  it('jeder Schlüssel einer Tabellenzeile löst auf, außer bei Planzeilen ohne Wert, die das PDF nicht druckt', () => {
+    // „Ordentliche Erträge“ zeigt der Teilergebnisplan immer; hat ein Produkt keine Erträge, druckt
+    // der Haushaltsplan die Zeile nicht und quellen.json hat keinen Beleg (leere Zelle, kein Knopf).
+    const ungedruckt: string[] = []
+    const unaufgeloest: string[] = []
+    for (const produkt of produkte) {
+      const werte = ergebnisplanVon(produkt.code)
+      const tabellen = [
+        baueTeilergebnisplan(produkt.code),
+        baueGrundzahlen(produkt.code),
+        baueInvestitionenTabelle(baueProduktInvestitionen(produkt.code)),
+      ]
+      for (const tabelle of tabellen) {
+        for (const zeile of tabelle?.zeilen ?? []) {
+          const schluessel = zeile.quelle
+          if (typeof schluessel !== 'string' || findeBeleg(schluessel) !== null) {
+            continue
+          }
+          const reihe = werte.zeilen[String(zeile.schluessel)]
+          if (reihe !== undefined && reihe.every((wert) => wert === 0)) {
+            ungedruckt.push(schluessel)
+          } else {
+            unaufgeloest.push(schluessel)
+          }
+        }
+      }
+    }
+    expect(unaufgeloest).toEqual([])
+    expect(ungedruckt.every((schluessel) => schluessel.endsWith(':ordentliche_ertraege'))).toBe(
+      true,
+    )
   })
 })

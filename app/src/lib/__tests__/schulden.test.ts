@@ -5,6 +5,7 @@ import { BERECHNET_DECAL, SCHULDEN_FARBEN } from '@/charts/echartsTheme'
 import { euro, euroKurz, jahr as formatiereJahr } from '@/charts/format'
 import { haushalt, investitionen } from '@/data/daten'
 import { quellenZeile } from '@/lib/kennzahlen'
+import { belegSchluessel, findeBeleg } from '@/lib/quelle'
 import investitionenSeiteQuelle from '@/pages/InvestitionenPage.vue?raw'
 import {
   achsenZusatz,
@@ -189,6 +190,26 @@ describe('schuldenKacheln (WR-03, D-09, D-10)', () => {
   it('folgt auf den echten Daten dem Datenfeld des Vorjahrs', () => {
     const erwartet = stand.berechnet[vorjahrIndex]
     expect(schuldenKacheln().map((kachel) => kachel.berechnet)).toEqual([erwartet, erwartet])
+  })
+
+  it('belegt beide Kacheln mit der Schuldenstandsreihe der Investitionskredite (D-01)', () => {
+    for (const kachel of schuldenKacheln()) {
+      expect(kachel.quelle).toBe(belegSchluessel.sd('investitionskredite'))
+      expect(findeBeleg(kachel.quelle)).not.toBeNull()
+    }
+  })
+
+  it('nennt die Herleitung aus den Namen der Reihen (Schuldenstand) und der Einwohnerzahl (je Einwohner)', () => {
+    const [gesamt, proKopf] = schuldenKacheln()
+    expect(gesamt?.herleitung).toBe('Investitionskredite plus NRW.Bank')
+    expect(proKopf?.herleitung).toContain('Investitionskredite plus NRW.Bank')
+    expect(proKopf?.herleitung).toContain('geteilt durch die Einwohnerzahl')
+  })
+
+  it('gibt die Wertart der Seitenleiste als „{Wertart} {Jahr}“ mit', () => {
+    const kennzahlen = schuldenKennzahlen()
+    const erwartet = `${kennzahlen.wertart} ${formatiereJahr(kennzahlen.jahr)}`
+    expect(schuldenKacheln().map((kachel) => kachel.wertart)).toEqual([erwartet, erwartet])
   })
 
   it('die Seite rendert die Kacheln, sie baut sie nicht selbst (Quelltext)', () => {

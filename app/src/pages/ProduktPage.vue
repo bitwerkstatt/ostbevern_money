@@ -7,6 +7,7 @@ import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
 import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import PageIntro from '@/components/PageIntro.vue'
+import QuelleKnopf from '@/components/QuelleKnopf.vue'
 import { useJahr } from '@/lib/jahr'
 import {
   baueErlaeuterungen,
@@ -16,6 +17,7 @@ import {
   baueProduktKopf,
   baueTeilergebnisplan,
 } from '@/lib/produkt'
+import { belegSchluessel } from '@/lib/quelle'
 
 const route = useRoute()
 const { jahr, jahrLink } = useJahr()
@@ -171,9 +173,14 @@ const investitionen = computed(() => baueInvestitionenTabelle(baueProduktInvesti
         <p v-else>Für dieses Produkt sind keine Investitionen geplant.</p>
       </section>
 
-      <p v-if="kopf.quelleSeite !== null" class="om-produkt__quelle">
-        Quelle: Haushaltsplan, PDF-Seite {{ kopf.quelleSeite }}
-      </p>
+      <div v-if="kopf.quelleSeite !== null" class="om-produkt__quellzeile">
+        <p class="om-produkt__quelle">Quelle: Haushaltsplan, PDF-Seite {{ kopf.quelleSeite }}</p>
+        <QuelleKnopf
+          :schluessel="belegSchluessel.pr(kopf.produkt.code)"
+          :bezeichnung="produkt.name"
+          variante="produkt"
+        />
+      </div>
     </div>
   </template>
   <template v-else>
@@ -272,5 +279,14 @@ const investitionen = computed(() => baueInvestitionenTabelle(baueProduktInvesti
 
 .om-produkt__quelle {
   margin: 0;
+}
+
+/* Quellzeile und Beleg-Knopf: bei 360 px bricht der Knopf unter die Zeile um. */
+.om-produkt__quellzeile {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--wa-space-m);
+  row-gap: var(--wa-space-2xs);
 }
 </style>
