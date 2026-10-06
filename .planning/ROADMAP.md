@@ -264,7 +264,7 @@ Plans:
   4. Ein Playwright-Smoke-Test bestätigt, dass jede Route ohne Konsolenfehler rendert und die Diagramme Daten enthalten. Ein Textdurchgang bestätigt, dass alle Texte deutsch und durchgehend in der Du-Anrede sind.
   5. GitHub Actions baut die App und deployt sie auf GitHub Pages (eigener Account), und die App ist unter einer öffentlichen URL erreichbar.
 
-**Plans**: 4/12 plans executed
+**Plans**: 8/12 plans executed
 **UI hint**: yes
 
 Plans:
@@ -277,10 +277,10 @@ Plans:
 - [x] 07-04-PLAN.md — Token-Hygiene D-17/D-18 mit Wächter für alle Dateien, Glossar-Überschrift, veraltete WA-Größen (Wave 2)
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 07-05-PLAN.md — Konfiguration (Kontakt, Original-PDF, Impressumsfelder), Seite „Über dieses Projekt“, Fußzeilenlink (Wave 3)
-- [ ] 07-06-PLAN.md — „Quelle anzeigen“ an den Kacheln von Investitionen und Stellenplan und auf der Produktseite (Wave 3)
-- [ ] 07-07-PLAN.md — „Quelle anzeigen“ in den Tabellen von /einnahmen und /ausgaben (Wave 3)
-- [ ] 07-08-PLAN.md — „Quelle anzeigen“ in den Tabellen und Kacheln von /rat-entscheidet, /investitionen, /stellenplan (Wave 3)
+- [x] 07-05-PLAN.md — Konfiguration (Kontakt, Original-PDF, Impressumsfelder), Seite „Über dieses Projekt“, Fußzeilenlink (Wave 3)
+- [x] 07-06-PLAN.md — „Quelle anzeigen“ an den Kacheln von Investitionen und Stellenplan und auf der Produktseite (Wave 3)
+- [x] 07-07-PLAN.md — „Quelle anzeigen“ in den Tabellen von /einnahmen und /ausgaben (Wave 3)
+- [x] 07-08-PLAN.md — „Quelle anzeigen“ in den Tabellen und Kacheln von /rat-entscheidet, /investitionen, /stellenplan (Wave 3)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 - [ ] 07-09-PLAN.md — Barrierefreiheit im Browser: Menügruppe D-19, Fokus, reduzierte Bewegung, Tabellen-Inventar D-16, 360 px, globale D-01-Abdeckung (Wave 4)
@@ -307,4 +307,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
 | 6. Kontext-Seiten | 17/17 | Complete    | 2026-10-06 |
-| 7. Feinschliff und Veröffentlichung | 4/12 | In Progress | - |
+| 7. Feinschliff und Veröffentlichung | 8/12 | In Progress | - |
