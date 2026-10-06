@@ -60,7 +60,9 @@ describe('baueRuecklagen (ENTW-03, S. 311)', () => {
 
   it('summiert die beiden Rücklagen je Spalte zum Wert über der Säule', () => {
     for (const zeile of zeilen) {
-      expect(zeile.summe).toBe((zeile.allgemeine ?? 0) + (zeile.ausgleich ?? 0))
+      expect(zeile.allgemeine).not.toBeNull()
+      expect(zeile.ausgleich).not.toBeNull()
+      expect(zeile.summe).toBe((zeile.allgemeine as number) + (zeile.ausgleich as number))
     }
   })
 
@@ -71,8 +73,23 @@ describe('baueRuecklagen (ENTW-03, S. 311)', () => {
     )
     const geprueft = baueRuecklagen(tabelle)
     expect(geprueft[0]?.ausgleich).toBeNull()
+    expect(geprueft[0]?.summe).toBeNull()
     expect(geprueft[1]?.ausgleich).toBe(0)
-    expect(geprueft[0]?.summe).toBe(geprueft[0]?.allgemeine)
+    expect(geprueft[1]?.summe).toBe(geprueft[1]?.allgemeine)
+  })
+
+  it('zeigt ohne eine der beiden Rücklagen keine Teilsumme als Summe (WR-04)', () => {
+    const allgemeine = posten('allgemeine_ruecklage')
+    const tabelle = mitPosten(
+      'allgemeine_ruecklage',
+      allgemeine.map((wert, index) => (index === 0 ? null : wert)),
+    )
+    const geprueft = baueRuecklagen(tabelle)
+    expect(geprueft[0]?.allgemeine).toBeNull()
+    expect(geprueft[0]?.summe).toBeNull()
+    geprueft.slice(1).forEach((zeile, versatz) => {
+      expect(zeile.summe).toBe((allgemeine[versatz + 1] ?? Number.NaN) + (zeile.ausgleich ?? 0))
+    })
   })
 
   it('hat ohne beide Werte keine Summe', () => {
