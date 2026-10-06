@@ -8,6 +8,9 @@ import {
   baueRuecklagen,
   hskSchwellen,
   rueckgang,
+  rueckgangAchsenMaximum,
+  rueckgangPlanjahre,
+  ruecklagenTabelle,
 } from '@/lib/ruecklagen'
 
 const EIGENKAPITAL = haushalt.eigenkapital
@@ -228,5 +231,82 @@ describe('ausgleichsruecklageAufgebrauchtJahr (ENTW-03, D-14)', () => {
     it('nennt das Jahr, an dessen Ende die Ausgleichsrücklage aufgebraucht ist', () => {
       expect(ausgleichsruecklageAufgebrauchtJahr()).toBe(2026)
     })
+  })
+})
+
+describe('rueckgangPlanjahre (ENTW-03, A7)', () => {
+  it('hat je Jahr ab dem Haushaltsjahr einen Eintrag mit Wertart und Anteil', () => {
+    const planjahre = rueckgangPlanjahre()
+    expect(planjahre.map((eintrag) => eintrag.jahr)).toEqual(haushalt.jahre.slice(START_INDEX))
+    expect(planjahre.map((eintrag) => eintrag.wertart)).toEqual(
+      haushalt.wertarten.slice(START_INDEX),
+    )
+  })
+
+  it('trägt je Eintrag den Rückgang der eigenen Spalte, ohne Versatz um ein Jahr', () => {
+    rueckgangPlanjahre().forEach((eintrag, versatz) => {
+      expect(eintrag.anteil).toBe(rueckgang(START_INDEX + versatz))
+    })
+  })
+
+  it('führt kein Jahr vor dem Haushaltsjahr', () => {
+    expect(rueckgangPlanjahre().some((eintrag) => eintrag.jahr < haushalt.haushaltsjahr)).toBe(
+      false,
+    )
+  })
+
+  it('lässt einen fehlenden Eingangswert null und nicht 0', () => {
+    const ohneErgebnis = mitPosten(
+      'jahresergebnis',
+      haushalt.jahre.map(() => null),
+    )
+    expect(rueckgangPlanjahre(ohneErgebnis).every((eintrag) => eintrag.anteil === null)).toBe(true)
+  })
+})
+
+describe('rueckgangAchsenMaximum (UI-SPEC E3 overflow)', () => {
+  it('ist das 1,2-Fache des größeren aus Werten und Schwelle', () => {
+    expect(rueckgangAchsenMaximum([0.02, 0.1], 0.05)).toBeCloseTo(0.12, 12)
+    expect(rueckgangAchsenMaximum([0.01, 0.02], 0.05)).toBeCloseTo(0.06, 12)
+  })
+
+  it('hält die Schwelle ohne Werte im Diagramm', () => {
+    expect(rueckgangAchsenMaximum([], 0.05)).toBeCloseTo(0.06, 12)
+  })
+
+  it('liegt für die Daten über Schwelle und jedem Wert', () => {
+    const anteile = rueckgangPlanjahre().flatMap((eintrag) =>
+      eintrag.anteil === null ? [] : [eintrag.anteil],
+    )
+    const schwelle = hskSchwellen().zweiJahre
+    const maximum = rueckgangAchsenMaximum(anteile, schwelle)
+    expect(maximum).toBeGreaterThan(schwelle)
+    expect(maximum).toBeGreaterThan(Math.max(...anteile))
+  })
+})
+
+describe('ruecklagenTabelle (ENTW-03)', () => {
+  it('hat eine Zeile je Jahr mit Wertart, beiden Rücklagen und dem Rückgang', () => {
+    const tabelle = ruecklagenTabelle()
+    expect(tabelle.map((zeile) => zeile.jahr)).toEqual(haushalt.jahre)
+    expect(tabelle.map((zeile) => zeile.wertart)).toEqual(haushalt.wertarten)
+    expect(tabelle.map((zeile) => zeile.allgemeine)).toEqual(posten('allgemeine_ruecklage'))
+    expect(tabelle.map((zeile) => zeile.ausgleich)).toEqual(posten('ausgleichsruecklage'))
+  })
+
+  it('führt den Rückgang erst ab dem Haushaltsjahr, davor null', () => {
+    ruecklagenTabelle().forEach((zeile, index) => {
+      expect(zeile.rueckgang).toBe(index < START_INDEX ? null : rueckgang(index))
+    })
+  })
+
+  it('zeigt eine echte 0 der Ausgleichsrücklage als 0 und keinen Wert als null', () => {
+    const mitLuecke = mitPosten(
+      'ausgleichsruecklage',
+      haushalt.jahre.map((_jahr, index) => (index === 0 ? null : 0)),
+    )
+    const zeilen = ruecklagenTabelle(mitLuecke)
+    expect(zeilen[0]?.ausgleich).toBeNull()
+    expect(zeilen[1]?.ausgleich).toBe(0)
   })
 })
