@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { jahr as formatiereJahr } from '@/charts/format'
+import { jahr as formatiereJahr, prozent } from '@/charts/format'
+import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
 import ChartCard from '@/components/ChartCard.vue'
+import DatenTabelle from '@/components/DatenTabelle.vue'
+import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import EntwicklungsDiagramm from '@/components/EntwicklungsDiagramm.vue'
 import ErgebnisBalken from '@/components/ErgebnisBalken.vue'
 import ErklaerText from '@/components/ErklaerText.vue'
@@ -8,7 +11,16 @@ import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import { haushalt } from '@/data/daten'
 import PostenZeitreihe from '@/components/PostenZeitreihe.vue'
+import RueckgangBalken from '@/components/RueckgangBalken.vue'
+import RuecklagenBalken from '@/components/RuecklagenBalken.vue'
 import { ENTWICKLUNG_POSTEN, baueErgebnisReihen, bauePostenReihe } from '@/lib/entwicklung'
+import { wertartName } from '@/lib/jahr'
+import {
+  baueRuecklagen,
+  hskSchwellen,
+  rueckgangPlanjahre,
+  ruecklagenTabelle,
+} from '@/lib/ruecklagen'
 
 // Die Seite zeigt immer alle ausgewiesenen Jahre, ohne Jahr-Umschalter (UI-SPEC Routes).
 // Erstes und letztes Jahr kommen aus den Daten, nie aus dem Quelltext.
@@ -33,6 +45,41 @@ const karten = ENTWICKLUNG_POSTEN.map((posten) => {
   )?.pdfSeite
   return { posten, pdf: seite == null ? undefined : { seite } }
 })
+
+// Die Rücklagen stehen in der Eigenkapitalübersicht des Vorberichts (Quellseite aus den Daten).
+const eigenkapitalSeite = haushalt.eigenkapital.gesamt_vorbericht.quelle
+const eigenkapitalQuelle = eigenkapitalSeite === null ? undefined : { seite: eigenkapitalSeite }
+
+// Ohne Rücklagenwerte zeigt die Karte den Leerzustand; Tabelle, Rückgang und Polster-Text entfallen.
+const hatRuecklagen = baueRuecklagen().some(
+  (zeile) => zeile.allgemeine !== null || zeile.ausgleich !== null,
+)
+// Mit nur einem Planjahr gibt es keinen Verlauf: die Rückgang-Karte entfällt, die Tabelle bleibt.
+const zeigeRueckgang = hatRuecklagen && rueckgangPlanjahre().length >= 2
+
+const schwellen = hskSchwellen()
+const SCHWELLEN_TEXT = `Laut Vorbericht (PDF-Seite ${String(schwellen.pdfSeite)}) ist die Schwelle ein Rückgang der allgemeinen Rücklage um mehr als ${prozent(schwellen.einJahr)} in einem Jahr oder um mehr als ${prozent(schwellen.zweiJahre)} in zwei aufeinanderfolgenden Jahren.`
+const RUECKGANG_ERKLAERUNG =
+  'Um diesen Anteil sinkt die allgemeine Rücklage im jeweiligen Jahr, bezogen auf ihren Bestand zu Jahresbeginn.'
+
+const TABELLEN_SPALTEN: DatenSpalte[] = [
+  { schluessel: 'jahr', titel: 'Jahr', art: 'text' },
+  { schluessel: 'allgemeine', titel: 'Allgemeine Rücklage (Bestand zu Jahresbeginn)', art: 'euro' },
+  { schluessel: 'ausgleich', titel: 'Ausgleichsrücklage (Bestand zu Jahresbeginn)', art: 'euro' },
+  { schluessel: 'rueckgang', titel: 'Rückgang im Jahr (berechnet)', art: 'prozent' },
+]
+const tabellenZeilen: DatenZeile[] = ruecklagenTabelle().map((zeile) => ({
+  jahr: `${formatiereJahr(zeile.jahr)} · ${wertartName(zeile.wertart)}`,
+  allgemeine: zeile.allgemeine,
+  ausgleich: zeile.ausgleich,
+  rueckgang: zeile.rueckgang,
+}))
+const tabellenFussnote =
+  (eigenkapitalSeite === null
+    ? ''
+    : `Quelle: Eigenkapitalübersicht, PDF-Seite ${String(eigenkapitalSeite)}. `) +
+  `Der Rückgang im Jahr ist berechnet wie im Vorbericht (PDF-Seite ${String(schwellen.pdfSeite)}): ` +
+  'der Fehlbetrag des Jahres, soweit die Ausgleichsrücklage ihn nicht deckt, geteilt durch die allgemeine Rücklage zu Jahresbeginn.'
 </script>
 
 <template>
@@ -78,6 +125,40 @@ const karten = ENTWICKLUNG_POSTEN.map((posten) => {
         </ChartCard>
       </div>
     </section>
+
+    <section class="om-entwicklung__abschnitt" aria-labelledby="om-entwicklung-polster">
+      <h2 id="om-entwicklung-polster">Wie lange reicht das Polster?</h2>
+      <ChartCard :titel="`Rücklagen ${erstesJahr}–${letztesJahr}`" :pdf="eigenkapitalQuelle">
+        <RuecklagenBalken />
+      </ChartCard>
+
+      <ChartCard
+        v-if="zeigeRueckgang"
+        titel="Rückgang der allgemeinen Rücklage"
+        :pdf="eigenkapitalQuelle"
+      >
+        <p class="om-entwicklung__berechnet">
+          <BerechnetEtikett />
+          {{ RUECKGANG_ERKLAERUNG }}
+        </p>
+        <RueckgangBalken />
+        <p class="om-entwicklung__unterschrift">{{ SCHWELLEN_TEXT }}</p>
+      </ChartCard>
+
+      <template v-if="hatRuecklagen">
+        <DatenTabelle
+          beschriftung="Rücklagen und Rückgang der allgemeinen Rücklage je Jahr"
+          :spalten="TABELLEN_SPALTEN"
+          :zeilen="tabellenZeilen"
+          :fussnote="tabellenFussnote"
+        />
+        <wa-callout variant="neutral" class="om-entwicklung__callout">
+          <wa-icon slot="icon" name="circle-info"></wa-icon>
+          <strong><GlossarBegriff schluessel="haushaltssicherung" /></strong>
+          <ErklaerText schluessel="polster" :ueberschrift="false" />
+        </wa-callout>
+      </template>
+    </section>
   </div>
 </template>
 
@@ -116,6 +197,23 @@ const karten = ENTWICKLUNG_POSTEN.map((posten) => {
 .om-entwicklung__callout {
   hyphens: auto;
   overflow-wrap: break-word;
+}
+
+.om-entwicklung__berechnet,
+.om-entwicklung__unterschrift {
+  margin: 0;
+  font-size: var(--wa-font-size-s);
+  color: var(--wa-color-text-quiet);
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.om-entwicklung__berechnet {
+  /* Das Etikett sitzt vor dem Satz, ohne Außenabstand links. */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--wa-space-xs);
 }
 
 .om-entwicklung__callout strong {
