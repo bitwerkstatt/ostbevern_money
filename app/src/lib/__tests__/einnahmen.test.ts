@@ -14,6 +14,7 @@ import {
   hatInvestiveWerte,
   quellenText,
 } from '@/lib/einnahmen'
+import { findeBeleg } from '@/lib/quelle'
 
 const JAHRE = haushalt.jahre.map((jahr, index) => [jahr, index] as const)
 const GEP = haushalt.ergebnisplan['GESAMT']?.zeilen
@@ -430,3 +431,63 @@ describe.runIf(haushalt.haushaltsjahr === 2026)(
     })
   },
 )
+
+describe.each(JAHRE)('Belegschlüssel der Tabellenzeilen, Jahr %i (D-01)', (_jahr, index) => {
+  it('baueSteuern, baueZuwendungen: vb-Schlüssel je Posten, der Beleg löst auf', () => {
+    for (const [name, zeilen] of [
+      ['steuerarten', baueSteuern(index)],
+      ['zuwendungen', baueZuwendungen(index)],
+    ] as const) {
+      for (const zeile of zeilen) {
+        expect(zeile.beleg, `${name}:${zeile.posten}`).toBe(`vb:${name}:${zeile.posten}`)
+        expect(findeBeleg(zeile.beleg ?? '')?.pdfSeite, `${name}:${zeile.posten}`).toBe(
+          zeile.quelle,
+        )
+      }
+    }
+  })
+
+  it('baueSonstigeErtraege: vb-Schlüssel, die Konzessionsabgaben nach Sparte tragen den meta-Schlüssel', () => {
+    for (const zeile of baueSonstigeErtraege(index)) {
+      const erwartet =
+        zeile.teilVon === null
+          ? `vb:sonstige_ertraege:${zeile.posten}`
+          : `meta:vorbericht_werte.${zeile.posten}`
+      expect(zeile.beleg, zeile.posten).toBe(erwartet)
+      expect(findeBeleg(zeile.beleg ?? '')?.pdfSeite, zeile.posten).toBe(zeile.quelle)
+    }
+  })
+
+  it('berechnete Posten nennen eine Herleitung, gedruckte nicht', () => {
+    for (const zeile of [
+      ...baueSteuern(index),
+      ...baueZuwendungen(index),
+      ...baueSonstigeErtraege(index),
+    ]) {
+      expect(zeile.herleitung !== null, zeile.posten).toBe(zeile.berechnet)
+    }
+  })
+
+  it('baueInvestiveTabelle: Pauschalen und Förderungen vb, Finanzplan-Zeilen fp:GESAMT', () => {
+    for (const zeile of baueInvestiveTabelle(index)) {
+      const erwartet =
+        zeile.gruppe === 'finanzplan'
+          ? `fp:GESAMT:${zeile.schluessel}`
+          : `vb:investitionszuwendungen:${zeile.schluessel}`
+      expect(zeile.beleg, zeile.schluessel).toBe(erwartet)
+      expect(findeBeleg(zeile.beleg ?? ''), zeile.schluessel).not.toBeNull()
+    }
+  })
+
+  it('baueInvestiveEinnahmen: „Sonstige (berechnet)“ zeigt auf die Finanzplanzeile und nennt die Herleitung', () => {
+    const sonstige = baueInvestiveEinnahmen(index).find(
+      (z) => z.schluessel === 'sonstige_berechnet',
+    )
+    expect(sonstige?.beleg).toBe('fp:GESAMT:investitionszuwendungen')
+    expect(sonstige?.herleitung).toMatch(/Pauschalen/)
+    for (const zeile of baueInvestiveEinnahmen(index)) {
+      expect(findeBeleg(zeile.beleg ?? ''), zeile.schluessel).not.toBeNull()
+      expect(zeile.herleitung !== null, zeile.schluessel).toBe(zeile.berechnet)
+    }
+  })
+})
