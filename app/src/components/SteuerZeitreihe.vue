@@ -77,6 +77,10 @@ const option = computed<EChartsOption>(() => {
   }
 })
 
+// Bildbeschreibung (A11Y-01): ohne Zahl, die Werte stehen in der Tabelle darunter.
+const BESCHREIBUNG =
+  'Liniendiagramm: der Betrag der gewählten Steuerart je Jahr. Dieselben Werte stehen in der Tabelle darunter.'
+
 const spalten: DatenSpalte[] = [
   { schluessel: 'jahr', titel: 'Jahr', art: 'text' },
   { schluessel: 'wertart', titel: 'Wertart', art: 'text' },
@@ -114,7 +118,13 @@ function beiAuswahl(ereignis: Event) {
       </wa-option>
     </wa-select>
 
-    <BaseChart :option="option" hoehe="320px" :leer-titel="LEER_TITEL" :leer-text="LEER_TEXT" />
+    <BaseChart
+      :option="option"
+      hoehe="320px"
+      :beschreibung="BESCHREIBUNG"
+      :leer-titel="LEER_TITEL"
+      :leer-text="LEER_TEXT"
+    />
     <p class="om-zeitreihe__legende">{{ LEGENDE_TEXT }}</p>
 
     <wa-details summary="Tabelle anzeigen">

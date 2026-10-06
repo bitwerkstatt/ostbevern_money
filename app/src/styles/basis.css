@@ -26,6 +26,12 @@ body {
   border: 0;
 }
 
+/* Der Schließen-Knopf der Drawer ist mit 43 px knapp unter dem Ziel von 44 px (A11Y-03). */
+wa-drawer::part(close-button__base) {
+  min-width: 44px;
+  min-height: 44px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   wa-skeleton::part(indicator) {
     animation: none;

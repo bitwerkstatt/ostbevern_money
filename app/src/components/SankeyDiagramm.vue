@@ -12,6 +12,10 @@ const props = defineProps<{
   wertartText: string
 }>()
 
+// Bildbeschreibung (A11Y-01): ohne Zahl, die Werte und die Links stehen in den Tabellen darunter.
+const BESCHREIBUNG =
+  'Flussdiagramm: links stehen die Ertragsarten, in der Mitte der Gemeindehaushalt, rechts die Ausgaben. Die Breite der Bänder zeigt den Betrag. Dieselben Werte und die Links zu den Aufgabenbereichen stehen in den Tabellen darunter.'
+
 const router = useRouter()
 const { jahrLink } = useJahr()
 
@@ -28,5 +32,5 @@ function beiKlick(params: unknown) {
 </script>
 
 <template>
-  <BaseChart :option="option" hoehe="640px" @chart-click="beiKlick" />
+  <BaseChart :option="option" hoehe="640px" :beschreibung="BESCHREIBUNG" @chart-click="beiKlick" />
 </template>
