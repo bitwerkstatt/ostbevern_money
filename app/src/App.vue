@@ -205,6 +205,11 @@ onBeforeUnmount(() => {
         <a :href="`mailto:${KONTAKT_EMAIL}`" class="om-kontakt">{{ KONTAKT_EMAIL }}</a>
       </p>
       <p>
+        <RouterLink :to="{ name: 'ueber' }" class="om-footer__ueber"
+          >Über dieses Projekt, Impressum und Datenschutz</RouterLink
+        >
+      </p>
+      <p>
         Inspiriert von
         <a
           href="https://github.com/codeformuenster/haushalt-muenster-2026"
@@ -331,6 +336,12 @@ onBeforeUnmount(() => {
 .om-footer a {
   color: inherit;
   text-decoration: underline;
+}
+
+.om-footer__ueber {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
 
 .om-extern-icon {

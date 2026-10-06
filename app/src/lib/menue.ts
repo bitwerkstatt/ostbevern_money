@@ -44,6 +44,13 @@ export const MENUE: readonly MenueEintrag[] = [
   { typ: 'link', name: 'glossar', text: 'Glossar', mitJahr: false },
 ]
 
+/**
+ * Routen, die nur aus der Fußzeile verlinkt sind und deshalb nicht in `MENUE` stehen (D-08):
+ * „Über dieses Projekt“ mit Impressum und Datenschutz. `menue.test.ts` verlangt, dass jede
+ * Route des Routers im Menü oder in dieser Liste steht.
+ */
+export const FUSSZEILEN_ROUTEN: readonly string[] = ['ueber']
+
 /** Alle Links des Menüs in Anzeigereihenfolge, Gruppen aufgelöst. */
 export function menueLinks(): readonly MenueLink[] {
   return MENUE.flatMap((eintrag) => (eintrag.typ === 'gruppe' ? eintrag.eintraege : [eintrag]))
