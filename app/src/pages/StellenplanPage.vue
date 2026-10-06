@@ -6,6 +6,7 @@ import ChartCard from '@/components/ChartCard.vue'
 import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import KennzahlKachel from '@/components/KennzahlKachel.vue'
 import PageIntro from '@/components/PageIntro.vue'
+import StellenNachBereich from '@/components/StellenNachBereich.vue'
 import StellenNachTeil from '@/components/StellenNachTeil.vue'
 import WertartEtikett from '@/components/WertartEtikett.vue'
 import { haushalt, stellenplan } from '@/data/daten'
@@ -140,6 +141,17 @@ const teilQuelle = `Stellenplan, ${seitenText(summen.pdfSeiten)}`
         halbe Stellen zählen zusammen als eine volle Stelle.
       </p>
     </wa-callout>
+
+    <div class="om-stellenplan__abschnitt">
+      <ChartCard titel="Stellen und Personalaufwand nach Aufgabenbereich">
+        <StellenNachBereich />
+        <p class="om-stellenplan__hinweis-text">
+          Den Aufwand je Stelle rechnen wir bewusst nicht aus, weil Stellen und Personalaufwand
+          nicht deckungsgleich sind. Die Aufteilung nach Aufgabenbereich steht im Haushaltsplan nur
+          für {{ haushaltsjahr }}.
+        </p>
+      </ChartCard>
+    </div>
   </div>
 </template>
 
@@ -178,6 +190,13 @@ const teilQuelle = `Stellenplan, ${seitenText(summen.pdfSeiten)}`
 
 .om-stellenplan__hinweis p + p {
   margin-block-start: var(--wa-space-xs);
+}
+
+.om-stellenplan__hinweis-text {
+  margin: var(--wa-space-m) 0 0;
+  font-size: var(--wa-font-size-s);
+  line-height: 1.5;
+  color: var(--wa-color-text-quiet);
 }
 
 @media (min-width: 700px) {

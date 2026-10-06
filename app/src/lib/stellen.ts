@@ -198,12 +198,70 @@ export interface BereichZeile {
   pdfSeiten: number[]
 }
 
-/** Gerüst (RED): die Logik folgt im GREEN-Commit. */
+/** Schlüssel der Zeile „Personalaufwendungen“ (Teilergebnisplan Z. 11) in `ergebnisplan`. */
+const PERSONALAUFWAND = 'personalaufwendungen'
+
+/**
+ * Stellen und Personalaufwand je Aufgabenbereich des Haushaltsjahrs (STEL-02, STEL-03, D-16),
+ * absteigend nach Stellen, Zeilen ohne Stellen zuletzt. Aufgabenbereiche sind die Produkt-
+ * bereiche unter GESAMT ohne den synthetischen Knoten „Weitergabe an Kreis und Land“
+ * (RESEARCH Pitfall 8). Die Stellen kommen aus den Zeilen mit Produktbereich (Stellenübersicht,
+ * dieselben Stellen wie die Teilsummen, nur anders gegliedert), der Personalaufwand aus dem
+ * Teilergebnisplan. Ein Aufgabenbereich ohne Stellen und ohne Personalaufwand fehlt; hat nur eine
+ * Seite einen Wert, bleibt die andere `null`. Beide Größen bleiben nebeneinander stehen: es gibt
+ * bewusst keine Verrechnung miteinander (D-16, Out of Scope Gehaltsschätzung).
+ */
 export function stellenNachBereich(
   daten: Stellenplan = stellenplan,
   plan: Haushalt = haushalt,
 ): BereichZeile[] {
-  void daten
-  void plan
-  return []
+  const index = plan.jahre.indexOf(daten.haushaltsjahr)
+  if (index < 0) {
+    throw new Error(
+      `Das Haushaltsjahr ${String(daten.haushaltsjahr)} steht nicht in haushalt.jahre`,
+    )
+  }
+  const stellenZeilenJeBereich = daten.zeilen.filter(
+    (zeile) =>
+      zeile.produktbereich !== null &&
+      zeile.merkmal === 'stellen' &&
+      zeile.jahr === daten.haushaltsjahr,
+  )
+
+  const bereiche = plan.knoten.filter(
+    (knoten) => knoten.ebene === 'PB' && knoten.eltern === 'GESAMT' && !knoten.synthetisch,
+  )
+
+  const zeilen = bereiche.flatMap<BereichZeile>((knoten) => {
+    const stellenDesBereichs = stellenZeilenJeBereich.filter(
+      (zeile) => zeile.produktbereich === knoten.code,
+    )
+    const personalaufwand = plan.ergebnisplan[knoten.code]?.zeilen[PERSONALAUFWAND]?.[index] ?? null
+    const stellen = summe(stellenDesBereichs)
+    if ((stellen ?? 0) === 0 && (personalaufwand ?? 0) === 0) {
+      return []
+    }
+    const seitenDesPlans =
+      personalaufwand === null || knoten.pdf_seite === null ? [] : [knoten.pdf_seite]
+    return [
+      {
+        pb: knoten.code,
+        name: knoten.name,
+        stellen,
+        personalaufwand,
+        pdfSeiten: [
+          ...new Set([...stellenDesBereichs.map((zeile) => zeile.pdf_seite), ...seitenDesPlans]),
+        ].sort((a, b) => a - b),
+      },
+    ]
+  })
+
+  // Stabile Reihenfolge: Stellen absteigend (ohne Stellen zuletzt), dann Personalaufwand, dann Code.
+  return zeilen.sort(
+    (a, b) =>
+      (a.stellen === null ? 1 : 0) - (b.stellen === null ? 1 : 0) ||
+      (b.stellen ?? 0) - (a.stellen ?? 0) ||
+      (b.personalaufwand ?? 0) - (a.personalaufwand ?? 0) ||
+      a.pb.localeCompare(b.pb),
+  )
 }
