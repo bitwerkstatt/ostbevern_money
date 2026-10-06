@@ -2,7 +2,15 @@ import { readFileSync } from 'node:fs'
 
 import { describe, expect, it } from 'vitest'
 
-import { KONTAKT_EMAIL, ORIGINAL_PDF_URL, istPlatzhalter } from '@/config'
+import {
+  IMPRESSUM_ANSCHRIFT,
+  IMPRESSUM_NAME,
+  KONTAKT_EMAIL,
+  ORIGINAL_PDF_URL,
+  istAnschriftPlatzhalter,
+  istImpressumPlatzhalter,
+  istPlatzhalter,
+} from '@/config'
 
 describe('istPlatzhalter (UI-03, D-17)', () => {
   it.each([
@@ -30,10 +38,60 @@ describe('istPlatzhalter (UI-03, D-17)', () => {
   })
 })
 
-describe('Konfiguration', () => {
-  it('liefert eine gültige E-Mail-Adresse und eine https-URL', () => {
+describe('Konfiguration (D-06, D-07)', () => {
+  it('setzt die Kontaktadresse aus D-07', () => {
+    expect(KONTAKT_EMAIL).toBe('mail@thomas-manthey.de')
     expect(KONTAKT_EMAIL).toMatch(/^[^@\s]+@[^@\s]+$/)
-    expect(ORIGINAL_PDF_URL).toMatch(/^https:\/\//)
+  })
+
+  it('verweist auf die offizielle PDF-Datei der Gemeinde (D-06)', () => {
+    expect(ORIGINAL_PDF_URL.startsWith('https://www.ostbevern.de/')).toBe(true)
+    expect(ORIGINAL_PDF_URL.endsWith('.pdf')).toBe(true)
+  })
+
+  it('hält weder die Kontaktadresse noch die PDF-URL für einen Platzhalter', () => {
+    expect(istPlatzhalter(KONTAKT_EMAIL)).toBe(false)
+    expect(istPlatzhalter(ORIGINAL_PDF_URL)).toBe(false)
+  })
+})
+
+describe('istImpressumPlatzhalter (E4, D-08)', () => {
+  it.each(['', '   ', 'name-noch-nicht-festgelegt.invalid', 'Name.INVALID'])(
+    'erkennt %j als Platzhalter',
+    (wert) => {
+      expect(istImpressumPlatzhalter(wert)).toBe(true)
+    },
+  )
+
+  it.each(['Erika Musterfrau', 'Hauptstraße 1', '59227 Ostbevern'])(
+    'lässt %j als echten Wert gelten',
+    (wert) => {
+      expect(istImpressumPlatzhalter(wert)).toBe(false)
+    },
+  )
+})
+
+describe('istAnschriftPlatzhalter (E4 partial, zero-one-many)', () => {
+  it('erkennt eine leere Anschrift als Platzhalter', () => {
+    expect(istAnschriftPlatzhalter([])).toBe(true)
+  })
+
+  it('erkennt eine halb gefüllte Anschrift als Platzhalter', () => {
+    expect(
+      istAnschriftPlatzhalter(['Hauptstraße 1', 'anschrift-noch-nicht-festgelegt.invalid']),
+    ).toBe(true)
+    expect(istAnschriftPlatzhalter(['Hauptstraße 1', ''])).toBe(true)
+  })
+
+  it('lässt eine vollständige Anschrift mit einer oder mehreren Zeilen gelten', () => {
+    expect(istAnschriftPlatzhalter(['Hauptstraße 1'])).toBe(false)
+    expect(istAnschriftPlatzhalter(['Hauptstraße 1', '59227 Ostbevern'])).toBe(false)
+  })
+
+  it('liefert bis zum Text-Checkpoint (07-10) erkennbare Platzhalter für Name und Anschrift', () => {
+    expect(istImpressumPlatzhalter(IMPRESSUM_NAME)).toBe(true)
+    expect(istAnschriftPlatzhalter(IMPRESSUM_ANSCHRIFT)).toBe(true)
+    expect(IMPRESSUM_ANSCHRIFT.length).toBeGreaterThan(0)
   })
 })
 
