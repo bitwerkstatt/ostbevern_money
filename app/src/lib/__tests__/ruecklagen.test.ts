@@ -174,7 +174,9 @@ describe('rueckgangFormelText (CR-01, S. 23)', () => {
   const VERRECHNUNG = 'verrechnung_bilanzierungshilfe'
   const verrechnungsWerte = posten(VERRECHNUNG)
   const datenHabenVerrechnung = verrechnungsWerte.some((wert) => wert !== null && wert !== 0)
-  const verrechnungsName = EIGENKAPITAL.posten.find((eintrag) => eintrag.posten === VERRECHNUNG)?.name
+  const verrechnungsName = EIGENKAPITAL.posten.find(
+    (eintrag) => eintrag.posten === VERRECHNUNG,
+  )?.name
 
   const ohneVerrechnung = mitPosten(
     VERRECHNUNG,
@@ -250,7 +252,10 @@ describe('rueckgangFormelText (CR-01, S. 23)', () => {
   it('rechnet jedes Planjahr aus den im Text genannten Termen auf rueckgang() zurück (echte Daten)', () => {
     const text = rueckgangFormelText()
     for (let index = START_INDEX; index <= LETZTER_INDEX; index += 1) {
-      expect(nachgerechnet(EIGENKAPITAL, text, index)).toBeCloseTo(rueckgang(index) ?? Number.NaN, 12)
+      expect(nachgerechnet(EIGENKAPITAL, text, index)).toBeCloseTo(
+        rueckgang(index) ?? Number.NaN,
+        12,
+      )
     }
   })
 

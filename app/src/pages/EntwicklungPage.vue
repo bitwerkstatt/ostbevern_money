@@ -18,6 +18,7 @@ import { wertartName } from '@/lib/jahr'
 import {
   baueRuecklagen,
   hskSchwellen,
+  rueckgangFormelText,
   rueckgangPlanjahre,
   ruecklagenTabelle,
 } from '@/lib/ruecklagen'
@@ -79,7 +80,7 @@ const tabellenFussnote =
     ? ''
     : `Quelle: Eigenkapitalübersicht, PDF-Seite ${String(eigenkapitalSeite)}. `) +
   `Der Rückgang im Jahr ist berechnet wie im Vorbericht (PDF-Seite ${String(schwellen.pdfSeite)}): ` +
-  'der Fehlbetrag des Jahres, soweit die Ausgleichsrücklage ihn nicht deckt, geteilt durch die allgemeine Rücklage zu Jahresbeginn.'
+  rueckgangFormelText()
 </script>
 
 <template>
