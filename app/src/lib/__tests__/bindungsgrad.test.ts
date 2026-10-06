@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
 import { haushalt, produkte } from '@/data/daten'
-import { baueBindungsgrad, BINDUNGSGRADE, FINANZIERUNGSPRODUKT } from '@/lib/bindungsgrad'
+import {
+  baueBindungsgrad,
+  BINDUNGSGRADE,
+  FINANZIERUNGSPRODUKT,
+  klAnteil,
+} from '@/lib/bindungsgrad'
 import { bindungsgradText } from '@/lib/produkt'
 import { ZEITREIHEN_PRODUKT } from '@/lib/zeitreihen'
 
@@ -120,6 +125,21 @@ describe('baueBindungsgrad', () => {
     for (const segment of modell.segmente) {
       expect(segment.anzahl).toBeGreaterThan(0)
     }
+  })
+})
+
+describe('klAnteil (RAT-02, D-02)', () => {
+  it('teilt die Weitergabe an Kreis und Land durch die Summe im Balken', () => {
+    expect(klAnteil(500, 2000)).toBe(0.25)
+    expect(klAnteil(3000, 2000)).toBe(1.5)
+  })
+
+  it('liefert null, wenn die Summe im Balken 0 ist', () => {
+    expect(klAnteil(500, 0)).toBeNull()
+  })
+
+  it('liefert 0 für eine Weitergabe von 0 €', () => {
+    expect(klAnteil(0, 2000)).toBe(0)
   })
 })
 

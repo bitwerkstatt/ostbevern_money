@@ -130,3 +130,7 @@ export function baueBindungsgrad(): BindungsgradModell {
 
   return { segmente, ueberschuss: ueberschuss.sort((a, b) => a.wert - b.wert), summe }
 }
+
+export function klAnteil(klGesamt: number, balkenSumme: number): number | null {
+  return klGesamt + balkenSumme < 0 ? null : -1
+}
