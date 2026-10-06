@@ -219,7 +219,7 @@ Plans:
   4. `/stellenplan` zeigt die Stellen 2026 im Vergleich zu 2025 und zu den besetzten Stellen am 30.06.2025, die Verteilung nach Aufgabenbereich und nach Entgelt- bzw. Besoldungsgruppe sowie daneben den Personalaufwand je Aufgabenbereich (TP Z. 11).
   5. Ein Hinweis „Was nicht im Haushalt steht“ erklärt BBO (Hallenbad) und TEO AöR (Abwasser).
 
-**Plans**: 11/12 plans executed
+**Plans**: 12/12 plans executed
 **UI hint**: yes
 
 Plans:
@@ -241,7 +241,7 @@ Plans:
 - [x] 06-11-PLAN.md — Stellenplan: Kacheln 2026/2025/besetzt, Stellen nach Teil, Stellen und Personalaufwand je Aufgabenbereich, Gruppen (Wave 3)
 
 **Wave 4** *(blocked on Wave 3 completion)*
-- [ ] 06-12-PLAN.md — Phasen-Gate: Quelltext-/Hinweis-Tests für die neuen Seiten, volle Pipeline- und App-Kette, Abschlussdurchgang (Wave 4)
+- [x] 06-12-PLAN.md — Phasen-Gate: Quelltext-/Hinweis-Tests für die neuen Seiten, volle Pipeline- und App-Kette, Abschlussdurchgang (Wave 4)
 
 ### Phase 7: Feinschliff und Veröffentlichung
 
@@ -270,5 +270,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Details | 5/5 | Complete    | 2026-10-02 |
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
-| 6. Kontext-Seiten | 11/12 | In Progress|  |
+| 6. Kontext-Seiten | 12/12 | In Progress|  |
 | 7. Feinschliff und Veröffentlichung | 0/TBD | Not started | - |
