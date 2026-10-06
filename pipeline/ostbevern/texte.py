@@ -193,7 +193,8 @@ def pruefe_text(text: str) -> None:
     wohlgeformten Platzhalter, einem unvollständigen/unverschachtelten Platzhalter
     (z. B. fehlende schließende Klammer), einem HTML-Zeichen ("<"/">") oder einer
     Ziffer außerhalb eines gültigen Platzhalters, einer Jahreszahl (19xx/20xx), eines
-    Paragraphen ("§ n") oder eines Seitenverweises ("S. n", auch als Spanne).
+    Paragraphen ("§ n") oder eines Seitenverweises ("S. n", auch als Spanne). Ein
+    Platzhalter im Namensraum "jahr." muss das Formatkürzel "jahr" tragen.
     """
     if "<" in text or ">" in text:
         raise TexteFehler(f"Text enthält ein HTML-Zeichen: {text!r}")
@@ -204,9 +205,14 @@ def pruefe_text(text: str) -> None:
         platzhalter_treffer = PLATZHALTER_MUSTER.fullmatch(span)
         if platzhalter_treffer is None:
             raise TexteFehler(f"Ungültiger Platzhalter: {span!r}")
-        _, format_kuerzel = platzhalter_treffer.groups()
+        schluessel, format_kuerzel = platzhalter_treffer.groups()
         if format_kuerzel not in FORMATKUERZEL:
             raise TexteFehler(f"Unbekanntes Formatkürzel in Platzhalter: {span!r}")
+        # CR-01/WR-05: Jahreszahlen dürfen nie mit Tausendertrennung erscheinen.
+        if schluessel.startswith("jahr.") and format_kuerzel != "jahr":
+            raise TexteFehler(
+                f"Platzhalter {span!r} im Namensraum 'jahr.' braucht das Formatkürzel 'jahr'"
+            )
         rest = rest.replace(span, "", 1)
 
     if "{{" in rest or "}}" in rest:
@@ -347,7 +353,7 @@ def _tilgung_ab_haushaltsjahr(w: dict[str, int | float]) -> int | float:
 # verwendet relative Begriffe (Haushaltsjahr, Vorjahr), nie eine Jahreszahl. Jede
 # Formel liest `jahr.haushaltsjahr`/`jahr.vorjahr` aus dem übergebenen Werte-Dict, um
 # die konkreten Jahresschlüssel zur Laufzeit zu bilden.
-ABGELEITET: dict[str, Callable[[dict[str, int | float]], int | float]] = {
+_ABGELEITET_ROH: dict[str, Callable[[dict[str, int | float]], int | float]] = {
     # Rückgang der Schlüsselzuweisung Vorjahr -> Haushaltsjahr (Spez. 3.3, D-15-Beispiel).
     "schluesselzuweisung_rueckgang_haushaltsjahr": _schluesselzuweisung_rueckgang_haushaltsjahr,
     # Betrag des globalen Minderaufwands als positive Zahl (GEP-Zeile ist negativ gebucht).
@@ -368,6 +374,27 @@ ABGELEITET: dict[str, Callable[[dict[str, int | float]], int | float]] = {
     "schulden_gesamt_letztes_jahr": _schulden_gesamt_letztes_jahr,
     "kreditaufnahme_ab_haushaltsjahr": _kreditaufnahme_ab_haushaltsjahr,
     "tilgung_ab_haushaltsjahr": _tilgung_ab_haushaltsjahr,
+}
+
+
+def _mit_eingabepruefung(
+    name: str, formel: Callable[[dict[str, int | float]], int | float]
+) -> Callable[[dict[str, int | float]], int | float]:
+    """Macht aus einem fehlenden Eingabewert (auch einem Nachbarjahr, WR-03) einen
+    `TexteFehler`, der Formel und Schlüssel nennt, statt eines bloßen `KeyError` (D-20)."""
+
+    def _ausgewertet(werte: dict[str, int | float]) -> int | float:
+        try:
+            return formel(werte)
+        except KeyError as fehler:
+            schluessel = fehler.args[0] if fehler.args else fehler
+            raise TexteFehler(f"Formel {name!r}: Eingabewert {schluessel!r} fehlt") from fehler
+
+    return _ausgewertet
+
+
+ABGELEITET: dict[str, Callable[[dict[str, int | float]], int | float]] = {
+    name: _mit_eingabepruefung(name, formel) for name, formel in _ABGELEITET_ROH.items()
 }
 
 
@@ -493,10 +520,7 @@ def textwerte(
     for name, formel in ABGELEITET.items():
         if verwendete is not None and f"abgeleitet.{name}" not in verwendete:
             continue
-        try:
-            werte[f"abgeleitet.{name}"] = formel(werte)
-        except KeyError as fehler:
-            raise TexteFehler(f"Formel {name!r}: Eingabewert {fehler} fehlt") from fehler
+        werte[f"abgeleitet.{name}"] = formel(werte)
 
     return werte
 

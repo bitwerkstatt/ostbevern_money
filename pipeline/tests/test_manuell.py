@@ -677,7 +677,15 @@ def test_regel5_ve_uebersicht_luecke_bei_fehlendem_paar(tmp_path: Path) -> None:
     zu_entfernen = ((pl.col("produkt") == "030101") & (pl.col("faellig_jahr") == 2027)).fill_null(
         False
     )
-    ohne_ambrosius = df.filter(~zu_entfernen)
+    entfernter_betrag = df.filter(zu_entfernen)["betrag_teur"].sum()
+    # Die Jahressumme wird mitgekürzt, sonst bricht die Fail-fast-Prüfung der VE-Übersicht
+    # (D-20, WR-01) ab, bevor Regel 5 die Lücke melden kann.
+    ohne_ambrosius = df.filter(~zu_entfernen).with_columns(
+        pl.when(pl.col("ist_gesamt") & (pl.col("faellig_jahr") == 2027))
+        .then(pl.col("betrag_teur") - entfernter_betrag)
+        .otherwise(pl.col("betrag_teur"))
+        .alias("betrag_teur")
+    )
     from ostbevern.schema import schreibe_ve_uebersicht_csv
 
     schreibe_ve_uebersicht_csv(ohne_ambrosius, tmp_path / VE_UEBERSICHT_CSV)

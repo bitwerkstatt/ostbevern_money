@@ -61,6 +61,7 @@ from ostbevern.schema import (
     zerlege_spaltenkopf,
 )
 from ostbevern.texte import (
+    TexteFehler,
     lies_erklaerungen,
     lies_glossar,
     loese_auf,
@@ -547,6 +548,50 @@ def _baue_massnahmen(
     return massnahmen
 
 
+def schreibe_schuldenstand_fort(
+    *,
+    jahre: Sequence[int],
+    investitionskredite_gedruckt: Mapping[int, int],
+    nrw_bank_gedruckt: Mapping[int, int],
+    kreditaufnahme: Sequence[int],
+    tilgung: Sequence[int],
+) -> tuple[list[int], list[int], list[bool]]:
+    """Schuldenstand je Jahr (D-14): gedruckte Jahre unverändert, alle späteren Jahre ab dem
+    letzten davor liegenden Stand fortgeschrieben (Investitionskredite plus GFP-Kreditaufnahme
+    minus GFP-Tilgung; NRW.BANK-Kredit bleibt auf dem letzten gedruckten Stand).
+
+    Liegt vor einem nicht gedruckten Jahr kein Stand, bricht die Funktion mit `AppDatenFehler`
+    ab (D-20, Phase-4-WR-02), statt vom Listenende her zu indizieren.
+    """
+    letztes_gedrucktes_jahr = max(nrw_bank_gedruckt)
+    nrw_bank_letzter_wert = nrw_bank_gedruckt[letztes_gedrucktes_jahr]
+
+    stand_je_jahr: dict[int, int] = dict(investitionskredite_gedruckt)
+    investitionskredite: list[int] = []
+    nrw_bank: list[int] = []
+    berechnet: list[bool] = []
+    for index, jahr in enumerate(jahre):
+        if jahr in investitionskredite_gedruckt:
+            nrw_bank.append(nrw_bank_gedruckt[jahr])
+            berechnet.append(False)
+        else:
+            davor = [j for j in stand_je_jahr if j < jahr]
+            if not davor:
+                raise AppDatenFehler(
+                    f"Schuldenstand {jahr}: kein gedruckter Stand der Investitionskredite "
+                    "vor diesem Jahr, Fortschreibung nicht möglich"
+                )
+            stand_je_jahr[jahr] = investitionskredite_ende(
+                stand_je_jahr[max(davor)],
+                kreditaufnahme[index],
+                tilgung[index],
+            )
+            nrw_bank.append(nrw_bank_letzter_wert)
+            berechnet.append(True)
+        investitionskredite.append(stand_je_jahr[jahr])
+    return investitionskredite, nrw_bank, berechnet
+
+
 def baue_investitionen_json(
     *,
     investitionen: pl.DataFrame,
@@ -609,30 +654,14 @@ def baue_investitionen_json(
     nrw_bank_gedruckt = _posten_nach_jahr("transferleistungen")
     liquiditaetskredite_gedruckt = _posten_nach_jahr("liquiditaetskredite")
 
-    letztes_gedrucktes_jahr = max(nrw_bank_gedruckt)
-    nrw_bank_letzter_wert = nrw_bank_gedruckt[letztes_gedrucktes_jahr]
-
-    investitionskredite: list[int] = []
-    nrw_bank: list[int] = []
-    liquiditaetskredite: list[int | None] = []
-    berechnet: list[bool] = []
-    for index, jahr in enumerate(jahre):
-        if jahr in investitionskredite_gedruckt:
-            investitionskredite.append(investitionskredite_gedruckt[jahr])
-            nrw_bank.append(nrw_bank_gedruckt[jahr])
-            berechnet.append(False)
-        else:
-            vorjahr_euro = investitionskredite[index - 1]
-            investitionskredite.append(
-                investitionskredite_ende(
-                    vorjahr_euro,
-                    finanzierung["zeilen"]["kreditaufnahme"][index],
-                    finanzierung["zeilen"]["tilgung"][index],
-                )
-            )
-            nrw_bank.append(nrw_bank_letzter_wert)
-            berechnet.append(True)
-        liquiditaetskredite.append(liquiditaetskredite_gedruckt.get(jahr))
+    investitionskredite, nrw_bank, berechnet = schreibe_schuldenstand_fort(
+        jahre=jahre,
+        investitionskredite_gedruckt=investitionskredite_gedruckt,
+        nrw_bank_gedruckt=nrw_bank_gedruckt,
+        kreditaufnahme=finanzierung["zeilen"]["kreditaufnahme"],
+        tilgung=finanzierung["zeilen"]["tilgung"],
+    )
+    liquiditaetskredite: list[int | None] = [liquiditaetskredite_gedruckt.get(j) for j in jahre]
 
     gesamt = [investitionskredite[i] + nrw_bank[i] for i in range(len(jahre))]
     pro_kopf = [pro_kopf_euro(wert, einwohner) for wert in gesamt]
@@ -933,6 +962,21 @@ def baue_stellenplan_json(df: pl.DataFrame, *, haushaltsjahr: int) -> dict[str, 
     }
 
 
+def pruefe_texte_haushaltsjahr(texte_daten: Mapping[str, object]) -> None:
+    """Schritt 07 (D-20, Phase-4-IN-02): `haushaltsjahr` und `werte["jahr.haushaltsjahr"]` in
+    `texte.json` müssen übereinstimmen, sonst bricht die Funktion mit `TexteFehler` ab. Beide
+    Felder bleiben in der Datei; der Schlüssel erscheint nur, wenn ein Text ihn verwendet."""
+    werte = texte_daten["werte"]
+    if (
+        "jahr.haushaltsjahr" in werte
+        and werte["jahr.haushaltsjahr"] != texte_daten["haushaltsjahr"]
+    ):  # type: ignore[operator]
+        raise TexteFehler(
+            f"texte.json: haushaltsjahr {texte_daten['haushaltsjahr']!r} weicht von "
+            f"werte['jahr.haushaltsjahr'] {werte['jahr.haushaltsjahr']!r} ab"  # type: ignore[index]
+        )
+
+
 def erzeuge_app_daten(
     jahr: int,
     *,
@@ -1098,6 +1142,7 @@ def erzeuge_app_daten(
         ],
         "werte": {schluessel: wert for schluessel, (wert, _format) in verwendet.items()},
     }
+    pruefe_texte_haushaltsjahr(texte_daten)
     texte_pfad = app_daten_wurzel / TEXTE_JSON
     schreibe_app_json(texte_daten, texte_pfad, praefix="texte")
 

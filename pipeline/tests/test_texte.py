@@ -671,7 +671,7 @@ def test_texte_py_validiert_sich_selbst_gegen_echte_daten(
 Titel: Selbsttest
 Quelle: S. 1
 
-Im Haushaltsjahr {{{{jahr.haushaltsjahr|zahl}}}} plant Ostbevern mit einem Jahresergebnis
+Im Haushaltsjahr {{{{jahr.haushaltsjahr|jahr}}}} plant Ostbevern mit einem Jahresergebnis
 von {{{{gep.jahresergebnis.{haushaltsjahr}|euro}}}}.
 """
     pfad = _schreibe(tmp_path, inhalt)

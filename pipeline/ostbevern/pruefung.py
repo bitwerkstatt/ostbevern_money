@@ -1744,6 +1744,28 @@ def _pruefe_regel5_satzung_paragraf4(
     return geprueft, abweichungen
 
 
+def validiere_ve_uebersicht(ve_uebersicht: pl.DataFrame) -> None:
+    """Fail-fast (D-20, Phase-4-WR-01): jede Summenzeile je Fälligkeitsjahr der VE-Übersicht
+    muss der Summe der Einzelzeilen desselben Jahres entsprechen.
+
+    Die Prüfung läuft vor allen Regeln und ist bewusst kein Prüfpunkt (der Konsistenzbericht
+    bleibt unverändert); sie bricht mit `PruefungsFehler` und Fälligkeitsjahr ab. Beträge
+    stehen in T€; schon 1 T€ (1.000 €) liegt über der Regel-5-Toleranz von 1 €, daher
+    gilt exakte Gleichheit.
+    """
+    summenzeilen = ve_uebersicht.filter(pl.col("ist_gesamt") & pl.col("faellig_jahr").is_not_null())
+    einzel = ve_uebersicht.filter(~pl.col("ist_gesamt"))
+    for zeile in summenzeilen.sort("faellig_jahr").iter_rows(named=True):
+        jahr = zeile["faellig_jahr"]
+        einzelsumme = einzel.filter(pl.col("faellig_jahr") == jahr)["betrag_teur"].sum()
+        if einzelsumme != zeile["betrag_teur"]:
+            raise PruefungsFehler(
+                f"ve_uebersicht.csv: Summenzeile fällig {jahr} ({zeile['betrag_teur']} T€, "
+                f"PDF-Seite {zeile['quelle']}) weicht von der Summe der Einzelzeilen "
+                f"({einzelsumme} T€) ab"
+            )
+
+
 def _pruefe_regel5_ve_uebersicht(
     *,
     ve_uebersicht: pl.DataFrame,
@@ -2622,6 +2644,7 @@ def pruefe_alles(
         )
     eigenkapital = lies_eigenkapital_csv(daten_wurzel / EIGENKAPITAL_CSV)
     ve_uebersicht = lies_ve_uebersicht_csv(daten_wurzel / VE_UEBERSICHT_CSV)
+    validiere_ve_uebersicht(ve_uebersicht)
     stellenplan = lies_stellenplan_csv(daten_wurzel / STELLENPLAN_CSV)
     vorbericht = {
         "steuerarten": lies_vorbericht_csv(daten_wurzel / STEUERARTEN_CSV),
