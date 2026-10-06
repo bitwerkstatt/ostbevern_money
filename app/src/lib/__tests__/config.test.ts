@@ -106,19 +106,85 @@ describe('App.vue (Fußzeile, D-17, D-18)', () => {
     expect(quelle).not.toContain(ORIGINAL_PDF_URL)
   })
 
-  it('zeigt alle vier Fußzeilen-Zeilen ohne Build-Datum', () => {
+  it('zeigt alle fünf Fußzeilen-Zeilen ohne Build-Datum', () => {
     expect(quelle).toContain('Datenstand: Haushalt')
     expect(quelle).toContain('Original-Haushaltsplan (PDF) der Gemeinde Ostbevern')
     expect(quelle).toContain(
       'Inoffizielles Projekt, keine Veröffentlichung der Gemeinde Ostbevern.',
     )
     expect(quelle).toContain('Kontakt:')
+    expect(quelle).toContain('Über dieses Projekt, Impressum und Datenschutz')
     expect(quelle).toContain('Inspiriert von')
     expect(quelle).not.toMatch(/build|Stand vom/i)
   })
 
   it('stellt das Projekt nie als offizielle Veröffentlichung der Gemeinde dar', () => {
     expect(quelle).not.toMatch(/offizielle[rs]? (Seite|Angebot|Veröffentlichung|Website)/i)
+  })
+
+  it('öffnet jeden externen Link mit noopener noreferrer und Hinweis auf den neuen Tab', () => {
+    const externe = quelle.match(/target="_blank"/g) ?? []
+    const gesichert = quelle.match(/rel="noopener noreferrer"/g) ?? []
+    const hinweise = quelle.match(/\(öffnet in neuem Tab\)/g) ?? []
+    expect(externe.length).toBeGreaterThan(0)
+    expect(gesichert.length).toBe(externe.length)
+    expect(hinweise.length).toBe(externe.length)
+  })
+})
+
+describe('App.vue (Fußzeilenlink auf Über dieses Projekt, D-08)', () => {
+  const quelle = readFileSync(new URL('../../App.vue', import.meta.url), 'utf8')
+
+  it('verlinkt die Seite ueber per RouterLink auf den benannten Pfad', () => {
+    expect(quelle).toMatch(/<RouterLink\s+:to="\{ name: 'ueber' \}"/)
+  })
+
+  it('setzt den Link zwischen die Kontaktzeile und „Inspiriert von“', () => {
+    const kontakt = quelle.indexOf('Kontakt:')
+    const ueber = quelle.indexOf('Über dieses Projekt, Impressum und Datenschutz')
+    const inspiriert = quelle.indexOf('Inspiriert von')
+    expect(kontakt).toBeGreaterThan(-1)
+    expect(ueber).toBeGreaterThan(kontakt)
+    expect(inspiriert).toBeGreaterThan(ueber)
+  })
+})
+
+describe('UeberPage.vue (Über dieses Projekt, D-08, T-07-14, T-07-16)', () => {
+  const quelle = readFileSync(new URL('../../pages/UeberPage.vue', import.meta.url), 'utf8')
+
+  it('liest Name, Anschrift, Kontakt und PDF-URL aus der Konfiguration', () => {
+    expect(quelle).toContain('IMPRESSUM_NAME')
+    expect(quelle).toContain('IMPRESSUM_ANSCHRIFT')
+    expect(quelle).toContain('KONTAKT_EMAIL')
+    expect(quelle).toContain('ORIGINAL_PDF_URL')
+  })
+
+  it('trägt weder die Kontaktadresse noch die PDF-URL fest ein', () => {
+    expect(quelle).not.toContain(KONTAKT_EMAIL)
+    expect(quelle).not.toContain(ORIGINAL_PDF_URL)
+    expect(quelle).not.toMatch(/@[a-z0-9.-]+\.(de|com|org|invalid)/i)
+  })
+
+  it('stellt das Projekt nie als offizielle Veröffentlichung der Gemeinde dar', () => {
+    expect(quelle).not.toMatch(/offizielle[rs]? (Seite|Angebot|Veröffentlichung|Website)/i)
+    expect(quelle).toContain('Ein inoffizielles Projekt')
+  })
+
+  it('führt die vier Abschnitte in der Reihenfolge von D-08', () => {
+    const stellen = ['Ein inoffizielles Projekt', 'Dank', 'Impressum', 'Datenschutz'].map((titel) =>
+      quelle.indexOf(`>${titel}</h2>`),
+    )
+    for (const stelle of stellen) {
+      expect(stelle).toBeGreaterThan(-1)
+    }
+    expect([...stellen].sort((a, b) => a - b)).toEqual(stellen)
+  })
+
+  it('nennt die Datenschutzaussage von D-08', () => {
+    // Prettier bricht den Fließtext um; der Vergleich ignoriert Zeilenumbrüche und Einrückung.
+    expect(quelle.replace(/\s+/g, ' ')).toContain(
+      'Diese Seite setzt keine Cookies und verwendet kein Tracking. Beim Aufruf werden keine Daten an Drittanbieter geschickt. Die Seite wird bei GitHub Pages gehostet.',
+    )
   })
 
   it('öffnet jeden externen Link mit noopener noreferrer und Hinweis auf den neuen Tab', () => {

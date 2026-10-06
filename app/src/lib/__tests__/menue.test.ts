@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { MENUE, menueLinks, type MenueGruppe } from '@/lib/menue'
+import { FUSSZEILEN_ROUTEN, MENUE, menueLinks, type MenueGruppe } from '@/lib/menue'
 
 // Der Quelltext des Routers (wie in `quelltext.test.ts` über `?raw`): jeder Menüeintrag muss
 // auf eine Route zeigen, die dort als `name: '…'` steht.
@@ -75,6 +75,55 @@ describe('MENUE (D-13, D-19)', () => {
     const imMenue = new Set(gruppen().flatMap((gruppe) => gruppe.eintraege.map((l) => l.name)))
     for (const name of PHASE_6_ROUTEN) {
       expect(imMenue.has(name), `Route ${name} in der Gruppe`).toBe(true)
+    }
+  })
+})
+
+// Routen, die nicht im Kopfmenü stehen, aber erreichbar sein müssen:
+// - `produkt` hat einen Parameter (`/produkt/:code`) und wird aus Tabellen und Karten verlinkt.
+// - `ueber` („Über dieses Projekt“, Impressum, Datenschutz) ist nur aus der Fußzeile verlinkt
+//   (D-08) und steht deshalb in FUSSZEILEN_ROUTEN statt im Menü.
+// Jede weitere Route muss im Menü oder in dieser Ausnahmeliste stehen, sonst ist sie nur per
+// Adresse erreichbar und scheitert hier.
+const OHNE_MENUEEINTRAG = ['produkt']
+
+function routenNamen(): string[] {
+  return Array.from(routerQuelltext.matchAll(/\bname: '([^']+)'/g), (treffer) => treffer[1]!)
+}
+
+describe('FUSSZEILEN_ROUTEN (D-08)', () => {
+  it('enthält genau die Route ueber', () => {
+    expect(FUSSZEILEN_ROUTEN).toEqual(['ueber'])
+  })
+
+  it('überschneidet sich nicht mit dem Menü', () => {
+    const imMenue = new Set(menueLinks().map((link) => link.name))
+    for (const name of FUSSZEILEN_ROUTEN) {
+      expect(imMenue.has(name), `Route ${name} nicht im Menü`).toBe(false)
+    }
+  })
+
+  it('verweist nur auf Routen, die im Router stehen', () => {
+    for (const name of FUSSZEILEN_ROUTEN) {
+      expect(routerQuelltext, `Route ${name}`).toContain(`name: '${name}'`)
+    }
+  })
+})
+
+describe('Jede Route ist im Menü oder in der Fußzeile erreichbar', () => {
+  it('findet die Routen im Quelltext des Routers', () => {
+    expect(routenNamen()).toContain('start')
+    expect(routenNamen()).toContain('ueber')
+  })
+
+  it('führt jede Route außer produkt im Menü oder in FUSSZEILEN_ROUTEN', () => {
+    const erreichbar = new Set<string>([
+      ...menueLinks().map((link) => link.name),
+      ...FUSSZEILEN_ROUTEN,
+      ...OHNE_MENUEEINTRAG,
+    ])
+    for (const name of routenNamen()) {
+      expect(erreichbar.has(name), `Route ${name} im Menü oder in FUSSZEILEN_ROUTEN`).toBe(true)
     }
   })
 })

@@ -16,6 +16,7 @@ import ProduktPage from '@/pages/ProduktPage.vue'
 import RatEntscheidetPage from '@/pages/RatEntscheidetPage.vue'
 import StartPage from '@/pages/StartPage.vue'
 import StellenplanPage from '@/pages/StellenplanPage.vue'
+import UeberPage from '@/pages/UeberPage.vue'
 import { ansagen } from '@/lib/ansage'
 import { findeProdukt } from '@/lib/ansicht'
 import { elementFuerHash, sprungPosition } from '@/lib/sprungziel'
@@ -105,6 +106,12 @@ const router = createRouter({
       name: 'glossar',
       component: GlossarPage,
       meta: { titel: 'Glossar' },
+    },
+    {
+      path: '/ueber',
+      name: 'ueber',
+      component: UeberPage,
+      meta: { titel: 'Über dieses Projekt' },
     },
     { path: '/:pathMatch(.*)*', redirect: { name: 'start' } },
   ],
