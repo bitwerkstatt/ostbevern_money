@@ -76,6 +76,32 @@ describe('HinweisNichtImHaushalt auf /einnahmen und in der Kurzform (UI-04, D-18
   })
 })
 
+describe('HinweisNichtImHaushalt auf /rat-entscheidet (UI-04, D-18)', () => {
+  const SEITE = '/src/pages/RatEntscheidetPage.vue'
+
+  it('RatEntscheidetPage bindet die Hinweisbox mit variante="kurz" ein', () => {
+    const seite = quelltext(SEITE)
+    expect(seite).toContain('<HinweisNichtImHaushalt')
+    expect(seite).toContain('variante="kurz"')
+  })
+
+  it('die Kurzform steht als letztes Element der Seite, hinter den Einzelzuschüssen', () => {
+    const template = templateTeil(quelltext(SEITE))
+    expect(template.indexOf('<ZuschussListe')).toBeGreaterThan(-1)
+    expect(template.indexOf('<HinweisNichtImHaushalt')).toBeGreaterThan(
+      template.indexOf('<ZuschussListe'),
+    )
+  })
+
+  it('der Block „Was der Rat nicht beeinflussen kann“ steht vor den Einzelzuschüssen', () => {
+    const template = templateTeil(quelltext(SEITE))
+    expect(template.indexOf('<NichtBeeinflussbarBlock')).toBeGreaterThan(-1)
+    expect(template.indexOf('<NichtBeeinflussbarBlock')).toBeLessThan(
+      template.indexOf('<ZuschussListe'),
+    )
+  })
+})
+
 describe('HinweisNichtImHaushalt auf /ausgaben (UI-04, D-18)', () => {
   it('AusgabenPage bindet die Hinweisbox mit variante="ausgaben" ein', () => {
     const seite = quelltext('/src/pages/AusgabenPage.vue')
