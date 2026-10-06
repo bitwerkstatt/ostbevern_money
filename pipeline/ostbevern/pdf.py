@@ -61,6 +61,34 @@ class Textzeile:
         return self.woerter[0].groesse
 
 
+@dataclass(frozen=True)
+class WortRahmen:
+    """Ein Wort mit vollem Rahmen (`x0`, `x1`, `top`, `bottom`) in PDF-Punkten (Phase 7).
+
+    Ursprung oben links wie bei pdfplumber; gedacht für Quellenbelege (Zeilenrechtecke).
+    """
+
+    text: str
+    x0: float
+    x1: float
+    top: float
+    bottom: float
+
+
+@dataclass(frozen=True)
+class RahmenZeile:
+    """Eine Textzeile aus `WortRahmen`, nach `top` gruppiert und nach `x0` sortiert."""
+
+    top: float
+    bottom: float
+    woerter: tuple[WortRahmen, ...]
+
+    @property
+    def text(self) -> str:
+        """Wörter durch je ein Leerzeichen getrennt."""
+        return " ".join(wort.text for wort in self.woerter)
+
+
 class PdfDokument:
     """Wrapper um pdfplumber.open mit 1-basierten, zeilengruppierten Seitenzugriffen."""
 
@@ -69,6 +97,7 @@ class PdfDokument:
         self._pdf = pdfplumber.open(pfad)
         self._cache: dict[int, tuple[Textzeile, ...]] = {}
         self._cache_fein: dict[int, tuple[Textzeile, ...]] = {}
+        self._cache_rahmen: dict[tuple[int, bool], tuple[RahmenZeile, ...]] = {}
 
     @classmethod
     def oeffne(cls, pfad: Path) -> PdfDokument:
@@ -159,3 +188,50 @@ class PdfDokument:
         zeilen = self._gruppiere_zeilen(woerter)
         self._cache_fein[pdf_seite] = zeilen
         return zeilen
+
+    def zeilen_mit_rahmen(self, pdf_seite: int, *, fein: bool = False) -> tuple[RahmenZeile, ...]:
+        """Liefert die Textzeilen von `pdf_seite` mit vollem Wortrahmen (Phase 7, Quellenbelege).
+
+        Dieselben `extract_words`-Argumente wie `zeilen()` (`fein=False`) bzw. `zeilen_fein()`
+        (`fein=True`), dazu `bottom`; gruppiert nach `top` mit `_ZEILEN_TOLERANZ`. Eigener
+        Cache je (Seite, fein); `zeilen()` und `zeilen_fein()` bleiben unberührt.
+        """
+        schluessel = (pdf_seite, fein)
+        if schluessel in self._cache_rahmen:
+            return self._cache_rahmen[schluessel]
+        self._pruefe_seite(pdf_seite)
+        seite = self._pdf.pages[pdf_seite - 1]
+        if fein:
+            rohe_woerter = seite.extract_words(x_tolerance=1, extra_attrs=["size", "fontname"])
+        else:
+            rohe_woerter = seite.extract_words(extra_attrs=["size"])
+        woerter = sorted(
+            (
+                WortRahmen(text=w["text"], x0=w["x0"], x1=w["x1"], top=w["top"], bottom=w["bottom"])
+                for w in rohe_woerter
+            ),
+            key=lambda w: w.top,
+        )
+        gruppen: list[list[WortRahmen]] = []
+        for wort in woerter:
+            if gruppen and abs(wort.top - gruppen[-1][0].top) <= _ZEILEN_TOLERANZ:
+                gruppen[-1].append(wort)
+            else:
+                gruppen.append([wort])
+        zeilen = tuple(
+            RahmenZeile(
+                top=min(w.top for w in gruppe),
+                bottom=max(w.bottom for w in gruppe),
+                woerter=tuple(sorted(gruppe, key=lambda w: w.x0)),
+            )
+            for gruppe in gruppen
+        )
+        ergebnis = tuple(sorted(zeilen, key=lambda z: z.top))
+        self._cache_rahmen[schluessel] = ergebnis
+        return ergebnis
+
+    def seitenmass(self, pdf_seite: int) -> tuple[float, float]:
+        """Liefert (Breite, Höhe) der Seite in PDF-Punkten, auf zwei Dezimalstellen gerundet."""
+        self._pruefe_seite(pdf_seite)
+        seite = self._pdf.pages[pdf_seite - 1]
+        return round(float(seite.width), 2), round(float(seite.height), 2)

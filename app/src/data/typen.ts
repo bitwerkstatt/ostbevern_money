@@ -399,3 +399,32 @@ export interface Texte {
    * vollständiger Daten-Dump, D-15). */
   werte: Record<string, number>
 }
+
+/** Eine gerenderte PDF-Seite in `quellen.json` (Schritt 08, Phase 7). */
+export interface QuellSeite {
+  /** Dateiname unter `public/quellen/`, z. B. "s062.webp". */
+  bild: string
+  /** Seitenbreite in PDF-Punkten (2 Dezimalstellen). */
+  breite: number
+  /** Seitenhöhe in PDF-Punkten (2 Dezimalstellen). */
+  hoehe: number
+}
+
+/** Ein Beleg: PDF-Seite, Bild und Zeilenrechteck (oder `null`, wenn keins gefunden wurde). */
+export interface Beleg {
+  /** 1-basierte PDF-Seite. */
+  pdf_seite: number
+  bild: string
+  /** `[x0, top, x1, bottom]` in PDF-Punkten, Ursprung oben links; `null` ohne Treffer (D-03).
+   * Als `number[]` typisiert, weil ein JSON-Import Tupel zu Arrays verbreitert. */
+  bbox: number[] | null
+}
+
+/** Gesamtstruktur von `quellen.json` (Schritt 08, Spez. 4.4). */
+export interface Quellen {
+  haushaltsjahr: number
+  /** Seitennummer (als Text) -> Bild und Seitenmaß. */
+  seiten: Record<string, QuellSeite>
+  /** Belegschlüssel (Grammatik siehe `lib/quelle.ts`) -> Beleg. */
+  belege: Record<string, Beleg>
+}
