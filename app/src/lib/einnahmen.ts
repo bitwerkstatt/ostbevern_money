@@ -7,6 +7,7 @@
 
 import { haushalt, investitionen } from '@/data/daten'
 import type { VorberichtPosten, VorberichtTabelle } from '@/data/typen'
+import { belegSchluessel } from '@/lib/quelle'
 import { zeilenName } from '@/lib/zeilen'
 
 /** Ein Posten einer Aufschlüsselung (Vorbericht-Tabelle), bereits für ein Jahr gelesen. */
@@ -21,6 +22,10 @@ export interface PostenZeile {
   berechnet: boolean
   /** 1-basierte PDF-Seite; `null` für einen Posten ohne eigene Quellseite. */
   quelle: number | null
+  /** Belegschlüssel der Zeile (`lib/quelle.ts`), `null` ohne Quellseite. */
+  beleg: string | null
+  /** Herleitung eines berechneten Postens (D-03), sonst `null`. */
+  herleitung: string | null
   /** `true` für die Auflösung von Sonderposten: Ertrag ohne Geldzufluss (EINN-03). */
   keinGeldfluss: boolean
 }
@@ -49,6 +54,10 @@ export interface InvestiveZeile {
   berechnet: boolean
   /** 1-basierte PDF-Seite (Vorbericht S. 52 bzw. Gesamtfinanzplan). */
   quelle: number | null
+  /** Belegschlüssel der Zeile (`vb:investitionszuwendungen:…` oder `fp:GESAMT:…`). */
+  beleg: string | null
+  /** Herleitung eines berechneten Postens (D-03), sonst `null`. */
+  herleitung: string | null
   gruppe: InvestiveGruppe
 }
 
@@ -111,9 +120,13 @@ const FINANZPLAN_BALKEN: readonly (readonly [string, string])[] = [
   ['kreditaufnahme', 'Kredite'],
 ]
 
+/** Knoten der Gesamtfinanzplan-Belege und seine Zeile „Zuwendungen für Investitionen“. */
+const FINANZPLAN_KNOTEN = 'GESAMT'
+const INVESTITIONSZUWENDUNGEN = 'investitionszuwendungen'
+
 /** Finanzplan-Zeilen der Tabelle „Investive Einnahmen“, in der Reihenfolge des Gesamtfinanzplans. */
 const FINANZPLAN_TABELLE: readonly string[] = [
-  'investitionszuwendungen',
+  INVESTITIONSZUWENDUNGEN,
   'veraeusserung_sachanlagen',
   'beitraege',
   'kreditaufnahme',
@@ -121,6 +134,13 @@ const FINANZPLAN_TABELLE: readonly string[] = [
 
 const SONSTIGE_BERECHNET = 'sonstige_berechnet'
 const SONSTIGE_BERECHNET_NAME = 'Sonstige (berechnet)'
+
+/** Herleitung des Rests „Sonstige“ in den Vorbericht-Aufschlüsselungen (Spez. 3.8). */
+const HERLEITUNG_REST =
+  'Zeile des Gesamtergebnisplans minus die Summe der gedruckten Einzelposten des Vorberichts'
+function herleitungSonstigeInvestiv(): string {
+  return `Zeile „${zeilenName('finanzplan', INVESTITIONSZUWENDUNGEN)}“ des Gesamtfinanzplans minus die gezeigten Pauschalen`
+}
 
 function vorberichtTabelle(name: string): VorberichtTabelle {
   const tabelle = haushalt.vorbericht[name]
@@ -134,7 +154,7 @@ function wertAn(posten: VorberichtPosten, jahrIndex: number): number | null {
   return posten.werte[jahrIndex] ?? null
 }
 
-function postenZeile(posten: VorberichtPosten, jahrIndex: number): PostenZeile {
+function postenZeile(posten: VorberichtPosten, tabelle: string, jahrIndex: number): PostenZeile {
   return {
     posten: posten.posten,
     name: posten.name,
@@ -142,6 +162,8 @@ function postenZeile(posten: VorberichtPosten, jahrIndex: number): PostenZeile {
     gerundet: posten.gerundet,
     berechnet: posten.berechnet,
     quelle: posten.quelle,
+    beleg: posten.quelle === null ? null : belegSchluessel.vb(tabelle, posten.posten),
+    herleitung: posten.berechnet ? HERLEITUNG_REST : null,
     keinGeldfluss: SONDERPOSTEN_POSTEN.includes(posten.posten),
   }
 }
@@ -168,7 +190,7 @@ export function baueSteuern(jahrIndex: number): SteuerZeile[] {
     .posten.map((posten) => {
       const hebesatz = hebesatzFuer(posten.posten)
       return {
-        ...postenZeile(posten, jahrIndex),
+        ...postenZeile(posten, 'steuerarten', jahrIndex),
         selbstFestgelegt: SELBST_FESTGELEGTE_STEUERN.includes(posten.posten),
         hebesatz: hebesatz.wert,
         hebesatzQuelle: hebesatz.quelle,
@@ -180,7 +202,7 @@ export function baueSteuern(jahrIndex: number): SteuerZeile[] {
 /** Zuwendungen des Jahres (EINN-03) mit dem Etikett „kein Geldfluss“ für Sonderposten. */
 export function baueZuwendungen(jahrIndex: number): PostenZeile[] {
   return vorberichtTabelle('zuwendungen')
-    .posten.map((posten) => postenZeile(posten, jahrIndex))
+    .posten.map((posten) => postenZeile(posten, 'zuwendungen', jahrIndex))
     .filter(istAnzeigbar)
 }
 
@@ -197,6 +219,8 @@ function konzessionsabgabeNachSparte(): SonstigeErtragZeile[] {
       gerundet: meta.gerundet === true,
       berechnet: false,
       quelle: meta.quelle,
+      beleg: belegSchluessel.meta(`vorbericht_werte.${schluessel}`),
+      herleitung: null,
       keinGeldfluss: false,
       teilVon: 'konzessionsabgaben',
     }
@@ -212,7 +236,7 @@ export function baueSonstigeErtraege(jahrIndex: number): SonstigeErtragZeile[] {
   const istHaushaltsjahr = haushalt.jahre.indexOf(haushalt.haushaltsjahr) === jahrIndex
   const zeilen: SonstigeErtragZeile[] = []
   for (const posten of vorberichtTabelle('sonstige_ertraege').posten) {
-    const zeile = { ...postenZeile(posten, jahrIndex), teilVon: null }
+    const zeile = { ...postenZeile(posten, 'sonstige_ertraege', jahrIndex), teilVon: null }
     if (!istAnzeigbar(zeile)) {
       continue
     }
@@ -249,6 +273,8 @@ function investiveFinanzplanZeile(
     gerundet: false,
     berechnet: false,
     quelle: finanzplanSeite(),
+    beleg: belegSchluessel.fp(FINANZPLAN_KNOTEN, schluessel),
+    herleitung: null,
     gruppe: 'finanzplan',
   }
 }
@@ -261,6 +287,9 @@ function pauschaleZeile(posten: VorberichtPosten, jahrIndex: number): InvestiveZ
     gerundet: posten.gerundet,
     berechnet: false,
     quelle: posten.quelle,
+    beleg:
+      posten.quelle === null ? null : belegSchluessel.vb('investitionszuwendungen', posten.posten),
+    herleitung: null,
     gruppe: 'pauschale',
   }
 }
@@ -287,10 +316,12 @@ export function baueInvestiveEinnahmen(jahrIndex: number): InvestiveZeile[] {
   const sonstige: InvestiveZeile = {
     schluessel: SONSTIGE_BERECHNET,
     name: SONSTIGE_BERECHNET_NAME,
-    wert: finanzplanWert('investitionszuwendungen', jahrIndex) - summeGezeigt,
+    wert: finanzplanWert(INVESTITIONSZUWENDUNGEN, jahrIndex) - summeGezeigt,
     gerundet: gezeigt.some((zeile) => zeile.gerundet),
     berechnet: true,
     quelle: finanzplanSeite(),
+    beleg: belegSchluessel.fp(FINANZPLAN_KNOTEN, INVESTITIONSZUWENDUNGEN),
+    herleitung: herleitungSonstigeInvestiv(),
     gruppe: 'sonstige',
   }
 

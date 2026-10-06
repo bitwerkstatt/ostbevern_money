@@ -3,9 +3,11 @@ import { describe, expect, it } from 'vitest'
 import { euro } from '@/charts/format'
 import { haushalt, produkte } from '@/data/daten'
 import type { Produkt } from '@/data/typen'
+import { findeBeleg } from '@/lib/quelle'
 import {
   STANDARD_ZEITREIHE,
   ZEITREIHEN_POSTEN,
+  ZEITREIHEN_PRODUKT,
   baueZeitreihe,
   betragText,
   findeGrundzahl,
@@ -20,7 +22,7 @@ const ERSTES_PLANJAHR = haushalt.jahre[0] ?? 0
 const POSTEN_SCHLUESSEL = ZEITREIHEN_POSTEN.map((eintrag) => eintrag.posten)
 
 function punkt(jahr: number, wert: number | null, wertart: string): Zeitpunkt {
-  return { jahr, wert, wertart, quelle: 'vorbericht', pdfSeite: 1, gerundet: true }
+  return { jahr, wert, wertart, quelle: 'vorbericht', pdfSeite: 1, beleg: null, gerundet: true }
 }
 
 describe('ZEITREIHEN_POSTEN (RESEARCH Pitfall 8)', () => {
@@ -307,3 +309,27 @@ describe.runIf(haushalt.haushaltsjahr === 2026)(
     })
   },
 )
+
+describe.each(POSTEN_SCHLUESSEL)('Belegschlüssel der Zeitreihe %s (D-01)', (posten) => {
+  const eintrag = ZEITREIHEN_POSTEN.find((e) => e.posten === posten)
+  const punkte = baueZeitreihe(posten)
+
+  it('Grundzahl-Punkte tragen gz:{produkt}:{position}, Vorbericht-Punkte vb:{tabelle}:{posten}', () => {
+    const grundzahl = eintrag === undefined ? undefined : findeGrundzahl(eintrag)
+    for (const punkt of punkte) {
+      const erwartet =
+        punkt.quelle === 'grundzahlen'
+          ? `gz:${ZEITREIHEN_PRODUKT}:${String(grundzahl?.position)}`
+          : `vb:${eintrag?.tabelle ?? ''}:${posten}`
+      expect(punkt.beleg, String(punkt.jahr)).toBe(erwartet)
+    }
+  })
+
+  it('jeder Beleg löst auf und zeigt auf die Seite des Punkts', () => {
+    for (const punkt of punkte) {
+      const beleg = findeBeleg(punkt.beleg ?? '')
+      expect(beleg, String(punkt.jahr)).not.toBeNull()
+      expect(beleg?.pdfSeite, String(punkt.jahr)).toBe(punkt.pdfSeite)
+    }
+  })
+})

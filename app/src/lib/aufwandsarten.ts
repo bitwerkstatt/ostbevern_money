@@ -4,6 +4,7 @@
 
 import { euro, jahr as formatiereJahr } from '@/charts/format'
 import { haushalt } from '@/data/daten'
+import { belegSchluessel } from '@/lib/quelle'
 import { textFuerJahr } from '@/lib/texte'
 import { zeilenName } from '@/lib/zeilen'
 
@@ -73,6 +74,8 @@ export interface TransferPosten {
   gerundet: boolean
   /** 1-basierte PDF-Seite; `null`, falls die Daten keine Seite nennen. */
   quelle: number | null
+  /** Belegschlüssel der Zeile (`lib/quelle.ts`), `null` ohne Quellseite. */
+  beleg: string | null
   anmerkung: string | null
   /** Einzelne Kita-Einrichtungen, nur bei der Zeile der Kita-Zuschüsse und nur in Jahren mit Werten. */
   kinder?: TransferPosten[]
@@ -116,6 +119,7 @@ function postenMitWert(tabellenName: string, jahrIndex: number): TransferPosten[
         wert,
         gerundet: p.gerundet,
         quelle: p.quelle,
+        beleg: p.quelle === null ? null : belegSchluessel.vb(tabellenName, p.posten),
         anmerkung: p.anmerkung,
       },
     ]

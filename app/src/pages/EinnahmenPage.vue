@@ -108,6 +108,8 @@ function tabellenZeile(
     berechnet: zeile.berechnet ? 1 : 0,
     keinGeldfluss: zeile.keinGeldfluss ? 1 : 0,
     teil: extra.teil === true ? 1 : 0,
+    quelle: zeile.beleg,
+    quelleHerleitung: zeile.herleitung,
   }
 }
 
@@ -138,6 +140,7 @@ const aufklapper = computed<Aufklapper[]>(() => {
         { schluessel: 'name', titel: 'Steuerart', art: 'text' },
         { schluessel: 'wert', titel: wertartText.value, art: 'euro' },
         { schluessel: 'festlegung', titel: 'Festlegung', art: 'text' },
+        { schluessel: 'quelle', titel: 'Quelle', art: 'quelle' },
       ],
       tabelle: steuern.value.map((zeile) =>
         tabellenZeile(zeile, {
@@ -155,6 +158,7 @@ const aufklapper = computed<Aufklapper[]>(() => {
       spalten: [
         { schluessel: 'name', titel: 'Posten', art: 'text' },
         { schluessel: 'wert', titel: wertartText.value, art: 'euro' },
+        { schluessel: 'quelle', titel: 'Quelle', art: 'quelle' },
       ],
       tabelle: zuwendungen.value.map((zeile) => tabellenZeile(zeile)),
       fussnote: quellenText(zuwendungen.value.map((zeile) => zeile.quelle)),
@@ -168,6 +172,7 @@ const aufklapper = computed<Aufklapper[]>(() => {
       spalten: [
         { schluessel: 'name', titel: 'Posten', art: 'text' },
         { schluessel: 'wert', titel: wertartText.value, art: 'euro' },
+        { schluessel: 'quelle', titel: 'Quelle', art: 'quelle' },
       ],
       tabelle: sonstigeErtraege.value.map((zeile) =>
         tabellenZeile(zeile, { teil: zeile.teilVon !== null }),
@@ -241,7 +246,7 @@ const investivBalken = computed<BalkenZeile[]>(() =>
 const investivSpalten = computed<DatenSpalte[]>(() => [
   { schluessel: 'name', titel: 'Posten', art: 'text' },
   { schluessel: 'wert', titel: wertartText.value, art: 'euro' },
-  { schluessel: 'quelle', titel: 'Quelle', art: 'text' },
+  { schluessel: 'quelle', titel: 'Quelle', art: 'quelle' },
 ])
 
 const investivTabelle = computed<DatenZeile[]>(() =>
@@ -249,7 +254,8 @@ const investivTabelle = computed<DatenZeile[]>(() =>
     schluessel: zeile.schluessel,
     name: zeile.name,
     wert: zeile.wert,
-    quelle: zeile.quelle === null ? null : `PDF-Seite ${String(zeile.quelle)}`,
+    quelle: zeile.beleg,
+    quelleHerleitung: zeile.herleitung,
     gerundet: zeile.gerundet ? 1 : 0,
     berechnet: zeile.berechnet ? 1 : 0,
     keinGeldfluss: 0,

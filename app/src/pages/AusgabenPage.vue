@@ -176,17 +176,17 @@ const artenTabelle = computed<DatenZeile[]>(() =>
 const transferSpalten = computed<DatenSpalte[]>(() => [
   { schluessel: 'name', titel: 'Posten', art: 'text' },
   { schluessel: 'wert', titel: wertartMitJahr.value, art: 'euro' },
-  { schluessel: 'quelle', titel: 'PDF-Seite', art: 'text' },
+  { schluessel: 'quelle', titel: 'Quelle', art: 'quelle' },
 ])
 
 const transfer = computed(() => baueTransferaufwendungen(index.value))
 
-// Kennzeichen als 0/1 (`DatenZeile` kennt nur Text, Zahlen und `null`); die Seitenzahl als Text.
+// Kennzeichen als 0/1 (`DatenZeile` kennt nur Text, Zahlen und `null`); `quelle` ist der Belegschlüssel.
 function transferZeile(posten: TransferPosten, teil: boolean): DatenZeile {
   return {
     name: posten.name,
     wert: posten.wert,
-    quelle: posten.quelle === null ? null : String(posten.quelle),
+    quelle: posten.beleg,
     gerundet: posten.gerundet ? 1 : 0,
     teil: teil ? 1 : 0,
   }

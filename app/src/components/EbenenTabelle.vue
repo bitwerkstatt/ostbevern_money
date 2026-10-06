@@ -8,6 +8,7 @@ import { haushalt } from '@/data/daten'
 import type { Modus } from '@/lib/ansicht'
 import { proKopf } from '@/lib/berechnung'
 import { klickZiel, type EbenenEintrag } from '@/lib/drilldown'
+import { ebenenBeleg } from '@/lib/ebenenBeleg'
 
 const props = defineProps<{
   eintraege: readonly EbenenEintrag[]
@@ -40,24 +41,31 @@ const spalten = computed<DatenSpalte[]>(() => {
   if (props.modus === 'zuschussbedarf') {
     liste.push({ schluessel: 'proKopf', titel: 'pro Einwohner (berechnet)', art: 'euro' })
   }
+  liste.push({ schluessel: 'quelle', titel: 'Quelle', art: 'quelle' })
   return liste
 })
 
 // Die Zeilen tragen nur Zahlen und Texte (`DatenZeile`); Wahrheitswerte stehen als 0/1.
-const zeilen = computed<DatenZeile[]>(() =>
-  props.eintraege.map((e) => ({
-    code: e.code,
-    name: e.name,
-    betrag: e.wert,
-    anteil: e.anteil,
-    proKopf: typeof einwohner === 'number' ? proKopf(e.wert, einwohner) : null,
-    ziel: klickZiel(e),
-    farbe: e.farbe,
-    kl: e.istKl ? 1 : 0,
-    gerundet: e.gerundet ? 1 : 0,
-    ueberschuss: e.ueberschuss ? 1 : 0,
-  })),
-)
+const zeilen = computed<DatenZeile[]>(() => {
+  const jahrIndex = haushalt.jahre.indexOf(props.jahr)
+  return props.eintraege.map((e) => {
+    const beleg = ebenenBeleg(e, jahrIndex, props.modus)
+    return {
+      code: e.code,
+      name: e.name,
+      betrag: e.wert,
+      anteil: e.anteil,
+      proKopf: typeof einwohner === 'number' ? proKopf(e.wert, einwohner) : null,
+      ziel: klickZiel(e),
+      farbe: e.farbe,
+      kl: e.istKl ? 1 : 0,
+      gerundet: e.gerundet ? 1 : 0,
+      ueberschuss: e.ueberschuss ? 1 : 0,
+      quelle: beleg?.schluessel ?? null,
+      quelleHerleitung: beleg?.herleitung ?? null,
+    }
+  })
+})
 
 function codeVon(zeile: DatenZeile): string {
   return String(zeile.code)
