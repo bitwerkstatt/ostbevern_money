@@ -1,7 +1,19 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { haushalt } from '@/data/daten'
-import { PB_FARBEN, abstufung, farbeFuerPb, mitDeckkraft } from '@/charts/echartsTheme'
+import {
+  BERECHNET_DECAL,
+  BINDUNG_FARBEN,
+  HOHL_FLAECHE,
+  KL_DECAL,
+  PB_FARBEN,
+  PUNKT_DECAL,
+  SCHULDEN_FARBEN,
+  SCHWELLE_FARBE,
+  abstufung,
+  farbeFuerPb,
+  mitDeckkraft,
+} from '@/charts/echartsTheme'
 
 // WCAG-2.x-Kontrast: relative Luminanz nach sRGB-Linearisierung.
 function luminanz(hex: string): number {
@@ -98,5 +110,42 @@ describe('mitDeckkraft (WR-03)', () => {
 
   it('fällt ohne Auflösung auf color-mix zurück, nie auf die deckende Farbe', () => {
     expect(mitDeckkraft('white', 0.45)).toBe('color-mix(in srgb, white 45%, transparent)')
+  })
+})
+
+describe('Farben der Phase 6 (UI-SPEC „Farbvergabe je Diagramm“)', () => {
+  it('Bindungsgrad-Segmente erreichen gegen Weiß mindestens 3:1', () => {
+    for (const [name, farbe] of Object.entries(BINDUNG_FARBEN)) {
+      expect(farbe, name).toMatch(/^#[0-9a-f]{6}$/i)
+      expect(kontrast(farbe, '#ffffff'), name).toBeGreaterThanOrEqual(3)
+    }
+    expect(Object.keys(BINDUNG_FARBEN)).toEqual(['pflichtig', 'teils', 'freiwillig'])
+  })
+
+  it('Schuldenfarben erreichen gegen Weiß mindestens 3:1', () => {
+    for (const [name, farbe] of Object.entries(SCHULDEN_FARBEN)) {
+      expect(farbe, name).toMatch(/^#[0-9a-f]{6}$/i)
+      expect(kontrast(farbe, '#ffffff'), name).toBeGreaterThanOrEqual(3)
+    }
+    expect(SCHULDEN_FARBEN.investitionskredite).toBeDefined()
+    expect(SCHULDEN_FARBEN.nrw_bank).toBeDefined()
+  })
+
+  it('Schwellenlinie erreicht gegen Weiß mindestens 3:1', () => {
+    expect(SCHWELLE_FARBE).toMatch(/^#[0-9a-f]{6}$/i)
+    expect(kontrast(SCHWELLE_FARBE, '#ffffff')).toBeGreaterThanOrEqual(3)
+  })
+
+  it('die Fläche hohler Säulen ist ein Hex-Wert und nicht Weiß (der Rand trägt den Kontrast)', () => {
+    expect(HOHL_FLAECHE).toMatch(/^#[0-9a-f]{6}$/i)
+    expect(HOHL_FLAECHE.toLowerCase()).not.toBe('#ffffff')
+  })
+
+  it('BERECHNET_DECAL unterscheidet sich von KL_DECAL und PUNKT_DECAL (senkrechte Streifen)', () => {
+    expect(BERECHNET_DECAL).not.toEqual(KL_DECAL)
+    expect(BERECHNET_DECAL).not.toEqual(PUNKT_DECAL)
+    expect(BERECHNET_DECAL.symbol).toBe('rect')
+    expect(BERECHNET_DECAL.rotation).toBe(Math.PI / 2)
+    expect(BERECHNET_DECAL.rotation).not.toBe(KL_DECAL.rotation)
   })
 })
