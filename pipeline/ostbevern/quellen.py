@@ -924,8 +924,8 @@ class _Sammler:
             raise QuellenFehler(f"Beleg {schluessel} doppelt vergeben")
         self.seiten.masse(seite)
         self.belege[schluessel] = {"pdf_seite": seite, "bild": bild_name(seite), "bbox": bbox}
-        if bbox is None:
-            self.ohne_bbox[schluessel] = grund or GRUND_NICHT_GEFUNDEN
+        if bbox is None and grund is not None:
+            self.ohne_bbox[schluessel] = grund
 
     def suche(self, schluessel: str, seite: int, finder: Callable[[float, float], Suche]) -> None:
         """Trägt den Beleg ein; `finder(breite, hoehe)` liefert `(bbox, grund)`.
@@ -937,7 +937,7 @@ class _Sammler:
         bbox, grund = finder(breite, hoehe)
         if bbox is not None and any(_schneidet(bbox, r) for r in self.schwaerzung.fuer(seite)):
             bbox, grund = None, GRUND_SCHWAERZUNG
-        self.eintragen(schluessel, seite, bbox, grund)
+        self.eintragen(schluessel, seite, bbox, grund or GRUND_NICHT_GEFUNDEN)
 
 
 def _lies_app_json(app_daten_wurzel: Path, datei: Path) -> dict:
@@ -1484,7 +1484,7 @@ def erzeuge_quellen(
     return QuellenErgebnis(
         pfad=pfad,
         anzahl_belege=len(belege),
-        anzahl_ohne_bbox=len({k for k in sammler.ohne_bbox if not k.startswith("seite:")}),
+        anzahl_ohne_bbox=len(sammler.ohne_bbox),
         seiten=seiten_sortiert,
         neu_gerendert=neu_gerendert,
         ohne_bbox=dict(sorted(sammler.ohne_bbox.items())),
