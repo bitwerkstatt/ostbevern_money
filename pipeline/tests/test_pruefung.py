@@ -2310,3 +2310,57 @@ def test_regel5_konzessionsabgaben_fehlender_split_wert_bricht_ab(tmp_path: Path
 
     with pytest.raises(PruefungsFehler):
         pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+
+
+# --- Phase 7 / Plan 02 (D-20): Restpunkte der Phase-2-Review ---
+
+
+@pytest.mark.parametrize(
+    ("spalten", "jahre"),
+    [
+        (("Ergebnis 2024", "Ansatz 2025", "Ansatz 2026"), [2024, 2025]),
+        (("Ergebnis 2024", "Ansatz 2025"), [2024, 2025, 2026]),
+    ],
+)
+def test_regel4_b1_laengenabweichung_bricht_mit_beiden_laengen_ab(
+    spalten: tuple[str, ...], jahre: list[int]
+) -> None:
+    sollwerte = {"gesamtergebnisplan": {"jahre": jahre, "zeilen": {"01": [0] * len(jahre)}}}
+    with pytest.raises(PruefungsFehler) as fehler:
+        pruefung._pruefe_regel4_b1(planwerte=None, sollwerte=sollwerte, spalten=spalten)  # type: ignore[arg-type]
+    meldung = str(fehler.value)
+    assert str(len(spalten)) in meldung
+    assert str(len(jahre)) in meldung
+    assert "Spaltenköpfe" in meldung
+
+
+def _befund_zeile_mit_begruendung(begruendung: str) -> str:
+    return _befunde_zeile(
+        regel=4,
+        plan="gesamtergebnisplan",
+        ebene="GESAMT",
+        code="",
+        zeile="02",
+        jahr=STANDARD_JAHR,
+        wertart="ansatz",
+        abweichung=5,
+        pdf_seite=62,
+        begruendung=begruendung,
+    )
+
+
+def test_lies_befunde_unmaskierte_pipe_in_begruendung_nennt_zeilennummer(tmp_path: Path) -> None:
+    pfad = tmp_path / "befunde.md"
+    _schreibe_befunde_md(pfad, zeilen=[_befund_zeile_mit_begruendung("Formel a|b im Text")])
+    with pytest.raises(PruefungsFehler) as fehler:
+        lies_befunde(pfad)
+    meldung = str(fehler.value)
+    assert ":7:" in meldung  # 1-basierte Zeilennummer der Datenzeile
+    assert "Pipe" in meldung
+
+
+def test_lies_befunde_maskierte_pipe_in_begruendung_ist_gueltig(tmp_path: Path) -> None:
+    pfad = tmp_path / "befunde.md"
+    _schreibe_befunde_md(pfad, zeilen=[_befund_zeile_mit_begruendung(r"Formel a\|b im Text")])
+    (befund,) = lies_befunde(pfad)
+    assert befund.begruendung == "Formel a|b im Text"
