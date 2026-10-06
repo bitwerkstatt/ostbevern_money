@@ -254,7 +254,11 @@ function alsZahl(wert: string | number | null | undefined): number {
 </template>
 
 <style scoped>
+/* `position: relative` macht den Rahmen zum Bezugsrahmen der absolut positionierten
+   `om-visually-hidden`-Texte in den Zellen; sonst ragen sie über den Rahmen hinaus und die Seite
+   scrollt bei 360 px waagerecht (A11Y-03, gemessen auf /investitionen). */
 .om-tabelle-rahmen {
+  position: relative;
   overflow-x: auto;
 }
 
