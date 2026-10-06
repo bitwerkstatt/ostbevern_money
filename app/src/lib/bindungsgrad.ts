@@ -4,6 +4,7 @@
 // negativem Zuschussbedarf (Überschuss) stehen in einer eigenen Liste. Das Finanzierungsprodukt
 // ist der einzige benannte Ausschluss und fehlt in beiden.
 
+import { anzahlText, euroKurz } from '@/charts/format'
 import { haushalt, produkte } from '@/data/daten'
 import { bindungsgradText } from '@/lib/produkt'
 import { ZEITREIHEN_PRODUKT } from '@/lib/zeitreihen'
@@ -131,12 +132,17 @@ export function baueBindungsgrad(): BindungsgradModell {
   return { segmente, ueberschuss: ueberschuss.sort((a, b) => a.wert - b.wert), summe }
 }
 
-export function produkteText(_anzahl: number): string {
-  return ''
+/** Anzahl der Produkte als Text: „1 Produkt“, sonst „{n} Produkte“ (WR-02). */
+export function produkteText(anzahl: number): string {
+  return anzahlText(anzahl, 'Produkt', 'Produkte')
 }
 
-export function segmentZusammenfassung(_segment: BindungsSegment): string {
-  return ''
+/**
+ * Summary des Aufklappers eines Segments (UI-SPEC Copywriting „Aufklapper-Summary“, D-04):
+ * Bezeichnung, gekürzter Betrag und Produktanzahl, im Singular bei genau einem Produkt (WR-02).
+ */
+export function segmentZusammenfassung(segment: BindungsSegment): string {
+  return `${segment.bezeichnung} · ${euroKurz(segment.summe)} · ${produkteText(segment.anzahl)}`
 }
 
 /**
