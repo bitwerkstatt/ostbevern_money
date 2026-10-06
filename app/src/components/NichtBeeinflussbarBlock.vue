@@ -90,7 +90,7 @@ const kacheln = computed(() =>
 
 .om-nicht-beeinflussbar__titel {
   margin: 0 0 var(--wa-space-m);
-  font-size: var(--wa-font-size-xl);
+  font-size: var(--wa-font-size-l);
   font-weight: var(--wa-font-weight-bold);
   line-height: var(--wa-line-height-condensed);
   hyphens: auto;

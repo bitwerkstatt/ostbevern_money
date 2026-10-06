@@ -64,7 +64,7 @@ const zeilen = computed<DatenZeile[]>(() =>
 
 .om-ueberschuss__titel {
   margin: 0;
-  font-size: var(--wa-font-size-xl);
+  font-size: var(--wa-font-size-l);
   font-weight: var(--wa-font-weight-bold);
   line-height: var(--wa-line-height-condensed);
   hyphens: auto;

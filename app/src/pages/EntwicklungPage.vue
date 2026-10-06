@@ -224,7 +224,7 @@ const tabellenFussnote =
 
 .om-entwicklung__abschnitt > h2 {
   margin: 0;
-  font-size: var(--wa-font-size-xl);
+  font-size: var(--wa-font-size-l);
   font-weight: var(--wa-font-weight-bold);
   line-height: var(--wa-line-height-condensed);
   hyphens: auto;
