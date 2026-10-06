@@ -36847,6 +36847,154 @@
         }
       ]
     },
+    "zuschuesse_lfd_zwecke": {
+      "tabelle": "zuschuesse_lfd_zwecke",
+      "quelle_einheit": "teur",
+      "planzeile": null,
+      "gesamt_plan": null,
+      "gesamt_vorbericht": {
+        "werte": [
+          null,
+          null,
+          120000,
+          null,
+          null,
+          null
+        ],
+        "gerundet": true,
+        "quelle": 47
+      },
+      "posten": [
+        {
+          "posten": "kulturtragende_vereine",
+          "name": "Kulturtragende Vereine",
+          "werte": [
+            null,
+            null,
+            23000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "vhs",
+          "name": "VHS",
+          "werte": [
+            null,
+            null,
+            5000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "jekits_eigenanteil_schule_fuer_musik",
+          "name": "Eigenanteil JeKits-Pauschale an die Schule für Musik",
+          "werte": [
+            null,
+            null,
+            8000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "sportfoerderrichtlinie",
+          "name": "Sportförderrichtlinie",
+          "werte": [
+            null,
+            null,
+            28000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "zuschuesse_dritte_soziales_leben",
+          "name": "Zuschüsse an Dritte im Bereich des sozialen Lebens",
+          "werte": [
+            null,
+            null,
+            23000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "schulsozialarbeit",
+          "name": "Schulsozialarbeit",
+          "werte": [
+            null,
+            null,
+            24000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "ferienfreizeit_jugendliche",
+          "name": "Ferienfreizeit der Jugendlichen",
+          "werte": [
+            null,
+            null,
+            8000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "restaurierung_private_denkmale",
+          "name": "Restaurierung privater Denkmale",
+          "werte": [
+            null,
+            null,
+            1000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        }
+      ]
+    },
     "investitionszuwendungen": {
       "tabelle": "investitionszuwendungen",
       "quelle_einheit": "teur",

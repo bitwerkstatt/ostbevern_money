@@ -1,0 +1,10 @@
+tabelle,position,posten,posten_name,ist_gesamt,jahr,wertart,betrag_teur,anmerkung,quelle
+zuschuesse_lfd_zwecke,1,kulturtragende_vereine,Kulturtragende Vereine,false,2026,ansatz,23,,47
+zuschuesse_lfd_zwecke,2,vhs,VHS,false,2026,ansatz,5,,47
+zuschuesse_lfd_zwecke,3,jekits_eigenanteil_schule_fuer_musik,Eigenanteil JeKits-Pauschale an die Schule für Musik,false,2026,ansatz,8,,47
+zuschuesse_lfd_zwecke,4,sportfoerderrichtlinie,Sportförderrichtlinie,false,2026,ansatz,28,,47
+zuschuesse_lfd_zwecke,5,zuschuesse_dritte_soziales_leben,Zuschüsse an Dritte im Bereich des sozialen Lebens,false,2026,ansatz,23,,47
+zuschuesse_lfd_zwecke,6,schulsozialarbeit,Schulsozialarbeit,false,2026,ansatz,24,,47
+zuschuesse_lfd_zwecke,7,ferienfreizeit_jugendliche,Ferienfreizeit der Jugendlichen,false,2026,ansatz,8,,47
+zuschuesse_lfd_zwecke,8,restaurierung_private_denkmale,Restaurierung privater Denkmale,false,2026,ansatz,1,,47
+zuschuesse_lfd_zwecke,9,gesamt,Zuschüsse für lfd. Zwecke,true,2026,ansatz,120,,47

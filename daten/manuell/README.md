@@ -81,6 +81,25 @@ die Tabelle druckt nur diese eine Spalte, nicht den ganzen Finanzplanungszeitrau
 Gesamtzeile dieser Tabelle als auch dem Transferaufwendungen-Posten „Zuschüsse an
 Kindertageseinr.“ desselben Jahres — beides prüft Regel 5.
 
+### `zuschuesse_lfd_zwecke.csv`
+
+Die acht Einzelzuschüsse, die der Vorbericht auf S. 47 im Fließtext zu „Die Zuschüsse für
+lfd. Zwecke (120 T€)“ nennt (RAT-03, Phase 6 D-03): kulturtragende Vereine 23, VHS 5,
+Eigenanteil JeKits-Pauschale an die Schule für Musik 8, Sportförderrichtlinie 28, Zuschüsse
+an Dritte im Bereich des sozialen Lebens 23, Schulsozialarbeit 24, Ferienfreizeit der
+Jugendlichen 8 und Restaurierung privater Denkmale 1 (alle T€), dazu die Gesamtzeile 120.
+Wie `kita_zuschuesse.csv` gibt es nur das Haushaltsjahr (Wertart `ansatz`, aus dem
+Spaltenkopf „Ansatz 2026“); für die übrigen Jahre druckt der Vorbericht keine
+Aufschlüsselung. Die Tabelle trägt ausschließlich Verwendungszwecke, nie Namen privater
+Personen.
+
+Sie schlüsselt den Transferaufwendungen-Posten „Zuschüsse für lfd. Zwecke“
+(`transferaufwendungen.csv`, 120 T€ im Haushaltsjahr) auf. Regel 5 prüft in Stufe (a) die
+Summe der acht Posten gegen die gedruckte Gesamtzeile und zusätzlich Gesamtzeile × 1000
+gegen den Transferposten desselben Jahres. Die Zuschüsse an das Kinder- und Jugendwerk und
+an die Träger der Offenen Ganztagsschulen (OGS) stehen weiter als eigene Posten in
+`transferaufwendungen.csv` und gehören nicht in diese Tabelle.
+
 ### `investitionszuwendungen.csv`
 
 Vorbericht S. 52 „Bei den Zuweisungen und Zuschüssen für Investitionen handelt es sich um:“
