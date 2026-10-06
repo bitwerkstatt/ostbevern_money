@@ -66,6 +66,60 @@ describe('verwendeteTokens und definierteTokens (Fail-first)', () => {
   })
 })
 
+// Typografie-Vertrag der Phase 6: UI-SPEC 06 §Typography erlaubt nur vier Schriftgrößen und zwei
+// Gewichte (Befund aus 06-UI-REVIEW, Säule 4). Die Phase-5-Dateien GlossarPage.vue,
+// GlossarListe.vue und EinnahmenPage.vue fehlen hier mit Absicht, ihre Bereinigung ist Phase 7.
+const PHASE_6_TYPOGRAFIE_DATEIEN = [
+  '/src/pages/EntwicklungPage.vue',
+  '/src/pages/InvestitionenPage.vue',
+  '/src/pages/RatEntscheidetPage.vue',
+  '/src/components/ZuschussListe.vue',
+  '/src/components/UeberschussListe.vue',
+  '/src/components/NichtBeeinflussbarBlock.vue',
+] as const
+
+const VERBOTENE_TYPOGRAFIE_TOKENS: ReadonlySet<string> = new Set([
+  '--wa-font-size-xl',
+  '--wa-font-weight-semibold',
+])
+
+/** Die verbotenen Größen- und Gewichts-Tokens, die der Text benutzt (sortiert, ohne Doppelte). */
+function verboteneTypografieTokens(text: string): string[] {
+  return Array.from(new Set(verwendeteTokens(text)))
+    .filter((name) => VERBOTENE_TYPOGRAFIE_TOKENS.has(name))
+    .sort()
+}
+
+describe('verboteneTypografieTokens (Fail-first)', () => {
+  it('meldet die verbotene Größe und das verbotene Gewicht', () => {
+    const text = 'font-size: var(--wa-font-size-xl); font-weight: var(--wa-font-weight-semibold)'
+    expect(verboteneTypografieTokens(text)).toEqual([
+      '--wa-font-size-xl',
+      '--wa-font-weight-semibold',
+    ])
+  })
+
+  it('lässt die erlaubten Tokens durch, auch --wa-font-size-2xl', () => {
+    const text = [
+      'font-size: var(--wa-font-size-2xl)',
+      'font-size: var(--wa-font-size-l)',
+      'font-size: var(--wa-font-size-m)',
+      'font-weight: var(--wa-font-weight-bold)',
+    ].join('; ')
+    expect(verboteneTypografieTokens(text)).toEqual([])
+  })
+})
+
+describe('Typografie der Phase-6-Dateien (UI-SPEC 06)', () => {
+  it('findet alle sechs Phase-6-Dateien in den Quelltexten', () => {
+    expect(Object.keys(quelltexte)).toEqual(expect.arrayContaining([...PHASE_6_TYPOGRAFIE_DATEIEN]))
+  })
+
+  it.each(PHASE_6_TYPOGRAFIE_DATEIEN)('%s benutzt nur erlaubte Schriftgrößen und Gewichte', (pfad) => {
+    expect(verboteneTypografieTokens(quelltexte[pfad] ?? '')).toEqual([])
+  })
+})
+
 describe('Stiltokens der App (G-05-6)', () => {
   const definiert = new Set([
     ...webAwesomeTokens(),
