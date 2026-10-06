@@ -151,9 +151,15 @@ export function stellenNachTeil(daten: Stellenplan = stellenplan): TeilSummen[] 
 }
 
 export interface Nachwuchs {
-  /** Personen im Vorjahr („beschäftigt“), `null` ohne Zeilen. */
+  /**
+   * Personen im Vorjahr („beschäftigt“); `null` ohne Zeilen oder wenn eine Zeile keine
+   * Personenzahl hat; nie 0 erfinden (WR-05).
+   */
   vorjahr: number | null
-  /** Personen im Haushaltsjahr („vorgesehen“), `null` ohne Zeilen. */
+  /**
+   * Personen im Haushaltsjahr („vorgesehen“); `null` ohne Zeilen oder wenn eine Zeile keine
+   * Personenzahl hat; nie 0 erfinden (WR-05).
+   */
   haushaltsjahr: number | null
   /** Belegende PDF-Seiten, aufsteigend. */
   pdfSeiten: number[]
@@ -163,7 +169,14 @@ function personen(zeilen: readonly StellenplanZeile[]): number | null {
   if (zeilen.length === 0) {
     return null
   }
-  return zeilen.reduce((gesamt, zeile) => gesamt + (zeile.personen ?? 0), 0)
+  let gesamt = 0
+  for (const zeile of zeilen) {
+    if (zeile.personen === null) {
+      return null
+    }
+    gesamt += zeile.personen
+  }
+  return gesamt
 }
 
 /**

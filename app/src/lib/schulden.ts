@@ -5,8 +5,10 @@
 // - Liquiditätskredite werden nicht gestapelt und zählen nicht zum Schuldenstand (`gesamt` =
 //   Investitionskredite + NRW.Bank). Sie stehen nur in der Tabelle; fehlt der Wert, ist er
 //   `null` und erscheint als „–“, nie als 0.
-// - Die Kachel „Schulden je Einwohner“ trägt kein „berechnet“, wenn der Vorjahreswert gedruckt
-//   ist (Vorbericht, Einwohner-Seite): das Etikett folgt dem Datenfeld `berechnet`.
+// - Die Kacheln „Schuldenstand Ende {Vorjahr}“ und „Schulden je Einwohner“ tragen kein
+//   „berechnet“, wenn der Vorjahreswert gedruckt ist (Vorbericht, Einwohner-Seite): das Etikett
+//   folgt dem Datenfeld `berechnet`. Ein fortgeschriebenes Vorjahr kennzeichnet Summe und
+//   Pro-Kopf-Wert gleichermaßen (WR-03, `schuldenKacheln`).
 //
 // Welche Jahre berechnet sind, steht allein in `schuldenstand.berechnet`; keine Jahresliste im Code.
 
@@ -20,6 +22,7 @@ import { flaechenFarbe, jahresAchse } from '@/charts/wertartStil'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import { haushalt, investitionen } from '@/data/daten'
 import { wertartName } from '@/lib/jahr'
+import { quellenZeile } from '@/lib/kennzahlen'
 import type { Tabelle } from '@/lib/produkt'
 
 /** Die Schuldenreihen je Jahr von `haushalt.jahre`, unverändert aus `investitionen.json`. */
@@ -170,6 +173,41 @@ export function schuldenKennzahlen(): SchuldenKennzahlen {
     pdfSeiten: [reihen.pdfSeite, einwohnerQuelle],
     berechnet,
   }
+}
+
+/** Eine Kennzahlkachel zum Schuldenstand (D-10). */
+export interface SchuldenKachel {
+  schluessel: string
+  bezeichnung: string
+  wert: string
+  zeile: string
+  berechnet: boolean
+}
+
+/**
+ * Die beiden Kacheln „Schuldenstand Ende {Vorjahr}“ und „Schulden je Einwohner“. Beide Werte
+ * stammen vom selben Index derselben Reihe und tragen deshalb dasselbe, aus dem Datenfeld
+ * `schuldenstand.berechnet` des Vorjahrs gelesene Etikett (WR-03).
+ */
+export function schuldenKacheln(
+  kennzahlen: SchuldenKennzahlen = schuldenKennzahlen(),
+): SchuldenKachel[] {
+  return [
+    {
+      schluessel: 'schuldenstand',
+      bezeichnung: `Schuldenstand Ende ${formatiereJahr(kennzahlen.jahr)}`,
+      wert: euroKurz(kennzahlen.gesamt),
+      zeile: quellenZeile(kennzahlen.wertart, kennzahlen.jahr, [kennzahlen.quelle]),
+      berechnet: kennzahlen.berechnet,
+    },
+    {
+      schluessel: 'schulden_je_einwohner',
+      bezeichnung: 'Schulden je Einwohner',
+      wert: euro(kennzahlen.proKopf),
+      zeile: quellenZeile(kennzahlen.wertart, kennzahlen.jahr, kennzahlen.pdfSeiten),
+      berechnet: kennzahlen.berechnet,
+    },
+  ]
 }
 
 /** Randbreite der Weißtrenner zwischen den Segmenten (UI-SPEC: 2 px). */

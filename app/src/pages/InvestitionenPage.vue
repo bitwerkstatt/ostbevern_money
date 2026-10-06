@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { euro, euroKurz, jahr as formatiereJahr } from '@/charts/format'
+import { euroKurz, jahr as formatiereJahr } from '@/charts/format'
 import ChartCard from '@/components/ChartCard.vue'
 import ErklaerText from '@/components/ErklaerText.vue'
 import FinanzierungsDiagramm from '@/components/FinanzierungsDiagramm.vue'
@@ -17,7 +17,7 @@ import { vePdfSeiten, veGesamt } from '@/lib/finanzierung'
 import { planjahre, useMassnahmenFilter } from '@/lib/investitionen'
 import { wertartFuerJahr, wertartName } from '@/lib/jahr'
 import { quellenZeile } from '@/lib/kennzahlen'
-import { baueSchuldenstand, schuldenKennzahlen } from '@/lib/schulden'
+import { baueSchuldenstand, schuldenKacheln } from '@/lib/schulden'
 
 // Die Seite zeigt alle ausgewiesenen Jahre, ohne Jahr-Umschalter (UI-SPEC Routes). Der Lead
 // enthält keine Zahlen und darf deshalb als Text im Code stehen.
@@ -33,25 +33,11 @@ const massnahmenTitel = computed(() => {
     : `Maßnahmen ${formatiereJahr(erstes)}–${formatiereJahr(letztes)}`
 })
 
-// Kennzahlkacheln zum Schuldenstand am Ende des Vorjahrs (D-10). „Schulden je Einwohner“ trägt nur
-// dann „berechnet“, wenn das Datenfeld des Vorjahrs es sagt (gedruckt: kein Etikett).
+// Kennzahlkacheln zum Schuldenstand am Ende des Vorjahrs (D-10). Beide Schuldenkacheln baut
+// `schuldenKacheln()`; „berechnet“ steht nur, wenn das Datenfeld des Vorjahrs es sagt (WR-03).
 const schuldenstand = baueSchuldenstand()
-const schulden = schuldenKennzahlen()
 const kacheln = [
-  {
-    schluessel: 'schuldenstand',
-    bezeichnung: `Schuldenstand Ende ${formatiereJahr(schulden.jahr)}`,
-    wert: euroKurz(schulden.gesamt),
-    zeile: quellenZeile(schulden.wertart, schulden.jahr, [schulden.quelle]),
-    berechnet: false,
-  },
-  {
-    schluessel: 'schulden_je_einwohner',
-    bezeichnung: 'Schulden je Einwohner',
-    wert: euro(schulden.proKopf),
-    zeile: quellenZeile(schulden.wertart, schulden.jahr, schulden.pdfSeiten),
-    berechnet: schulden.berechnet,
-  },
+  ...schuldenKacheln(),
   {
     schluessel: 'verpflichtungsermaechtigungen',
     bezeichnung: 'Verpflichtungsermächtigungen',

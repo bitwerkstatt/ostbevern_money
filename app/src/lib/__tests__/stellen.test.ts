@@ -22,6 +22,22 @@ function ohne(behalte: (zeile: Stellenplan['zeilen'][number]) => boolean): Stell
   return { ...stellenplan, zeilen: stellenplan.zeilen.filter(behalte) }
 }
 
+/** Kopie des Stellenplans, in der die erste Nachwuchszeile mit `merkmal` keine Personenzahl hat. */
+function mitFehlenderPersonenzahl(merkmal: string): Stellenplan {
+  let geaendert = false
+  const zeilen = stellenplan.zeilen.map((zeile) => {
+    if (!geaendert && zeile.teil === 'nachwuchs' && zeile.merkmal === merkmal) {
+      geaendert = true
+      return { ...zeile, personen: null }
+    }
+    return zeile
+  })
+  if (!geaendert) {
+    throw new Error(`Keine Nachwuchszeile mit Merkmal ${merkmal}`)
+  }
+  return { ...stellenplan, zeilen }
+}
+
 describe('TEILE', () => {
   it('nennt die drei Teile mit Namen und Gruppentitel in fester Reihenfolge', () => {
     expect(TEILE.map((t) => t.teil)).toEqual(['beamte', 'tarif', 'sozial_erziehungsdienst'])
@@ -189,12 +205,36 @@ describe('nachwuchs', () => {
   it('zählt Personen je Jahr und nennt die PDF-Seite', () => {
     const n = nachwuchs()
     expect(n.pdfSeiten.length).toBeGreaterThan(0)
+    // Jede Nachwuchszeile hat eine Personenzahl: die Erwartung braucht keinen Rückfall auf 0 (WR-05).
+    const nachwuchsZeilen = stellenplan.zeilen.filter((z) => z.teil === 'nachwuchs')
+    expect(nachwuchsZeilen.length).toBeGreaterThan(0)
+    for (const zeile of nachwuchsZeilen) {
+      expect(zeile.personen).not.toBeNull()
+    }
     const personen = (merkmal: string): number =>
-      stellenplan.zeilen
-        .filter((z) => z.teil === 'nachwuchs' && z.merkmal === merkmal)
-        .reduce((summe, z) => summe + (z.personen ?? 0), 0)
+      nachwuchsZeilen
+        .filter((z) => z.merkmal === merkmal)
+        .reduce((summe, z) => summe + (z.personen as number), 0)
     expect(n.vorjahr).toBe(personen('beschaeftigt'))
     expect(n.haushaltsjahr).toBe(personen('vorgesehen'))
+  })
+
+  it('WR-05: fehlt einer Zeile des Haushaltsjahrs die Personenzahl, ist das Jahr null (nie 0)', () => {
+    const vorher = nachwuchs()
+    const kopie = mitFehlenderPersonenzahl('vorgesehen')
+    const n = nachwuchs(kopie)
+    expect(n.haushaltsjahr).toBeNull()
+    expect(n.vorjahr).toBe(vorher.vorjahr)
+    expect(n.pdfSeiten).toEqual(vorher.pdfSeiten)
+  })
+
+  it('WR-05: fehlt einer Zeile des Vorjahrs die Personenzahl, ist das Jahr null (nie 0)', () => {
+    const vorher = nachwuchs()
+    const kopie = mitFehlenderPersonenzahl('beschaeftigt')
+    const n = nachwuchs(kopie)
+    expect(n.vorjahr).toBeNull()
+    expect(n.haushaltsjahr).toBe(vorher.haushaltsjahr)
+    expect(n.pdfSeiten).toEqual(vorher.pdfSeiten)
   })
 
   it('nennt nur das vorhandene Jahr, wenn Personenzahlen fehlen (UI-SPEC E10 partial)', () => {
