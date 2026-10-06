@@ -37,7 +37,7 @@ export interface Ruecklagenzeile {
   allgemeine: number | null
   /** Ausgleichsrücklage, Bestand zu Jahresbeginn; `null` ohne Wert, eine echte 0 bleibt 0. */
   ausgleich: number | null
-  /** Summe der beiden Rücklagen (Wert über der Säule); `null`, wenn beide fehlen. */
+  /** Summe der beiden Rücklagen (Wert über der Säule); `null`, wenn eine der beiden Rücklagen fehlt; nie eine Teilsumme (WR-04). */
   summe: number | null
 }
 
@@ -81,8 +81,7 @@ export function baueRuecklagen(
       wertart: wertartAn(index),
       allgemeine,
       ausgleich,
-      summe:
-        allgemeine === null && ausgleich === null ? null : (allgemeine ?? 0) + (ausgleich ?? 0),
+      summe: allgemeine === null || ausgleich === null ? null : allgemeine + ausgleich,
     }
   })
 }
