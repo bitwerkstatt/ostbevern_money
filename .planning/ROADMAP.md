@@ -22,7 +22,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Details** - Produktinformationen, Grundzahlen, Erläuterungen, Investitionen; Prüfregeln 6–8 grün, 63 Produkte vollständig (Spez. P2) (completed 2026-10-02)
 - [x] **Phase 4: Manuelle Daten und App-Daten** - Vorberichtstabellen, meta.json, Erklärtexte, Stellenplan, App-JSON; Prüfregel 5 grün, `alle.py` reproduzierbar (Spez. P3) (completed 2026-10-04)
 - [x] **Phase 5: Leitfragen-Seiten** - Start, Einnahmen, Ausgaben, Geldfluss und Glossar beantworten „Woher?“ und „Wofür?“ (Spez. P4) (completed 2026-10-05)
-- [ ] **Phase 6: Kontext-Seiten** - Entwicklung, Investitionen und Schulden, Rat entscheidet, Stellenplan, „Was nicht im Haushalt steht“ (Spez. P5)
+- [x] **Phase 6: Kontext-Seiten** - Entwicklung, Investitionen und Schulden, Rat entscheidet, Stellenplan, „Was nicht im Haushalt steht“ (Spez. P5) (completed 2026-10-06)
 - [ ] **Phase 7: Feinschliff und Veröffentlichung** - Quellenbelege, Barrierefreiheit, Mobilansicht, Textdurchgang, Smoke-Test, Deployment auf GitHub Pages (Spez. P7)
 
 ## Phase Details
@@ -219,7 +219,7 @@ Plans:
   4. `/stellenplan` zeigt die Stellen 2026 im Vergleich zu 2025 und zu den besetzten Stellen am 30.06.2025, die Verteilung nach Aufgabenbereich und nach Entgelt- bzw. Besoldungsgruppe sowie daneben den Personalaufwand je Aufgabenbereich (TP Z. 11).
   5. Ein Hinweis „Was nicht im Haushalt steht“ erklärt BBO (Hallenbad) und TEO AöR (Abwasser).
 
-**Plans**: 17/17 plans executed
+**Plans**: 17/17 plans complete
 **UI hint**: yes
 
 Plans:
@@ -279,5 +279,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Details | 5/5 | Complete    | 2026-10-02 |
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
-| 6. Kontext-Seiten | 17/17 | In Progress|  |
+| 6. Kontext-Seiten | 17/17 | Complete    | 2026-10-06 |
 | 7. Feinschliff und Veröffentlichung | 0/TBD | Not started | - |

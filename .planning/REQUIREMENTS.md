@@ -90,29 +90,29 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 
 ### Entwicklung
 
-- [ ] **ENTW-01**: Nutzer sieht Erträge, Aufwendungen und Jahresergebnis 2024–2029, Ist, Ansatz und Planung sind unterscheidbar
-- [ ] **ENTW-02**: Nutzer sieht Zeitreihen für Kreisumlage, Gewerbesteuer, Schlüsselzuweisung, Personal und Zinsen
-- [ ] **ENTW-03**: Nutzer sieht Ausgleichsrücklage und allgemeine Rücklage und wie lange das Polster reicht
+- [x] **ENTW-01**: Nutzer sieht Erträge, Aufwendungen und Jahresergebnis 2024–2029, Ist, Ansatz und Planung sind unterscheidbar
+- [x] **ENTW-02**: Nutzer sieht Zeitreihen für Kreisumlage, Gewerbesteuer, Schlüsselzuweisung, Personal und Zinsen
+- [x] **ENTW-03**: Nutzer sieht Ausgleichsrücklage und allgemeine Rücklage und wie lange das Polster reicht
 
 ### Investitionen und Schulden
 
-- [ ] **INV-01**: Nutzer sieht Investitionsmaßnahmen 2026–2029 als Liste und Balken, filterbar nach Aufgabenbereich und Art (Bau, Grundstücke, Fahrzeuge/Ausstattung)
-- [ ] **INV-02**: Nutzer sieht die Verpflichtungsermächtigungen (11,6 Mio. €) mit ihren Fälligkeiten
-- [ ] **INV-03**: Nutzer sieht die Finanzierung (Investitionseinzahlungen, Kredite) und eine Zeitreihe von Kreditaufnahme und Tilgung 2024–2029
-- [ ] **INV-04**: Nutzer sieht den Schuldenstand gesamt und je Einwohner
+- [x] **INV-01**: Nutzer sieht Investitionsmaßnahmen 2026–2029 als Liste und Balken, filterbar nach Aufgabenbereich und Art (Bau, Grundstücke, Fahrzeuge/Ausstattung)
+- [x] **INV-02**: Nutzer sieht die Verpflichtungsermächtigungen (11,6 Mio. €) mit ihren Fälligkeiten
+- [x] **INV-03**: Nutzer sieht die Finanzierung (Investitionseinzahlungen, Kredite) und eine Zeitreihe von Kreditaufnahme und Tilgung 2024–2029
+- [x] **INV-04**: Nutzer sieht den Schuldenstand gesamt und je Einwohner
 
 ### Rat entscheidet
 
-- [ ] **RAT-01**: Nutzer sieht den Zuschussbedarf 2026 nach Bindungsgrad (pflichtig / teils / freiwillig) als gestapelten Balken mit den Produkten je Kategorie
-- [ ] **RAT-02**: Nutzer sieht einen Block „Was der Rat nicht beeinflussen kann“ (Kreisumlage, Gewerbesteuerumlage, gesetzliche Sozialleistungen)
-- [ ] **RAT-03**: Nutzer sieht die Einzelzuschüsse aus dem Vorbericht (Kita-Träger einzeln, Kinder- und Jugendwerk, OGS, Vereine, VHS, Sport, Musikschule)
-- [ ] **RAT-04**: Ein Hinweis erklärt, dass der Bindungsgrad eine Selbstauskunft der Verwaltung ist
+- [x] **RAT-01**: Nutzer sieht den Zuschussbedarf 2026 nach Bindungsgrad (pflichtig / teils / freiwillig) als gestapelten Balken mit den Produkten je Kategorie
+- [x] **RAT-02**: Nutzer sieht einen Block „Was der Rat nicht beeinflussen kann“ (Kreisumlage, Gewerbesteuerumlage, gesetzliche Sozialleistungen)
+- [x] **RAT-03**: Nutzer sieht die Einzelzuschüsse aus dem Vorbericht (Kita-Träger einzeln, Kinder- und Jugendwerk, OGS, Vereine, VHS, Sport, Musikschule)
+- [x] **RAT-04**: Ein Hinweis erklärt, dass der Bindungsgrad eine Selbstauskunft der Verwaltung ist
 
 ### Stellenplan
 
-- [ ] **STEL-01**: Nutzer sieht die Stellen 2026 gesamt im Vergleich zu 2025 und zu den besetzten Stellen am 30.06.2025
-- [ ] **STEL-02**: Nutzer sieht die Verteilung nach Aufgabenbereich und nach Entgelt- bzw. Besoldungsgruppe
-- [ ] **STEL-03**: Nutzer sieht daneben den Personalaufwand je Aufgabenbereich (TP Z. 11)
+- [x] **STEL-01**: Nutzer sieht die Stellen 2026 gesamt im Vergleich zu 2025 und zu den besetzten Stellen am 30.06.2025
+- [x] **STEL-02**: Nutzer sieht die Verteilung nach Aufgabenbereich und nach Entgelt- bzw. Besoldungsgruppe
+- [x] **STEL-03**: Nutzer sieht daneben den Personalaufwand je Aufgabenbereich (TP Z. 11)
 
 ### Glossar
 
@@ -125,7 +125,7 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [x] **UI-01**: Auf Einnahmen, Ausgaben und Geldfluss gibt es einen Jahr-Umschalter (2024 Ist … 2029 Planung), Standard ist 2026
 - [ ] **UI-02**: „Quelle anzeigen“ öffnet an Kennzahlen und Tabellenzeilen eine Seitenleiste mit dem PDF-Ausschnitt
 - [x] **UI-03**: Die Fußzeile zeigt Datenstand, Link zum Original-PDF, den Hinweis „inoffizielles Projekt“ und einen Kontakt
-- [ ] **UI-04**: Ein Hinweis „Was nicht im Haushalt steht“ erklärt BBO (Hallenbad) und TEO AöR (Abwasser)
+- [x] **UI-04**: Ein Hinweis „Was nicht im Haushalt steht“ erklärt BBO (Hallenbad) und TEO AöR (Abwasser)
 - [x] **UI-05**: Zahlen in Texten werden aus den Daten erzeugt, nicht fest eingetippt; jeder Erklärtext mit Zahl verweist auf eine PDF-Seite
 - [ ] **UI-06**: Alle Texte sind deutsch und durchgehend in der Du-Anrede
 
@@ -232,27 +232,27 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FLUSS-02 | Phase 5 | Complete |
 | FLUSS-03 | Phase 5 | Complete |
 | FLUSS-04 | Phase 5 | Complete |
-| ENTW-01 | Phase 6 | Pending |
-| ENTW-02 | Phase 6 | Pending |
-| ENTW-03 | Phase 6 | Pending |
-| INV-01 | Phase 6 | Pending |
-| INV-02 | Phase 6 | Pending |
-| INV-03 | Phase 6 | Pending |
-| INV-04 | Phase 6 | Pending |
-| RAT-01 | Phase 6 | Pending |
-| RAT-02 | Phase 6 | Pending |
-| RAT-03 | Phase 6 | Pending |
-| RAT-04 | Phase 6 | Pending |
-| STEL-01 | Phase 6 | Pending |
-| STEL-02 | Phase 6 | Pending |
-| STEL-03 | Phase 6 | Pending |
+| ENTW-01 | Phase 6 | Complete |
+| ENTW-02 | Phase 6 | Complete |
+| ENTW-03 | Phase 6 | Complete |
+| INV-01 | Phase 6 | Complete |
+| INV-02 | Phase 6 | Complete |
+| INV-03 | Phase 6 | Complete |
+| INV-04 | Phase 6 | Complete |
+| RAT-01 | Phase 6 | Complete |
+| RAT-02 | Phase 6 | Complete |
+| RAT-03 | Phase 6 | Complete |
+| RAT-04 | Phase 6 | Complete |
+| STEL-01 | Phase 6 | Complete |
+| STEL-02 | Phase 6 | Complete |
+| STEL-03 | Phase 6 | Complete |
 | GLOS-01 | Phase 5 | Complete |
 | GLOS-02 | Phase 5 | Complete |
 | GLOS-03 | Phase 5 | Complete |
 | UI-01 | Phase 5 | Complete |
 | UI-02 | Phase 7 | Pending |
 | UI-03 | Phase 5 | Complete |
-| UI-04 | Phase 6 | Pending |
+| UI-04 | Phase 6 | Complete |
 | UI-05 | Phase 5 | Complete |
 | UI-06 | Phase 7 | Pending |
 | A11Y-01 | Phase 7 | Pending |

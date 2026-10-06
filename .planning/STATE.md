@@ -1,43 +1,43 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 06
-current_phase_name: Kontext-Seiten
-status: executing
-stopped_at: Phase 6 UI-SPEC approved
-last_updated: "2026-10-06T08:56:41.676Z"
+current_phase: 7
+current_phase_name: Feinschliff und Veröffentlichung
+status: planning
+stopped_at: Phase 06 complete, ready to plan Phase 7
+last_updated: "2026-10-06T08:59:38.173Z"
 last_activity: 2026-10-06
-last_activity_desc: Phase 06 execution started
-state_head: ff7cff6e000893d117c820746b8b8523a984e2a8
+last_activity_desc: Phase 06 complete, transitioned to Phase 7
+state_head: ca18ae09216519069aec1029d2b8121ca5bf43b2
 progress:
   total_phases: 7
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 54
-  completed_plans: 49
-  percent: 71
+  completed_plans: 54
+  percent: 86
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-10-05)
+See: .planning/PROJECT.md (updated 2026-10-06)
 
 **Core value:** Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch automatische Prüfungen belegt. Die Leitfragen „Woher?“ und „Wofür?“ sind für Laien verständlich beantwortet.
-**Current focus:** Phase 06 — Kontext-Seiten
+**Current focus:** Phase 7 — Feinschliff und Veröffentlichung
 
 ## Current Position
 
-Phase: 06 (Kontext-Seiten) — EXECUTING
-Plan: 1 of 17
-Status: Executing Phase 06
-Last activity: 2026-10-06 - Completed quick task 261006-f1w: Phase-6-Typografie an UI-SPEC angleichen
+Phase: 7 — Feinschliff und Veröffentlichung
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-10-06 — Phase 06 complete, transitioned to Phase 7
 
-Progress: [███████░░░] 71%
+Progress: [█████████░] 86%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 37
+- Total plans completed: 54
 - Average duration: -
 - Total execution time: 0.0 hours
 
@@ -50,6 +50,7 @@ Progress: [███████░░░] 71%
 | 03 | 5 | - | - |
 | 04 | 6 | - | - |
 | 05 | 16 | - | - |
+| 06 | 17 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: -
@@ -82,6 +83,9 @@ Recent decisions affecting current work:
 - [Phase 5]: Leitfragen-Seiten Start, Einnahmen, Ausgaben (inkl. Produktseite), Geldfluss und Glossar fertig; vitest 5.0.3 als Testframework (1031 Tests), Zahlen nur aus Daten (Quelltext-Scan), kein `v-html`, Tooltips über `htmlSicher`/`tooltipZeilen`.
 - [Phase 5]: Hash-Sprungziele berücksichtigen den sticky Header (`sprungziel.ts`); `stiltokens.test.ts` verbietet undefinierte `--wa-*`-Tokens (Lücken G-05-4/G-05-6, Plan 05-16).
 - [Phase 5]: Fußzeilen-Kontakt und PDF-Link bleiben `.invalid`-Platzhalter bis Phase 7 (D-17).
+- [Phase 6]: Kontextseiten Entwicklung, Investitionen, Rat entscheidet, Stellenplan fertig; UAT 3/3, Nyquist-konform (1585 vitest-Tests), Security 37/37 geschlossen, Verifikation passed.
+- [Phase 6]: Einzelzuschüsse S. 47 per Regel 5 gegen Transferposten (120.000 €); HSK-Schwellen S. 23 in `meta.json`.
+- [Quick 261006-f1w]: Phase-6-Überschriften auf `--wa-font-size-l`; Typografie-Wächter in `stiltokens.test.ts` für die sechs Phase-6-Dateien.
 
 ### Pending Todos
 
@@ -94,6 +98,7 @@ None yet.
 - [Phase 2]: Code-Review 02-REVIEW.md: 3 Warnungen offen (u. a. Vorzeichen-Beschreibung in `befunde.md`, Kommentar zu PB 09/15 sollte S. 296/299 zitieren).
 - [Phase 4]: Code-Review 04-REVIEW-DISPOSITION.md: Befunde WR-01…WR-05, IN-02 offen, alle ohne Auswirkung auf die heutigen Daten (Nutzerentscheidung 2026-10-03). WR-06/IN-01 (`formatiere()`-Fallback) in Plan 05-01 behoben.
 - [Phase 4]: `/gsd-secure-phase 04` steht aus (Sicherheitsprüfung aktiviert, noch kein 04-SECURITY.md).
+- [Phase 6]: UI-Review 06-UI-REVIEW.md (21/24, vor Fix): `xl` in Phase-6-Dateien behoben (Quick 261006-f1w); offen und kosmetisch: `h3` in `StellenplanPage.vue` und `.om-zuschuesse__untertitel` mit 16 px statt Spec-Rolle; Review-Restpunkte IN-01…IN-09 (INFO); DOM-Integrationstest für `MenueGruppe` in Phase 7.
 - [Phase 5]: UI-Review 05-UI-REVIEW.md (16/24): Token-Hygiene offen — `font-weight: 600` fest in App.vue, `--wa-font-weight-semibold`, `--wa-font-size-xl`, `--wa-space-3xs`/`2xl` außerhalb der UI-SPEC-Skala; kosmetisch, vor/in Phase 7 bereinigen.
 
 ### Quick Tasks Completed
@@ -113,6 +118,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-05T18:58:12.741Z
-Stopped at: Phase 6 UI-SPEC approved
-Resume file: .planning/phases/06-kontext-seiten/06-UI-SPEC.md
+Last session: 2026-10-06
+Stopped at: Phase 06 complete, ready to plan Phase 7
+Resume file: None

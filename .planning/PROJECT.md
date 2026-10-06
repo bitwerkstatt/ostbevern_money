@@ -28,6 +28,11 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 - ✓ Ausgaben: Treemap mit Drilldown, „Weitergabe an Kreis und Land“ als eigene Kategorie, Umschalter Aufwand/Zuschussbedarf, Sicht nach Aufwandsart, Produktdetail — Phase 5
 - ✓ Geldfluss: Sankey 2024–2029 inkl. Defizit- und Minderaufwand-Ausgleich, mobile Alternative — Phase 5
 - ✓ Glossar mit allen Begriffen und allen 63 Produkten, GlossarBegriff-Links mit Tooltip und Sprungmarke — Phase 5
+- ✓ Entwicklung 2024–2029: Erträge/Aufwendungen, Jahresergebnis nach Wertart, Posten-Zeitreihen, Rücklagen mit Rückgang je Jahr (S. 23/311) — Phase 6
+- ✓ Investitionen und Schulden: Maßnahmen mit Filter (URL-Zustand), VE 11,6 Mio. € mit Fälligkeiten, Finanzierung, Schuldenstand gesamt/je Einwohner — Phase 6
+- ✓ Worüber entscheidet der Rat? Bindungsgrad-Balken mit Produkten, „Was der Rat nicht beeinflussen kann“, Einzelzuschüsse (Regel 5), Selbstauskunft-Hinweis — Phase 6
+- ✓ Stellenplan 2026/2025/besetzt, nach Aufgabenbereich und Gruppe, Personalaufwand je Aufgabenbereich — Phase 6
+- ✓ Hinweis „Was nicht im Haushalt steht“ (BBO, TEO AöR) — Phase 6
 
 ### Active
 
@@ -36,10 +41,6 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 - [ ] Pipeline ist für das ProFIS-Layout generisch: Jahr, Spalten und Seitenbereiche konfigurierbar, sodass der Haushalt 2027 mit wenig Änderung verarbeitet werden kann
 
 **App (Vue 3, TS, Vite, Web Awesome, ECharts):**
-- [ ] Entwicklung 2024–2029
-- [ ] Investitionen und Schulden (Maßnahmen, VE, Finanzierung, Schuldenstand)
-- [ ] Worüber entscheidet der Rat? (Bindungsgrad, nicht beeinflussbare Posten, Einzelzuschüsse)
-- [ ] Stellenplan
 - [ ] Jahr-Umschalter, „Quelle anzeigen“, Fußzeile mit Datenstand und Hinweis „inoffizielles Projekt“ (Jahr-Umschalter und Fußzeile seit Phase 5; offen: „Quelle anzeigen“, echte Kontakt-/PDF-Links in Phase 7, D-17)
 - [ ] Barrierefreiheit (Lighthouse ≥ 95), Tabellenalternative zu jedem Diagramm, responsiv ab 360 px
 - [ ] Deployment über GitHub Actions auf GitHub Pages (eigener Account)
@@ -111,6 +112,10 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 | Erklärtexte nutzen Platzhalter `{{schluessel\|kuerzel}}`; formatiert wird nur in `format.ts`, Jahreszahlen mit eigenem Kürzel `jahr` (ohne Tausendertrennung) | Pipeline formatiert nie (D-15); „2.026“ statt „2026“ war ein echter Fehler (CR-01) | ✓ Good — Phase 4 (Rendertest über `formatiere()`-Portierung mit Node-Gegenprobe) |
 | Manuelle Vorberichtswerte sind unabhängige Transkription mit Seitenbeleg; Fußnoten werden als korrigierter Wert mit Anmerkung gespeichert, Cent-Beträge kaufmännisch gerundet | Regel 5/9 treffen GEP und Satzung exakt | ✓ Good — Phase 4 |
 | „Weitergabe an Kreis und Land“ als eigener Knoten; Zuschussbedarf je Knoten als berechneter Wert gekennzeichnet | Fachlich korrekte Ausgabensicht für eine kreisangehörige Gemeinde | ✓ Good — Phase 4 |
+| HSK-Schwellen und Rücklagen-Rückgang aus dem Vorbericht (S. 23) in `meta.json`, Rückgang in TS und Python nach derselben Regel | Polster-Aussage muss gedruckte Werte exakt treffen | ✓ Good — Phase 6 (1,77/4,23/4,73/10,04 %) |
+| Rücklagen-Fußnote nennt Beträge ohne Vorzeichen („zuzüglich der Verrechnung“) | Beträge-Lesart ergibt die gedruckten 1,77 %; Vorzeichen-Zusatz nicht nötig (UAT 06, WR-01) | ✓ Good — Phase 6 |
+| Kontextseiten über Menügruppe „Mehr wissen“ (Disclosure, Drawer-Gruppe mobil), Position rein rechnerisch | Navigation bleibt bei 360 px und nach Resize erreichbar | ✓ Good — Phase 6 |
+| Phase-6-Dateien stehen unter einem Typografie-Wächter (`stiltokens.test.ts`), Bestand aus Phase 5 wird in Phase 7 bereinigt | UI-SPEC-Skala gilt für neuen Code ohne Ausnahme | ✓ Good — Quick 261006-f1w |
 
 ## Evolution
 
@@ -130,4 +135,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-05 after Phase 5*
+*Last updated: 2026-10-06 after Phase 6*
