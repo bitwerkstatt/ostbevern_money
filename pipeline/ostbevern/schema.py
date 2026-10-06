@@ -47,6 +47,10 @@ STEUERARTEN_CSV = MANUELL_WURZEL / "steuerarten.csv"
 ZUWENDUNGEN_CSV = MANUELL_WURZEL / "zuwendungen.csv"
 TRANSFERAUFWENDUNGEN_CSV = MANUELL_WURZEL / "transferaufwendungen.csv"
 KITA_ZUSCHUESSE_CSV = MANUELL_WURZEL / "kita_zuschuesse.csv"
+# Einzelzuschüsse für laufende Zwecke (Phase 6, D-03, RAT-03, Vorbericht S. 47): die acht im
+# Fließtext genannten Posten und die Gesamtzeile 120 T€, nur das Haushaltsjahr. Splittet den
+# Transferaufwendungen-Posten "Zuschüsse für lfd. Zwecke" (Regel 5 prüft Σ und Transferposten).
+ZUSCHUESSE_LFD_ZWECKE_CSV = MANUELL_WURZEL / "zuschuesse_lfd_zwecke.csv"
 # Weitere Vorberichtstabellen (Phase 4, D-08, MANU-05): die fünf Tabellen Leistungs-
 # entgelte (2.1.4), Kostenerstattungen (2.1.6), Personal (2.2.1), Sachaufwand (2.2.3)
 # und Sonstige Aufwendungen (2.2.6) in einer Datei, Spalte `tabelle` unterscheidet sie.

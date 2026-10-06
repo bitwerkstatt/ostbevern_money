@@ -125,6 +125,18 @@
         "quelle": 33,
         "gerundet": true,
         "anmerkung": "Vorbericht 2.1.7, Text unter der Tabelle: 'Die Konzessionsabgaben betreffen die Sparten Strom- (315 T€), Gas- (40 T€) und Wasserversorgung (115 T€).' Aufteilung nur für das Haushaltsjahr gedruckt."
+      },
+      "hsk_schwelle_ein_jahr": {
+        "wert": 25,
+        "einheit": "prozent",
+        "quelle": 23,
+        "anmerkung": "Vorbericht S. 23 zitiert § 76 GO NRW: Ein Haushaltssicherungskonzept ist aufzustellen, wenn der in der Schlussbilanz des Vorjahres auszuweisende Ansatz der Allgemeinen Rücklage innerhalb eines Haushaltsjahres 'um mehr als ein Viertel' verringert wird. Bezugsgröße: Ansatz der allgemeinen Rücklage in der Schlussbilanz des Vorjahres. Die App gibt nur den Wortlaut des Vorberichts wieder."
+      },
+      "hsk_schwelle_zwei_jahre": {
+        "wert": 5,
+        "einheit": "prozent",
+        "quelle": 23,
+        "anmerkung": "Vorbericht S. 23 zitiert § 76 GO NRW: Ein Haushaltssicherungskonzept ist auch aufzustellen, wenn 'in zwei aufeinanderfolgenden Haushaltsjahren geplant ist, den in der Schlussbilanz des Vorjahres auszuweisenden Ansatz der Allgemeinen Rücklage jeweils um mehr als ein Zwanzigstel zu verringern'. Bezugsgröße: Ansatz der allgemeinen Rücklage in der Schlussbilanz des Vorjahres. Die App gibt nur den Wortlaut des Vorberichts wieder."
       }
     }
   },
@@ -36843,6 +36855,154 @@
           "gerundet": true,
           "berechnet": false,
           "quelle": 46,
+          "anmerkung": null
+        }
+      ]
+    },
+    "zuschuesse_lfd_zwecke": {
+      "tabelle": "zuschuesse_lfd_zwecke",
+      "quelle_einheit": "teur",
+      "planzeile": null,
+      "gesamt_plan": null,
+      "gesamt_vorbericht": {
+        "werte": [
+          null,
+          null,
+          120000,
+          null,
+          null,
+          null
+        ],
+        "gerundet": true,
+        "quelle": 47
+      },
+      "posten": [
+        {
+          "posten": "kulturtragende_vereine",
+          "name": "Kulturtragende Vereine",
+          "werte": [
+            null,
+            null,
+            23000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "vhs",
+          "name": "VHS",
+          "werte": [
+            null,
+            null,
+            5000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "jekits_eigenanteil_schule_fuer_musik",
+          "name": "Eigenanteil JeKits-Pauschale an die Schule für Musik",
+          "werte": [
+            null,
+            null,
+            8000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "sportfoerderrichtlinie",
+          "name": "Sportförderrichtlinie",
+          "werte": [
+            null,
+            null,
+            28000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "zuschuesse_dritte_soziales_leben",
+          "name": "Zuschüsse an Dritte im Bereich des sozialen Lebens",
+          "werte": [
+            null,
+            null,
+            23000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "schulsozialarbeit",
+          "name": "Schulsozialarbeit",
+          "werte": [
+            null,
+            null,
+            24000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "ferienfreizeit_jugendliche",
+          "name": "Ferienfreizeit der Jugendlichen",
+          "werte": [
+            null,
+            null,
+            8000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
+          "anmerkung": null
+        },
+        {
+          "posten": "restaurierung_private_denkmale",
+          "name": "Restaurierung privater Denkmale",
+          "werte": [
+            null,
+            null,
+            1000,
+            null,
+            null,
+            null
+          ],
+          "gerundet": true,
+          "berechnet": false,
+          "quelle": 47,
           "anmerkung": null
         }
       ]

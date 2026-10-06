@@ -17,6 +17,7 @@ from pathlib import Path
 import polars as pl
 import pytest
 
+from ostbevern import pruefung
 from ostbevern.konfiguration import STANDARD_JAHR, lade_jahrgang
 from ostbevern.manuell import (
     ManuellFehler,
@@ -45,6 +46,7 @@ from ostbevern.schema import (
     VE_UEBERSICHT_CSV,
     VERBINDLICHKEITEN_CSV,
     WEITERE_VORBERICHTSTABELLEN_CSV,
+    ZUSCHUESSE_LFD_ZWECKE_CSV,
     ZUWENDUNGEN_CSV,
     lies_eigenkapital_csv,
     lies_ve_uebersicht_csv,
@@ -58,7 +60,12 @@ _ALLE_VORBERICHT_CSVS = (
     ZUWENDUNGEN_CSV,
     TRANSFERAUFWENDUNGEN_CSV,
     KITA_ZUSCHUESSE_CSV,
+    ZUSCHUESSE_LFD_ZWECKE_CSV,
 )
+
+# Tabellen, die nur das Haushaltsjahr drucken (MANU-04, Phase 6 D-03): ihre (jahr, wertart)-
+# Menge ist eine echte Teilmenge der Ergebnisplan-Spaltenköpfe.
+_NUR_HAUSHALTSJAHR_CSVS = frozenset({KITA_ZUSCHUESSE_CSV, ZUSCHUESSE_LFD_ZWECKE_CSV})
 
 
 def _kopiere_daten_baum_nach(tmp_path: Path) -> None:
@@ -103,10 +110,11 @@ def test_schema_vorbericht_tabelle_kanonisch(pfad: Path, tmp_path: Path) -> None
         )
     }
     tatsaechliche_jahre_wertarten = set(df.select(["jahr", "wertart"]).unique().iter_rows())
-    # kita_zuschuesse druckt nur das Haushaltsjahr (MANU-04): seine (jahr, wertart)-Menge ist
-    # eine echte Teilmenge der Ergebnisplan-Spaltenköpfe, nicht deren vollständige Menge.
+    # kita_zuschuesse und zuschuesse_lfd_zwecke drucken nur das Haushaltsjahr (MANU-04): ihre
+    # (jahr, wertart)-Menge ist eine echte Teilmenge der Ergebnisplan-Spaltenköpfe, nicht
+    # deren vollständige Menge.
     assert tatsaechliche_jahre_wertarten <= erwartete_jahre_wertarten
-    if pfad != KITA_ZUSCHUESSE_CSV:
+    if pfad not in _NUR_HAUSHALTSJAHR_CSVS:
         assert tatsaechliche_jahre_wertarten == erwartete_jahre_wertarten
 
 
@@ -202,6 +210,77 @@ def test_regel5_kita_erkennt_abweichung(tmp_path: Path) -> None:
     ]
     assert len(treffer) == 1
     assert treffer[0].abweichung == -2000
+
+
+def test_regel5_lfd_zwecke_gleich_transferposten(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Σ der acht Posten = Gesamtzeile = Transferposten (S. 47). Mit negativer Toleranz
+    erscheint jeder geprüfte Punkt in `abweichungen` und ist damit sichtbar."""
+    monkeypatch.setattr(pruefung, "TOLERANZ_EURO", -1)
+    bericht = pruefe_alles(STANDARD_JAHR)
+    regel5 = next(regel for regel in bericht.regeln if regel.regel == 5)
+    jahr = lade_jahrgang(STANDARD_JAHR).haushaltsjahr
+    treffer = [
+        punkt
+        for punkt in regel5.abweichungen
+        if punkt.plan == "vorbericht_zuschuesse_lfd_zwecke"
+        and punkt.zeile == "transfer_lfd_zwecke"
+        and punkt.jahr == jahr
+    ]
+    assert len(treffer) == 1
+    assert treffer[0].soll == treffer[0].ist == 120_000
+    assert treffer[0].pdf_seite == 47
+
+    # Unverändert, mit der echten Toleranz: grün.
+    monkeypatch.undo()
+    regel5_echt = next(r for r in pruefe_alles(STANDARD_JAHR).regeln if r.regel == 5)
+    assert regel5_echt.status == "grün"
+
+
+def test_regel5_lfd_zwecke_erkennt_abweichung(tmp_path: Path) -> None:
+    _kopiere_daten_baum_nach(tmp_path)
+    df = lies_vorbericht_csv(tmp_path / ZUSCHUESSE_LFD_ZWECKE_CSV)
+    mutiert = _mutiere_betrag_teur(df, posten=("gesamt",), jahr=STANDARD_JAHR, delta=1)
+    schreibe_vorbericht_csv(mutiert, tmp_path / ZUSCHUESSE_LFD_ZWECKE_CSV)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel5 = next(regel for regel in bericht.regeln if regel.regel == 5)
+    assert regel5.status == "rot"
+    treffer = [
+        punkt
+        for punkt in regel5.abweichungen
+        if punkt.plan == "vorbericht_zuschuesse_lfd_zwecke" and punkt.zeile == "transfer_lfd_zwecke"
+    ]
+    assert len(treffer) == 1
+    assert treffer[0].soll == 120_000
+    assert treffer[0].ist == 121_000
+    assert treffer[0].abweichung == 1000
+
+
+def test_regel5_lfd_zwecke_einzelposten_tippfehler(tmp_path: Path) -> None:
+    _kopiere_daten_baum_nach(tmp_path)
+    df = lies_vorbericht_csv(tmp_path / ZUSCHUESSE_LFD_ZWECKE_CSV)
+    mutiert = _mutiere_betrag_teur(df, posten=("vhs",), jahr=STANDARD_JAHR, delta=1)
+    schreibe_vorbericht_csv(mutiert, tmp_path / ZUSCHUESSE_LFD_ZWECKE_CSV)
+
+    bericht = pruefe_alles(STANDARD_JAHR, daten_wurzel=tmp_path)
+    regel5 = next(regel for regel in bericht.regeln if regel.regel == 5)
+    assert regel5.status == "rot"
+    treffer = [
+        punkt
+        for punkt in regel5.abweichungen
+        if punkt.plan == "vorbericht_zuschuesse_lfd_zwecke" and punkt.zeile == "summe_posten"
+    ]
+    assert len(treffer) == 1
+    assert treffer[0].abweichung == 1000
+
+
+def test_regel5_lfd_zwecke_fehlender_transferposten_bricht_ab() -> None:
+    lfd_df = lies_vorbericht_csv(DATEN_WURZEL / ZUSCHUESSE_LFD_ZWECKE_CSV)
+    transfer_df = lies_vorbericht_csv(DATEN_WURZEL / TRANSFERAUFWENDUNGEN_CSV).filter(
+        pl.col("posten") != "zuschuesse_laufende_zwecke"
+    )
+    with pytest.raises(PruefungsFehler, match="zuschuesse_laufende_zwecke"):
+        pruefung._pruefe_regel5_lfd_zwecke_gegen_transfer(lfd_df=lfd_df, transfer_df=transfer_df)
 
 
 def test_regel5_weitergabe_kreis_land_gleich_tp_15() -> None:
@@ -394,6 +473,18 @@ def test_meta_json_gueltig() -> None:
     assert meta["einwohner"]["wert"] == 11741
     assert meta["kreisumlage"]["brutto"]["wert"] == 11472478
     assert meta["kreisumlage"]["brutto"]["berechnet"] is True
+
+
+def test_meta_hsk_schwellen() -> None:
+    """HSK-Schwellen aus dem Vorbericht (S. 23, Zitat § 76 GO NRW, Phase 6 D-14, ENTW-03):
+    ganze Prozentpunkte mit Seitenangabe; die Anmerkung nennt die Bezugsgröße."""
+    werte = lies_meta_json(DATEN_WURZEL / META_JSON)["vorbericht_werte"]
+    ein_jahr = werte["hsk_schwelle_ein_jahr"]
+    zwei_jahre = werte["hsk_schwelle_zwei_jahre"]
+    assert (ein_jahr["wert"], ein_jahr["einheit"], ein_jahr["quelle"]) == (25, "prozent", 23)
+    assert (zwei_jahre["wert"], zwei_jahre["einheit"], zwei_jahre["quelle"]) == (5, "prozent", 23)
+    assert "Schlussbilanz des Vorjahres" in ein_jahr["anmerkung"]
+    assert "Schlussbilanz des Vorjahres" in zwei_jahre["anmerkung"]
 
 
 @pytest.mark.parametrize(

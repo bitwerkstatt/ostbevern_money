@@ -12,7 +12,7 @@ Gesamtstatus: grün
 | Regel 2 – Produkte → PG → PB | grün | 7994 | 0 | 0 | 6 |
 | Regel 3 – Produktbereiche → Gesamtergebnisplan | grün | 114 | 0 | 0 | 1 |
 | Regel 4 – Sollwerte (Anhang B, Satzung § 1-3) | grün | 259 | 0 | 0 | 0 |
-| Regel 5 – Manuelle Tabellen → Planzeilen | grün | 148 | 0 | 0 | 29 |
+| Regel 5 – Manuelle Tabellen → Planzeilen | grün | 150 | 0 | 0 | 29 |
 | Regel 6 – Investitionsmaßnahmen → Teil-/Gesamtfinanzplan | grün | 1964 | 0 | 0 | 8 |
 | Regel 7 – Haushaltsquerschnitte → PG-/PB-Teilpläne | grün | 1152 | 0 | 0 | 18 |
 | Regel 8 – Vollständigkeit der Produkte | grün | 820 | 0 | 0 | 0 |

@@ -47,6 +47,7 @@ from ostbevern.schema import (
     VE_FAELLIGKEITEN_CSV,
     VERBINDLICHKEITEN_CSV,
     WEITERE_VORBERICHTSTABELLEN_CSV,
+    ZUSCHUESSE_LFD_ZWECKE_CSV,
     ZUWENDUNGEN_CSV,
     lies_eigenkapital_csv,
     lies_grundzahlen_csv,
@@ -957,7 +958,8 @@ def erzeuge_app_daten(
     gep_pdf_seite = ergebnisplan.filter(pl.col("ebene") == "GESAMT")["pdf_seite"][0]
 
     # Reihenfolge ist Teil des App-JSON-Vertrags (D-21): steuerarten, zuwendungen,
-    # transferaufwendungen, kita_zuschuesse, investitionszuwendungen (Phase 5 D-03, ohne
+    # transferaufwendungen, kita_zuschuesse, zuschuesse_lfd_zwecke (Phase 6 D-03, RAT-03, ohne
+    # GEP-Zeile wie Kita), investitionszuwendungen (Phase 5 D-03, ohne
     # GEP-Zeile: die App liest GFP Z. 18 aus `finanzplan`), dann die sechs weiteren Tabellen
     # (leistungsentgelte, kostenerstattungen, personal, sachaufwand, sonstige_aufwendungen,
     # zuletzt sonstige_ertraege, Phase 5 D-04) — dict-
@@ -969,6 +971,7 @@ def erzeuge_app_daten(
         "zuwendungen": lies_vorbericht_csv(daten_wurzel / ZUWENDUNGEN_CSV),
         "transferaufwendungen": transferaufwendungen_df,
         "kita_zuschuesse": lies_vorbericht_csv(daten_wurzel / KITA_ZUSCHUESSE_CSV),
+        "zuschuesse_lfd_zwecke": lies_vorbericht_csv(daten_wurzel / ZUSCHUESSE_LFD_ZWECKE_CSV),
         "investitionszuwendungen": lies_vorbericht_csv(daten_wurzel / INVESTITIONSZUWENDUNGEN_CSV),
         **zerlege_weitere_vorberichtstabellen(
             lies_vorbericht_csv(daten_wurzel / WEITERE_VORBERICHTSTABELLEN_CSV)

@@ -185,6 +185,7 @@ def test_haushalt_json_vorbericht_reihenfolge(tmp_path: Path) -> None:
         "zuwendungen",
         "transferaufwendungen",
         "kita_zuschuesse",
+        "zuschuesse_lfd_zwecke",
         "investitionszuwendungen",
         "leistungsentgelte",
         "kostenerstattungen",
@@ -193,6 +194,26 @@ def test_haushalt_json_vorbericht_reihenfolge(tmp_path: Path) -> None:
         "sonstige_aufwendungen",
         "sonstige_ertraege",
     ]
+
+
+def test_zuschuesse_lfd_zwecke_in_haushalt_json(tmp_path: Path) -> None:
+    """Vorbericht S. 47 (Phase 6 D-03, RAT-03): die acht Einzelzuschüsse ergeben die
+    gedruckte Gesamtzeile und den Transferaufwendungen-Posten "Zuschüsse für lfd. Zwecke"
+    im Haushaltsjahr; alle Posten tragen PDF-Seite 47."""
+    erzeuge_app_daten(STANDARD_JAHR, app_daten_wurzel=tmp_path)
+    daten = json.loads((tmp_path / HAUSHALT_JSON).read_text(encoding="utf-8"))
+    tabelle = daten["vorbericht"]["zuschuesse_lfd_zwecke"]
+    index = daten["jahre"].index(daten["haushaltsjahr"])
+    transfer = {p["posten"]: p for p in daten["vorbericht"]["transferaufwendungen"]["posten"]}
+
+    assert tabelle["tabelle"] == "zuschuesse_lfd_zwecke"
+    assert len(tabelle["posten"]) == 8
+    assert all(posten["quelle"] == 47 for posten in tabelle["posten"])
+    assert tabelle["gesamt_vorbericht"]["quelle"] == 47
+
+    summe = sum(p["werte"][index] for p in tabelle["posten"] if p["werte"][index] is not None)
+    gesamt = tabelle["gesamt_vorbericht"]["werte"][index]
+    assert summe == gesamt == transfer["zuschuesse_laufende_zwecke"]["werte"][index]
 
 
 def test_sonstige_ertraege_ergibt_gep_zeile_07(tmp_path: Path) -> None:
