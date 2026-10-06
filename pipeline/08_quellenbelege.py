@@ -16,6 +16,7 @@ from ostbevern.konfiguration import (
     KonfigurationsFehler,
 )
 from ostbevern.pdf import PdfFehler
+from ostbevern.produkte import ProdukteFehler
 from ostbevern.quellen import QuellenFehler, erzeuge_quellen
 from ostbevern.schema import SchemaFehler
 
@@ -44,6 +45,7 @@ def main(
     except (
         QuellenFehler,
         BelegbildFehler,
+        ProdukteFehler,
         PdfFehler,
         SchemaFehler,
         KonfigurationsFehler,
@@ -56,6 +58,7 @@ def main(
         f"({ergebnis.anzahl_belege} Belege, {ergebnis.anzahl_ohne_bbox} ohne Markierung, "
         f"{len(ergebnis.seiten)} Seiten, {ergebnis.neu_gerendert} Bilder neu gerendert)"
     )
+    typer.echo(f"Bericht: {ergebnis.bericht.relative_to(PROJEKT_WURZEL)}")
 
 
 if __name__ == "__main__":
