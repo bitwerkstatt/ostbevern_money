@@ -264,8 +264,35 @@ Plans:
   4. Ein Playwright-Smoke-Test bestätigt, dass jede Route ohne Konsolenfehler rendert und die Diagramme Daten enthalten. Ein Textdurchgang bestätigt, dass alle Texte deutsch und durchgehend in der Du-Anrede sind.
   5. GitHub Actions baut die App und deployt sie auf GitHub Pages (eigener Account), und die App ist unter einer öffentlichen URL erreichbar.
 
-**Plans**: TBD
+**Plans**: 12 plans
 **UI hint**: yes
+
+Plans:
+**Wave 1**
+- [ ] 07-01-PLAN.md — Tracer GESAMT-Planzeile → Schritt 08 → quellen.json + WebP → Start-Kachel → Seitenleiste; Leisten-Vertrag (D-03-Hinweise, Laden/Fehler, #page-Link, reduzierte Bewegung), DatenTabelle-Spalte „Quelle“, Playwright-Infrastruktur (Wave 1)
+- [ ] 07-02-PLAN.md — Review-Restpunkte D-20 (Phase 2 und 4, neu triagiert) als Fail-fast-Guards ohne Datenänderung, Ledger aktualisiert (Wave 1)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 07-03-PLAN.md — Belege aller Typen, Schwärzung der Personenfelder, alle Belegseiten, Bericht quellenbelege.md mit Datenschutz-Prüfliste, Schritt 08 in alle.py und CI, Vertragstest TS ↔ quellen.json (Wave 2)
+- [ ] 07-04-PLAN.md — Token-Hygiene D-17/D-18 mit Wächter für alle Dateien, Glossar-Überschrift, veraltete WA-Größen (Wave 2)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 07-05-PLAN.md — Konfiguration (Kontakt, Original-PDF, Impressumsfelder), Seite „Über dieses Projekt“, Fußzeilenlink (Wave 3)
+- [ ] 07-06-PLAN.md — „Quelle anzeigen“ an den Kacheln von Investitionen und Stellenplan und auf der Produktseite (Wave 3)
+- [ ] 07-07-PLAN.md — „Quelle anzeigen“ in den Tabellen von /einnahmen und /ausgaben (Wave 3)
+- [ ] 07-08-PLAN.md — „Quelle anzeigen“ in den Tabellen und Kacheln von /rat-entscheidet, /investitionen, /stellenplan (Wave 3)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+- [ ] 07-09-PLAN.md — Barrierefreiheit im Browser: Menügruppe D-19, Fokus, reduzierte Bewegung, Tabellen-Inventar D-16, 360 px, globale D-01-Abdeckung (Wave 4)
+
+**Wave 5** *(blocked on Wave 4 completion)*
+- [ ] 07-10-PLAN.md — Du-Anrede-Test, Textliste, Abnahme-Checkpoint (Texte, Impressum, Datenschutz der Belegseiten, Fokus), Veröffentlichungsbereitschaft (Wave 5, Checkpoint)
+
+**Wave 6** *(blocked on Wave 5 completion)*
+- [ ] 07-11-PLAN.md — Smoke-Test mit axe, Zustandstests, CI-Schritt und Deploy-Job auf GitHub Pages, README-Anleitung (Wave 6)
+
+**Wave 7** *(blocked on Wave 6 completion)*
+- [ ] 07-12-PLAN.md — Paketprüfung und Lighthouse je Route, CI-identisches Abschluss-Gate, Repository und erster Push durch den Nutzer, öffentliche URL (Wave 7, Checkpoints)
 
 ## Progress
 
@@ -280,4 +307,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
 | 6. Kontext-Seiten | 17/17 | Complete    | 2026-10-06 |
-| 7. Feinschliff und Veröffentlichung | 0/TBD | Not started | - |
+| 7. Feinschliff und Veröffentlichung | 0/12 | Planned | - |

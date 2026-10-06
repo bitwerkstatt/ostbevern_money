@@ -42,13 +42,36 @@ created: "2026-10-06"
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 07-xx-xx | — | — | DATA-04 | — | N/A | pytest | `uv run --directory pipeline pytest tests/test_quellen.py -x -q` | ❌ W0 | ⬜ pending |
-| 07-xx-xx | — | — | UI-02 | — | N/A | vitest + Playwright | `npm --prefix "$S/app" run test -- src/lib/__tests__/quelle.test.ts` / `e2e/interaktion.spec.ts` | ❌ W0 | ⬜ pending |
-| 07-xx-xx | — | — | UI-06 | — | N/A | vitest | `npm --prefix "$S/app" run test -- src/lib/__tests__/duanrede.test.ts` | ❌ W0 | ⬜ pending |
-| 07-xx-xx | — | — | A11Y-01..03 | — | N/A | Playwright | `e2e/inventar.spec.ts`, `e2e/interaktion.spec.ts`, `e2e/mobil.spec.ts` | ❌ W0 | ⬜ pending |
-| 07-xx-xx | — | — | A11Y-04 | — | N/A | Lighthouse-Skript | Lighthouse-Rezept (RESEARCH § Code Examples) | ❌ W0 | ⬜ pending |
-| 07-xx-xx | — | — | QUAL-02 | — | Keine Fremd-Requests | Playwright | `e2e/smoke.spec.ts` | ❌ W0 | ⬜ pending |
-| 07-xx-xx | — | — | DEPL-01 | — | Minimale Workflow-Berechtigungen, gepinnte SHAs | statisch (grep) | `grep` auf `permissions`, `if:` in `.github/workflows/` | ❌ W0 | ⬜ pending |
+| 07-01-01 | 07-01 | 1 | DATA-04, UI-02 | T-07-01, T-07-02 | bbox nur bei Zeile+Betrag; Produktinformationsseiten nie ungeschwärzt | pytest + Determinismus + vitest + build | `uv run --directory pipeline pytest tests/test_quellen.py -x -q`; zweimal `08_quellenbelege.py` mit `sha256sum -c`; Scratch-Kette mit `quelle.test.ts` | ❌ W0 (neu in Task) | ⬜ pending |
+| 07-01-02 | 07-01 | 1 | UI-02, A11Y-02 | T-07-03, T-07-04 | kein Roh-HTML; `#page=` nur an fester URL | vitest | Scratch-Kette mit `quelle.test.ts`, `stiltokens.test.ts` | ❌ W0 | ⬜ pending |
+| 07-01-03 | 07-01 | 1 | UI-02 | T-07-05, T-07-SC | nur Requests an die Preview-Herkunft | Playwright (Docker) | `npx playwright test --project=ci e2e/quelle.spec.ts` | ❌ W0 | ⬜ pending |
+| 07-02-01 | 07-02 | 1 | DATA-04 (D-20) | T-07-07 | Fail-fast statt IndexError | pytest | `uv run --directory pipeline pytest tests/test_pruefung.py -x -q` | ✅ | ⬜ pending |
+| 07-02-02 | 07-02 | 1 | DATA-04 (D-20) | T-07-06 | keine Datenänderung | pytest + Gate | `uv run --directory pipeline pytest -q`; `alle.py` + `git diff --stat --exit-code -- daten app/src/data` | ✅ | ⬜ pending |
+| 07-03-01 | 07-03 | 2 | DATA-04 | T-07-10, T-07-11 | Mehrdeutigkeit → null + Bericht | pytest | `uv run --directory pipeline pytest tests/test_quellen.py -x -q` | ✅ (07-01) | ⬜ pending |
+| 07-03-02 | 07-03 | 2 | DATA-04 | T-07-08 | Schwärzung geometrisch und per Pixel geprüft | pytest | `uv run --directory pipeline pytest tests/test_belegbilder.py tests/test_produkte.py tests/test_quellen.py tests/test_konfiguration.py -x -q` | ❌ W0 | ⬜ pending |
+| 07-03-03 | 07-03 | 2 | DATA-04 | T-07-12 | reproduzierbar inkl. `app/public/quellen` | pytest + Gate + vitest | `alle.py` + Diff/Untracked-Gate; Scratch-Kette mit `quelle-abdeckung.test.ts` | ❌ W0 | ⬜ pending |
+| 07-04-01 | 07-04 | 2 | A11Y-04 | T-07-13 | — | vitest | Scratch-Kette mit `stiltokens.test.ts`, `quelltext.test.ts` | ✅ | ⬜ pending |
+| 07-04-02 | 07-04 | 2 | QUAL-02 | — | — | vitest + build | volle Scratch-Kette | ✅ | ⬜ pending |
+| 07-05-01 | 07-05 | 3 | DEPL-02 | T-07-15 | Platzhalter erkannt | vitest | Scratch-Kette mit `config.test.ts` | ✅ | ⬜ pending |
+| 07-05-02 | 07-05 | 3 | UI-06, DEPL-02 | T-07-14, T-07-16 | nie „offizielle“ Darstellung; noopener | vitest + build | volle Scratch-Kette | ✅ | ⬜ pending |
+| 07-06-01 | 07-06 | 3 | UI-02 | T-07-17 | Schlüssel nur über `belegSchluessel` | vitest | Scratch-Kette mit `quelle-kacheln.test.ts` | ❌ W0 | ⬜ pending |
+| 07-06-02 | 07-06 | 3 | UI-02, DATA-04 | T-07-17 | — | vitest + Playwright | volle Scratch-Kette + `e2e/quelle.spec.ts` | ✅ | ⬜ pending |
+| 07-07-01 | 07-07 | 3 | UI-02 | T-07-18 | — | vitest | Scratch-Kette mit `quelle-leitfragen.test.ts` | ❌ W0 | ⬜ pending |
+| 07-07-02 | 07-07 | 3 | UI-02 | T-07-18 | — | vitest + Playwright | volle Scratch-Kette + `e2e/quelle.spec.ts` | ✅ | ⬜ pending |
+| 07-08-01 | 07-08 | 3 | UI-02 | T-07-19 | — | vitest | Scratch-Kette mit `quelle-kontext.test.ts` | ❌ W0 | ⬜ pending |
+| 07-08-02 | 07-08 | 3 | UI-02 | T-07-19 | — | vitest + Playwright | volle Scratch-Kette + `e2e/quelle.spec.ts` | ✅ | ⬜ pending |
+| 07-09-01 | 07-09 | 4 | A11Y-02, UI-02 | — | — | Playwright | `npx playwright test --project=ci e2e/interaktion.spec.ts e2e/quelle.spec.ts` | ❌ W0 | ⬜ pending |
+| 07-09-02 | 07-09 | 4 | A11Y-01 | T-07-20 | geschlossene Ausnahmeliste | Playwright + vitest | volle Scratch-Kette + `npx playwright test --project=ci` | ❌ W0 | ⬜ pending |
+| 07-09-03 | 07-09 | 4 | A11Y-03 | — | — | Playwright | `npx playwright test --project=mobil` | ❌ W0 | ⬜ pending |
+| 07-10-01 | 07-10 | 5 | UI-06 | — | — | vitest + Playwright | Scratch mit `duanrede.test.ts` + `--project=texte` | ❌ W0 | ⬜ pending |
+| 07-10-02 | 07-10 | 5 | UI-06 | T-07-21, T-07-22 | Abnahme vor Commit | Checkpoint (blocking-human) | — | — | ⬜ pending |
+| 07-10-03 | 07-10 | 5 | UI-06 | T-07-23 | Impressum ohne Platzhalter | pytest + Gate + vitest + Playwright | volle Ketten | ✅ | ⬜ pending |
+| 07-11-01 | 07-11 | 6 | QUAL-02 | — | — | vitest (SSR) | Scratch mit `src/components/__tests__/zustaende.test.ts` | ❌ W0 | ⬜ pending |
+| 07-11-02 | 07-11 | 6 | QUAL-02, A11Y-02 | T-07-26, T-07-27 | keine Fremd-Requests, kein `.invalid` | Playwright + axe | `npx playwright test --project=ci` | ❌ W0 | ⬜ pending |
+| 07-11-03 | 07-11 | 6 | DEPL-01 | T-07-24, T-07-25 | Rechte nur im Deploy-Job, SHAs gepinnt | statisch (grep/awk) | `grep -c 'pages: write'`, Block-Prüfung per `awk`, SHA-Prüfung | ✅ | ⬜ pending |
+| 07-12-01 | 07-12 | 7 | A11Y-04 | T-07-28 | Paketprüfung vor Installation | Checkpoint (blocking-human) | — | — | ⬜ pending |
+| 07-12-02 | 07-12 | 7 | A11Y-04, A11Y-03 | T-07-28 | Lighthouse nur im Scratch | Lighthouse-Skript + CI-identisches Gate | `bash scripts/lighthouse-a11y.sh`; Pipeline- und App-Job lokal; `--project=ci --project=mobil` | ❌ W0 | ⬜ pending |
+| 07-12-03 | 07-12 | 7 | DEPL-02 | T-07-29 | Push nur durch den Nutzer | Checkpoint (human-action) | — (Sandbox erreicht github.io nicht) | — | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
