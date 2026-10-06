@@ -127,7 +127,7 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [x] **UI-03**: Die Fußzeile zeigt Datenstand, Link zum Original-PDF, den Hinweis „inoffizielles Projekt“ und einen Kontakt
 - [x] **UI-04**: Ein Hinweis „Was nicht im Haushalt steht“ erklärt BBO (Hallenbad) und TEO AöR (Abwasser)
 - [x] **UI-05**: Zahlen in Texten werden aus den Daten erzeugt, nicht fest eingetippt; jeder Erklärtext mit Zahl verweist auf eine PDF-Seite
-- [ ] **UI-06**: Alle Texte sind deutsch und durchgehend in der Du-Anrede
+- [x] **UI-06**: Alle Texte sind deutsch und durchgehend in der Du-Anrede
 
 ### Barrierefreiheit und Qualität
 
@@ -254,7 +254,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-03 | Phase 5 | Complete |
 | UI-04 | Phase 6 | Complete |
 | UI-05 | Phase 5 | Complete |
-| UI-06 | Phase 7 | Pending |
+| UI-06 | Phase 7 | Complete |
 | A11Y-01 | Phase 7 | Pending |
 | A11Y-02 | Phase 7 | Pending |
 | A11Y-03 | Phase 7 | Pending |

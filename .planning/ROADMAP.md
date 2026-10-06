@@ -264,7 +264,7 @@ Plans:
   4. Ein Playwright-Smoke-Test bestätigt, dass jede Route ohne Konsolenfehler rendert und die Diagramme Daten enthalten. Ein Textdurchgang bestätigt, dass alle Texte deutsch und durchgehend in der Du-Anrede sind.
   5. GitHub Actions baut die App und deployt sie auf GitHub Pages (eigener Account), und die App ist unter einer öffentlichen URL erreichbar.
 
-**Plans**: 9/12 plans executed
+**Plans**: 10/12 plans executed
 **UI hint**: yes
 
 Plans:
@@ -286,7 +286,7 @@ Plans:
 - [x] 07-09-PLAN.md — Barrierefreiheit im Browser: Menügruppe D-19, Fokus, reduzierte Bewegung, Tabellen-Inventar D-16, 360 px, globale D-01-Abdeckung (Wave 4)
 
 **Wave 5** *(blocked on Wave 4 completion)*
-- [ ] 07-10-PLAN.md — Du-Anrede-Test, Textliste, Abnahme-Checkpoint (Texte, Impressum, Datenschutz der Belegseiten, Fokus), Veröffentlichungsbereitschaft (Wave 5, Checkpoint)
+- [x] 07-10-PLAN.md — Du-Anrede-Test, Textliste, Abnahme-Checkpoint (Texte, Impressum, Datenschutz der Belegseiten, Fokus), Veröffentlichungsbereitschaft (Wave 5, Checkpoint)
 
 **Wave 6** *(blocked on Wave 5 completion)*
 - [ ] 07-11-PLAN.md — Smoke-Test mit axe, Zustandstests, CI-Schritt und Deploy-Job auf GitHub Pages, README-Anleitung (Wave 6)
@@ -307,4 +307,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
 | 6. Kontext-Seiten | 17/17 | Complete    | 2026-10-06 |
-| 7. Feinschliff und Veröffentlichung | 9/12 | In Progress | - |
+| 7. Feinschliff und Veröffentlichung | 10/12 | In Progress | - |
