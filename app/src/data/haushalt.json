@@ -125,6 +125,18 @@
         "quelle": 33,
         "gerundet": true,
         "anmerkung": "Vorbericht 2.1.7, Text unter der Tabelle: 'Die Konzessionsabgaben betreffen die Sparten Strom- (315 T€), Gas- (40 T€) und Wasserversorgung (115 T€).' Aufteilung nur für das Haushaltsjahr gedruckt."
+      },
+      "hsk_schwelle_ein_jahr": {
+        "wert": 25,
+        "einheit": "prozent",
+        "quelle": 23,
+        "anmerkung": "Vorbericht S. 23 zitiert § 76 GO NRW: Ein Haushaltssicherungskonzept ist aufzustellen, wenn der in der Schlussbilanz des Vorjahres auszuweisende Ansatz der Allgemeinen Rücklage innerhalb eines Haushaltsjahres 'um mehr als ein Viertel' verringert wird. Bezugsgröße: Ansatz der allgemeinen Rücklage in der Schlussbilanz des Vorjahres. Die App gibt nur den Wortlaut des Vorberichts wieder."
+      },
+      "hsk_schwelle_zwei_jahre": {
+        "wert": 5,
+        "einheit": "prozent",
+        "quelle": 23,
+        "anmerkung": "Vorbericht S. 23 zitiert § 76 GO NRW: Ein Haushaltssicherungskonzept ist auch aufzustellen, wenn 'in zwei aufeinanderfolgenden Haushaltsjahren geplant ist, den in der Schlussbilanz des Vorjahres auszuweisenden Ansatz der Allgemeinen Rücklage jeweils um mehr als ein Zwanzigstel zu verringern'. Bezugsgröße: Ansatz der allgemeinen Rücklage in der Schlussbilanz des Vorjahres. Die App gibt nur den Wortlaut des Vorberichts wieder."
       }
     }
   },
