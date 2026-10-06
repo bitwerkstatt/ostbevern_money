@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import HinweisNichtImHaushalt from '@/components/HinweisNichtImHaushalt.vue'
+import NichtBeeinflussbarBlock from '@/components/NichtBeeinflussbarBlock.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import WertartEtikett from '@/components/WertartEtikett.vue'
 import ZuschussListe from '@/components/ZuschussListe.vue'
@@ -17,7 +19,9 @@ const lead =
     <PageIntro titel="Worüber entscheidet der Rat?" :beschreibung="lead">
       <WertartEtikett :wertart="wertart" />
     </PageIntro>
+    <NichtBeeinflussbarBlock />
     <ZuschussListe />
+    <HinweisNichtImHaushalt variante="kurz" />
   </div>
 </template>
 

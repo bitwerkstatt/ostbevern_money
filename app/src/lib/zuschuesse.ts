@@ -1,11 +1,14 @@
 // Einzelzuschüsse des Haushaltsjahrs aus den Vorbericht-Tabellen (RAT-03, D-03): die
 // Kindertageseinrichtungen (S. 46), das Kinder- und Jugendwerk und der Offene Ganztag
 // (Transferaufwendungen, S. 46) sowie die acht Einzelposten der Zuschüsse für laufende Zwecke
-// (S. 47). Werte werden aus `haushalt.json` gelesen, nie neu berechnet. Alle Beträge sind
-// T€-Werte × 1000 und deshalb gerundet; die App zeigt sie als „rd.“.
+// (S. 47). Dazu die großen Posten, die der Rat nicht beeinflussen kann (RAT-02, D-02): die
+// Weitergabe an Kreis und Land (über `lib/kreisumlage.ts`, wie auf /ausgaben) und die gesetzlichen
+// Sozialleistungen. Werte werden aus `haushalt.json` gelesen, nie neu berechnet. Alle Beträge
+// sind T€-Werte × 1000 und deshalb gerundet; die App zeigt sie als „rd.“.
 
 import { haushalt } from '@/data/daten'
 import type { VorberichtPosten, VorberichtTabelle } from '@/data/typen'
+import { baueKreisumlage } from '@/lib/kreisumlage'
 
 export interface Zuschuss {
   schluessel: string
@@ -34,8 +37,11 @@ const TRANSFER_TABELLE = 'transferaufwendungen'
 /** Die zwei eigenen Zuschüsse unter den Transferaufwendungen (Kinder- und Jugendwerk, OGS). */
 const TRANSFER_ZUSCHUESSE = ['zuschuss_kinder_jugendwerk', 'zuschuss_ogs'] as const
 
-/** Gesetzliche Sozialleistungen unter den Transferaufwendungen (D-02). */
-export const SOZIALLEISTUNGEN_SCHLUESSEL = 'sozialleistungen'
+/** Schlüssel der Sozialleistungen unter den Transferaufwendungen (D-02). */
+const SOZIALLEISTUNGEN_SCHLUESSEL = 'sozialleistungen'
+
+/** Name der Kachel; der Vorbericht nennt den Posten nur „Sozialleistungen“. */
+export const SOZIALLEISTUNGEN_BEZEICHNUNG = 'Gesetzliche Sozialleistungen'
 
 function jahrIndex(): number {
   const index = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
@@ -126,19 +132,40 @@ export function zusammen(gruppe: ZuschussGruppe): number | null {
   return werte.length === 0 ? null : werte.reduce((summe, wert) => summe + wert, 0)
 }
 
-// RED-Stand (Task 2): Signaturen ohne Implementierung.
-export const SOZIALLEISTUNGEN_BEZEICHNUNG = 'Gesetzliche Sozialleistungen'
-
 export interface NichtBeeinflussbar {
+  /** Kacheln: die KL-Unterposten, dann die Sozialleistungen; ohne Posten mit 0 oder ohne Wert. */
   posten: Zuschuss[]
+  /** Eurogenauer Gesamtaufwand der Weitergabe an Kreis und Land im Haushaltsjahr. */
   klGesamt: number
   klName: string
 }
 
+/** Posten mit dem Wert 0 oder ohne Wert sind keine Kachel (UI-SPEC E6 partial). */
 export function ohneLeere(posten: readonly Zuschuss[]): Zuschuss[] {
-  return [...posten]
+  return posten.filter((p) => p.wert !== null && p.wert !== 0)
 }
 
+/**
+ * Was der Rat nicht beeinflussen kann (D-02): die KL-Unterposten wie auf /ausgaben und die
+ * gesetzlichen Sozialleistungen. KL erscheint nur hier, nie als Bindungsgrad-Segment.
+ */
 export function nichtBeeinflussbar(): NichtBeeinflussbar {
-  return { posten: [], klGesamt: 0, klName: '' }
+  const index = jahrIndex()
+  const kl = baueKreisumlage(index)
+  const klPosten: Zuschuss[] = kl.unterposten.map((u) => ({
+    schluessel: u.code,
+    name: u.name,
+    wert: u.wert,
+    gerundet: u.gerundet,
+    pdfSeite: u.pdfSeite,
+  }))
+  const sozialleistungen: Zuschuss = {
+    ...alsZuschuss(vorberichtPosten(TRANSFER_TABELLE, SOZIALLEISTUNGEN_SCHLUESSEL), index),
+    name: SOZIALLEISTUNGEN_BEZEICHNUNG,
+  }
+  return {
+    posten: ohneLeere([...klPosten, sozialleistungen]),
+    klGesamt: kl.gesamt,
+    klName: kl.name,
+  }
 }
