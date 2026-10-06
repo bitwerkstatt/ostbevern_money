@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { haushalt, stellenplan } from '@/data/daten'
 import type { Haushalt, Stellenplan } from '@/data/typen'
+import { belegSchluessel, bboxProzent, findeBeleg } from '@/lib/quelle'
 import {
   alsVzae,
   differenzText,
@@ -395,6 +396,35 @@ describe('stellenNachGruppe', () => {
         expect(zeile.gruppe).not.toBe('')
         expect(Number.isInteger(zeile.stellen)).toBe(true)
         expect(zeile.pdfSeite).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('trägt je Zeile Teil, Position, Bereich null und den auflösbaren sp-Schlüssel', () => {
+    for (const { teil } of TEILE) {
+      for (const zeile of stellenNachGruppe(teil)) {
+        expect(zeile.teil).toBe(teil)
+        expect(zeile.produktbereich).toBeNull()
+        expect(zeile.beleg).toBe(belegSchluessel.sp(teil, zeile.position, null))
+        const beleg = findeBeleg(zeile.beleg)
+        expect(beleg, zeile.beleg).not.toBeNull()
+        expect(beleg?.pdfSeite, zeile.beleg).toBe(zeile.pdfSeite)
+      }
+    }
+  })
+
+  it('die Stellenplanseiten sind Querformat: die Markierung nutzt die Querformat-Umrechnung', () => {
+    for (const { teil } of TEILE) {
+      for (const zeile of stellenNachGruppe(teil)) {
+        const beleg = findeBeleg(zeile.beleg)
+        expect(beleg, zeile.beleg).not.toBeNull()
+        if (beleg === null || beleg.bbox === null) {
+          continue
+        }
+        expect(beleg.breite, zeile.beleg).toBeGreaterThan(beleg.hoehe)
+        const prozent = bboxProzent(beleg.bbox, beleg.breite, beleg.hoehe)
+        expect(prozent.links + prozent.breite, zeile.beleg).toBeLessThanOrEqual(100.1)
+        expect(prozent.oben + prozent.hoehe, zeile.beleg).toBeLessThanOrEqual(100.1)
       }
     }
   })

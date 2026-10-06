@@ -9,6 +9,7 @@
 import { haushalt } from '@/data/daten'
 import type { VorberichtPosten, VorberichtTabelle } from '@/data/typen'
 import { baueKreisumlage } from '@/lib/kreisumlage'
+import { belegSchluessel, findeBeleg } from '@/lib/quelle'
 
 export interface Zuschuss {
   schluessel: string
@@ -19,6 +20,8 @@ export interface Zuschuss {
   gerundet: boolean
   /** 1-basierte PDF-Seite des Postens; `null`, falls die Daten keine Seite nennen. */
   pdfSeite: number | null
+  /** Belegschlüssel der Quelle (`lib/quelle.ts`); `null`, wenn der Posten keine Seite nennt. */
+  beleg: string | null
 }
 
 export interface ZuschussGruppe {
@@ -69,14 +72,22 @@ export function vorberichtPosten(tabelle: string, schluessel: string): Vorberich
   return posten
 }
 
-/** Der Posten im Haushaltsjahr als `Zuschuss`; ohne Wert bleibt `wert` `null` (nie 0). */
-export function alsZuschuss(posten: VorberichtPosten, index: number = jahrIndex()): Zuschuss {
+/**
+ * Der Posten der Vorberichtstabelle `tabelle` im Haushaltsjahr als `Zuschuss`; ohne Wert bleibt
+ * `wert` `null` (nie 0), ohne Seite der Beleg `null`.
+ */
+export function alsZuschuss(
+  tabelle: string,
+  posten: VorberichtPosten,
+  index: number = jahrIndex(),
+): Zuschuss {
   return {
     schluessel: posten.posten,
     name: posten.name,
     wert: posten.werte[index] ?? null,
     gerundet: posten.gerundet,
     pdfSeite: posten.quelle,
+    beleg: posten.quelle === null ? null : belegSchluessel.vb(tabelle, posten.posten),
   }
 }
 
@@ -92,7 +103,7 @@ function seitenVon(posten: readonly Zuschuss[], weitere: readonly (number | null
 
 function gruppeAusTabelle(name: string, index: number): ZuschussGruppe {
   const tabelle = vorberichtTabelle(name)
-  const posten = tabelle.posten.map((p) => alsZuschuss(p, index))
+  const posten = tabelle.posten.map((p) => alsZuschuss(name, p, index))
   return {
     posten,
     gesamt: tabelle.gesamt_vorbericht.werte[index] ?? null,
@@ -112,7 +123,7 @@ export function kitaZuschuesse(): ZuschussGruppe {
 export function weitereZuschuesse(): { transfer: ZuschussGruppe; lfdZwecke: ZuschussGruppe } {
   const index = jahrIndex()
   const posten = TRANSFER_ZUSCHUESSE.map((schluessel) =>
-    alsZuschuss(vorberichtPosten(TRANSFER_TABELLE, schluessel), index),
+    alsZuschuss(TRANSFER_TABELLE, vorberichtPosten(TRANSFER_TABELLE, schluessel), index),
   )
   return {
     transfer: { posten, gesamt: null, pdfSeiten: seitenVon(posten, []) },
@@ -146,6 +157,20 @@ export function ohneLeere(posten: readonly Zuschuss[]): Zuschuss[] {
 }
 
 /**
+ * Belegschlüssel eines KL-Unterpostens: der Vorberichtsposten gleichen Namens unter den
+ * Transferaufwendungen (`KL.kreisumlage` gehört zu `vb:transferaufwendungen:kreisumlage`), sonst
+ * die Seite des Knotens; ohne Seite `null`.
+ */
+function klBeleg(code: string, pdfSeite: number | null): string | null {
+  const posten = code.slice(code.lastIndexOf('.') + 1)
+  const vorbericht = belegSchluessel.vb(TRANSFER_TABELLE, posten)
+  if (findeBeleg(vorbericht) !== null) {
+    return vorbericht
+  }
+  return pdfSeite === null ? null : belegSchluessel.seite(pdfSeite)
+}
+
+/**
  * Was der Rat nicht beeinflussen kann (D-02): die KL-Unterposten wie auf /ausgaben und die
  * gesetzlichen Sozialleistungen. KL erscheint nur hier, nie als Bindungsgrad-Segment.
  */
@@ -158,9 +183,14 @@ export function nichtBeeinflussbar(): NichtBeeinflussbar {
     wert: u.wert,
     gerundet: u.gerundet,
     pdfSeite: u.pdfSeite,
+    beleg: klBeleg(u.code, u.pdfSeite),
   }))
   const sozialleistungen: Zuschuss = {
-    ...alsZuschuss(vorberichtPosten(TRANSFER_TABELLE, SOZIALLEISTUNGEN_SCHLUESSEL), index),
+    ...alsZuschuss(
+      TRANSFER_TABELLE,
+      vorberichtPosten(TRANSFER_TABELLE, SOZIALLEISTUNGEN_SCHLUESSEL),
+      index,
+    ),
     name: SOZIALLEISTUNGEN_BEZEICHNUNG,
   }
   return {

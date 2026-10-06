@@ -97,14 +97,14 @@ const beschreibung = computed(
 const spalten: DatenSpalte[] = [
   { schluessel: 'gruppe', titel: 'Gruppe', art: 'text' },
   { schluessel: 'stellen', titel: 'Stellen (VZÄ)', art: 'dezimal' },
-  { schluessel: 'quelle', titel: 'Quelle', art: 'text' },
+  { schluessel: 'quelle', titel: 'Quelle', art: 'quelle' },
 ]
 
 const tabelle = computed<DatenZeile[]>(() =>
   zeilen.value.map((zeile) => ({
     gruppe: zeile.gruppe,
     stellen: alsVzae(zeile.stellen),
-    quelle: `PDF-Seite ${String(zeile.pdfSeite)}`,
+    quelle: zeile.beleg,
   })),
 )
 </script>

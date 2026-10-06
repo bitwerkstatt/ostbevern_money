@@ -26,6 +26,7 @@ defineSlots<{
 }>()
 
 const wertart = wertartName(wertartFuerJahr(haushalt.haushaltsjahr))
+const wertartZeile = `${wertart} ${formatJahr(haushalt.haushaltsjahr)}`
 
 const lead =
   'Diese Beträge legen Gesetze sowie Kreis und Land fest, der Rat kann sie nicht steuern.'
@@ -49,9 +50,10 @@ const kacheln = computed(() =>
     schluessel: p.schluessel,
     bezeichnung: p.name,
     wert: p.wert === null ? '' : `rd. ${euroKurz(p.wert)}`,
+    quelle: p.beleg ?? undefined,
     zeile:
       p.pdfSeite === null
-        ? `${wertart} ${formatJahr(haushalt.haushaltsjahr)}`
+        ? wertartZeile
         : quellenZeile(wertart, haushalt.haushaltsjahr, [p.pdfSeite]),
   })),
 )
@@ -69,7 +71,13 @@ const kacheln = computed(() =>
     <p class="om-nicht-beeinflussbar__lead">{{ lead }}</p>
     <ul class="om-nicht-beeinflussbar__raster" role="list" lang="de">
       <li v-for="k in kacheln" :key="k.schluessel">
-        <KennzahlKachel :bezeichnung="k.bezeichnung" :wert="k.wert" :zeile="k.zeile" />
+        <KennzahlKachel
+          :bezeichnung="k.bezeichnung"
+          :wert="k.wert"
+          :zeile="k.zeile"
+          :quelle="k.quelle"
+          :wertart="wertartZeile"
+        />
       </li>
     </ul>
     <div class="om-nicht-beeinflussbar__vergleich">

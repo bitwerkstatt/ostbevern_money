@@ -9,6 +9,7 @@
 import { vzae } from '@/charts/format'
 import { haushalt, stellenplan } from '@/data/daten'
 import type { Haushalt, Stellenplan, StellenplanZeile } from '@/data/typen'
+import { belegSchluessel } from '@/lib/quelle'
 
 export interface TeilInfo {
   /** Wert von `StellenplanZeile.teil`. */
@@ -286,6 +287,14 @@ export interface GruppenZeile {
   stellen: number
   /** 1-basierte PDF-Seite der Zeile. */
   pdfSeite: number
+  /** Wert von `StellenplanZeile.teil`. */
+  teil: string
+  /** Gedruckte Zeilenordnung innerhalb des Teils. */
+  position: number
+  /** Produktbereich der Zeile; für Gruppenzeilen immer `null` (Teil A/B ohne Bereich). */
+  produktbereich: string | null
+  /** Belegschlüssel `sp:{teil}:{position}:{produktbereich oder -}` (`lib/quelle.ts`). */
+  beleg: string
 }
 
 /** Pauschal- oder Sonderzeilen (z. B. „pauschal“) stehen am Ende der Achse (UI-SPEC). */
@@ -312,5 +321,9 @@ export function stellenNachGruppe(teil: string, daten: Stellenplan = stellenplan
       gruppe: zeile.gruppe,
       stellen: hundertstel(zeile),
       pdfSeite: zeile.pdf_seite,
+      teil: zeile.teil,
+      position: zeile.position,
+      produktbereich: zeile.produktbereich,
+      beleg: belegSchluessel.sp(zeile.teil, zeile.position, zeile.produktbereich),
     }))
 }
