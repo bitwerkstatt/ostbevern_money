@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest'
 
 import { haushalt } from '@/data/daten'
-import { kitaZuschuesse, vorberichtTabelle, weitereZuschuesse, zusammen } from '@/lib/zuschuesse'
+import { baueKreisumlage, findeKlKnoten } from '@/lib/kreisumlage'
+import {
+  kitaZuschuesse,
+  nichtBeeinflussbar,
+  ohneLeere,
+  SOZIALLEISTUNGEN_BEZEICHNUNG,
+  vorberichtTabelle,
+  weitereZuschuesse,
+  zusammen,
+} from '@/lib/zuschuesse'
 
 const INDEX = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
 
@@ -114,5 +123,74 @@ describe.runIf(haushalt.haushaltsjahr === 2026)('Einzelzuschüsse Haushalt 2026'
     const kita = kitaZuschuesse()
     expect(kita.posten).toHaveLength(7)
     expect(kita.gesamt).toBe(559000)
+  })
+})
+
+describe('ohneLeere', () => {
+  const posten = (schluessel: string, wert: number | null) => ({
+    schluessel,
+    name: schluessel,
+    wert,
+    gerundet: true,
+    pdfSeite: 1,
+  })
+
+  it('lässt Posten mit dem Wert 0 oder ohne Wert weg', () => {
+    const rest = ohneLeere([posten('a', 0), posten('b', null), posten('c', 5000)])
+    expect(rest.map((p) => p.schluessel)).toEqual(['c'])
+  })
+})
+
+describe('nichtBeeinflussbar', () => {
+  const ergebnis = nichtBeeinflussbar()
+
+  it('enthält jeden Unterposten der Weitergabe an Kreis und Land mit denselben Werten wie /ausgaben', () => {
+    const kreisumlage = baueKreisumlage(INDEX)
+    expect(kreisumlage.unterposten.length).toBeGreaterThan(0)
+    for (const u of kreisumlage.unterposten) {
+      const kachel = ergebnis.posten.find((p) => p.schluessel === u.code)
+      expect(kachel?.wert, u.code).toBe(u.wert)
+      expect(kachel?.name, u.code).toBe(u.name)
+      expect(kachel?.pdfSeite, u.code).toBe(u.pdfSeite)
+    }
+  })
+
+  it('enthält die gesetzlichen Sozialleistungen aus den Transferaufwendungen', () => {
+    const kachel = ergebnis.posten.find((p) => p.name === SOZIALLEISTUNGEN_BEZEICHNUNG)
+    const wert = transferWert('sozialleistungen')
+    if (wert === null || wert === undefined || wert === 0) {
+      expect(kachel).toBeUndefined()
+    } else {
+      expect(kachel?.wert).toBe(wert)
+    }
+  })
+
+  it('zeigt keinen Posten ohne Wert oder mit dem Wert 0 und belegt jeden mit einer PDF-Seite', () => {
+    expect(ergebnis.posten.length).toBeGreaterThan(0)
+    for (const p of ergebnis.posten) {
+      expect(p.wert, p.schluessel).not.toBeNull()
+      expect(p.wert, p.schluessel).not.toBe(0)
+      expect(p.pdfSeite, p.schluessel).not.toBeNull()
+      expect(p.gerundet, p.schluessel).toBe(true)
+    }
+  })
+
+  it('liefert Gesamtbetrag und Namen der Weitergabe an Kreis und Land', () => {
+    expect(ergebnis.klGesamt).toBe(baueKreisumlage(INDEX).gesamt)
+    expect(ergebnis.klName).toBe(findeKlKnoten().name)
+  })
+})
+
+describe.runIf(haushalt.haushaltsjahr === 2026)('Nicht beeinflussbare Posten Haushalt 2026', () => {
+  const werte = Object.fromEntries(nichtBeeinflussbar().posten.map((p) => [p.name, p.wert]))
+
+  it('Kreisumlage 10.147.000 €, Gewerbesteuerumlage 654.000 €, Krankenhausinvestitionsumlage 200.000 €', () => {
+    expect(werte.Kreisumlage).toBe(10147000)
+    expect(werte.Gewerbesteuerumlage).toBe(654000)
+    expect(werte.Krankenhausinvestitionsumlage).toBe(200000)
+  })
+
+  it('Gesetzliche Sozialleistungen 491.000 €', () => {
+    expect(werte[SOZIALLEISTUNGEN_BEZEICHNUNG]).toBe(491000)
   })
 })

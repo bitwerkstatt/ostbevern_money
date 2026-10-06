@@ -125,3 +125,20 @@ export function zusammen(gruppe: ZuschussGruppe): number | null {
   const werte = gruppe.posten.flatMap((p) => (p.wert === null ? [] : [p.wert]))
   return werte.length === 0 ? null : werte.reduce((summe, wert) => summe + wert, 0)
 }
+
+// RED-Stand (Task 2): Signaturen ohne Implementierung.
+export const SOZIALLEISTUNGEN_BEZEICHNUNG = 'Gesetzliche Sozialleistungen'
+
+export interface NichtBeeinflussbar {
+  posten: Zuschuss[]
+  klGesamt: number
+  klName: string
+}
+
+export function ohneLeere(posten: readonly Zuschuss[]): Zuschuss[] {
+  return [...posten]
+}
+
+export function nichtBeeinflussbar(): NichtBeeinflussbar {
+  return { posten: [], klGesamt: 0, klName: '' }
+}
