@@ -12,6 +12,7 @@
 
 import type { EChartsOption } from 'echarts'
 
+import { zweizeilig } from '@/charts/beschriftung'
 import { BERECHNET_DECAL, SCHULDEN_FARBEN } from '@/charts/echartsTheme'
 import { euro, euroKurz, jahr as formatiereJahr, KEIN_WERT } from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
@@ -169,12 +170,6 @@ export function schuldenKennzahlen(): SchuldenKennzahlen {
     pdfSeiten: [reihen.pdfSeite, einwohnerQuelle],
     berechnet,
   }
-}
-
-/** Trennt „21,3 Mio. €“ für schmale Bildschirme in zwei Zeilen („21,3“ / „Mio. €“). */
-function zweizeilig(text: string): string {
-  const stelle = text.indexOf(' ')
-  return stelle < 0 ? text : `${text.slice(0, stelle)}\n${text.slice(stelle + 1)}`
 }
 
 /** Randbreite der Weißtrenner zwischen den Segmenten (UI-SPEC: 2 px). */

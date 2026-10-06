@@ -4,13 +4,16 @@
 
 import type { EChartsOption } from 'echarts'
 
-import { INVEST_FARBE } from '@/charts/echartsTheme'
-import { euro, euroKurz, jahr as formatiereJahr } from '@/charts/format'
+import { zweizeilig } from '@/charts/beschriftung'
+import { INVEST_FARBE, KATEGORIE_FARBEN } from '@/charts/echartsTheme'
+import { euro, euroKurz, jahr as formatiereJahr, KEIN_WERT } from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
+import { jahresAchse } from '@/charts/wertartStil'
 import type { DatenSpalte } from '@/components/datenTabelle'
-import { investitionen } from '@/data/daten'
+import { haushalt, investitionen } from '@/data/daten'
 import type { Massnahme, VeFaelligkeit } from '@/data/typen'
-import type { Tabelle } from '@/lib/produkt'
+import { wertartName } from '@/lib/jahr'
+import { jahrSchluessel, type Tabelle } from '@/lib/produkt'
 
 // ---------------------------------------------------------------------------------------
 // Verpflichtungsermächtigungen nach Fälligkeit (INV-02, D-10)
@@ -205,72 +208,308 @@ export function veTabelle(eintraege: readonly VeFaelligkeitsjahr[] = veFaelligke
 }
 
 // ---------------------------------------------------------------------------------------
-// Finanzierung der Investitionen (INV-03, D-08) — Gerüst für den RED-Schritt
+// Finanzierung der Investitionen (INV-03, D-08)
 // ---------------------------------------------------------------------------------------
+//
+// Die Diagramme lesen nur Finanzplan-Reihen (Ein- und Auszahlungen); ein Ergebnisplan-Wert
+// (Erträge, Aufwendungen) steht nie im selben Diagramm (Spez. 3.1).
 
+/** Die beiden Diagramme: Investitionen mit Einzahlungen, Kreditaufnahme mit Tilgung. */
 export type FinanzierungsVariante = 'investitionen' | 'kredite'
 
+/** Die Finanzierungsreihen je Eintrag von `haushalt.jahre`; ein fehlender Wert ist `null`. */
 export interface Finanzierungsreihen {
   jahre: number[]
   wertarten: string[]
+  /** GFP Z. 23, Einzahlungen aus Investitionstätigkeit. */
   einzahlungen: (number | null)[]
+  /** GFP Z. 30, Auszahlungen aus Investitionstätigkeit. */
   auszahlungen: (number | null)[]
+  /** GFP Z. 33, Aufnahme und Rückflüsse von Darlehen. */
   kreditaufnahme: (number | null)[]
+  /** GFP Z. 35, Tilgung und Gewährung von Darlehen. */
   tilgung: (number | null)[]
 }
 
+/** Eine Einzahlungszeile des Gesamtfinanzplans (Z. 18 bis 22) mit gedrucktem Namen. */
 export interface EinzahlungsZeile {
   schluessel: string
+  /** Zweistellige Zeilennummer, z. B. „18“. */
   nummer: string
   name: string
   werte: (number | null)[]
 }
 
+/** Namen der dunklen (erste Serie) und der hellen (zweite Serie) Säule je Variante. */
 export const FINANZIERUNG_NAMEN: Readonly<
   Record<FinanzierungsVariante, readonly [string, string]>
 > = {
-  investitionen: ['', ''],
-  kredite: ['', ''],
+  investitionen: ['Auszahlungen', 'Einzahlungen'],
+  kredite: ['Kreditaufnahme', 'Tilgung'],
 }
 
-export function finanzierungsLegende(_variante: FinanzierungsVariante): string {
-  return ''
+/** Die Textlegende unter dem Diagramm: „dunkel: …, hell: …“. */
+export function finanzierungsLegende(variante: FinanzierungsVariante): string {
+  const [dunkel, hell] = FINANZIERUNG_NAMEN[variante]
+  return `dunkel: ${dunkel}, hell: ${hell}`
 }
 
+/** Genau `anzahl` Werte; was fehlt oder keine endliche Zahl ist, wird `null` (nie 0). */
+function alsReihe(
+  werte: readonly (number | null | undefined)[],
+  anzahl: number,
+): (number | null)[] {
+  return Array.from({ length: anzahl }, (_leer, index) => {
+    const wert = werte[index]
+    return typeof wert === 'number' && Number.isFinite(wert) ? wert : null
+  })
+}
+
+/** Die vier Finanzierungsreihen aus `investitionen.finanzierung`, je Eintrag von `haushalt.jahre`. */
 export function finanzierungsReihen(): Finanzierungsreihen {
+  const zeilen = investitionen.finanzierung.zeilen
+  const anzahl = haushalt.jahre.length
   return {
-    jahre: [],
-    wertarten: [],
-    einzahlungen: [],
-    auszahlungen: [],
-    kreditaufnahme: [],
-    tilgung: [],
+    jahre: [...haushalt.jahre],
+    wertarten: [...haushalt.wertarten],
+    einzahlungen: alsReihe(zeilen.einzahlungen_investitionen, anzahl),
+    auszahlungen: alsReihe(zeilen.auszahlungen_investitionen, anzahl),
+    kreditaufnahme: alsReihe(zeilen.kreditaufnahme, anzahl),
+    tilgung: alsReihe(zeilen.tilgung, anzahl),
   }
 }
 
+/** Die Zeilen 18 bis 22 des Gesamtfinanzplans, aus denen die Einzahlungen bestehen. */
+const EINZAHLUNGS_SCHLUESSEL: readonly string[] = [
+  'investitionszuwendungen',
+  'veraeusserung_sachanlagen',
+  'veraeusserung_finanzanlagen',
+  'beitraege',
+  'sonstige_investitionseinzahlungen',
+]
+
+/** Gedruckter Name einer Finanzplan-Zeile (einzige Namensquelle: `zeilen_namen.finanzplan`). */
+function finanzplanZeilenname(schluessel: string): { nummer: string; name: string } {
+  const eintrag = haushalt.zeilen_namen.finanzplan.find((name) => name.schluessel === schluessel)
+  if (eintrag === undefined) {
+    throw new Error(`Kein Zeilenname für die Finanzplan-Zeile ${schluessel}`)
+  }
+  return { nummer: eintrag.nummer, name: eintrag.name }
+}
+
+/**
+ * Woraus die Einzahlungen aus Investitionstätigkeit bestehen: die fünf Zeilen 18 bis 22 mit den
+ * gedruckten Namen und einem Wert je Eintrag von `haushalt.jahre`.
+ */
 export function einzahlungsAufteilung(): EinzahlungsZeile[] {
-  return []
+  const zeilen = haushalt.finanzplan['GESAMT']?.zeilen
+  if (zeilen === undefined) {
+    throw new Error('Der Finanzplan GESAMT fehlt in haushalt.json')
+  }
+  const anzahl = haushalt.jahre.length
+  return EINZAHLUNGS_SCHLUESSEL.map((schluessel) => ({
+    schluessel,
+    ...finanzplanZeilenname(schluessel),
+    werte: alsReihe(zeilen[schluessel] ?? [], anzahl),
+  }))
 }
 
+/**
+ * Die Jahre, in denen die Summe der Zeilen 18 bis 22 von der gedruckten Summenzeile (Z. 23)
+ * abweicht, mit der Differenz (Summe der Einzelzeilen minus Summenzeile). Leer, wenn alles passt.
+ */
 export function einzahlungsAbweichungen(): { jahr: number; differenz: number }[] {
-  return []
+  const zeilen = einzahlungsAufteilung()
+  const reihen = finanzierungsReihen()
+  return reihen.jahre.flatMap((jahr, index) => {
+    const gedruckt = reihen.einzahlungen[index]
+    if (gedruckt === null || gedruckt === undefined) {
+      return []
+    }
+    const summe = zeilen.reduce((s, zeile) => s + (zeile.werte[index] ?? 0), 0)
+    return summe === gedruckt ? [] : [{ jahr, differenz: summe - gedruckt }]
+  })
 }
 
+/** Die dunkle und die helle Reihe einer Variante, in Serienreihenfolge. */
+function reihenVon(
+  variante: FinanzierungsVariante,
+  reihen: Finanzierungsreihen,
+): readonly [(number | null)[], (number | null)[]] {
+  return variante === 'investitionen'
+    ? [reihen.auszahlungen, reihen.einzahlungen]
+    : [reihen.kreditaufnahme, reihen.tilgung]
+}
+
+/**
+ * Zwei gruppierte Säulen je Jahr: dunkel in `INVEST_FARBE`, hell in `KATEGORIE_FARBEN[2]`. Die
+ * Datenpunkte sind die Finanzplan-Werte unverändert (ein fehlender Wert bleibt `null`). Die
+ * Achse hat zwei Zeilen („{jahr}“ / Wertart). Beschriftung als `euroKurz`, zweizeilig; bis
+ * 699 px trägt nur der größte Wert je Jahr eine Beschriftung (bei Gleichstand die erste Serie),
+ * alle weiteren stehen im Tooltip und in der Tabelle. Tooltips nur über `tooltipZeilen`.
+ */
 export function finanzierungsOption(
-  _variante: FinanzierungsVariante,
-  _schmal: boolean,
-  _reihen?: Finanzierungsreihen,
+  variante: FinanzierungsVariante,
+  schmal: boolean,
+  reihen: Finanzierungsreihen = finanzierungsReihen(),
 ): EChartsOption {
-  return { series: [] }
+  const [dunkelName, hellName] = FINANZIERUNG_NAMEN[variante]
+  const [dunkel, hell] = reihenVon(variante, reihen)
+  const hellFarbe = KATEGORIE_FARBEN[2] ?? INVEST_FARBE
+
+  /** `true`, wenn der Wert der Serie `nummer` im Jahr `index` beschriftet wird. */
+  function beschriftet(nummer: 0 | 1, index: number): boolean {
+    const mein = (nummer === 0 ? dunkel : hell)[index]
+    if (mein === null || mein === undefined) {
+      return false
+    }
+    if (!schmal) {
+      return true
+    }
+    const anderer = (nummer === 0 ? hell : dunkel)[index]
+    if (anderer === null || anderer === undefined) {
+      return true
+    }
+    return nummer === 0 ? mein >= anderer : mein > anderer
+  }
+
+  function serie(nummer: 0 | 1, name: string, daten: (number | null)[], farbe: string) {
+    return {
+      type: 'bar' as const,
+      name,
+      data: daten,
+      barGap: '10%',
+      itemStyle: { color: farbe },
+      label: {
+        show: true,
+        position: 'top' as const,
+        lineHeight: 17,
+        formatter: (params: { dataIndex: number }) => {
+          const wert = daten[params.dataIndex]
+          return wert === null || wert === undefined || !beschriftet(nummer, params.dataIndex)
+            ? ''
+            : zweizeilig(euroKurz(wert))
+        },
+      },
+    }
+  }
+
+  function text(wert: number | null | undefined): string {
+    return wert === null || wert === undefined ? KEIN_WERT : euro(wert)
+  }
+
+  return {
+    grid: {
+      left: 8,
+      right: schmal ? 16 : 24,
+      top: 24,
+      bottom: 8,
+      outerBoundsMode: 'same',
+      outerBoundsContain: 'axisLabel',
+    },
+    xAxis: {
+      type: 'category',
+      data: jahresAchse(reihen.jahre, reihen.wertarten),
+      axisLabel: { interval: 0, rotate: 0 },
+    },
+    yAxis: {
+      type: 'value',
+      min: 0,
+      // Luft über der höchsten Säule für die zweizeilige Beschriftung.
+      boundaryGap: [0, '18%'],
+      axisLabel: { formatter: (wert: number) => euroKurz(wert) },
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      formatter: (params) => {
+        const eintrag = Array.isArray(params) ? params[0] : params
+        const index = eintrag?.dataIndex
+        const jahr = index === undefined ? undefined : reihen.jahre[index]
+        const wertart = index === undefined ? undefined : reihen.wertarten[index]
+        if (index === undefined || jahr === undefined || wertart === undefined) {
+          return ''
+        }
+        return tooltipZeilen([
+          `${formatiereJahr(jahr)} · ${wertartName(wertart)}`,
+          `${dunkelName}: ${text(dunkel[index])}`,
+          `${hellName}: ${text(hell[index])}`,
+        ])
+      },
+    },
+    series: [serie(0, dunkelName, dunkel, INVEST_FARBE), serie(1, hellName, hell, hellFarbe)],
+  }
 }
 
+/** Beschriftung der Jahreszeile der Finanzierungstabelle: „{jahr} · {Wertart}“. */
+function jahrBeschriftung(jahr: number, wertart: string | undefined): string {
+  return `${formatiereJahr(jahr)} · ${wertart === undefined ? '' : wertartName(wertart)}`
+}
+
+/**
+ * Tabelle eines Finanzierungsdiagramms: je Jahr eine Zeile mit der dunklen und der hellen
+ * Reihe. Ein fehlender Wert bleibt `null` und erscheint als „–“, nie als 0.
+ */
 export function finanzierungsTabelle(
-  _variante: FinanzierungsVariante,
-  _reihen?: Finanzierungsreihen,
+  variante: FinanzierungsVariante,
+  reihen: Finanzierungsreihen = finanzierungsReihen(),
 ): Tabelle {
-  return { spalten: [], zeilen: [] }
+  const [dunkelName, hellName] = FINANZIERUNG_NAMEN[variante]
+  const [dunkel, hell] = reihenVon(variante, reihen)
+  const spalten: DatenSpalte[] = [
+    { schluessel: 'jahr', titel: 'Jahr', art: 'text' },
+    { schluessel: 'dunkel', titel: dunkelName, art: 'euro' },
+    { schluessel: 'hell', titel: hellName, art: 'euro' },
+  ]
+  return {
+    spalten,
+    zeilen: reihen.jahre.map((jahr, index) => ({
+      jahr: jahrBeschriftung(jahr, reihen.wertarten[index]),
+      dunkel: dunkel[index] ?? null,
+      hell: hell[index] ?? null,
+    })),
+  }
 }
 
+/**
+ * Tabelle „Woraus die Einzahlungen bestehen“: die Zeilen 18 bis 22 je Jahr, darunter die
+ * gedruckte Summenzeile (Z. 23, Einzahlungen aus Investitionstätigkeit). Spaltenkopf je Jahr:
+ * „{Jahr} {Wertart}“.
+ */
 export function einzahlungsTabelle(): Tabelle {
-  return { spalten: [], zeilen: [] }
+  const reihen = finanzierungsReihen()
+  const spalten: DatenSpalte[] = [
+    { schluessel: 'name', titel: 'Zeile', art: 'text' },
+    ...reihen.jahre.map((jahr, index): DatenSpalte => {
+      const wertart = reihen.wertarten[index]
+      return {
+        schluessel: jahrSchluessel(jahr),
+        titel:
+          wertart === undefined
+            ? formatiereJahr(jahr)
+            : `${formatiereJahr(jahr)} ${wertartName(wertart)}`,
+        art: 'euro',
+      }
+    }),
+  ]
+
+  function zeile(
+    name: string,
+    werte: readonly (number | null)[],
+  ): Record<string, string | number | null> {
+    const eintrag: Record<string, string | number | null> = { name }
+    reihen.jahre.forEach((jahr, index) => {
+      eintrag[jahrSchluessel(jahr)] = werte[index] ?? null
+    })
+    return eintrag
+  }
+
+  const summe = finanzplanZeilenname('einzahlungen_investitionen')
+  return {
+    spalten,
+    zeilen: [
+      ...einzahlungsAufteilung().map((eintrag) => zeile(eintrag.name, eintrag.werte)),
+      zeile(summe.name, reihen.einzahlungen),
+    ],
+  }
 }
