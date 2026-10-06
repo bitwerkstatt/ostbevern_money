@@ -2,7 +2,10 @@ import type { EChartsOption } from 'echarts'
 import { describe, expect, it } from 'vitest'
 
 import { BERECHNET_DECAL, SCHULDEN_FARBEN } from '@/charts/echartsTheme'
+import { euro, euroKurz, jahr as formatiereJahr } from '@/charts/format'
 import { haushalt, investitionen } from '@/data/daten'
+import { quellenZeile } from '@/lib/kennzahlen'
+import investitionenSeiteQuelle from '@/pages/InvestitionenPage.vue?raw'
 import {
   achsenZusatz,
   baueSchuldenstand,
@@ -10,6 +13,7 @@ import {
   jahreListe,
   jahreOhneLiquiditaetskredite,
   liquiditaetsSatz,
+  schuldenKacheln,
   schuldenKennzahlen,
   schuldenstandOption,
   schuldenTabelle,
@@ -153,6 +157,46 @@ describe('schuldenKennzahlen (D-09, D-10, Nutzerentscheidung 4)', () => {
   })
 })
 
+describe('schuldenKacheln (WR-03, D-09, D-10)', () => {
+  it('liefert genau die beiden Kacheln in dieser Reihenfolge', () => {
+    expect(schuldenKacheln().map((kachel) => kachel.schluessel)).toEqual([
+      'schuldenstand',
+      'schulden_je_einwohner',
+    ])
+  })
+
+  it('baut Bezeichnung, Wert und Quellenzeile aus den Kennzahlen des Vorjahrs', () => {
+    const kennzahlen = schuldenKennzahlen()
+    const [gesamt, proKopf] = schuldenKacheln(kennzahlen)
+    expect(gesamt?.bezeichnung).toBe(`Schuldenstand Ende ${formatiereJahr(kennzahlen.jahr)}`)
+    expect(gesamt?.wert).toBe(euroKurz(kennzahlen.gesamt))
+    expect(gesamt?.zeile).toBe(
+      quellenZeile(kennzahlen.wertart, kennzahlen.jahr, [kennzahlen.quelle]),
+    )
+    expect(proKopf?.bezeichnung).toBe('Schulden je Einwohner')
+    expect(proKopf?.wert).toBe(euro(kennzahlen.proKopf))
+    expect(proKopf?.zeile).toBe(
+      quellenZeile(kennzahlen.wertart, kennzahlen.jahr, kennzahlen.pdfSeiten),
+    )
+  })
+
+  it.each([true, false])('markiert beide Kacheln gleich, wenn berechnet %s ist', (berechnet) => {
+    const kacheln = schuldenKacheln({ ...schuldenKennzahlen(), berechnet })
+    expect(kacheln).toHaveLength(2)
+    expect(kacheln.map((kachel) => kachel.berechnet)).toEqual([berechnet, berechnet])
+  })
+
+  it('folgt auf den echten Daten dem Datenfeld des Vorjahrs', () => {
+    const erwartet = stand.berechnet[vorjahrIndex]
+    expect(schuldenKacheln().map((kachel) => kachel.berechnet)).toEqual([erwartet, erwartet])
+  })
+
+  it('die Seite rendert die Kacheln, sie baut sie nicht selbst (Quelltext)', () => {
+    expect(investitionenSeiteQuelle).toContain('schuldenKacheln()')
+    expect(investitionenSeiteQuelle).not.toContain('schuldenKennzahlen(')
+  })
+})
+
 describe('achsenZusatz (T-06-24)', () => {
   it('trägt „berechnet“ genau dort, wo berechnet[i] wahr ist', () => {
     const achse = achsenZusatz()
@@ -251,6 +295,15 @@ describe.runIf(haushalt.haushaltsjahr === 2026)('Jahrgang 2026 (ROADMAP SC 2)', 
     expect(kennzahlen.gesamt).toBe(7_710_000)
     expect(kennzahlen.proKopf).toBe(656)
     expect(kennzahlen.berechnet).toBe(false)
+  })
+
+  it('beide Schuldenkacheln: Ende 2025 mit 7,71 Mio. € und 656 €, ohne „berechnet“', () => {
+    const [gesamt, proKopf] = schuldenKacheln()
+    expect(gesamt?.bezeichnung).toBe('Schuldenstand Ende 2025')
+    expect(gesamt?.wert).toBe(euroKurz(7_710_000))
+    expect(proKopf?.wert).toBe(euro(656))
+    expect(gesamt?.berechnet).toBe(false)
+    expect(proKopf?.berechnet).toBe(false)
   })
 
   it('berechnet = [false, false, false, true, true, true]', () => {

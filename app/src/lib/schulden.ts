@@ -172,6 +172,21 @@ export function schuldenKennzahlen(): SchuldenKennzahlen {
   }
 }
 
+/** Eine Kennzahlkachel zum Schuldenstand (D-10). */
+export interface SchuldenKachel {
+  schluessel: string
+  bezeichnung: string
+  wert: string
+  zeile: string
+  berechnet: boolean
+}
+
+export function schuldenKacheln(
+  _kennzahlen: SchuldenKennzahlen = schuldenKennzahlen(),
+): SchuldenKachel[] {
+  return []
+}
+
 /** Randbreite der Weißtrenner zwischen den Segmenten (UI-SPEC: 2 px). */
 const TRENNER = 2
 
