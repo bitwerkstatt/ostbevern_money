@@ -158,6 +158,53 @@ describe('getippteZahlen (UI-05, Fail-first)', () => {
   })
 })
 
+/** Ein öffnendes `<wa-…>`-Tag samt Attributen; Anführungszeichen dürfen ein `>` enthalten. */
+const WA_ELEMENT = /<wa-[\w-]+(?:"[^"]*"|'[^']*'|[^>"'])*>/g
+/** Das `size`-Attribut mit einem der drei langen Namen, die Web Awesome 3 als veraltet meldet. */
+const VERALTETE_GROESSE = /\ssize\s*=\s*"(small|medium|large)"/g
+
+/**
+ * Die veralteten Größenangaben (`small`, `medium`, `large`) an `wa-*`-Elementen im Template.
+ * Web Awesome 3.14 meldet sie als Konsolenwarnung (QUAL-02); erlaubt sind `xs`, `s`, `m`, `l`, `xl`.
+ */
+function veralteteGroessen(template: string): string[] {
+  return Array.from(template.matchAll(WA_ELEMENT), (element) => element[0]).flatMap((element) =>
+    Array.from(element.matchAll(VERALTETE_GROESSE), (treffer) => treffer[0].trim()),
+  )
+}
+
+describe('veralteteGroessen (QUAL-02, Fail-first)', () => {
+  it.each([
+    ['<wa-tag size="small" variant="neutral">x</wa-tag>', 'size="small"'],
+    ['<wa-tag size="medium">x</wa-tag>', 'size="medium"'],
+    ['<wa-button size="large">x</wa-button>', 'size="large"'],
+    [
+      '<wa-button\n  variant="brand"\n  size="large"\n  @click="a => b()"\n>x</wa-button>',
+      'size="large"',
+    ],
+  ])('meldet die veraltete Größe in %s', (probe, erwartet) => {
+    expect(veralteteGroessen(probe)).toEqual([erwartet])
+  })
+
+  it.each([
+    '<wa-tag size="s" variant="neutral">x</wa-tag>',
+    '<wa-button size="l">x</wa-button>',
+    '<wa-tag variant="neutral">x</wa-tag>',
+    '<img size="large" alt="">',
+    '<p>size="small" im Fließtext</p>',
+  ])('lässt %s unbeanstandet', (probe) => {
+    expect(veralteteGroessen(probe)).toEqual([])
+  })
+})
+
+describe('Keine veralteten Web-Awesome-Größen in den Templates (QUAL-02)', () => {
+  const dateien = Object.entries(quelltexte).sort(([a], [b]) => a.localeCompare(b))
+
+  it.each(dateien)('%s benutzt nur die kurzen Größennamen', (_pfad, text) => {
+    expect(veralteteGroessen(templateTeil(text))).toEqual([])
+  })
+})
+
 describe('Keine getippten Zahlen in den Templates (UI-05, T-05-40, T-05-41)', () => {
   const dateien = Object.entries(quelltexte).sort(([a], [b]) => a.localeCompare(b))
 
