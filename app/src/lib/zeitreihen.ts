@@ -175,7 +175,9 @@ export function baueZeitreihe(posten: string): Zeitpunkt[] {
  * gehört zusätzlich zur Serie der nächsten, damit die Linie ohne Sprung weiterläuft; dort ist
  * `geteilt` gesetzt, damit die spätere Serie den Punkt nicht noch einmal zeichnet.
  */
-export function zeitreihenSerien(punkte: readonly Zeitpunkt[]): Zeitreihe {
+export function zeitreihenSerien(
+  punkte: readonly Pick<Zeitpunkt, 'jahr' | 'wert' | 'wertart'>[],
+): Zeitreihe {
   const reihenfolge = [...WERTART_NAMEN.keys()]
   const serien = reihenfolge.map((wertart): ZeitreihenSerie => {
     const werte: (number | null)[] = punkte.map(() => null)
