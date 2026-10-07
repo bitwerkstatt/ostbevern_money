@@ -133,15 +133,15 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 
 - [ ] **A11Y-01**: Zu jedem Diagramm gibt es eine Tabellenalternative
 - [ ] **A11Y-02**: Fokussteuerung beim Routenwechsel, ausreichende Kontraste und `prefers-reduced-motion` werden beachtet
-- [ ] **A11Y-03**: Alle Seiten sind ab 360 px Breite nutzbar
-- [ ] **A11Y-04**: Lighthouse-Barrierefreiheit ≥ 95 auf allen Routen
+- [x] **A11Y-03**: Alle Seiten sind ab 360 px Breite nutzbar
+- [x] **A11Y-04**: Lighthouse-Barrierefreiheit ≥ 95 auf allen Routen
 - [x] **QUAL-01**: `vue-tsc` und ESLint laufen fehlerfrei in der CI
 - [ ] **QUAL-02**: Ein Playwright-Smoke-Test stellt sicher, dass jede Route ohne Konsolenfehler rendert und Diagramme Daten enthalten
 
 ### Deployment
 
 - [ ] **DEPL-01**: GitHub Actions baut die App und deployt sie auf GitHub Pages (eigener Account)
-- [ ] **DEPL-02**: Die App ist unter einer öffentlichen URL erreichbar
+- [x] **DEPL-02**: Die App ist unter einer öffentlichen URL erreichbar
 
 ## v2 Requirements
 
@@ -257,12 +257,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-06 | Phase 7 | Complete |
 | A11Y-01 | Phase 7 | Pending |
 | A11Y-02 | Phase 7 | Pending |
-| A11Y-03 | Phase 7 | Pending |
-| A11Y-04 | Phase 7 | Pending |
+| A11Y-03 | Phase 7 | Complete |
+| A11Y-04 | Phase 7 | Complete |
 | QUAL-01 | Phase 1 | Complete |
 | QUAL-02 | Phase 7 | Pending |
 | DEPL-01 | Phase 7 | Pending |
-| DEPL-02 | Phase 7 | Pending |
+| DEPL-02 | Phase 7 | Complete |
 
 **Coverage:**
 - v1 requirements: 85 total
