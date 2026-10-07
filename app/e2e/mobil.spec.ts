@@ -1,6 +1,12 @@
+import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
 
 import { routen } from './routen'
+import { befundeTabellenrahmen, oeffneAlleBereiche } from './tabellenrahmen'
+
+// WCAG-Tags des Smoke-Tests (`smoke.spec.ts`); Best-Practice-Regeln wie `landmark-unique` und
+// `region` gehören nicht dazu (Web Awesomes eigene `wa-details`-Regionen verletzen sie).
+const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']
 
 // Nutzbarkeit bei 360 × 640 (A11Y-03, Projekt `mobil`, nicht im CI-Smoke-Pfad, D-12):
 // - kein waagerechtes Scrollen der Seite (`scrollWidth <= innerWidth`),
@@ -156,6 +162,53 @@ test.describe('360 × 640: Überlauf und Zielgröße je Route (A11Y-03)', () => 
       const fehler = befund(route.pfad, messung)
       console.log(tabellenzeile(route.pfad, messung, fehler === null))
       expect(fehler ?? '', fehler ?? '').toBe('')
+    })
+  }
+})
+
+test.describe('Tabellenrahmen bei 360 px (A11Y-01, A11Y-03)', () => {
+  test.beforeEach(({ viewport }) => {
+    expect(viewport).toEqual({ width: 360, height: 640 })
+  })
+
+  for (const route of routen()) {
+    test(`Rahmen mit Rolle und genau einem Namen auf ${route.pfad}`, async ({ page }) => {
+      await page.goto(`/#${route.pfad}`)
+      await expect(page.locator('h1')).toBeVisible()
+      await page.waitForLoadState('networkidle')
+      await oeffneAlleBereiche(page)
+
+      // Der ResizeObserver der Tabelle setzt Tabstopp und Rolle nach dem Layout: bis zur Ruhe
+      // wiederholen, der letzte Befund steht in der Meldung.
+      await expect
+        .poll(() => befundeTabellenrahmen(page), { message: `Tabellenrahmen auf ${route.pfad}` })
+        .toEqual([])
+    })
+
+    test(`axe meldet bei geöffneten Bereichen auf ${route.pfad} keinen Verstoß`, async ({
+      page,
+    }) => {
+      // Wie im Smoke-Test: ohne Bewegung blendet Web Awesome nichts ein, sonst sähe axe Text
+      // mitten im Einblenden mit halber Deckkraft und meldete Scheinverstöße beim Kontrast.
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      await page.goto(`/#${route.pfad}`)
+      await expect(page.locator('h1')).toBeVisible()
+      await page.waitForLoadState('networkidle')
+      await oeffneAlleBereiche(page)
+      await warteAufRuhe(page)
+      await expect.poll(() => befundeTabellenrahmen(page)).toEqual([])
+
+      const ergebnis = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze()
+      const meldung = ergebnis.violations
+        .map(
+          (verstoss) =>
+            `${verstoss.id} (${verstoss.impact ?? 'ohne Gewicht'}, ${String(verstoss.nodes.length)} Knoten): ${verstoss.nodes
+              .slice(0, 3)
+              .map((knoten) => `${knoten.target.join(' ')} – ${knoten.any[0]?.message ?? ''}`)
+              .join('; ')}`,
+        )
+        .join('\n')
+      expect(meldung, meldung).toBe('')
     })
   }
 })

@@ -30,3 +30,20 @@ export function sichtbareSpalten(
       spalte.art !== 'quelle' || zeilen.some((zeile) => hatBeleg(zeile[spalte.schluessel] ?? null)),
   )
 }
+
+/**
+ * Attribute des scrollbaren Tabellenrahmens (D-19, D-20, A11Y-01): Ein Rahmen, der waagerecht
+ * scrollt, braucht Tastaturfokus, eine Rolle und einen Namen, und zwar immer zusammen (ein
+ * Tabstopp ohne Rolle und Namen ist ein Verstoß, ein Name ohne Rolle ungültig). Der Name kommt
+ * ausschließlich per `aria-labelledby` aus der Caption der Tabelle. Ohne Überlauf bekommt der
+ * Rahmen nichts.
+ */
+export function rahmenAttribute(
+  ueberlaeuft: boolean,
+  captionId: string,
+): Record<string, string | number> {
+  if (!ueberlaeuft) {
+    return {}
+  }
+  return { tabindex: 0, role: 'region', 'aria-labelledby': captionId }
+}

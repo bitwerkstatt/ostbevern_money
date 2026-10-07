@@ -2,6 +2,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test'
 
 import { MENUE, menueLinks, type MenueGruppe } from '../src/lib/menue'
 import { routen } from './routen'
+import { befundeTabellenrahmen, oeffneAlleBereiche } from './tabellenrahmen'
 
 // Browser-Beweis der Bedienung (Plan 07-09): Menügruppe „Mehr wissen“ (D-19), Fokus und Titel
 // bei jedem Routenwechsel (A11Y-02) und reduzierte Bewegung bei den Web-Awesome-Komponenten.
@@ -228,6 +229,29 @@ test.describe('Fokus und Titel bei jedem Routenwechsel (A11Y-02)', () => {
       expect(aktivIstUeberschrift).toBe(true)
     })
   }
+})
+
+// Spiegel von `mobil.spec.ts` (das Projekt `mobil` läuft nicht in der CI): Der scrollbare
+// Tabellenrahmen auf /investitionen bei 360 px hat Tabstopp, Rolle und genau einen Namen
+// (A11Y-01, A11Y-03).
+test.describe('Tabellenrahmen bei 360 px (A11Y-01, A11Y-03)', () => {
+  test('/investitionen: überlaufende Rahmen sind benannte Regionen mit Tabstopp, die Seite scrollt nicht', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 640 })
+    await page.goto('/#/investitionen')
+    await expect(page.locator('h1')).toBeVisible()
+    await page.waitForLoadState('networkidle')
+    await oeffneAlleBereiche(page)
+
+    await expect
+      .poll(() => befundeTabellenrahmen(page), { message: 'Tabellenrahmen auf /investitionen' })
+      .toEqual([])
+    // Der Test ist nur aussagekräftig, wenn mindestens ein Rahmen wirklich überläuft.
+    await expect(
+      page.locator('.om-tabelle-rahmen[role="region"][tabindex="0"]').first(),
+    ).toBeAttached()
+  })
 })
 
 test.describe('Reduzierte Bewegung bei Web-Awesome-Komponenten (A11Y-02)', () => {
