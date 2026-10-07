@@ -29,6 +29,7 @@ import {
   jahr as formatiereJahr,
   kurzMitHinweis,
   rundKurz,
+  rundMitHinweis,
 } from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
 import { haushalt } from '@/data/daten'
@@ -648,6 +649,12 @@ export function balkenOption(
  * Satz aus den Daten des gewählten Jahres (D-11, Pitfall 6): nennt Defizit bzw. Überschuss
  * und den Globalen Minderaufwand mit ihren Beträgen und die PDF-Seite. `wertart` ist der
  * Anzeigename der Wertart („Ist“, „Ansatz“, „Planung“). Zahlen kommen nur aus `geldfluss`.
+ *
+ * Nach Satz 1 unterscheidet der Text vier Fälle der Bilanz (D-06, TXT-01):
+ *   A Defizit (links), dazu ggf. der Minderaufwand „ebenfalls links“;
+ *   B Überschuss (rechts), dazu ggf. der Minderaufwand ohne „ebenfalls“, weil kein Defizit davor steht;
+ *   C nur der Minderaufwand: erst er gleicht beide Seiten aus, „rund“ nur bei gerundetem Betrag;
+ *   D nichts davon: nur hier gleichen sich Erträge und Aufwendungen „genau“ aus.
  */
 export function lesehilfeSatz(geldfluss: Geldfluss, jahr: number, wertart: string): string {
   const defizit = geldfluss.knoten.find((k) => k.art === 'defizit')
@@ -658,21 +665,32 @@ export function lesehilfeSatz(geldfluss: Geldfluss, jahr: number, wertart: strin
     `Für ${formatiereJahr(jahr)} (${wertart}) sind beide Seiten gleich groß: ${rundKurz(geldfluss.summeLinks)}.`,
   ]
   if (defizit) {
+    // Fall A
     saetze.push(
       `Das Defizit von ${euro(defizit.wert)} steht links, weil die Gemeinde diesen Betrag aus ihren Rücklagen deckt.`,
     )
-  }
-  if (minderaufwand) {
-    saetze.push(
-      `Der globale Minderaufwand von ${euro(minderaufwand.wert)} steht ebenfalls links: Er senkt die geplanten Aufwendungen rechnerisch, ohne dass dafür ein Ertrag eingeht.`,
-    )
-  }
-  if (ueberschuss) {
+    if (minderaufwand) {
+      saetze.push(
+        `Der globale Minderaufwand von ${euro(minderaufwand.wert)} steht ebenfalls links: Er senkt die geplanten Aufwendungen rechnerisch, ohne dass dafür ein Ertrag eingeht.`,
+      )
+    }
+  } else if (ueberschuss) {
+    // Fall B
+    if (minderaufwand) {
+      saetze.push(
+        `Der globale Minderaufwand von ${euro(minderaufwand.wert)} steht links: Er senkt die geplanten Aufwendungen rechnerisch, ohne dass dafür ein Ertrag eingeht.`,
+      )
+    }
     saetze.push(
       `Der Überschuss von ${euro(ueberschuss.wert)} steht rechts, weil er den Rücklagen zugeführt wird.`,
     )
-  }
-  if (!defizit && !ueberschuss) {
+  } else if (minderaufwand) {
+    // Fall C
+    saetze.push(
+      `Die Aufwendungen sind höher als die Erträge. Erst der globale Minderaufwand von ${rundMitHinweis(minderaufwand.wert, minderaufwand.gerundet)} gleicht beide Seiten aus. Er steht links und senkt die geplanten Aufwendungen rechnerisch, ohne dass dafür ein Ertrag eingeht.`,
+    )
+  } else {
+    // Fall D
     saetze.push('Erträge und Aufwendungen gleichen sich in diesem Jahr genau aus.')
   }
   if (geldfluss.pdfSeite !== null) {
