@@ -169,10 +169,11 @@ export function minderaufwandHinweis(jahrIndex: number): MinderaufwandHinweis | 
   pruefeJahrIndex(jahrIndex)
   const jahr = haushalt.jahre[jahrIndex]
   const wert = haushalt.ergebnisplan.GESAMT?.zeilen[MINDERAUFWAND_ZEILE]?.[jahrIndex]
-  if (jahr === undefined || wert === undefined || wert === 0) {
+  // Der Gesamtergebnisplan führt die Kürzung mit negativem Vorzeichen; ein Wert ab 0 ist keine
+  // Kürzung (kein „Minderaufwand“) und bekommt deshalb keinen Hinweis.
+  if (jahr === undefined || wert === undefined || wert >= 0) {
     return null
   }
-  // Der Gesamtergebnisplan führt die Kürzung mit negativem Vorzeichen.
   const betrag = -wert
   const hatGepruefterText = textFuerJahr(MINDERAUFWAND_TEXT, jahr) !== null
   return {
