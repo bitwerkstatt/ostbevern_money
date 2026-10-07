@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { haushalt } from '@/data/daten'
-import { anteil, proKopf, summe } from '@/lib/berechnung'
+import { anteil, minderaufwandBetrag, proKopf, summe } from '@/lib/berechnung'
 
 describe('proKopf', () => {
   it('rundet auf ganze Euro (Math.round), nicht ab (Pitfall 3)', () => {
@@ -33,6 +33,29 @@ describe('summe', () => {
   it('addiert und überspringt null', () => {
     expect(summe([1, null, 2])).toBe(3)
     expect(summe([])).toBe(0)
+  })
+})
+
+// Die eine Minderaufwand-Regel für /geldfluss und /ausgaben (D-08, TXT-02, 05/IN-07). Der Wurf ist
+// nur an der reinen Funktion testbar, weil `haushalt` ein statischer Import ist.
+describe('minderaufwandBetrag (D-08, TXT-02)', () => {
+  it('liefert null für einen fehlenden Wert', () => {
+    expect(minderaufwandBetrag(undefined, 2026)).toBeNull()
+    expect(minderaufwandBetrag(null, 2026)).toBeNull()
+  })
+
+  it('liefert null für 0 (kein Minderaufwand, kein Hinweis)', () => {
+    expect(minderaufwandBetrag(0, 2024)).toBeNull()
+  })
+
+  it('liefert für einen negativen Plan-Wert den positiven Betrag, nie ein Minuszeichen', () => {
+    expect(minderaufwandBetrag(-600_000, 2026)).toBe(600_000)
+  })
+
+  it('wirft bei einem positiven Plan-Wert (Datenfehler) und nennt das Jahr', () => {
+    expect(() => minderaufwandBetrag(5, 2027)).toThrow(
+      /^Globaler Minderaufwand ist positiv: Datenfehler.*2027/,
+    )
   })
 })
 

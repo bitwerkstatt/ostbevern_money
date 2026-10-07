@@ -22,3 +22,15 @@ export function anteil(wert: number, summe: number): number | null {
 export function summe(werte: readonly (number | null)[]): number {
   return werte.reduce<number>((gesamt, wert) => gesamt + (wert ?? 0), 0)
 }
+
+/**
+ * Platzhalter der alten Regel aus `minderaufwandHinweis` (Stand vor D-08): ein Wert ab 0 ergibt
+ * `null`, auch ein positiver. Wird im folgenden Schritt durch die vollständige Regel ersetzt.
+ */
+export function minderaufwandBetrag(
+  zeile27: number | null | undefined,
+  jahr: number,
+): number | null {
+  void jahr
+  return zeile27 === null || zeile27 === undefined || zeile27 >= 0 ? null : -zeile27
+}
