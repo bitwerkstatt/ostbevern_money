@@ -5,11 +5,11 @@ titles: json
 findings:
   - id: CR-01
     severity: critical
-    disposition: open
+    disposition: skipped
     title: "Namen und Unterschriften zweier Personen stehen ungeschwärzt in einem ausgelieferten Belegbild"
   - id: CR-02
     severity: critical
-    disposition: open
+    disposition: fixed
     title: "`lighthouse-a11y.sh` löscht ein vom Nutzer übergebenes `LH_SCRATCH`-Verzeichnis vollständig"
   - id: WR-01
     severity: warning
@@ -83,17 +83,17 @@ findings:
     severity: info
     disposition: open
     title: "Neue Spec ist nicht prettier-konform, und `format:check` sieht `e2e/` nicht"
-open: 20
+open: 18
 total: 20
-recorded: 2026-10-07T09:11:14.007Z
+recorded: 2026-10-07T10:01:17.064Z
 ---
 
 # Phase 07: Code Review Disposition
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| CR-01 | critical | open | - |
-| CR-02 | critical | open | - |
+| CR-01 | critical | skipped | 07-REVIEW-FIX.md |
+| CR-02 | critical | fixed | 07-REVIEW-FIX.md |
 | WR-01 | warning | open | - |
 | WR-02 | warning | open | - |
 | WR-03 | warning | open | - |
