@@ -36,10 +36,18 @@ const haushaltsjahr = jahr(haushalt.haushaltsjahr)
     <section aria-labelledby="om-ueber-dank" class="om-ueber__abschnitt">
       <h2 id="om-ueber-dank">Dank und Informationen</h2>
       <p>
-        Das Projekt wurde inspiriert vom Siegerprojekt beim MünsterHack 2026, Münster Money von Code for Münster. Danke dafür! Die technische Umsetzung ist unabhängig komplett neu enstanden. <br />
-        Der Haushaltsplan der Gemeinde Ostbevern ist ein 400 Seiten starkes PDF-Dokument voller Tabellen und komplexer Zusammenhänge, das durchzulesen und zu verstehen viele Stunden brauchen kann. In diesem Projekt wurden die Möglichkeiten künstlicher Intelligenz verwendet,
-        um das Dokument zu analysieren, relevaten Zahlen zu extrahieren und verständlich aufzubereiten. Soweit es möglich war, wurde jede angezeigte Zahl mit ihrer Quelle im Originaldokument verknüpft, so dass eine Nachprüfbarkeit gegeben ist. Künstliche Intelligenz ist aber nicht
-        fehlerfrei, und im Rahmen eines Hobbyprojektes ist es auch nicht möglich, jede einzelne Zahl manuell nachzuprüfen. Bekannt ist insbesondere, dass vor allem bei den sehr großen Beträgen Rundungsdifferenzen auftreten. <br />
+        Das Projekt wurde inspiriert vom Siegerprojekt beim MünsterHack 2026, Münster Money von Code
+        for Münster. Danke dafür! Die technische Umsetzung ist unabhängig komplett neu entstanden.
+        <br />
+        Der Haushaltsplan der Gemeinde Ostbevern ist ein 400 Seiten starkes PDF-Dokument voller
+        Tabellen und komplexer Zusammenhänge, das durchzulesen und zu verstehen viele Stunden
+        brauchen kann. In diesem Projekt wurden die Möglichkeiten künstlicher Intelligenz verwendet,
+        um das Dokument zu analysieren, relevanten Zahlen zu extrahieren und verständlich
+        aufzubereiten. Soweit es möglich war, wurde jede angezeigte Zahl mit ihrer Quelle im
+        Originaldokument verknüpft, so dass eine Nachprüfbarkeit gegeben ist. Künstliche Intelligenz
+        ist aber nicht fehlerfrei, und im Rahmen eines Hobbyprojektes ist es auch nicht möglich,
+        jede einzelne Zahl manuell nachzuprüfen. Große Beträge werden auf der Seite gerundet
+        angezeigt, etwa in Millionen Euro. <br />
         Wichtige Begriffe finden sich im Glossar.
       </p>
       <p>

@@ -181,9 +181,12 @@ describe('UeberPage.vue (Über dieses Projekt, D-08, T-07-14, T-07-16)', () => {
   })
 
   it('führt die vier Abschnitte in der Reihenfolge von D-08', () => {
-    const stellen = ['Ein inoffizielles Projekt', 'Dank', 'Impressum', 'Datenschutz'].map((titel) =>
-      quelle.indexOf(`>${titel}</h2>`),
-    )
+    const stellen = [
+      'Ein inoffizielles Projekt',
+      'Dank und Informationen',
+      'Impressum',
+      'Datenschutz',
+    ].map((titel) => quelle.indexOf(`>${titel}</h2>`))
     for (const stelle of stellen) {
       expect(stelle).toBeGreaterThan(-1)
     }
