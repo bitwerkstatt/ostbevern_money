@@ -264,7 +264,7 @@ Plans:
   4. Ein Playwright-Smoke-Test bestätigt, dass jede Route ohne Konsolenfehler rendert und die Diagramme Daten enthalten. Ein Textdurchgang bestätigt, dass alle Texte deutsch und durchgehend in der Du-Anrede sind.
   5. GitHub Actions baut die App und deployt sie auf GitHub Pages (eigener Account), und die App ist unter einer öffentlichen URL erreichbar.
 
-**Plans**: 13/14 plans executed
+**Plans**: 14/14 plans executed
 **UI hint**: yes
 
 Plans:
@@ -298,7 +298,7 @@ Plans:
 - [x] 07-13-PLAN.md — Kennzahl-Kacheln ab 360 px bei jeder Breite: Breitentest `e2e/kacheln.spec.ts` im CI-Projekt (rot → grün), gemeinsames Raster `om-kachelraster` mit gemessener Mindestbreite, Betrag immer einzeilig in Größe l, Knopf „Quelle“ (Name unverändert), UI-SPEC-Nachtrag (Gap Closure)
 
 **Gap closure** *(07-UAT G-07-2: CI-Breitentest auf GitHub rot, Kachel-Mindestspur gegen falsche Schrift kalibriert, li-Einzug von Web Awesome; Wave 2 des Gap-Laufs, nach 07-13)*
-- [ ] 07-14-PLAN.md — CI-Schrift lokal nachgestellt (`scripts/e2e-wie-ci.sh`, fonts-dejavu-core 2.37-8 mit Prüfsumme), rote Messung identisch zur CI, `li` ohne Einzug, Mindestspur `--om-kachel-mindestbreite` unter DejaVu Sans kalibriert, Spaltensprünge im Breitentest, app-Job auf ubuntu-24.04, UI-SPEC- und README-Nachtrag; Push und öffentliche URL durch den Nutzer (Gap Closure)
+- [x] 07-14-PLAN.md — CI-Schrift lokal nachgestellt (`scripts/e2e-wie-ci.sh`, fonts-dejavu-core 2.37-8 mit Prüfsumme), rote Messung identisch zur CI, `li` ohne Einzug, Mindestspur `--om-kachel-mindestbreite` unter DejaVu Sans kalibriert, Spaltensprünge im Breitentest, app-Job auf ubuntu-24.04, UI-SPEC- und README-Nachtrag; Push und öffentliche URL durch den Nutzer (Gap Closure)
 
 ## Progress
 
@@ -313,4 +313,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
 | 6. Kontext-Seiten | 17/17 | Complete    | 2026-10-06 |
-| 7. Feinschliff und Veröffentlichung | 13/13 | In Progress | - |
+| 7. Feinschliff und Veröffentlichung | 14/14 | In Progress | - |
