@@ -1,6 +1,11 @@
 import { expect, test, type Locator, type Page } from '@playwright/test'
 
 import { MENUE, menueLinks, type MenueGruppe } from '../src/lib/menue'
+import {
+  pruefeEscape,
+  pruefeLinkDerAktuellenSeite,
+  pruefeLinkEinerAnderenSeite,
+} from './menueDrawer'
 import { routen } from './routen'
 import { befundeTabellenrahmen, oeffneAlleBereiche } from './tabellenrahmen'
 
@@ -229,6 +234,29 @@ test.describe('Fokus und Titel bei jedem Routenwechsel (A11Y-02)', () => {
       expect(aktivIstUeberschrift).toBe(true)
     })
   }
+})
+
+// Spiegel von `mobil.spec.ts` (das Projekt `mobil` läuft nicht in der CI): Bei 360 px schließt
+// jeder Linkklick im Menü den Drawer, der Fokus steht danach auf der Überschrift, Escape gibt ihn
+// an den Menüknopf zurück (A11Y-02, D-21).
+test.describe('Mobiles Menü schließt bei jedem Linkklick (A11Y-02, D-21)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 640 })
+  })
+
+  test('Link der aktuellen Seite: Drawer zu, aria-expanded false, Fokus auf der Überschrift', async ({
+    page,
+  }) => {
+    await pruefeLinkDerAktuellenSeite(page)
+  })
+
+  test('Link einer anderen Seite: Route wechselt, Fokus auf der Überschrift', async ({ page }) => {
+    await pruefeLinkEinerAnderenSeite(page)
+  })
+
+  test('Escape schließt den Drawer, der Fokus kehrt zum Menüknopf zurück', async ({ page }) => {
+    await pruefeEscape(page)
+  })
 })
 
 // Spiegel von `mobil.spec.ts` (das Projekt `mobil` läuft nicht in der CI): Der scrollbare

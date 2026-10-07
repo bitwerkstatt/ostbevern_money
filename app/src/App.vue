@@ -50,8 +50,29 @@ function beiHide(ereignis: Event) {
   }
 }
 
-// Nach dem Schließen zurück zum Schalter. Nach einem Seitenwechsel gehört der Fokus der neuen
-// Seite (Router: Überschrift, D-13), ihn jetzt zum Schalter zu holen wäre ein Fokusraub.
+// Fokus auf die Überschrift der Seite (D-13, D-21): Ziel des Skip-Links und nach jedem Linkklick
+// im mobilen Menü. Die Überschrift ist von sich aus nicht fokussierbar und bekommt dafür
+// `tabindex="-1"`.
+function fokussiereUeberschrift() {
+  const ziel =
+    document.querySelector<HTMLElement>('h1') ?? document.querySelector<HTMLElement>('main')
+  if (ziel !== null) {
+    if (!ziel.hasAttribute('tabindex')) {
+      ziel.setAttribute('tabindex', '-1')
+    }
+    ziel.focus()
+  }
+}
+
+// Ein Tipp auf einen Link im Menü schließt den Drawer immer, auch beim Link der aktuellen Seite
+// (dann wechselt die Route nicht und der Routenwächter unten greift nicht, D-21, A11Y-02).
+function beiDrawerLinkKlick() {
+  schliesstDurchSeitenwechsel.value = true
+  drawerOffen.value = false
+}
+
+// Nach dem Schließen zurück zum Schalter. Nach einem Linkklick oder Seitenwechsel gehört der
+// Fokus der Seite (Überschrift), ihn jetzt zum Schalter zu holen wäre ein Fokusraub.
 function beiAfterHide(ereignis: Event) {
   if (ereignis.target !== ereignis.currentTarget) {
     return
@@ -59,6 +80,10 @@ function beiAfterHide(ereignis: Event) {
   drawerAktiv.value = false
   if (schliesstDurchSeitenwechsel.value) {
     schliesstDurchSeitenwechsel.value = false
+    // `wa-drawer` gibt den Fokus selbst per `setTimeout` an das Element zurück, das beim Öffnen den
+    // Fokus hatte (den Menüknopf), und zwar unmittelbar vor diesem Ereignis. Ein synchroner
+    // Fokus hier würde überschrieben; erst dieser Aufruf kommt danach an die Reihe.
+    setTimeout(fokussiereUeberschrift)
     return
   }
   menueSchalter.value?.focus()
@@ -99,14 +124,7 @@ function beiSeitenklick(ereignis: Event) {
     return
   }
   ereignis.preventDefault()
-  const ziel =
-    document.querySelector<HTMLElement>('h1') ?? document.querySelector<HTMLElement>('main')
-  if (ziel !== null) {
-    if (!ziel.hasAttribute('tabindex')) {
-      ziel.setAttribute('tabindex', '-1')
-    }
-    ziel.focus()
-  }
+  fokussiereUeberschrift()
 }
 
 onMounted(() => {
@@ -170,11 +188,15 @@ onBeforeUnmount(() => {
                   }}</span>
                   <ul class="om-nav-gruppe__liste" :aria-labelledby="`om-drawer-gruppe-${nummer}`">
                     <li v-for="link in eintrag.eintraege" :key="link.name">
-                      <RouterLink :to="menueZiel(link)">{{ link.text }}</RouterLink>
+                      <RouterLink :to="menueZiel(link)" @click="beiDrawerLinkKlick">{{
+                        link.text
+                      }}</RouterLink>
                     </li>
                   </ul>
                 </template>
-                <RouterLink v-else :to="menueZiel(eintrag)">{{ eintrag.text }}</RouterLink>
+                <RouterLink v-else :to="menueZiel(eintrag)" @click="beiDrawerLinkKlick">{{
+                  eintrag.text
+                }}</RouterLink>
               </li>
             </ul>
           </nav>

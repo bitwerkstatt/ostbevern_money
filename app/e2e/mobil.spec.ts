@@ -1,6 +1,11 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
 
+import {
+  pruefeEscape,
+  pruefeLinkDerAktuellenSeite,
+  pruefeLinkEinerAnderenSeite,
+} from './menueDrawer'
 import { routen } from './routen'
 import { befundeTabellenrahmen, oeffneAlleBereiche } from './tabellenrahmen'
 
@@ -211,6 +216,22 @@ test.describe('Tabellenrahmen bei 360 px (A11Y-01, A11Y-03)', () => {
       expect(meldung, meldung).toBe('')
     })
   }
+})
+
+test.describe('Mobiles Menü schließt bei jedem Linkklick (A11Y-02, D-21)', () => {
+  test('Link der aktuellen Seite: Drawer zu, aria-expanded false, Fokus auf der Überschrift', async ({
+    page,
+  }) => {
+    await pruefeLinkDerAktuellenSeite(page)
+  })
+
+  test('Link einer anderen Seite: Route wechselt, Fokus auf der Überschrift', async ({ page }) => {
+    await pruefeLinkEinerAnderenSeite(page)
+  })
+
+  test('Escape schließt den Drawer, der Fokus kehrt zum Menüknopf zurück', async ({ page }) => {
+    await pruefeEscape(page)
+  })
 })
 
 test.describe('360 × 640 mit geöffneter Leiste und geöffnetem Menü (A11Y-03)', () => {
