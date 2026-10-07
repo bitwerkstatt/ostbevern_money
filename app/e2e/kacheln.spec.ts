@@ -17,13 +17,36 @@ import { routen } from './routen'
 // - die Betragsgröße ist `--wa-font-size-l` bei jeder Breite (G-02),
 // - der Knopf zeigt „Quelle“, behält den zugänglichen Namen „Quelle anzeigen: …, PDF-Seite {n}“
 //   und ist mindestens 44 × 44 px groß (G-03),
-// - jede Kachel steht in einem Raster `.om-kachelraster` (G-04).
+// - jede Kachel steht in einem Raster `.om-kachelraster` (G-04),
+// - das `li` um jede Kachel hat Außenabstand 0 (07-14, Einzug aus Web Awesome),
+// - je Route wird die Schrift der Beträge protokolliert (nicht geprüft).
 // Ein eigener Test hält die Routenliste geschlossen: Zeigt eine weitere Route Kacheln, schlägt er
 // fehl, statt sie ungeprüft zu lassen.
 // Alle Befunde einer Route werden gesammelt, damit ein Lauf jeden Überlauf mit Route, Breite und
 // Betrag nennt.
+//
+// Messumgebung (Lücke G-07-2, Plan 07-14): Die gerenderten Breiten hängen von der Systemschrift
+// hinter `system-ui` ab. GitHub Actions (ubuntu-24.04) rendert DejaVu Sans. Lokale Läufe und jede
+// Kalibrierung gehen deshalb über `scripts/e2e-wie-ci.sh`. Das nackte Playwright-Image rendert
+// WenQuanYi Zen Hei (rund 16 % schmaler) und ist keine gültige Kalibrierumgebung.
 
-const BREITEN = [360, 400, 480, 560, 600, 700, 768, 1024, 1280, 1440] as const
+// Grundbreiten des Sweeps. 720 und 952 px sind die Spaltensprünge der Mindestspur 13rem aus 07-13,
+// die zuvor niemand testete (G-07-2).
+const GRUNDBREITEN = [360, 400, 480, 560, 600, 700, 720, 768, 952, 1024, 1280, 1440] as const
+
+// Spaltensprünge der aktuellen Mindestspur `--om-kachel-mindestbreite` (13,25rem = 212 px): Die
+// Spur ist dort genau so breit wie die Mindestspur, also der ungünstigste Fall. Die Liste füllt den
+// Inhaltsbereich der Seite (Breite = Viewport − 48 px durch das Seitenpolster `--wa-space-l` von
+// 24 px links und rechts), die Lücke beträgt 16 px unter 700 px und 24 px ab 700 px. Der Sprung auf n
+// Spalten liegt daher bei n·212 + (n−1)·Lücke + 48 px: n = 2: 488, n = 3: 732, n = 4: 968,
+// n = 5: 1204, n = 6: 1440 (n = 7 läge bei 1676 px, jenseits des Sweeps). Ändert sich der Wert in
+// basis.css, müssen diese Breiten folgen; der Selbsttest auf der Startseite meldet es, wenn nicht.
+const SPALTENSPRUENGE: readonly number[] = [488, 732, 968, 1204, 1440]
+
+/** Alle Breiten des Sweeps: Grundbreiten und Spaltensprünge, aufsteigend und ohne Doppelte. */
+const BREITEN: readonly number[] = [...new Set([...GRUNDBREITEN, ...SPALTENSPRUENGE])].sort(
+  (a, b) => a - b,
+)
 const HOEHE = 800
 const MINDESTMASS = 44
 const TOLERANZ = 0.5
@@ -50,6 +73,12 @@ interface KachelMessung {
   engsteInnenbreite: number
   /** Kleinster Abstand zwischen rechter Betragskante und rechter Inhaltskante in px. */
   reserve: number
+  /** Aufgelöste `--om-kachel-mindestbreite` in px (kleinster Wert über die Kachellisten). */
+  mindestspur: number
+  /** Kleinste Spur (ohne 0) der `grid-template-columns` der Kachellisten in px. */
+  engsteSpur: number
+  /** Kleinster Abstand des Betrags zum Inhaltsrand in der schmalsten möglichen Spur in px. */
+  spurreserve: number
   befunde: string[]
 }
 
@@ -97,6 +126,34 @@ async function warteAufLayout(page: Page): Promise<void> {
   )
 }
 
+/**
+ * Die Plattformschrift, die die Beträge rendert (CDP `CSS.getPlatformFontsForNode`). Das Projekt
+ * `ci` ist Chromium, CDP steht also zur Verfügung. Die Schrift wird nur protokolliert, nie
+ * geprüft, weil GitHub sein Image ändern kann.
+ */
+async function schriftDerBetraege(page: Page): Promise<string> {
+  const sitzung = await page.context().newCDPSession(page)
+  try {
+    await sitzung.send('DOM.enable')
+    await sitzung.send('CSS.enable')
+    const dokument = await sitzung.send('DOM.getDocument', { depth: -1 })
+    const knoten = await sitzung.send('DOM.querySelectorAll', {
+      nodeId: dokument.root.nodeId,
+      selector: '.om-kennzahl .om-zahl',
+    })
+    const schriften = new Set<string>()
+    for (const nodeId of knoten.nodeIds) {
+      const antwort = await sitzung.send('CSS.getPlatformFontsForNode', { nodeId })
+      for (const eintrag of antwort.fonts) {
+        schriften.add(`${eintrag.familyName} (${eintrag.postScriptName})`)
+      }
+    }
+    return schriften.size > 0 ? [...schriften].join(', ') : '(keine)'
+  } finally {
+    await sitzung.detach()
+  }
+}
+
 /** Misst alle sichtbaren Kacheln der Seite im aktuellen Zustand (eine Auswertung im Browser). */
 function messeKacheln(page: Page): Promise<KachelMessung> {
   return page.evaluate(
@@ -121,6 +178,9 @@ function messeKacheln(page: Page): Promise<KachelMessung> {
       let betragBreite = 0
       let engsteInnenbreite = Number.POSITIVE_INFINITY
       let reserve = Number.POSITIVE_INFINITY
+      let spurreserve = Number.POSITIVE_INFINITY
+      let mindestspur = Number.POSITIVE_INFINITY
+      let engsteSpur = Number.POSITIVE_INFINITY
       let spalten = 0
 
       const kacheln = [...document.querySelectorAll('.om-kennzahl')].filter(
@@ -145,8 +205,10 @@ function messeKacheln(page: Page): Promise<KachelMessung> {
         if (liste !== null && liste !== undefined) {
           const spuren = getComputedStyle(liste)
             .gridTemplateColumns.split(/\s+/)
-            .filter((spur) => zahl(spur) > 0).length
-          spalten = Math.max(spalten, spuren)
+            .map(zahl)
+            .filter((spur) => spur > 0)
+          spalten = Math.max(spalten, spuren.length)
+          engsteSpur = Math.min(engsteSpur, ...spuren)
         }
 
         // (b) nichts wird abgeschnitten
@@ -257,6 +319,59 @@ function messeKacheln(page: Page): Promise<KachelMessung> {
             `„${name}“: Kachel scrollWidth ${String(kachel.scrollWidth)} > clientWidth ${String(kachel.clientWidth)}`,
           )
         }
+
+        // (i) das li des Rasters hat keinen Außenabstand (Einzug aus Web Awesome native.css)
+        const eintrag = kachel.closest('li')
+        if (eintrag !== null) {
+          const eintragStil = getComputedStyle(eintrag)
+          const raender = [
+            eintragStil.marginLeft,
+            eintragStil.marginRight,
+            eintragStil.marginTop,
+            eintragStil.marginBottom,
+          ]
+          if (raender.some((rand) => Math.abs(zahl(rand)) > toleranz)) {
+            befunde.push(
+              `„${name}“: li hat Außenabstand links ${eintragStil.marginLeft}, rechts ${eintragStil.marginRight}, oben ${eintragStil.marginTop}, unten ${eintragStil.marginBottom}, erwartet 0 (Einzug des li aus Web Awesome (native.css) nicht zurückgesetzt)`,
+            )
+          }
+        }
+
+        // (j) der Betrag passt in die schmalste Spur, die das Raster erzeugen kann. Seine Breite
+        // hängt nicht vom Viewport ab (nowrap, feste Größe), und die auto-fit-Spur wird nie schmaler
+        // als die Mindestbreite, solange die Liste mindestens so breit ist (ab 360 px der Fall).
+        // Der Check deckt damit jede Breite zwischen den getesteten Breiten ab.
+        if (raster !== null && eintrag !== null && betrag !== null) {
+          const roh = getComputedStyle(raster).getPropertyValue('--om-kachel-mindestbreite').trim()
+          if (roh === '') {
+            befunde.push(`„${name}“: Raster ohne --om-kachel-mindestbreite`)
+          } else {
+            const mindestSonde = document.createElement('div')
+            mindestSonde.style.position = 'absolute'
+            mindestSonde.style.visibility = 'hidden'
+            mindestSonde.style.width = roh
+            document.body.append(mindestSonde)
+            const mindestPx = mindestSonde.getBoundingClientRect().width
+            mindestSonde.remove()
+            mindestspur = Math.min(mindestspur, mindestPx)
+            const eintragStil = getComputedStyle(eintrag)
+            const schmalsterInhalt =
+              mindestPx -
+              zahl(eintragStil.marginLeft) -
+              zahl(eintragStil.marginRight) -
+              zahl(stil.borderLeftWidth) -
+              zahl(stil.borderRightWidth) -
+              zahl(stil.paddingLeft) -
+              zahl(stil.paddingRight)
+            const betragsBreite = betrag.getBoundingClientRect().width
+            spurreserve = Math.min(spurreserve, schmalsterInhalt - betragsBreite)
+            if (betragsBreite > schmalsterInhalt + toleranz) {
+              befunde.push(
+                `„${name}“: Betrag „${(betrag.textContent ?? '').trim()}“ (${px(betragsBreite)} px) passt nicht in die schmalste Spur (Inhalt ${px(schmalsterInhalt)} px bei Mindestspur ${px(mindestPx)} px)`,
+              )
+            }
+          }
+        }
       }
 
       // Seite: kein waagerechtes Scrollen, die breitesten Verursacher nennen.
@@ -289,6 +404,9 @@ function messeKacheln(page: Page): Promise<KachelMessung> {
         betragBreite,
         engsteInnenbreite: Number.isFinite(engsteInnenbreite) ? engsteInnenbreite : 0,
         reserve: Number.isFinite(reserve) ? reserve : 0,
+        mindestspur: Number.isFinite(mindestspur) ? mindestspur : 0,
+        engsteSpur: Number.isFinite(engsteSpur) ? engsteSpur : 0,
+        spurreserve: Number.isFinite(spurreserve) ? spurreserve : 0,
         befunde,
       }
     },
@@ -307,12 +425,14 @@ function tabellenzeile(pfad: string, breite: number, messung: KachelMessung): st
     eine(messung.betragBreite),
     eine(messung.engsteInnenbreite),
     eine(messung.reserve),
+    eine(messung.engsteSpur),
+    eine(messung.spurreserve),
     `${String(messung.scrollWidth)} |`,
   ].join(' | ')
 }
 
 test.describe('Kennzahl-Kacheln über alle Breiten (A11Y-03, 07-13)', () => {
-  test.use({ viewport: { width: BREITEN[0], height: HOEHE } })
+  test.use({ viewport: { width: GRUNDBREITEN[0], height: HOEHE } })
 
   for (const name of KACHEL_ROUTEN) {
     const route = routen().find((eintrag) => eintrag.name === name)
@@ -325,6 +445,7 @@ test.describe('Kennzahl-Kacheln über alle Breiten (A11Y-03, 07-13)', () => {
       await page.goto(`/#${pfad}`)
       await expect(page.locator('h1')).toBeVisible()
       await page.waitForLoadState('networkidle')
+      console.log(`Schrift der Beträge auf ${pfad}: ${await schriftDerBetraege(page)}`)
 
       // Aufsteigende Breiten: Diagramme ziehen nach dem Viewport nach, sie sind nie breiter.
       const befunde: string[] = []
@@ -335,6 +456,16 @@ test.describe('Kennzahl-Kacheln über alle Breiten (A11Y-03, 07-13)', () => {
         console.log(tabellenzeile(pfad, breite, messung))
         if (messung.kacheln === 0) {
           messung.befunde.push('keine sichtbare Kennzahl-Kachel gefunden')
+        }
+        // Selbsttest: Auf der Startseite (sieben Kacheln) gibt es jeden Spaltensprung bis 1440 px.
+        // Dort muss die engste Spur der Mindestspur entsprechen, sonst ist die Liste
+        // SPALTENSPRUENGE nicht mehr an --om-kachel-mindestbreite ausgerichtet.
+        if (name === 'start' && SPALTENSPRUENGE.includes(breite)) {
+          if (Math.abs(messung.engsteSpur - messung.mindestspur) > TOLERANZ) {
+            messung.befunde.push(
+              `Breite ${String(breite)} ist kein Spaltensprung der Mindestspur (engste Spur ${messung.engsteSpur.toFixed(1)} px, Mindestspur ${messung.mindestspur.toFixed(1)} px): SPALTENSPRUENGE an --om-kachel-mindestbreite anpassen`,
+            )
+          }
         }
         for (const befund of messung.befunde) {
           befunde.push(`${pfad} @ ${String(breite)} px: ${befund}`)

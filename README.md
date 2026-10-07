@@ -26,6 +26,16 @@ npm --prefix app run build
 
 Alle Befehle und Konventionen stehen in [`.claude/CLAUDE.md`](.claude/CLAUDE.md).
 
+### Browser-Tests mit der Schrift der CI
+
+Der Breitentest der Kennzahl-Kacheln (`app/e2e/kacheln.spec.ts`) misst gerenderte Beträge und hängt deshalb von der Systemschrift ab. GitHub Actions läuft auf `ubuntu-24.04` und rendert mit DejaVu Sans; im nackten Playwright-Image wäre es eine andere, schmalere Schrift, und die Messung wäre wertlos. Damit du lokal dieselben Zahlen bekommst, startest du die Browser-Tests über `scripts/e2e-wie-ci.sh`. Das Skript braucht Docker, lädt das Schriftpaket einmal nach `~/.cache/ostbevern-money` (die Prüfsumme ist fest eingetragen) und ändert nichts an der App.
+
+Bereite dafür eine Kopie von `app/` mit Linux-Abhängigkeiten und einem Build vor (`npm ci` und `npm run build-only`). Auf macOS führst du beides im Image `mcr.microsoft.com/playwright:v1.63.0-noble` aus, weil `app/node_modules` dort macOS-Binärdateien enthält. Dann:
+
+```bash
+scripts/e2e-wie-ci.sh <Verzeichnis-der-Kopie> --project=ci
+```
+
 ## Veröffentlichung auf GitHub Pages
 
 Die App ist eine statische Seite ohne Backend. Der Workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) baut sie und veröffentlicht sie auf GitHub Pages, sobald der Stand auf `main` liegt und alle Prüfungen grün sind. Ein Pull Request oder ein anderer Branch veröffentlicht nie etwas. Das Anlegen des Repositories und der erste Push sind bewusst deine Handgriffe, damit nichts ungewollt öffentlich wird:
