@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 import BaseChart, { datenpunkte } from '@/components/BaseChart.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
 import { KEIN_WERT } from '@/charts/format'
-import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
+import { rahmenAttribute, type DatenSpalte, type DatenZeile } from '@/components/datenTabelle'
 
 // Zustände von BaseChart und DatenTabelle (E6, QUAL-02): laden, Fehler, leer, teilweise leer.
 // Gerendert wird serverseitig mit `vue/server-renderer` (Teil des vue-Pakets, kein neues
@@ -89,17 +89,27 @@ const SPALTEN: readonly DatenSpalte[] = [
   { schluessel: 'name', titel: 'Name', art: 'text' },
   { schluessel: 'betrag', titel: 'Betrag', art: 'euro' },
 ]
+const BESCHRIFTUNG = 'Beispieltabelle der Posten'
 
 describe('DatenTabelle Zustände', () => {
   it('laedt: zeigt wa-skeleton, keine Tabelle', async () => {
-    const html = await rendere(DatenTabelle, { spalten: SPALTEN, zeilen: [], laedt: true })
+    const html = await rendere(DatenTabelle, {
+      beschriftung: BESCHRIFTUNG,
+      spalten: SPALTEN,
+      zeilen: [],
+      laedt: true,
+    })
     expect(html).toContain('<wa-skeleton')
     expect(html).not.toContain('<table')
     expect(html).not.toContain('Keine Einzelwerte')
   })
 
   it('leer: zeilen [] zeigt Titel und Text des Leerzustands, keine Tabelle', async () => {
-    const html = await rendere(DatenTabelle, { spalten: SPALTEN, zeilen: [] })
+    const html = await rendere(DatenTabelle, {
+      beschriftung: BESCHRIFTUNG,
+      spalten: SPALTEN,
+      zeilen: [],
+    })
     expect(html).toContain('Keine Einzelwerte')
     expect(html).toContain('Der Haushaltsplan nennt hier keine Aufschlüsselung.')
     expect(html).not.toContain('<table')
@@ -110,7 +120,11 @@ describe('DatenTabelle Zustände', () => {
       { name: 'Posten A', betrag: null },
       { name: 'Posten B', betrag: 5 },
     ]
-    const html = await rendere(DatenTabelle, { spalten: SPALTEN, zeilen })
+    const html = await rendere(DatenTabelle, {
+      beschriftung: BESCHRIFTUNG,
+      spalten: SPALTEN,
+      zeilen,
+    })
     expect(html).toContain('<table')
     // Scoped-CSS-Attribute (data-v-…) stehen im Tag; geprüft wird Tag, Rolle und Inhalt.
     expect(html).toMatch(new RegExp(`<span aria-hidden="true"[^>]*>${KEIN_WERT}</span>`))
@@ -119,5 +133,46 @@ describe('DatenTabelle Zustände', () => {
     expect(html.split('kein Wert').length - 1).toBe(1)
     expect(html).toContain('value="5"')
     expect(html).not.toContain('value="0"')
+  })
+})
+
+describe('DatenTabelle Name und Rahmen (A11Y-01, A11Y-03, D-20)', () => {
+  const zeilen: DatenZeile[] = [{ name: 'Posten A', betrag: 5 }]
+
+  it('die Caption ist immer vorhanden, trägt eine id und den Beschriftungstext', async () => {
+    const html = await rendere(DatenTabelle, {
+      beschriftung: BESCHRIFTUNG,
+      spalten: SPALTEN,
+      zeilen,
+    })
+    expect(html).toMatch(/<caption[^>]* id="[^"]+"/)
+    expect(html).toContain('om-visually-hidden')
+    expect(html).toContain(BESCHRIFTUNG)
+  })
+
+  it('genau ein Namensweg: kein aria-label, ohne Überlauf weder role region noch tabindex', async () => {
+    const html = await rendere(DatenTabelle, {
+      beschriftung: BESCHRIFTUNG,
+      spalten: SPALTEN,
+      zeilen,
+    })
+    expect(html).not.toContain('aria-label')
+    expect(html).not.toContain('role="region"')
+    expect(html).not.toContain('tabindex')
+    expect(html).not.toContain('aria-labelledby')
+  })
+})
+
+describe('rahmenAttribute (A11Y-01, 05/WR-02)', () => {
+  it('liefert ohne Überlauf nichts', () => {
+    expect(rahmenAttribute(false, 'caption-1')).toEqual({})
+  })
+
+  it('liefert bei Überlauf tabindex, Rolle und Namensbezug zusammen', () => {
+    expect(rahmenAttribute(true, 'caption-1')).toEqual({
+      tabindex: 0,
+      role: 'region',
+      'aria-labelledby': 'caption-1',
+    })
   })
 })

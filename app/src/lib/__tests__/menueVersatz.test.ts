@@ -2,14 +2,8 @@ import { describe, expect, it } from 'vitest'
 
 import { listenVersatz, randAusMaximalbreite } from '@/lib/menueVersatz'
 
-// Der Quelltext der Menügruppe (wie in `menue.test.ts` über `?raw`): die Verdrahtung von
-// `positioniere()` wird am Quelltext festgenagelt, weil vitest ohne DOM läuft.
-const gruppenQuelltexte = import.meta.glob<string>('/src/components/MenueGruppe.vue', {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-})
-const gruppenQuelltext = gruppenQuelltexte['/src/components/MenueGruppe.vue'] ?? ''
+// Reine Rechnung der Listenlage. Die Verdrahtung in `MenueGruppe.vue` (Öffnen, Resize,
+// `style.left`) prüft `e2e/interaktion.spec.ts` im Browser (D-14, 06/IN-09), nicht der Quelltext.
 
 describe('listenVersatz (WR-01, UI-SPEC E12)', () => {
   it('verschiebt die Liste beim ersten Öffnen nach links, wenn sie rechts überläuft', () => {
@@ -146,22 +140,4 @@ describe('Resize und Fixpunkt (WR-01)', () => {
       expect(listenVersatz(gemessen(basis, ergebnis, breite))).toBe(ergebnis)
     },
   )
-})
-
-describe('Verdrahtung in MenueGruppe.vue', () => {
-  it('erreicht positioniere() aus wechsle() und dem Resize-Handler und liest style.left', () => {
-    const aufrufe = gruppenQuelltext.match(/positioniere\(\)/g) ?? []
-    // Eine Definition (`function positioniere()`) plus mindestens zwei Aufrufe.
-    expect(aufrufe.length).toBeGreaterThanOrEqual(3)
-    expect(gruppenQuelltext).toContain('style.left')
-  })
-
-  it('delegiert an listenVersatz und randAusMaximalbreite', () => {
-    expect(gruppenQuelltext).toContain('listenVersatz(')
-    expect(gruppenQuelltext).toContain('randAusMaximalbreite(')
-  })
-
-  it('setzt den reaktiven Versatz nicht mehr vor dem Messen auf 0', () => {
-    expect(gruppenQuelltext).not.toMatch(/versatz\.value\s*=\s*0\s*$/m)
-  })
 })

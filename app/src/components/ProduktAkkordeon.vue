@@ -43,11 +43,14 @@ const gruppen = produktGruppen()
   gap: var(--wa-space-xs);
 }
 
-/* Mindest-Trefferfläche 44 px (WCAG 2.5.5); lange Summary-Texte brechen um. */
+/* Mindest-Trefferfläche 44 px (WCAG 2.5.5); lange Summary-Texte brechen um. `anywhere` statt
+   `break-word`: nur `anywhere` senkt die Mindestbreite des Texts im Flex-Container der Summary.
+   Ohne Silbentrennung (Browser ohne deutsches Wörterbuch) schöbe sonst ein langes Wort den Pfeil
+   über den Rand und die Seite scrollte bei 360 px waagerecht (A11Y-03, gemessen auf /glossar). */
 .om-produkt-akkordeon wa-details::part(summary) {
   min-height: 44px;
   hyphens: auto;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 
 .om-produkt-akkordeon wa-details {
