@@ -14,7 +14,7 @@ import {
   finanzierungsTabelle,
   type FinanzierungsVariante,
 } from '@/lib/finanzierung'
-import { jahreListe } from '@/lib/schulden'
+import { jahreListe } from '@/lib/hilfsfunktionen'
 
 const props = defineProps<{
   variante: FinanzierungsVariante

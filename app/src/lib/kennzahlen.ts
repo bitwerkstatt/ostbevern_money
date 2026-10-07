@@ -3,7 +3,6 @@
 // `haushalt.json` gelesen; nur die beiden Pro-Kopf-Werte sind berechnet (`proKopf`,
 // gerundet). Die Seite zeigt die Zahlen über `charts/format.ts`.
 
-import { jahr as formatJahr } from '@/charts/format'
 import { haushalt, investitionen } from '@/data/daten'
 import type { Knoten } from '@/data/typen'
 import { proKopf } from '@/lib/berechnung'
@@ -33,13 +32,6 @@ export interface Kennzahl {
    * belegten Zeile besteht; sonst `null`. Namen, Zeilennummern und Seiten stammen aus den Daten.
    */
   herleitung: string | null
-}
-
-/** Zeile unter einem Wert: „{Wertart} {jahr} · PDF-Seite {n}“ (D-10, UI-SPEC KennzahlKachel). */
-export function quellenZeile(wertart: string, jahr: number, pdfSeiten: readonly number[]): string {
-  const seiten = pdfSeiten.join(', ')
-  const wort = pdfSeiten.length === 1 ? 'PDF-Seite' : 'PDF-Seiten'
-  return `${wertart} ${formatJahr(jahr)} · ${wort} ${seiten}`
 }
 
 function wertAn(werte: readonly number[] | undefined, index: number, name: string): number {

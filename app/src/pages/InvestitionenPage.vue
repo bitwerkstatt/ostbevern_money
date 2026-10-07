@@ -14,9 +14,9 @@ import SchuldenstandDiagramm from '@/components/SchuldenstandDiagramm.vue'
 import VeFaelligkeiten from '@/components/VeFaelligkeiten.vue'
 import { haushalt, investitionen } from '@/data/daten'
 import { vePdfSeiten, veGesamt } from '@/lib/finanzierung'
+import { quellenZeile } from '@/lib/hilfsfunktionen'
 import { planjahre, useMassnahmenFilter } from '@/lib/investitionen'
 import { wertartFuerJahr, wertartName } from '@/lib/jahr'
-import { quellenZeile } from '@/lib/kennzahlen'
 import { belegSchluessel } from '@/lib/quelle'
 import { baueSchuldenstand, schuldenKacheln } from '@/lib/schulden'
 
@@ -65,9 +65,10 @@ const schuldenTitel = (() => {
     : `Schuldenstand ${formatiereJahr(erstes)}–${formatiereJahr(letztes)}`
 })()
 
-// Der Filterzustand liegt in der URL (`pb`, `art`); die Filterzeile liest ihn selbst, die Seite
-// braucht die Treffer und den Rücksetzer für den Leerzustand.
-const { vorhaben, zuruecksetzen } = useMassnahmenFilter()
+// Der Filterzustand liegt in der URL (`pb`, `art`) und wird hier genau einmal je Seite angelegt;
+// die Filterzeile bekommt ihn als Prop, die Seite braucht die Treffer und den Rücksetzer.
+const steuerung = useMassnahmenFilter()
+const { vorhaben, zuruecksetzen } = steuerung
 </script>
 
 <template>
@@ -93,7 +94,7 @@ const { vorhaben, zuruecksetzen } = useMassnahmenFilter()
     </ul>
     <section class="om-investitionen__abschnitt" aria-labelledby="om-investitionen-massnahmen">
       <h2 id="om-investitionen-massnahmen">{{ massnahmenTitel }}</h2>
-      <MassnahmenFilter />
+      <MassnahmenFilter :steuerung="steuerung" />
       <ChartCard v-if="vorhaben.length > 0" titel="Die größten Maßnahmen">
         <MassnahmenListe :vorhaben="vorhaben" />
       </ChartCard>

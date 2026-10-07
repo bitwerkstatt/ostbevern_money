@@ -6,8 +6,8 @@ import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
 import KennzahlKachel from '@/components/KennzahlKachel.vue'
 import { haushalt } from '@/data/daten'
 import { klAnteil } from '@/lib/bindungsgrad'
+import { quellenZeile } from '@/lib/hilfsfunktionen'
 import { wertartFuerJahr, wertartName } from '@/lib/jahr'
-import { quellenZeile } from '@/lib/kennzahlen'
 import { nichtBeeinflussbar } from '@/lib/zuschuesse'
 
 // RAT-02, D-02: große Posten, die der Rat nicht steuern kann. Die Kacheln nennen nur Betrag,

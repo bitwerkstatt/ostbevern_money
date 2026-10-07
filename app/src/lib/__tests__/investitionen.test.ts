@@ -6,6 +6,7 @@ import { farbeFuerPb } from '@/charts/echartsTheme'
 import { euroKurz } from '@/charts/format'
 import { haushalt, investitionen, produkte } from '@/data/daten'
 import type { Massnahme } from '@/data/typen'
+import { klickIndex } from '@/lib/hilfsfunktionen'
 import { belegSchluessel, findeBeleg } from '@/lib/quelle'
 import {
   ARTEN,
@@ -17,7 +18,6 @@ import {
   ergebnisText,
   filterArt,
   GROESSTE_ANZAHL,
-  klickIndex,
   leseMassnahmenFilter,
   MASSNAHMEN_AUFGABENBEREICHE,
   planjahre,

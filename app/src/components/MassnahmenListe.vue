@@ -8,10 +8,10 @@ import { euroKurz, jahr as formatiereJahr, zahl } from '@/charts/format'
 import BaseChart from '@/components/BaseChart.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
 import { useSchmalerBildschirm } from '@/lib/bildschirm'
+import { klickIndex } from '@/lib/hilfsfunktionen'
 import {
   baueMassnahmenTabelle,
   GROESSTE_ANZAHL,
-  klickIndex,
   planjahre,
   type Vorhaben,
 } from '@/lib/investitionen'

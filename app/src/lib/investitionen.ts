@@ -211,17 +211,6 @@ export function aufgabenbereichName(pb: string): string {
   return findeKnoten(pb)?.name ?? pb
 }
 
-/** Index der Maßnahme, auf die ein Klick im Balkendiagramm zeigt (`dataIndex`); sonst `null`. */
-export function klickIndex(params: unknown, anzahl: number): number | null {
-  if (typeof params !== 'object' || params === null || !('dataIndex' in params)) {
-    return null
-  }
-  const index = params.dataIndex
-  return typeof index === 'number' && Number.isInteger(index) && index >= 0 && index < anzahl
-    ? index
-    : null
-}
-
 /**
  * Tabelle aller Maßnahmen der Auswahl: Maßnahme (die Seite macht daraus den Link auf das
  * Produkt), Aufgabenbereich, Art(en), je Planjahr ein Betrag (Kopf: „{Jahr} {Wertart}“),
@@ -443,3 +432,6 @@ export function useMassnahmenFilter() {
 
   return { filter, vorhaben, setzePb, setzeArt, zuruecksetzen }
 }
+
+/** Zustand und Setzer des Maßnahmenfilters; die Seite erzeugt ihn einmal und reicht ihn weiter. */
+export type MassnahmenSteuerung = ReturnType<typeof useMassnahmenFilter>
