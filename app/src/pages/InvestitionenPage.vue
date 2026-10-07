@@ -78,11 +78,7 @@ const { vorhaben, zuruecksetzen } = useMassnahmenFilter()
         >Finanzplan</GlossarBegriff
       >), nicht Erträge und Aufwendungen.
     </p>
-    <ul
-      class="om-investitionen__kacheln"
-      role="list"
-      aria-label="Kennzahlen zu Schulden und Verpflichtungen"
-    >
+    <ul class="om-kachelraster" role="list" aria-label="Kennzahlen zu Schulden und Verpflichtungen">
       <li v-for="kachel in kacheln" :key="kachel.schluessel">
         <KennzahlKachel
           :bezeichnung="kachel.bezeichnung"
@@ -166,15 +162,6 @@ const { vorhaben, zuruecksetzen } = useMassnahmenFilter()
   margin: 0;
   font-size: var(--wa-font-size-s);
   color: var(--wa-color-text-quiet);
-}
-
-.om-investitionen__kacheln {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--wa-space-m);
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .om-investitionen__abschnitt {

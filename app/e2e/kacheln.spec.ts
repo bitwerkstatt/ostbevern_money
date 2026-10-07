@@ -29,7 +29,12 @@ const MINDESTMASS = 44
 const TOLERANZ = 0.5
 
 /** Routennamen (`routen()`), die Kennzahl-Kacheln zeigen; der Klassifikationstest hält sie vollständig. */
-const KACHEL_ROUTEN: readonly string[] = ['start']
+const KACHEL_ROUTEN: readonly string[] = [
+  'start',
+  'investitionen',
+  'rat-entscheidet',
+  'stellenplan',
+]
 
 interface KachelMessung {
   innerWidth: number
@@ -66,6 +71,29 @@ async function warteAufLayout(page: Page): Promise<void> {
         .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
         .map((animation) => animation.finished.catch(() => undefined)),
     ),
+  )
+  // Diagramme ziehen nach einer Größenänderung verzögert nach (ECharts-Resize). Beim Wechsel auf
+  // das zweispaltige Layout ab 700 px steht ein Diagramm kurz noch in der alten, breiteren
+  // Größe und schiebt die Seite über den Rand (auf /stellenplan: Leinwand 520 px in einer Spalte
+  // von 302 px). Das ist kein Layoutfehler der Kacheln und nach wenigen Millisekunden vorbei.
+  // Gewartet wird deshalb, bis die Seite nicht mehr über den Rand reicht, höchstens 2 s. Ein
+  // dauerhafter Überlauf bleibt danach bestehen und wird von der Messung gemeldet.
+  await page.evaluate(
+    () =>
+      new Promise<void>((fertig) => {
+        const beginn = performance.now()
+        const pruefe = () => {
+          if (
+            document.documentElement.scrollWidth <= window.innerWidth ||
+            performance.now() - beginn > 2000
+          ) {
+            fertig()
+          } else {
+            setTimeout(pruefe, 50)
+          }
+        }
+        pruefe()
+      }),
   )
 }
 
@@ -240,7 +268,7 @@ function messeKacheln(page: Page): Promise<KachelMessung> {
           if (kasten.right > sichtbareBreite + toleranz && kasten.width > 0) {
             const klassen = [...element.classList].map((klasse) => `.${klasse}`).join('')
             verursacher.push(
-              `${element.tagName.toLowerCase()}${klassen} reicht bis ${px(kasten.right)} px`,
+              `${element.tagName.toLowerCase()}${klassen} reicht bis ${px(kasten.right)} px (links ${px(kasten.left)} px, Breite ${px(kasten.width)} px)`,
             )
           }
           if (verursacher.length >= 5) {
@@ -315,4 +343,29 @@ test.describe('Kennzahl-Kacheln über alle Breiten (A11Y-03, 07-13)', () => {
       expect(befunde, befunde.join('\n')).toEqual([])
     })
   }
+
+  // Hält die Routenliste geschlossen: Eine neue Route mit Kacheln schlägt hier fehl, statt
+  // ungeprüft zu bleiben. Der Test zählt nur; über das Layout der übrigen Routen sagt er nichts
+  // (D-12: der Smoke-Test bleibt Desktop-only).
+  test('Kachelrouten: genau diese Routen zeigen Kennzahl-Kacheln', async ({ page }) => {
+    const mitKacheln: string[] = []
+    for (const route of routen()) {
+      await page.goto(`/#${route.pfad}`)
+      await expect(page.locator('h1')).toBeVisible()
+      await page.waitForLoadState('networkidle')
+      const anzahl = await page.locator('.om-kennzahl').count()
+      console.log(`| ${route.pfad} | ${String(anzahl)} Kacheln |`)
+      if (anzahl > 0) {
+        mitKacheln.push(route.name)
+      }
+    }
+    const erwartet = [...KACHEL_ROUTEN].sort()
+    const gefunden = mitKacheln.sort()
+    const fehlen = erwartet.filter((name) => !gefunden.includes(name))
+    const zusaetzlich = gefunden.filter((name) => !erwartet.includes(name))
+    const meldung =
+      `Routen ohne Kacheln, aber in KACHEL_ROUTEN: ${fehlen.join(', ') || '(keine)'}; ` +
+      `Routen mit Kacheln, aber nicht in KACHEL_ROUTEN: ${zusaetzlich.join(', ') || '(keine)'}`
+    expect(gefunden, meldung).toEqual(erwartet)
+  })
 })

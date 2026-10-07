@@ -69,7 +69,7 @@ const kacheln = computed(() =>
       Was der Rat nicht beeinflussen kann
     </h2>
     <p class="om-nicht-beeinflussbar__lead">{{ lead }}</p>
-    <ul class="om-nicht-beeinflussbar__raster" role="list" lang="de">
+    <ul class="om-kachelraster" role="list" lang="de">
       <li v-for="k in kacheln" :key="k.schluessel">
         <KennzahlKachel
           :bezeichnung="k.bezeichnung"
@@ -112,19 +112,6 @@ const kacheln = computed(() =>
   overflow-wrap: break-word;
 }
 
-.om-nicht-beeinflussbar__raster {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--wa-space-m);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.om-nicht-beeinflussbar__raster > li {
-  min-width: 0;
-}
-
 .om-nicht-beeinflussbar__satz {
   margin: 0;
   line-height: var(--wa-line-height-normal);
@@ -134,11 +121,5 @@ const kacheln = computed(() =>
 
 .om-nicht-beeinflussbar__vergleich:not(:empty) {
   margin-block-start: var(--wa-space-m);
-}
-
-@media (min-width: 700px) {
-  .om-nicht-beeinflussbar__raster {
-    gap: var(--wa-space-l);
-  }
 }
 </style>

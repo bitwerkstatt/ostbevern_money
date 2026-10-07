@@ -154,7 +154,7 @@ const gruppenQuelle = `Stellenplan, ${seitenText(
     </PageIntro>
 
     <section class="om-stellenplan__abschnitt" aria-label="Die Stellen im Überblick">
-      <ul class="om-stellenplan__raster" role="list">
+      <ul class="om-kachelraster" role="list">
         <li v-for="kachel in kacheln" :key="kachel.schluessel">
           <KennzahlKachel
             :bezeichnung="kachel.bezeichnung"
@@ -229,19 +229,6 @@ const gruppenQuelle = `Stellenplan, ${seitenText(
   min-width: 0;
 }
 
-.om-stellenplan__raster {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--wa-space-m);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.om-stellenplan__raster > li {
-  min-width: 0;
-}
-
 .om-stellenplan__hinweis {
   display: block;
   margin-block-end: var(--wa-space-xl);
@@ -280,11 +267,5 @@ const gruppenQuelle = `Stellenplan, ${seitenText(
   font-size: var(--wa-font-size-s);
   line-height: 1.5;
   color: var(--wa-color-text-quiet);
-}
-
-@media (min-width: 700px) {
-  .om-stellenplan__raster {
-    gap: var(--wa-space-l);
-  }
 }
 </style>
