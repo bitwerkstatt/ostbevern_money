@@ -1,8 +1,8 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "Nach dem Klick auf einen Begriff scrollt die Seite zu weit nach oben, das fokussierte Element ist dadurch nicht sichtbar. (UAT 05 Test 6, Gap G-05-6)"
 created: 2026-10-05T00:00:00Z
-updated: 2026-10-05T00:20:00Z
+updated: 2026-10-07T12:00:00Z
 goal: find_root_cause_only
 ---
 
@@ -106,3 +106,7 @@ root_cause: "router/index.ts:101-102 returns `{ el: ziel }` without a `top` offs
 fix: (not applied — goal find_root_cause_only)
 verification: (not applicable)
 files_changed: []
+
+## Resolution
+
+resolved: 2026-10-07 — fixed; marked resolved by the user at v1.0 milestone close.

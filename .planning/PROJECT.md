@@ -6,6 +6,21 @@ Eine statische Webanwendung, die den Bürgerinnen und Bürgern von Ostbevern den
 
 Die vollständige fachliche Spezifikation steht in `discussion/SPEZIFIKATION.md`. Sie ist die maßgebliche Detailquelle für Datenmodell, Prüfregeln, Seiteninhalte und Sollwerte (Anhang B).
 
+## Current State
+
+**Shipped:** v1.0 MVP am 2026-10-07. Öffentlich unter https://bitwerkstatt.github.io/ostbevern_money/ (11 Routen, Deploy über GitHub Actions nach grüner CI).
+
+- Pipeline: ~25.500 LOC Python, Schritte 01–08 in `alle.py`, Prüfregeln 1–10 grün, Ausgabe byte-reproduzierbar
+- App: ~29.900 LOC TypeScript/Vue, vitest und Playwright (axe-Smoke, 360 px, Kachel-Breitentest), Lighthouse-a11y 100
+- Archiv: `.planning/milestones/v1.0-ROADMAP.md`, `v1.0-REQUIREMENTS.md`, `v1.0-phases/`
+
+## Next Milestone Goals
+
+Noch nicht festgelegt, kommt über `/gsd-new-milestone`. Kandidaten aus dem v2-Backlog:
+- Spiele (Planspiel, „Was kostet …?“, Schätzduell). Vorher müssen die Planspiel-Rechenregeln fachlich geklärt sein.
+- Nachweis der Generik mit dem echten Haushalt 2027 (ERW-03)
+- Offene Restpunkte: Code-Review-Befunde aus Phase 2/4, `/gsd-secure-phase 04`
+
 ## Core Value
 
 Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch automatische Prüfungen gegen den Gesamtplan und die Satzung belegt. Die beiden Leitfragen „Woher?“ und „Wofür?“ sind für Laien verständlich beantwortet.
@@ -14,35 +29,35 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 
 ### Validated
 
-- ✓ Seitenklassifikation aller PDF-Seiten (Typ, PB, PG, Produkt); Startseiten aller 63 Produkte stimmen mit Anhang A überein — Phase 2
-- ✓ Extraktion von Gesamtergebnisplan, Gesamtfinanzplan, Teilergebnis- und Teilfinanzplänen (PB, PG und Produkt) im Langformat, Spalten über x-Koordinaten — Phase 2
-- ✓ Produktinformationen (inkl. Bindungsgrad, Grundzahlen, Erläuterungsposten) für alle 63 Produkte — `produkte.json` ohne Personennamen, `grundzahlen.csv`, `erlaeuterungen.csv` — Phase 3
-- ✓ Investitionsmaßnahmen (nur aus Produktseiten) und VE-Fälligkeiten — `investitionen.csv`, `ve_faelligkeiten.csv`, PB-Listen als Kontrollquelle — Phase 3
-- ✓ Stellenplan (Teil A Beamte, Teil B Tarif, Stellenübersicht nach PB) — `stellenplan.csv`, Regel 10, Beamte 2026 = 8 — Phase 4
-- ✓ Manuell gepflegte Vorberichtstabellen und `meta.json` mit Quelle je Wert, automatisch gegen Planzeilen geprüft (Regel 5, Eckwerte Regel 9) — Phase 4
-- ✓ Konsistenzprüfung (Prüfregeln 1–10) in pytest und als Markdown-Bericht; bekannte Abweichungen in `befunde.md` — Phase 4
-- ✓ App-JSON-Dateien (`haushalt.json`, `produkte.json`, `investitionen.json`, `stellenplan.json`, `texte.json`) reproduzierbar über `alle.py`, ohne Personennamen, CI-Diff-Prüfung — Phase 4
-- ✓ Erklärtexte mit Datenplatzhaltern und Seitenverweis; jede Zahl rendert über `formatiere()` korrekt (Jahreszahlen mit Kürzel `jahr`, CR-01) — Phase 4
-- ✓ Start mit Kennzahlenband 2026 und Einstiegen zu den Leitfragen — Phase 5
-- ✓ Einnahmen: Ertragsarten → Steuerarten/Zuwendungen → Zeitreihen; investive Einnahmen separat — Phase 5
-- ✓ Ausgaben: Treemap mit Drilldown, „Weitergabe an Kreis und Land“ als eigene Kategorie, Umschalter Aufwand/Zuschussbedarf, Sicht nach Aufwandsart, Produktdetail — Phase 5
-- ✓ Geldfluss: Sankey 2024–2029 inkl. Defizit- und Minderaufwand-Ausgleich, mobile Alternative — Phase 5
-- ✓ Glossar mit allen Begriffen und allen 63 Produkten, GlossarBegriff-Links mit Tooltip und Sprungmarke — Phase 5
-- ✓ Entwicklung 2024–2029: Erträge/Aufwendungen, Jahresergebnis nach Wertart, Posten-Zeitreihen, Rücklagen mit Rückgang je Jahr (S. 23/311) — Phase 6
-- ✓ Investitionen und Schulden: Maßnahmen mit Filter (URL-Zustand), VE 11,6 Mio. € mit Fälligkeiten, Finanzierung, Schuldenstand gesamt/je Einwohner — Phase 6
-- ✓ Worüber entscheidet der Rat? Bindungsgrad-Balken mit Produkten, „Was der Rat nicht beeinflussen kann“, Einzelzuschüsse (Regel 5), Selbstauskunft-Hinweis — Phase 6
-- ✓ Stellenplan 2026/2025/besetzt, nach Aufgabenbereich und Gruppe, Personalaufwand je Aufgabenbereich — Phase 6
-- ✓ Hinweis „Was nicht im Haushalt steht“ (BBO, TEO AöR) — Phase 6
-- ✓ Quellenbelege: Zeilenrechteck + gerenderte WebP-Seiten, `quellen.json`, „Quelle anzeigen“-Leiste — Phase 7
-- ✓ Jahr-Umschalter, Fußzeile mit Datenstand, Hinweis „inoffizielles Projekt“, echte Kontakt-Adresse und PDF-Link der Gemeinde (D-17) — Phase 7
-- ✓ Barrierefreiheit (Lighthouse-a11y 100 auf allen 11 Routen), Tabellenalternative zu jedem Diagramm, responsiv ab 360 px (Kachel-Raster über alle Spaltensprünge geprüft) — Phase 7
-- ✓ Deployment über GitHub Actions auf GitHub Pages: https://bitwerkstatt.github.io/ostbevern_money/ — Phase 7
-- ✓ Pipeline ist für das ProFIS-Layout generisch konfigurierbar (Jahr, Spalten, Seitenbereiche in `jahrgaenge/{jahr}.toml`) — Phase 1; der Nachweis mit echtem Haushalt 2027 ist ERW-03 (v2)
+- ✓ Seitenklassifikation aller PDF-Seiten (Typ, PB, PG, Produkt); Startseiten aller 63 Produkte stimmen mit Anhang A überein — v1.0 (Phase 2)
+- ✓ Extraktion von Gesamtergebnisplan, Gesamtfinanzplan, Teilergebnis- und Teilfinanzplänen (PB, PG und Produkt) im Langformat, Spalten über x-Koordinaten — v1.0 (Phase 2)
+- ✓ Produktinformationen (inkl. Bindungsgrad, Grundzahlen, Erläuterungsposten) für alle 63 Produkte — `produkte.json` ohne Personennamen, `grundzahlen.csv`, `erlaeuterungen.csv` — v1.0 (Phase 3)
+- ✓ Investitionsmaßnahmen (nur aus Produktseiten) und VE-Fälligkeiten — `investitionen.csv`, `ve_faelligkeiten.csv`, PB-Listen als Kontrollquelle — v1.0 (Phase 3)
+- ✓ Stellenplan (Teil A Beamte, Teil B Tarif, Stellenübersicht nach PB) — `stellenplan.csv`, Regel 10, Beamte 2026 = 8 — v1.0 (Phase 4)
+- ✓ Manuell gepflegte Vorberichtstabellen und `meta.json` mit Quelle je Wert, automatisch gegen Planzeilen geprüft (Regel 5, Eckwerte Regel 9) — v1.0 (Phase 4)
+- ✓ Konsistenzprüfung (Prüfregeln 1–10) in pytest und als Markdown-Bericht; bekannte Abweichungen in `befunde.md` — v1.0 (Phase 4)
+- ✓ App-JSON-Dateien (`haushalt.json`, `produkte.json`, `investitionen.json`, `stellenplan.json`, `texte.json`) reproduzierbar über `alle.py`, ohne Personennamen, CI-Diff-Prüfung — v1.0 (Phase 4)
+- ✓ Erklärtexte mit Datenplatzhaltern und Seitenverweis; jede Zahl rendert über `formatiere()` korrekt (Jahreszahlen mit Kürzel `jahr`, CR-01) — v1.0 (Phase 4)
+- ✓ Start mit Kennzahlenband 2026 und Einstiegen zu den Leitfragen — v1.0 (Phase 5)
+- ✓ Einnahmen: Ertragsarten → Steuerarten/Zuwendungen → Zeitreihen; investive Einnahmen separat — v1.0 (Phase 5)
+- ✓ Ausgaben: Treemap mit Drilldown, „Weitergabe an Kreis und Land“ als eigene Kategorie, Umschalter Aufwand/Zuschussbedarf, Sicht nach Aufwandsart, Produktdetail — v1.0 (Phase 5)
+- ✓ Geldfluss: Sankey 2024–2029 inkl. Defizit- und Minderaufwand-Ausgleich, mobile Alternative — v1.0 (Phase 5)
+- ✓ Glossar mit allen Begriffen und allen 63 Produkten, GlossarBegriff-Links mit Tooltip und Sprungmarke — v1.0 (Phase 5)
+- ✓ Entwicklung 2024–2029: Erträge/Aufwendungen, Jahresergebnis nach Wertart, Posten-Zeitreihen, Rücklagen mit Rückgang je Jahr (S. 23/311) — v1.0 (Phase 6)
+- ✓ Investitionen und Schulden: Maßnahmen mit Filter (URL-Zustand), VE 11,6 Mio. € mit Fälligkeiten, Finanzierung, Schuldenstand gesamt/je Einwohner — v1.0 (Phase 6)
+- ✓ Worüber entscheidet der Rat? Bindungsgrad-Balken mit Produkten, „Was der Rat nicht beeinflussen kann“, Einzelzuschüsse (Regel 5), Selbstauskunft-Hinweis — v1.0 (Phase 6)
+- ✓ Stellenplan 2026/2025/besetzt, nach Aufgabenbereich und Gruppe, Personalaufwand je Aufgabenbereich — v1.0 (Phase 6)
+- ✓ Hinweis „Was nicht im Haushalt steht“ (BBO, TEO AöR) — v1.0 (Phase 6)
+- ✓ Quellenbelege: Zeilenrechteck + gerenderte WebP-Seiten, `quellen.json`, „Quelle anzeigen“-Leiste — v1.0 (Phase 7)
+- ✓ Jahr-Umschalter, Fußzeile mit Datenstand, Hinweis „inoffizielles Projekt“, echte Kontakt-Adresse und PDF-Link der Gemeinde (D-17) — v1.0 (Phase 7)
+- ✓ Barrierefreiheit (Lighthouse-a11y 100 auf allen 11 Routen), Tabellenalternative zu jedem Diagramm, responsiv ab 360 px (Kachel-Raster über alle Spaltensprünge geprüft) — v1.0 (Phase 7)
+- ✓ Deployment über GitHub Actions auf GitHub Pages: https://bitwerkstatt.github.io/ostbevern_money/ — v1.0 (Phase 7)
+- ✓ Pipeline ist für das ProFIS-Layout generisch konfigurierbar (Jahr, Spalten, Seitenbereiche in `jahrgaenge/{jahr}.toml`) — v1.0 (Phase 1); der Nachweis mit echtem Haushalt 2027 ist ERW-03 (v2)
 
 
 ### Active
 
-- (keine offenen v1-Anforderungen — Meilenstein bereit zum Abschluss)
+- (keine — v1.0 abgeschlossen; neue Anforderungen entstehen mit `/gsd-new-milestone`)
 
 ### Out of Scope
 
@@ -86,21 +101,21 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Münster-Code übernehmen | Erlaubnis von Code for Münster liegt vor, spart Aufwand bei Charts und Komponenten | — Pending |
-| Einwohnerzahl 11.741 | Im Haushalt selbst begründet (Vorbericht), Stichtag bekannt | — Pending |
-| Du-Anrede überall | Einheitlich und nahbar, wird später auch für die Spiele passen | — Pending |
+| Münster-Code übernehmen | Erlaubnis von Code for Münster liegt vor, spart Aufwand bei Charts und Komponenten | ✓ Good — v1.0 (Basiskomponenten mit Münster-Namen und -Props) |
+| Einwohnerzahl 11.741 | Im Haushalt selbst begründet (Vorbericht), Stichtag bekannt | ✓ Good — v1.0 (in `meta.json`, Pro-Kopf-Werte als „berechnet“ markiert) |
+| Du-Anrede überall | Einheitlich und nahbar, wird später auch für die Spiele passen | ✓ Good — v1.0 (Du-Anrede-Wächter in vitest) |
 | GitHub Pages, eigener Account | Einfachstes Hosting, Umzug später möglich | ✓ Good — Phase 7 (Repo `ostbevern_money`, CI inkl. deploy grün) |
-| Kämmerei erst nach Fertigstellung informieren | Kein Abstimmungs-Gate; Hinweis „inoffizielles Projekt“ | — Pending |
-| Pipeline generisch für ProFIS-Layout | Haushalt 2027 soll mit wenig Änderung verarbeitbar sein | — Pending |
-| v1 = Pipeline + Leitfragen + Kontextseiten + Feinschliff; Spiele in v2 | Fokus auf korrekte Kernaussagen; Planspiel-Regeln brauchen fachliche Klärung | — Pending |
-| Ergebnisplan als Hauptsicht, Kreisumlage herausgelöst | Fachlich korrekt für eine kreisangehörige Gemeinde (Spez. 3.1, 3.4) | — Pending |
-| BBO/TEO nur als Hinweis | Außerhalb des Kernhaushalts; eigene Seite ggf. später | — Pending |
+| Kämmerei erst nach Fertigstellung informieren | Kein Abstimmungs-Gate; Hinweis „inoffizielles Projekt“ | — Pending (App ist live, Information steht aus) |
+| Pipeline generisch für ProFIS-Layout | Haushalt 2027 soll mit wenig Änderung verarbeitbar sein | — Pending (Struktur steht, Nachweis mit 2027 = ERW-03) |
+| v1 = Pipeline + Leitfragen + Kontextseiten + Feinschliff; Spiele in v2 | Fokus auf korrekte Kernaussagen; Planspiel-Regeln brauchen fachliche Klärung | ✓ Good — v1.0 in 7 Tagen geliefert |
+| Ergebnisplan als Hauptsicht, Kreisumlage herausgelöst | Fachlich korrekt für eine kreisangehörige Gemeinde (Spez. 3.1, 3.4) | ✓ Good — v1.0 |
+| BBO/TEO nur als Hinweis | Außerhalb des Kernhaushalts; eigene Seite ggf. später | ✓ Good — v1.0 (Hinweisbox auf drei Seiten) |
 | Paketliste vor Installation menschlich freigegeben (5 PyPI, 21 npm); Minor-/Patch-Drift ok, neue Major-Versionen brauchen erneute Freigabe | Supply-Chain-Schutz vor jeder Installation | ✓ Good — Phase 1 |
 | Jahrgangswerte nur in `jahrgaenge/{jahr}.toml` und `{jahr}_sollwerte.toml`, gelesen über `lade_jahrgang`/`lade_sollwerte` mit vollständiger Validierung | Pipeline generisch für spätere Jahrgänge | ✓ Good — Phase 1 |
 | Nummerierte Pipeline-Skripte entstehen erst mit ihrer Logik in der jeweiligen Phase; Phase 1 liefert nur `alle.py` | Keine leeren Platzhaltermodule | ✓ Good — Phase 1 |
 | ESLint-only (oxlint und vue-devtools aus dem Scaffold entfernt) | Nur freigegebene Pakete | ✓ Good — Phase 1 |
 | ECharts-Module nur in `echartsTheme.ts` registriert; Beispieldaten-Hinweis rendert ausschließlich `ChartCard` | Kleines Bundle; Demo-Zahlen können nie ohne Hinweis erscheinen | ✓ Good — Phase 1 |
-| CI: zwei parallele Jobs, Actions SHA-gepinnt, `contents: read`, Installation nur aus Lockfiles | Lokal nachgestellte CI = Remote-CI | ✓ Good — Phase 1 (Remote-Lauf steht aus, noch kein GitHub-Remote) |
+| CI: zwei parallele Jobs, Actions SHA-gepinnt, `contents: read`, Installation nur aus Lockfiles | Lokal nachgestellte CI = Remote-CI | ✓ Good — Phase 1 (Remote-CI seit Phase 7 grün) |
 | Anhang-B-Sollwerte sind unabhängige Referenz, aber nicht unfehlbar: Abweichungen werden erst gegen das PDF geprüft, dann korrigiert | Spez. Anhang B.3 hatte für PB 09/15 Z. 29 den Wert der ersten PG statt der GESAMTSUMME (S. 296/299) übernommen | ✓ Good — Phase 2 |
 | Gedruckte Rundungsdifferenzen (2–3 €) gehen mit Seitenbeleg in `befunde.md`, nie in eine Toleranz | Toleranz bleibt strikt 1 €; jede Ausnahme ist einzeln belegt | ✓ Good — Phase 2 (10 Befunde) |
 | Nicht gedruckte Produktgruppen werden synthetisch gebildet (`synthetisch=true`) | Teilplanbereich druckt nicht jede PG | ✓ Good — Phase 2; genau ein Produkt je synthetischer PG, PG 1502 „Tourismus“ als deklarierte Ausnahme in der Jahrgangsdatei (Quick 261001-oim) |
@@ -136,4 +151,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-07 after Phase 7*
+*Last updated: 2026-10-07 after v1.0 milestone*

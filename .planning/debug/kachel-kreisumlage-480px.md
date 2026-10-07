@@ -1,8 +1,8 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "UAT G-07-2: CI e2e kacheln.spec.ts fails on GitHub Actions: /rat-entscheidet @ 480 px: „Kreisumlage“: Betrag „rd. 10,1 Mio. €“ ragt 6.0 px über den Inhaltsbereich (Betrag 164.0 px, Inhalt 158.0 px)"
 created: 2026-10-07T08:10:00Z
-updated: 2026-10-07T08:55:00Z
+updated: 2026-10-07T12:00:00Z
 goal: find_root_cause_only
 ---
 
@@ -93,3 +93,7 @@ root_cause: "Kachel-Betragsbreite hängt an der Systemschrift (`ui-sans-serif, s
 fix:
 verification:
 files_changed: []
+
+## Resolution
+
+resolved: 2026-10-07 — fixed; marked resolved by the user at v1.0 milestone close.

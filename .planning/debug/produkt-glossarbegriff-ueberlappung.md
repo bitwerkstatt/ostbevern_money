@@ -1,8 +1,8 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "Auf den Produktseiten liegen Glossarbegriffshülle (\"Bindungsgrad\") und Glossarbegriff (\"teils pflichtig, teils freiwillig\") leicht übereinder (Überschneidung)"
 created: 2026-10-05T00:00:00Z
-updated: 2026-10-05T00:25:00Z
+updated: 2026-10-07T12:00:00Z
 goal: find_root_cause_only
 ---
 
@@ -100,3 +100,7 @@ root_cause: In ProduktPage.vue the "Auf einen Blick" row stacks <dt> and <dd> wi
 fix:
 verification:
 files_changed: []
+
+## Resolution
+
+resolved: 2026-10-07 — fixed; marked resolved by the user at v1.0 milestone close.
