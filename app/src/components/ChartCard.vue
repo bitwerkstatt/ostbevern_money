@@ -36,7 +36,7 @@ defineExpose({ fokussiereTitel })
     <h2 :id="titelId" ref="titelElement" tabindex="-1">{{ titel }}</h2>
     <p v-if="beschreibung" :id="beschreibungId">{{ beschreibung }}</p>
     <wa-callout v-if="beispieldaten" variant="warning" class="om-chart-card__beispieldaten">
-      <wa-icon slot="icon" name="circle-info"></wa-icon>
+      <wa-icon slot="icon" name="triangle-exclamation"></wa-icon>
       Beispieldaten — noch keine echten Haushaltszahlen.
     </wa-callout>
     <div class="om-chart-card__inhalt">
