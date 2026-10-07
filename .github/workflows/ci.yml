@@ -8,7 +8,7 @@
 # einzige Job mit Schreibrechten für Pages und den OIDC-Token (least privilege).
 #
 # Hinweis (D-10): Es gibt noch kein GitHub-Remote. Der Workflow läuft erst, wenn die Nutzerin
-# bzw. der Nutzer das öffentliche Repository `ostbevern-money` anlegt und `main` pusht; die
+# bzw. der Nutzer das öffentliche Repository `ostbevern_money` anlegt und `main` pusht; die
 # Schritte stehen im README (Abschnitt „Veröffentlichung auf GitHub Pages“).
 name: CI
 
