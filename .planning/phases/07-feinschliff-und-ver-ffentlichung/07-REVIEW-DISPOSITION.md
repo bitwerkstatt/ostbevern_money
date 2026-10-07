@@ -3,6 +3,62 @@ phase: 07
 review: 07-REVIEW.md
 titles: json
 findings:
+  - id: WR-08
+    severity: warning
+    disposition: fixed
+    title: "Eine beschädigte oder von Hand geänderte `belegbilder_schwaerzung.json` bricht Schritt 08 mit rohem Traceback ab"
+  - id: IN-01
+    severity: info
+    disposition: fixed
+    title: "Spalte „geschwärzt“ der Datenschutz-Prüfliste gilt je Seite, nicht je Treffer"
+  - id: IN-02
+    severity: info
+    disposition: fixed
+    title: "`minderaufwandHinweis` formuliert bei positivem GEP-Wert einen negativen „Minderaufwand“"
+  - id: IN-03
+    severity: info
+    disposition: fixed
+    title: "`istAufwandsart` vergleicht Zeilennummern als Zeichenketten"
+  - id: IN-04
+    severity: info
+    disposition: fixed
+    title: "Fest codierter Farbwert in `StellenNachGruppe`"
+  - id: IN-05
+    severity: info
+    disposition: fixed
+    title: "`schulden.ts` erfindet im Tooltip Nullwerte"
+  - id: IN-06
+    severity: info
+    disposition: fixed
+    title: "Quell-Seitenleiste nennt bei Zeitreihen nur das Jahr als Bezeichnung"
+  - id: IN-07
+    severity: info
+    disposition: fixed
+    title: "Veralteter und lockerer Rahmen"
+  - id: IN-08
+    severity: info
+    disposition: fixed
+    title: "Beleg-Link auf die Gemeinde-PDF ist an einen inhaltsgebundenen Pfad geknüpft"
+  - id: IN-09
+    severity: info
+    disposition: fixed
+    title: "Die behauptete Mindestreserve von 16 px wird nirgends geprüft und hängt an den Daten"
+  - id: IN-10
+    severity: info
+    disposition: fixed
+    title: "`e2e-wie-ci.sh` führt ohne Argumente alle Playwright-Projekte aus und lädt ohne Zeitlimit über HTTP"
+  - id: IN-11
+    severity: info
+    disposition: fixed
+    title: "Neue Spec ist nicht prettier-konform, und `format:check` sieht `e2e/` nicht"
+  - id: IN-12
+    severity: info
+    disposition: fixed
+    title: "Die Schriftprüfung der CI ist schwächer als ihre Beschreibung (Teilzeichenfolge, Version nur protokolliert)"
+  - id: IN-13
+    severity: info
+    disposition: fixed
+    title: "Die Absicherung aus WR-03 ist lückenhaft platziert, und gleichartige Zugriffe bleiben ungeschützt"
   - id: CR-01
     severity: critical
     disposition: deferred
@@ -39,79 +95,38 @@ findings:
     severity: warning
     disposition: fixed
     title: "Der Breitentest hat keine eigene Zeitgrenze; im Fehlerfall reißt er die Standardgrenze von 30 s und verliert seine Diagnose"
-  - id: IN-01
-    severity: info
-    disposition: open
-    title: "Spalte „geschwärzt“ der Datenschutz-Prüfliste gilt je Seite, nicht je Treffer"
-  - id: IN-02
-    severity: info
-    disposition: open
-    title: "`minderaufwandHinweis` formuliert bei positivem GEP-Wert einen negativen „Minderaufwand“"
-  - id: IN-03
-    severity: info
-    disposition: open
-    title: "`istAufwandsart` vergleicht Zeilennummern als Zeichenketten"
-  - id: IN-04
-    severity: info
-    disposition: open
-    title: "Fest codierter Farbwert in `StellenNachGruppe`"
-  - id: IN-05
-    severity: info
-    disposition: open
-    title: "`schulden.ts` erfindet im Tooltip Nullwerte"
-  - id: IN-06
-    severity: info
-    disposition: open
-    title: "Quell-Seitenleiste nennt bei Zeitreihen nur das Jahr als Bezeichnung"
-  - id: IN-07
-    severity: info
-    disposition: open
-    title: "Veralteter und lockerer Rahmen"
-  - id: IN-08
-    severity: info
-    disposition: open
-    title: "Beleg-Link auf die Gemeinde-PDF ist an einen inhaltsgebundenen Pfad geknüpft"
-  - id: IN-09
-    severity: info
-    disposition: open
-    title: "Die behauptete Mindestreserve von 16 px wird nirgends geprüft und hängt an den Daten"
-  - id: IN-10
-    severity: info
-    disposition: open
-    title: "`e2e-wie-ci.sh` führt ohne Argumente alle Playwright-Projekte aus und lädt ohne Zeitlimit über HTTP"
-  - id: IN-11
-    severity: info
-    disposition: open
-    title: "Neue Spec ist nicht prettier-konform, und `format:check` sieht `e2e/` nicht"
-open: 11
-total: 20
-recorded: 2026-10-07T10:01:30.255Z
+open: 0
+total: 23
+recorded: 2026-10-07T11:00:52.570Z
 ---
 
 # Phase 07: Code Review Disposition
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| CR-01 | critical | deferred | Nutzerentscheidung 2026-10-07: bleibt so — öffentliche Satzung, Amtsträger unterzeichnen in amtlicher Funktion; Bild s009.webp unverändert |
-| CR-02 | critical | fixed | 07-REVIEW-FIX.md |
-| WR-01 | warning | fixed | 07-REVIEW-FIX.md |
-| WR-02 | warning | fixed | 07-REVIEW-FIX.md |
-| WR-03 | warning | fixed | 07-REVIEW-FIX.md |
-| WR-04 | warning | fixed | 07-REVIEW-FIX.md |
-| WR-05 | warning | fixed | 07-REVIEW-FIX.md |
-| WR-06 | warning | fixed | 07-REVIEW-FIX.md |
-| WR-07 | warning | fixed | 07-REVIEW-FIX.md |
-| IN-01 | info | open | - |
-| IN-02 | info | open | - |
-| IN-03 | info | open | - |
-| IN-04 | info | open | - |
-| IN-05 | info | open | - |
-| IN-06 | info | open | - |
-| IN-07 | info | open | - |
-| IN-08 | info | open | - |
-| IN-09 | info | open | - |
-| IN-10 | info | open | - |
-| IN-11 | info | open | - |
+| WR-08 | warning | fixed | 07-REVIEW-FIX.md |
+| IN-01 | info | fixed | 07-REVIEW-FIX.md |
+| IN-02 | info | fixed | 07-REVIEW-FIX.md |
+| IN-03 | info | fixed | 07-REVIEW-FIX.md |
+| IN-04 | info | fixed | 07-REVIEW-FIX.md |
+| IN-05 | info | fixed | 07-REVIEW-FIX.md |
+| IN-06 | info | fixed | 07-REVIEW-FIX.md |
+| IN-07 | info | fixed | 07-REVIEW-FIX.md |
+| IN-08 | info | fixed | 07-REVIEW-FIX.md |
+| IN-09 | info | fixed | 07-REVIEW-FIX.md |
+| IN-10 | info | fixed | 07-REVIEW-FIX.md |
+| IN-11 | info | fixed | 07-REVIEW-FIX.md |
+| IN-12 | info | fixed | 07-REVIEW-FIX.md |
+| IN-13 | info | fixed | 07-REVIEW-FIX.md |
+| CR-01 | critical | deferred | Nutzerentscheidung 2026-10-07: bleibt so — öffentliche Satzung, Amtsträger unterzeichnen in amtlicher Funktion; Bild s009.webp unverändert (not in the current review) |
+| CR-02 | critical | fixed | 07-REVIEW-FIX.md (not in the current review) |
+| WR-01 | warning | fixed | 07-REVIEW-FIX.md (not in the current review) |
+| WR-02 | warning | fixed | 07-REVIEW-FIX.md (not in the current review) |
+| WR-03 | warning | fixed | 07-REVIEW-FIX.md (not in the current review) |
+| WR-04 | warning | fixed | 07-REVIEW-FIX.md (not in the current review) |
+| WR-05 | warning | fixed | 07-REVIEW-FIX.md (not in the current review) |
+| WR-06 | warning | fixed | 07-REVIEW-FIX.md (not in the current review) |
+| WR-07 | warning | fixed | 07-REVIEW-FIX.md (not in the current review) |
 
 Dispositions: `open` (recorded, not yet triaged), `fixed`, `skipped`, `deferred`.
 Set `deferred` by hand and put the reason in the Source cell; both are preserved. A `|` in the reason is kept as prose and escaped on the next run.
