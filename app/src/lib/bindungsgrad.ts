@@ -6,6 +6,7 @@
 
 import { anzahlText, euroKurz } from '@/charts/format'
 import { haushalt, produkte } from '@/data/daten'
+import { haushaltsjahrIndex } from '@/lib/jahr'
 import { bindungsgradText } from '@/lib/produkt'
 import { ZEITREIHEN_PRODUKT } from '@/lib/zeitreihen'
 
@@ -66,17 +67,9 @@ function istBindungsgrad(wert: string): wert is Bindungsgrad {
   return (BINDUNGSGRADE as readonly string[]).includes(wert)
 }
 
-function jahrIndex(): number {
-  const index = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
-  if (index < 0) {
-    throw new Error(`Haushaltsjahr ${String(haushalt.haushaltsjahr)} steht nicht in haushalt.jahre`)
-  }
-  return index
-}
-
 /** Segmente, Produktlisten und Überschuss des Haushaltsjahrs (D-01). */
 export function baueBindungsgrad(): BindungsgradModell {
-  const index = jahrIndex()
+  const index = haushaltsjahrIndex()
   const jeBindungsgrad = new Map<Bindungsgrad, BindungsProdukt[]>(
     BINDUNGSGRADE.map((b) => [b, []] as const),
   )

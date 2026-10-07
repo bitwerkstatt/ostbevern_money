@@ -8,6 +8,7 @@
 
 import { haushalt } from '@/data/daten'
 import type { VorberichtPosten, VorberichtTabelle } from '@/data/typen'
+import { haushaltsjahrIndex } from '@/lib/jahr'
 import { baueKreisumlage } from '@/lib/kreisumlage'
 import { belegSchluessel, findeBeleg } from '@/lib/quelle'
 
@@ -46,14 +47,6 @@ const SOZIALLEISTUNGEN_SCHLUESSEL = 'sozialleistungen'
 /** Name der Kachel; der Vorbericht nennt den Posten nur „Sozialleistungen“. */
 export const SOZIALLEISTUNGEN_BEZEICHNUNG = 'Gesetzliche Sozialleistungen'
 
-function jahrIndex(): number {
-  const index = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
-  if (index < 0) {
-    throw new Error(`Haushaltsjahr ${String(haushalt.haushaltsjahr)} steht nicht in haushalt.jahre`)
-  }
-  return index
-}
-
 /** Eine Vorberichtstabelle; eine fehlende Tabelle ist ein Datenfehler und wirft. */
 export function vorberichtTabelle(name: string): VorberichtTabelle {
   const tabelle = haushalt.vorbericht[name]
@@ -79,7 +72,7 @@ export function vorberichtPosten(tabelle: string, schluessel: string): Vorberich
 export function alsZuschuss(
   tabelle: string,
   posten: VorberichtPosten,
-  index: number = jahrIndex(),
+  index: number = haushaltsjahrIndex(),
 ): Zuschuss {
   return {
     schluessel: posten.posten,
@@ -113,7 +106,7 @@ function gruppeAusTabelle(name: string, index: number): ZuschussGruppe {
 
 /** Die Kindertageseinrichtungen einzeln, mit der gedruckten Gesamtzeile (S. 46). */
 export function kitaZuschuesse(): ZuschussGruppe {
-  return gruppeAusTabelle(KITA_TABELLE, jahrIndex())
+  return gruppeAusTabelle(KITA_TABELLE, haushaltsjahrIndex())
 }
 
 /**
@@ -121,7 +114,7 @@ export function kitaZuschuesse(): ZuschussGruppe {
  * (`transfer`) und die Einzelposten der Zuschüsse für laufende Zwecke (`lfdZwecke`).
  */
 export function weitereZuschuesse(): { transfer: ZuschussGruppe; lfdZwecke: ZuschussGruppe } {
-  const index = jahrIndex()
+  const index = haushaltsjahrIndex()
   const posten = TRANSFER_ZUSCHUESSE.map((schluessel) =>
     alsZuschuss(TRANSFER_TABELLE, vorberichtPosten(TRANSFER_TABELLE, schluessel), index),
   )
@@ -185,7 +178,7 @@ function klBeleg(code: string, pdfSeite: number | null): string | null {
  * gesetzlichen Sozialleistungen. KL erscheint nur hier, nie als Bindungsgrad-Segment.
  */
 export function nichtBeeinflussbar(): NichtBeeinflussbar {
-  const index = jahrIndex()
+  const index = haushaltsjahrIndex()
   const kl = baueKreisumlage(index)
   const klPosten: Zuschuss[] = kl.unterposten.map((u) => ({
     schluessel: u.code,
