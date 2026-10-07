@@ -16,7 +16,7 @@
 // `rueckgangFormelText()` beschreibt diese Regel für die Fußnote auf /entwicklung aus denselben Konstanten.
 
 import { haushalt } from '@/data/daten'
-import type { Meta, VorberichtTabelle } from '@/data/typen'
+import type { Meta, VorberichtPosten, VorberichtTabelle } from '@/data/typen'
 import { haushaltsjahrIndex, wertartAn } from '@/lib/jahr'
 
 /** Posten-Schlüssel der Eigenkapitalübersicht (S. 311). */
@@ -42,13 +42,18 @@ export interface Ruecklagenzeile {
   summe: number | null
 }
 
-/** Werte eines Postens je Jahr; ein fehlender Posten ist ein Datenfehler und nennt seinen Schlüssel. */
-function postenWerte(tabelle: VorberichtTabelle, schluessel: string): readonly (number | null)[] {
+/** Eintrag eines Postens; ein fehlender Posten ist ein Datenfehler und nennt seinen Schlüssel. */
+function postenEintrag(tabelle: VorberichtTabelle, schluessel: string): VorberichtPosten {
   const eintrag = tabelle.posten.find((kandidat) => kandidat.posten === schluessel)
   if (eintrag === undefined) {
     throw new Error(`eigenkapital.posten.${schluessel} fehlt in haushalt.json`)
   }
-  return eintrag.werte
+  return eintrag
+}
+
+/** Werte eines Postens je Jahr. */
+function postenWerte(tabelle: VorberichtTabelle, schluessel: string): readonly (number | null)[] {
+  return postenEintrag(tabelle, schluessel).werte
 }
 
 function wertAn(tabelle: VorberichtTabelle, schluessel: string, index: number): number | null {
@@ -80,8 +85,13 @@ export function baueRuecklagen(
 
 /**
  * Abbau der allgemeinen Rücklage im Jahr `index` in Euro (S. 23): das Defizit des Jahres, soweit die
- * Ausgleichsrücklage es nicht deckt, plus die Verrechnung der Bilanzierungshilfe. `null`, wenn ein
- * Eingangswert fehlt.
+ * Ausgleichsrücklage es nicht deckt, zuzüglich der Verrechnung der Bilanzierungshilfe. `null`, wenn
+ * ein Eingangswert fehlt.
+ *
+ * Vorzeichen: Die Verrechnung ist im Druck negativ gebucht. Die Formel zieht sie ab (`… - verrechnung`);
+ * der Abzug eines negativen Wertes erhöht den Abbau um ihren Betrag. „Zuzüglich“ meint also die Beträge
+ * (|Verrechnung| kommt zum Defizit hinzu), nicht das Vorzeichen des gedruckten Wertes (D-17, UAT 06
+ * Test 1).
  */
 export function abbau(
   index: number,
@@ -94,7 +104,7 @@ export function abbau(
   if (ausgleich === null || verrechnung === null || ergebnis === null) {
     return null
   }
-  // Die Verrechnung steht im Druck negativ; ihr Abzug erhöht den Abbau.
+  // Die Verrechnung steht im Druck negativ; ihr Abzug erhöht den Abbau um ihren Betrag.
   return Math.max(0, -ergebnis - ausgleich) - verrechnung
 }
 
@@ -114,15 +124,6 @@ export function rueckgang(
   return verlust / bestand
 }
 
-/** Gedruckter Name eines Postens; ein fehlender Posten ist ein Datenfehler und nennt seinen Schlüssel. */
-function postenName(tabelle: VorberichtTabelle, schluessel: string): string {
-  const eintrag = tabelle.posten.find((kandidat) => kandidat.posten === schluessel)
-  if (eintrag === undefined) {
-    throw new Error(`eigenkapital.posten.${schluessel} fehlt in haushalt.json`)
-  }
-  return eintrag.name
-}
-
 /** Wahr, wenn mindestens ein Jahr eine Verrechnung der Bilanzierungshilfe ungleich 0 trägt. */
 function hatVerrechnung(tabelle: VorberichtTabelle): boolean {
   return postenWerte(tabelle, VERRECHNUNG).some((wert) => wert !== null && wert !== 0)
@@ -137,7 +138,7 @@ function hatVerrechnung(tabelle: VorberichtTabelle): boolean {
  */
 export function rueckgangFormelText(tabelle: VorberichtTabelle = haushalt.eigenkapital): string {
   // Immer lesen, damit ein fehlender Posten auch ohne Verrechnung als Datenfehler auffällt.
-  const verrechnungsName = postenName(tabelle, VERRECHNUNG)
+  const verrechnungsName = postenEintrag(tabelle, VERRECHNUNG).name
   const verrechnung = hatVerrechnung(tabelle)
     ? `, zuzüglich der Verrechnung aus der Zeile „${verrechnungsName}“`
     : ''
