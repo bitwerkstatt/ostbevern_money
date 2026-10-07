@@ -48,7 +48,7 @@ const einstiege = computed(() => {
 <template>
   <PageIntro
     :titel="`Der Haushalt ${jahrText} der Gemeinde Ostbevern`"
-    beschreibung="Hier siehst du, woher das Geld der Gemeinde kommt und wofür sie es ausgibt. Alle Zahlen stammen direkt aus dem Haushaltsplan."
+    beschreibung="Hier siehst du, woher das Geld der Gemeinde kommt und wofür sie es ausgibt."
   />
 
   <section class="om-start__kennzahlen" aria-labelledby="om-start-kennzahlen">
