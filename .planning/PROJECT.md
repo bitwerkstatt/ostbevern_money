@@ -14,12 +14,17 @@ Die vollständige fachliche Spezifikation steht in `discussion/SPEZIFIKATION.md`
 - App: ~29.900 LOC TypeScript/Vue, vitest und Playwright (axe-Smoke, 360 px, Kachel-Breitentest), Lighthouse-a11y 100
 - Archiv: `.planning/milestones/v1.0-ROADMAP.md`, `v1.0-REQUIREMENTS.md`, `v1.0-phases/`
 
-## Next Milestone Goals
+## Current Milestone: v1.0.1 Restpunkte
 
-Noch nicht festgelegt, kommt über `/gsd-new-milestone`. Kandidaten aus dem v2-Backlog:
-- Spiele (Planspiel, „Was kostet …?“, Schätzduell). Vorher müssen die Planspiel-Rechenregeln fachlich geklärt sein.
-- Nachweis der Generik mit dem echten Haushalt 2027 (ERW-03)
-- Offene Restpunkte: Code-Review-Befunde aus Phase 2/4, `/gsd-secure-phase 04`
+**Goal:** Die offenen Qualitätspunkte aus v1.0 abschließen, ohne neue Funktionen: jeder Review-Befund hat eine Disposition, Phase 4 ist sicherheitsgeprüft, v1.0 ist auditiert und gegen den aktuellen Stand verifiziert.
+
+**Target features:**
+- Triage der 28 offenen Review-Befunde aus Phase 1, 5 und 6 (Ledger in `milestones/v1.0-phases/*/…-REVIEW-DISPOSITION.md`), inkl. Bestätigung bereits behobener Befunde
+- Befunde mit Wirkung auf Zahlen, Texte oder Barrierefreiheit beheben; reine Code-Hygiene beheben, wenn günstig, sonst begründet `deferred`
+- Security-Prüfung für Phase 4 nachholen (`04-SECURITY.md`)
+- Milestone-Audit für v1.0 nachholen und veraltete Verifikationen erneuern
+
+Nicht enthalten: Deploy-/Gerätecheck aus Phase 7 (macht der Nutzer selbst), Spiele und Haushalt 2027 (bleiben v2-Backlog).
 
 ## Core Value
 
@@ -57,7 +62,10 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 
 ### Active
 
-- (keine — v1.0 abgeschlossen; neue Anforderungen entstehen mit `/gsd-new-milestone`)
+- [ ] Alle offenen Review-Befunde aus v1.0 haben eine Disposition (fixed/skipped/deferred mit Begründung) — v1.0.1
+- [ ] Fachlich relevante Befunde (Zahlen, Texte, Barrierefreiheit) sind behoben — v1.0.1
+- [ ] Phase 4 ist sicherheitsgeprüft — v1.0.1
+- [ ] v1.0 ist auditiert, Verifikationen sind aktuell — v1.0.1
 
 ### Out of Scope
 
@@ -151,4 +159,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-07 after v1.0 milestone*
+*Last updated: 2026-10-07 after starting milestone v1.0.1*
