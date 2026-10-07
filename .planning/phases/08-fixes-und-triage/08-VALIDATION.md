@@ -40,17 +40,22 @@ created: "2026-10-07"
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| TBD | TBD | 1 | TXT-01 | — | N/A | unit | `npx vitest run src/lib/__tests__/geldfluss.test.ts` | ✅ extend | ⬜ pending |
-| TBD | TBD | 1 | TXT-02 | — | N/A | unit | `npx vitest run src/lib/__tests__/aufwandsarten.test.ts src/lib/__tests__/geldfluss.test.ts` | ✅ extend | ⬜ pending |
-| TBD | TBD | 1 | TXT-03 | — | N/A | pytest + unit | `uv run --directory pipeline pytest tests/test_texte.py tests/test_app_daten.py -q`; `npx vitest run src/lib/__tests__/texte.test.ts` | ✅ extend | ⬜ pending |
-| TBD | TBD | 1 | TXT-04 | — | N/A | unit (guard) | `npx vitest run src/lib/__tests__/quelltext.test.ts src/charts/__tests__/format.test.ts` | ❌ W0 guard | ⬜ pending |
-| TBD | TBD | 1 | TXT-05 | — | N/A | unit | `npx vitest run src/lib/__tests__/stellen.test.ts src/lib/__tests__/zuschuesse.test.ts` | ✅ extend | ⬜ pending |
-| TBD | TBD | 1 | TXT-06 | — | N/A | unit | `npx vitest run src/lib/__tests__/einwohner.test.ts` | ❌ W0 | ⬜ pending |
-| TBD | TBD | 2 | A11Y-01 | — | N/A | unit + type-check | `npx vitest run src/components/__tests__/zustaende.test.ts`; `npm run type-check` | ✅ extend | ⬜ pending |
-| TBD | TBD | 2 | A11Y-01/03 | — | N/A | e2e mobil | `scripts/e2e-wie-ci.sh <scratch>/app --project=mobil e2e/mobil.spec.ts` | ✅ extend | ⬜ pending |
-| TBD | TBD | 2 | A11Y-02 | — | N/A | e2e mobil + ci | `scripts/e2e-wie-ci.sh <scratch>/app e2e/interaktion.spec.ts` | ✅ extend | ⬜ pending |
-| TBD | TBD | 3 | TRI-01..03 | — | N/A | scripted check | `grep -c "| open |" <ledger>` = 0 and `grep -n "^open:" <ledger>` shows `open: 0` | n/a | ⬜ pending |
-| TBD | TBD | 3 | TRI-04 | — | N/A | cross | `alle.py --jahr 2026` + `git status --porcelain -- daten app/src/data app/public/quellen` shows only intended changes | n/a | ⬜ pending |
+| 08-02 T2 | 08-02 | 1 | TXT-01 | T-08-04 | „genau“ only in case D | unit (constructed `Geldfluss`) | `npm --prefix "$S/app" run test -- src/lib/__tests__/geldfluss.test.ts` | ✅ extend | ⬜ pending |
+| 08-02 T3 | 08-02 | 1 | TXT-02 | T-08-05 | Z. 27 > 0 throws in both consumers | unit | `npm --prefix "$S/app" run test -- src/lib/__tests__/berechnung.test.ts src/lib/__tests__/aufwandsarten.test.ts src/lib/__tests__/geldfluss.test.ts` | ✅ extend | ⬜ pending |
+| 08-01 T1, T2 | 08-01 | 1 | TXT-03 | T-08-01..03 | typed years and title placeholders rejected | pytest + unit + identity script | `uv run --directory pipeline pytest tests/test_texte.py tests/test_app_daten.py -q`; `npm --prefix "$S/app" run test -- src/lib/__tests__/texte.test.ts` | ✅ extend | ⬜ pending |
+| 08-02 T1 | 08-02 | 1 | TXT-04 (authority) | — | N/A | unit + SSR | `npm --prefix "$S/app" run test -- src/charts/__tests__/format.test.ts src/components/__tests__/eurobetrag.test.ts` | ❌ W0 eurobetrag.test.ts (created in task) | ⬜ pending |
+| 08-04 T1–T3, 08-05 T1 | 08-04, 08-05 | 2 | TXT-04 (copies) | T-08-08 | N/A | unit + e2e smoke | `npm --prefix "$S/app" run test -- src/lib/__tests__/drilldown.test.ts src/lib/__tests__/zeitreihen.test.ts src/lib/__tests__/quelltext.test.ts`; `scripts/e2e-wie-ci.sh "$S/app" e2e/smoke.spec.ts` | ✅ extend | ⬜ pending |
+| 08-07 T1 | 08-07 | 3 | TXT-04 (guard) | T-08-12 | guard fail-first on pre-phase file | unit (guard via `?raw` glob) | `npm --prefix "$S/app" run test -- src/lib/__tests__/rdregel.test.ts` | ❌ W0 rdregel.test.ts (created in task) | ⬜ pending |
+| 08-03 T1, 08-05 T1–T2 | 08-03, 08-05 | 1, 2 | TXT-05 | T-08-07, T-08-09 | derived sums labelled, own pages | unit | `npm --prefix "$S/app" run test -- src/lib/__tests__/stellen.test.ts src/lib/__tests__/zuschuesse.test.ts` | ✅ extend | ⬜ pending |
+| 08-03 T2 | 08-03 | 1 | TXT-06 | T-08-06 | missing Einwohnerzahl throws | unit | `npm --prefix "$S/app" run test -- src/lib/__tests__/einwohner.test.ts` | ❌ W0 einwohner.test.ts (created in task) | ⬜ pending |
+| 08-06 T1 | 08-06 | 3 | A11Y-01 | T-08-10 | tab stop only with role and name | unit + type-check | `npm --prefix "$S/app" run test -- src/components/__tests__/zustaende.test.ts`; `npm --prefix "$S/app" run type-check` | ✅ extend | ⬜ pending |
+| 08-06 T1 | 08-06 | 3 | A11Y-01/03 | T-08-10 | one name per table, unique regions, axe at 360 px | e2e mobil + ci mirror | `scripts/e2e-wie-ci.sh "$S/app" --project=mobil`; `scripts/e2e-wie-ci.sh "$S/app" e2e/interaktion.spec.ts` | ✅ extend | ⬜ pending |
+| 08-06 T2 | 08-06 | 3 | A11Y-02 | T-08-11 | focus on h1 after drawer link | e2e mobil + ci mirror | `scripts/e2e-wie-ci.sh "$S/app" --project=mobil`; `scripts/e2e-wie-ci.sh "$S/app"` | ✅ extend | ⬜ pending |
+| 08-09 T1 | 08-09 | 3 | TRI-04 (01/IN-03) | T-08-16 | warning icon file exists, orphan JSON deleted | unit (SSR) | `npm --prefix "$S/app" run test -- src/components/__tests__/chartcard.test.ts` | ❌ W0 chartcard.test.ts (created in task) | ⬜ pending |
+| 08-12 T1–T3 | 08-12 | 5 | TRI-01..03 | T-08-19 | every row cites commit or reason | scripted check | ledger checks in 08-12 (`^open: 0$`, no `disposition: open`, no open table row, awk Source-cell check) | n/a | ⬜ pending |
+| 08-07..08-11, 08-12 T3 | 08-07..08-12 | 3–5 | TRI-04 | T-08-13..18 | data byte-identical | cross | `uv run --directory pipeline python alle.py --jahr 2026 && git diff --stat --exit-code -- daten app/src/data` plus `git status --porcelain --untracked-files=all -- daten app/src/data app/public/quellen` empty (only intended diffs: texte.json in 08-01, deletion of beispieldaten.json in 08-09) | n/a | ⬜ pending |
+
+*`$S` is the scratch copy: `S=$(mktemp -d) && rsync -a --exclude node_modules --exclude dist --exclude test-results --exclude playwright-report app/ "$S/app/" && npm --prefix "$S/app" ci --no-audit --no-fund --silent`.*
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 *Task IDs are filled in by the planner/executor once PLAN.md files exist.*
@@ -71,7 +76,7 @@ created: "2026-10-07"
 
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
-| Screenreader does not announce a table name twice | A11Y-03 | Chromium a11y tree alone cannot prove screen-reader announcement behaviour (RESEARCH assumption A1) | VoiceOver/NVDA: navigate to a `DatenTabelle` on `/ausgaben` at 360 px, check the name is read once |
+| Screenreader does not announce a table name twice | A11Y-03 | Chromium a11y tree alone cannot prove screen-reader announcement behaviour (RESEARCH assumption A1) | VoiceOver/NVDA: navigate to a `DatenTabelle` on `/ausgaben` at 360 px, check the name is read once (human-check in 08-06 T1 and 08-12 T3) |
 
 ---
 

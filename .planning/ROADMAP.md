@@ -45,7 +45,21 @@
   3. Der scrollbare Container von `DatenTabelle` hat immer Rolle und zugänglichen Namen, auch ohne `beschriftung`, und keine Datentabelle trägt ihren Namen doppelt (Region-Label und `<caption>`). Tippst du bei 360 px im geöffneten Menü auf den Link der Seite, auf der du gerade bist, schließt sich das Menü. vitest, der axe-Smoke-Test und ein Playwright-Test bestätigen das.
   4. `01-REVIEW-DISPOSITION.md`, `05-REVIEW-DISPOSITION.md` und `06-REVIEW-DISPOSITION.md` unter `.planning/milestones/v1.0-phases/` stehen auf `open: 0`, jede Zeile nennt Commit oder Begründung. Nebenbei behobene Befunde (z. B. 05/IN-09, Platzhalter-Kontaktdaten, erledigt mit D-17 in Phase 7) sind mit Beleg auf fixed gesetzt, 06/WR-01 (Rücklagen-Fußnote) ist mit der Begründung aus UAT 06 erfasst. Jeder reine Hygiene-Befund (Duplikate, toter Code, Hex-Fallbacks, Kopplung, Test-Nits, Doku-Drift) ist behoben, wenn das wenig kostet, sonst auf deferred mit Begründung in der Source-Spalte.
   5. Die Querschnittsbedingung hält: `alle.py --jahr 2026` ist byte-identisch oder begründet geändert, Prüfregeln 1–10 sind grün, die CI-Kette von Pipeline und App (Scratch-Kopie, inkl. axe-Smoke und 360-px-Prüfungen) ist grün.
-**Plans**: TBD
+**Plans**: 12 plans in 5 waves
+
+Plans:
+- [ ] 08-01-PLAN.md — Jahreszahlen nur als Platzhalter: pruefe_text, Titelprüfung, jahr.-Schlüssel, sieben Abschnitte, istJahrneutral (TXT-03; Welle 1)
+- [ ] 08-02-PLAN.md — rd./rund-Regel in format.ts, Lesehilfe in vier Fällen, gemeinsame Minderaufwand-Regel (TXT-01, TXT-02, TXT-04; Welle 1)
+- [ ] 08-03-PLAN.md — Stellenplan-Kacheln berechnet mit eigenen Seiten, einwohnerZahl() wirft laut (TXT-05, TXT-06; Welle 1)
+- [ ] 08-04-PLAN.md — zwölf rd.-Altkopien durch EuroBetrag bzw. betragMitHinweis ersetzt (TXT-04; Welle 2)
+- [ ] 08-05-PLAN.md — Zusammen-Zeile der Zuschüsse mit Kennzeichen, Prüfauftrag D-12, Filtersumme gekennzeichnet (TXT-05, TXT-04; Welle 2)
+- [ ] 08-06-PLAN.md — DatenTabelle mit Rolle und einem Namen, Drawer schließt bei jedem Link, menueVersatz im Browser (A11Y-01..03; Welle 3)
+- [ ] 08-07-PLAN.md — Wächter-Test der rd.-Regel, Token-Wächter-Grenzen, begründete Quelltext-Tests (TXT-04, TRI-04; Welle 3)
+- [ ] 08-08-PLAN.md — Pipeline- und Doku-Hygiene: Formelfehler, Glossar-Invariante, pdf_relativ, Anzahlen, CI-Doku (TRI-04; Welle 3)
+- [ ] 08-09-PLAN.md — Warn-Icon und verwaiste Beispieldaten, eine Flächenfarbe, alsRgb, Markup-Nits (TRI-04; Welle 3)
+- [ ] 08-10-PLAN.md — gemeinsame Jahr-Helfer, postenEintrag, anzahlText, Vorzeichen-Kommentar (TRI-04; Welle 3)
+- [ ] 08-11-PLAN.md — schlankes Modul hilfsfunktionen.ts, Maßnahmenfilter einmal je Seite (TRI-04; Welle 4)
+- [ ] 08-12-PLAN.md — Ledger 01/05/06 auf open: 0 mit Belegen, Abschlusslauf der Querschnittsbedingung (TRI-01..04; Welle 5)
 **UI hint**: yes
 
 ### Phase 9: Sicherheit und Audit
@@ -74,5 +88,5 @@ Phases execute in numeric order: 8 → 9
 | 5. Leitfragen-Seiten | v1.0 | 16/16 | Complete | 2026-10-05 |
 | 6. Kontext-Seiten | v1.0 | 17/17 | Complete | 2026-10-06 |
 | 7. Feinschliff und Veröffentlichung | v1.0 | 14/14 | Complete | 2026-10-07 |
-| 8. Fixes und Triage | v1.0.1 | 0/TBD | Not started | - |
+| 8. Fixes und Triage | v1.0.1 | 0/12 | Planned | - |
 | 9. Sicherheit und Audit | v1.0.1 | 0/TBD | Not started | - |
