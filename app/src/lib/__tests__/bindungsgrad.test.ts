@@ -188,6 +188,11 @@ describe('produkteText und segmentZusammenfassung (WR-02, RAT-01)', () => {
 })
 
 describe('Anzahltexte in den Komponenten (WR-02)', () => {
+  // Warum Quelltext: Gesichert wird die Konvention, dass Anzahltexte über `anzahlText` und
+  // `produkteText` entstehen und nie mit festem Plural getippt sind (WR-02). Dieser Block pinnt
+  // bewusst die Verdrahtung der drei Komponenten (06/IN-09) und beschränkt sich auf stabile
+  // Aussagen. Ohne DOM in der Testumgebung (`environment: 'node'`, kein DOM-Paket) lässt sich das
+  // nicht an der gerenderten Seite prüfen (D-14).
   const quelltexte = import.meta.glob<string>(
     [
       '/src/components/MassnahmenFilter.vue',

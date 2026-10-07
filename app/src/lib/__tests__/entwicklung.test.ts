@@ -347,6 +347,9 @@ describe('postenFussnote (ENTW-02, Quelle je Karte)', () => {
 })
 
 describe('Quelltext von lib/entwicklung.ts', () => {
+  // Warum Quelltext: Gesichert wird die Konvention „keine Jahrgangswerte im Code“. Eine fest
+  // getippte Jahreszahl liefert für den heutigen Jahrgang dieselbe Ausgabe wie die berechnete und
+  // fällt in keinem Verhaltenstest auf; sie zeigt sich nur im Quelltext (D-14).
   const quelltexte = import.meta.glob<string>('/src/lib/entwicklung.ts', {
     query: '?raw',
     import: 'default',

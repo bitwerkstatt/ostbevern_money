@@ -11,6 +11,10 @@ import { baueKennzahlen } from '@/lib/kennzahlen'
 import { belegSchluessel, findeBeleg } from '@/lib/quelle'
 import { schuldenKacheln } from '@/lib/schulden'
 import { stellenSummen } from '@/lib/stellen'
+// Warum Quelltext (die drei `?raw`-Importe der Seiten): Gesichert wird die Belegabdeckung je Seite,
+// also dass jede `KennzahlKachel` im Template `:quelle` bindet. Die Kacheln entstehen teils im
+// Seitenskript, und ohne DOM in der Testumgebung (`environment: 'node'`, kein DOM-Paket) lässt sich
+// die gerenderte Seite nicht abzählen (D-14).
 import investitionenSeite from '@/pages/InvestitionenPage.vue?raw'
 import startSeite from '@/pages/StartPage.vue?raw'
 import stellenplanSeite from '@/pages/StellenplanPage.vue?raw'

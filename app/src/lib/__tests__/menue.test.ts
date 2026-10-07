@@ -4,6 +4,10 @@ import { FUSSZEILEN_ROUTEN, MENUE, menueLinks, type MenueGruppe } from '@/lib/me
 
 // Der Quelltext des Routers (wie in `quelltext.test.ts` über `?raw`): jeder Menüeintrag muss
 // auf eine Route zeigen, die dort als `name: '…'` steht.
+// Warum Quelltext: Das Menüinventar muss zu den Routen passen. `router/index.ts` baut den Router
+// beim Import mit Hash-Verlauf auf, der einen Browser braucht; die Testumgebung
+// (`environment: 'node'`) hat kein DOM und kein DOM-Paket. Deshalb liest der Test die
+// Routennamen aus dem Quelltext (D-14).
 const routerQuelltexte = import.meta.glob<string>('/src/router/index.ts', {
   query: '?raw',
   import: 'default',

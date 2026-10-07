@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
 import { euroKurz } from '@/charts/format'
+// Warum Quelltext (auch `StartPage.vue?raw` unten): Gesichert wird die Konvention, dass kein Betrag
+// im Template getippt steht, sondern aus den Daten kommt (UI-05). Ein Rendertest bestätigt nur die
+// Testdaten, und ohne DOM in der Testumgebung (`environment: 'node'`, kein DOM-Paket) ließe sich auch
+// die gerenderte Seite nicht prüfen (D-14).
 import kennzahlKachelQuelle from '@/components/KennzahlKachel.vue?raw'
 import { haushalt, investitionen } from '@/data/daten'
 import { baueErtragsarten } from '@/lib/ertragsarten'
