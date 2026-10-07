@@ -15,6 +15,13 @@ export function klickIndex(params: unknown, anzahl: number): number | null {
     : null
 }
 
+/** Zeile unter einem Wert: „{Wertart} {jahr} · PDF-Seite {n}“ (D-10, UI-SPEC KennzahlKachel). */
+export function quellenZeile(wertart: string, jahr: number, pdfSeiten: readonly number[]): string {
+  const seiten = pdfSeiten.join(', ')
+  const wort = pdfSeiten.length === 1 ? 'PDF-Seite' : 'PDF-Seiten'
+  return `${wertart} ${formatiereJahr(jahr)} · ${wort} ${seiten}`
+}
+
 /** Jahreszahlen als Aufzählung: „2027“, „2027 und 2028“, „2027, 2028 und 2029“. */
 export function jahreListe(jahre: readonly number[]): string {
   const texte = jahre.map(formatiereJahr)

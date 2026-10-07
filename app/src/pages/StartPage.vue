@@ -8,7 +8,8 @@ import KennzahlKachel from '@/components/KennzahlKachel.vue'
 import KreisumlageCallout from '@/components/KreisumlageCallout.vue'
 import PageIntro from '@/components/PageIntro.vue'
 import { haushalt } from '@/data/daten'
-import { baueEinstiege, baueKennzahlen, quellenZeile, type Kennzahl } from '@/lib/kennzahlen'
+import { quellenZeile } from '@/lib/hilfsfunktionen'
+import { baueEinstiege, baueKennzahlen, type Kennzahl } from '@/lib/kennzahlen'
 
 // Die Startseite zeigt immer das Haushaltsjahr, ohne Jahr-Umschalter (UI-SPEC Routes).
 const jahrText = formatJahr(haushalt.haushaltsjahr)
