@@ -36,7 +36,11 @@ def main(
         bool,
         typer.Option(
             "--neu-rendern",
-            help="Alle Belegseiten neu rendern (sonst nur fehlende Bilder).",
+            help=(
+                "Alle Belegseiten neu rendern (sonst nur fehlende Bilder und Seiten, deren "
+                "Schwärzungsrechtecke sich gegenüber daten/zwischen/belegbilder_schwaerzung.json "
+                "geändert haben)."
+            ),
         ),
     ] = False,
 ) -> None:

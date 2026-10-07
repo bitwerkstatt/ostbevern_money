@@ -14,6 +14,8 @@ WebP-Kompression keine hellen Pixel in das Rechteck selbst trägt.
 
 from __future__ import annotations
 
+import hashlib
+import json
 from collections.abc import Collection, Mapping, Sequence
 from pathlib import Path
 
@@ -41,6 +43,37 @@ def bild_name(pdf_seite: int) -> str:
     return f"s{pdf_seite:03d}.webp"
 
 
+def schwaerzung_fingerprint(rechtecke: Sequence[Sequence[float]]) -> str:
+    """Kurzer Hash der Schwärzungsrechtecke einer Seite (Rechtecke auf 2 Dezimalstellen gerundet).
+
+    Er hängt nur von Zahlen ab, nicht von der Plattform; eine leere Liste ergibt einen festen Wert.
+    """
+    normiert = sorted([round(float(wert), 2) for wert in rechteck] for rechteck in rechtecke)
+    return hashlib.sha256(json.dumps(normiert).encode("utf-8")).hexdigest()[:16]
+
+
+def _lies_fingerprints(pfad: Path | None) -> dict[str, str]:
+    if pfad is None or not pfad.exists():
+        return {}
+    daten = json.loads(pfad.read_text(encoding="utf-8"))
+    if not isinstance(daten, dict):
+        raise BelegbildFehler(f"{pfad.name}: erwartet ein JSON-Objekt Seite -> Fingerprint")
+    return {str(seite): str(wert) for seite, wert in daten.items()}
+
+
+def _schreibe_fingerprints(pfad: Path, fingerprints: Mapping[str, str]) -> None:
+    inhalt = json.dumps(dict(sorted(fingerprints.items(), key=lambda e: int(e[0]))), indent=2)
+    if pfad.exists() and pfad.read_text(encoding="utf-8") == inhalt + "\n":
+        return
+    pfad.parent.mkdir(parents=True, exist_ok=True)
+    temp = pfad.with_name(pfad.name + ".tmp")
+    try:
+        temp.write_text(inhalt + "\n", encoding="utf-8")
+        temp.replace(pfad)
+    finally:
+        temp.unlink(missing_ok=True)
+
+
 def seitenmass_pdfium(pdf_pfad: Path, pdf_seite: int) -> tuple[float, float]:
     """Seitenmaß (Breite, Höhe) in PDF-Punkten laut pypdfium2, auf zwei Dezimalstellen gerundet.
 
@@ -63,12 +96,16 @@ def rendere_seiten(
     neu: bool = False,
     schwaerzungen: Mapping[int, Sequence[Sequence[float]]] | None = None,
     ohne_personenfelder: Collection[int] = (),
+    fingerprint_pfad: Path | None = None,
 ) -> list[Path]:
     """Rendert `seiten` nach `ziel_wurzel/s{nnn}.webp`; liefert die geschriebenen Pfade.
 
-    Eine Seite wird nur gerendert, wenn ihre Datei fehlt oder `neu` gesetzt ist (die WebP-Bytes
-    sind über Plattformen hinweg nicht als identisch belegt, deshalb gibt es kein stilles
-    Neurendern). Seiten des Typs `produktinformationen` verlangen mindestens ein Rechteck in
+    Eine Seite wird nur gerendert, wenn ihre Datei fehlt, `neu` gesetzt ist oder (mit
+    `fingerprint_pfad`) sich ihre Schwärzungsrechtecke gegenüber dem dort gespeicherten
+    Fingerprint geändert haben (die WebP-Bytes sind über Plattformen hinweg nicht als identisch
+    belegt, deshalb gibt es sonst kein stilles Neurendern). Für ein vorhandenes Bild ohne
+    gespeicherten Fingerprint wird der aktuelle Fingerprint übernommen, ohne neu zu rendern.
+    Seiten des Typs `produktinformationen` verlangen mindestens ein Rechteck in
     `schwaerzungen` (Rechtecke `[x0, top, x1, bottom]` in PDF-Punkten) oder einen Eintrag in
     `ohne_personenfelder` (Seiten, für die der Aufrufer geprüft hat, dass sie kein Personenfeld
     zeigen); sonst löst die Funktion `BelegbildFehler` aus, bevor ein Bild geschrieben wird.
@@ -86,10 +123,24 @@ def rendere_seiten(
             )
 
     geschrieben: list[Path] = []
+    gespeichert = _lies_fingerprints(fingerprint_pfad)
+    aktuell = {
+        str(seite): schwaerzung_fingerprint(schwaerzungen.get(seite, ()))
+        for seite in sorted(seiten)
+    }
     offen = [
-        seite for seite in sorted(seiten) if neu or not (ziel_wurzel / bild_name(seite)).exists()
+        seite
+        for seite in sorted(seiten)
+        if neu
+        or not (ziel_wurzel / bild_name(seite)).exists()
+        or gespeichert.get(str(seite), aktuell[str(seite)]) != aktuell[str(seite)]
     ]
+    # Fingerprints der nicht angefragten Seiten bleiben erhalten; neu gerenderte Seiten bekommen
+    # ihren Fingerprint erst nach erfolgreichem Schreiben (ein Abbruch lässt den alten stehen).
+    vorab = {**gespeichert, **{k: f for k, f in aktuell.items() if k not in gespeichert}}
     if not offen:
+        if fingerprint_pfad is not None:
+            _schreibe_fingerprints(fingerprint_pfad, vorab)
         return geschrieben
 
     ziel_wurzel.mkdir(parents=True, exist_ok=True)
@@ -122,4 +173,8 @@ def rendere_seiten(
             geschrieben.append(pfad)
     finally:
         pdf.close()
+    if fingerprint_pfad is not None:
+        _schreibe_fingerprints(
+            fingerprint_pfad, {**vorab, **{str(seite): aktuell[str(seite)] for seite in offen}}
+        )
     return geschrieben

@@ -170,6 +170,61 @@ def test_vorhandene_bilder_werden_ohne_neu_nicht_erneut_gerendert(
     assert (tmp_path / bild_name(62)).read_bytes() == inhalt
 
 
+def test_geaenderte_schwaerzung_rendert_vorhandenes_bild_neu(
+    jahrgang: Jahrgang, tmp_path: Path
+) -> None:
+    seitentypen = {62: "sonstige"}
+    fingerprints = tmp_path / "fingerprints.json"
+    bilder = tmp_path / "bilder"
+    erstes = rendere_seiten(
+        jahrgang.pdf_pfad, [62], bilder, seitentypen=seitentypen, fingerprint_pfad=fingerprints
+    )
+    assert len(erstes) == 1
+    gleich = rendere_seiten(
+        jahrgang.pdf_pfad, [62], bilder, seitentypen=seitentypen, fingerprint_pfad=fingerprints
+    )
+    assert gleich == []
+
+    geschwaerzt = rendere_seiten(
+        jahrgang.pdf_pfad,
+        [62],
+        bilder,
+        seitentypen=seitentypen,
+        schwaerzungen={62: [[100.0, 100.0, 300.0, 140.0]]},
+        fingerprint_pfad=fingerprints,
+    )
+    assert [pfad.name for pfad in geschwaerzt] == [bild_name(62)]
+    with Image.open(geschwaerzt[0]) as bild:
+        assert max(bild.convert("RGB").getpixel((400, 240))) < 24
+    # Danach ist der neue Fingerprint gespeichert: kein weiteres Neurendern.
+    assert (
+        rendere_seiten(
+            jahrgang.pdf_pfad,
+            [62],
+            bilder,
+            seitentypen=seitentypen,
+            schwaerzungen={62: [[100.0, 100.0, 300.0, 140.0]]},
+            fingerprint_pfad=fingerprints,
+        )
+        == []
+    )
+
+
+def test_vorhandenes_bild_ohne_gespeicherten_fingerprint_wird_nur_uebernommen(
+    jahrgang: Jahrgang, tmp_path: Path
+) -> None:
+    seitentypen = {62: "sonstige"}
+    bilder = tmp_path / "bilder"
+    rendere_seiten(jahrgang.pdf_pfad, [62], bilder, seitentypen=seitentypen)
+    fingerprints = tmp_path / "fingerprints.json"
+    assert not fingerprints.exists()
+    nachlauf = rendere_seiten(
+        jahrgang.pdf_pfad, [62], bilder, seitentypen=seitentypen, fingerprint_pfad=fingerprints
+    )
+    assert nachlauf == []
+    assert json.loads(fingerprints.read_text(encoding="utf-8")).keys() == {"62"}
+
+
 def test_abbruch_beim_schreiben_hinterlaesst_kein_kaputtes_bild(
     jahrgang: Jahrgang, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

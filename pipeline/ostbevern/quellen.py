@@ -91,6 +91,9 @@ from ostbevern.zeilen import normalisiere_bezeichnung
 
 BELEGBILDER_WURZEL = PROJEKT_WURZEL / "app" / "public" / "quellen"
 QUELLEN_JSON = Path("quellen.json")
+# Fingerprint der Schwärzungsrechtecke je gerenderter Seite (WR-01): Ändert sich die Schwärzung,
+# wird das vorhandene Bild der Seite neu gerendert.
+SCHWAERZUNG_FINGERPRINTS = Path("zwischen/belegbilder_schwaerzung.json")
 
 GRUND_NICHT_GEFUNDEN = "nicht_gefunden"
 GRUND_MEHRDEUTIG = "mehrdeutig"
@@ -1458,6 +1461,7 @@ def erzeuge_quellen(
                 neu=neu_rendern,
                 schwaerzungen={seite: schwaerzung.fuer(seite) for seite in schwaerzungen},
                 ohne_personenfelder=ohne_personenfelder,
+                fingerprint_pfad=daten_wurzel / SCHWAERZUNG_FINGERPRINTS,
             )
         )
 
