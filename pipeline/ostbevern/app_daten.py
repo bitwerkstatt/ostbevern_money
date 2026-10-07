@@ -67,6 +67,7 @@ from ostbevern.texte import (
     loese_auf,
     pruefe_grundzahl_jahre,
     pruefe_text,
+    pruefe_titel,
     textwerte,
 )
 from ostbevern.zeilen import ZEILEN
@@ -1112,8 +1113,9 @@ def erzeuge_app_daten(
     # Glossar (Plan 05-03, D-14, GLOS-01): gleicher Textvertrag, gemeinsame Auflösung.
     glossar = lies_glossar(daten_wurzel / GLOSSAR_MD)
     for abschnitt in (*erklaerungen, *glossar):
+        pruefe_titel(abschnitt.titel, abschnitt.schluessel)
         for absatz in abschnitt.absaetze:
-            pruefe_text(absatz)
+            pruefe_text(absatz, abschnitt=abschnitt.schluessel)
     alle_werte = textwerte(
         daten, investitionen_daten, produkte_daten, texte=[*erklaerungen, *glossar]
     )
