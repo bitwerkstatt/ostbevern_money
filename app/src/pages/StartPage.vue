@@ -62,7 +62,7 @@ const einstiege = computed(() => {
       <GlossarBegriff schluessel="finanzplan">Finanzplan</GlossarBegriff>
       erfasst die geplanten Zahlungen.
     </p>
-    <ul class="om-start__raster" role="list">
+    <ul class="om-kachelraster" role="list">
       <li v-for="k in kennzahlen" :key="k.schluessel">
         <KennzahlKachel
           :bezeichnung="k.bezeichnung"
@@ -124,15 +124,6 @@ const einstiege = computed(() => {
   overflow-wrap: break-word;
 }
 
-.om-start__raster {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--wa-space-m);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
 .om-start__einstiege {
   display: grid;
   grid-template-columns: 1fr;
@@ -145,12 +136,8 @@ const einstiege = computed(() => {
 }
 
 @media (min-width: 700px) {
-  .om-start__raster,
   .om-start__einstiege {
     gap: var(--wa-space-l);
-  }
-
-  .om-start__einstiege {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

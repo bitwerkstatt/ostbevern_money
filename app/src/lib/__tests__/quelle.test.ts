@@ -274,16 +274,28 @@ describe('QuelleKnopf und DatenTabelle-Spalte „Quelle“ (Server-Rendering ohn
     })
     expect(html).not.toContain('<button')
     expect(html).not.toContain('Quelle anzeigen')
+    expect(html).not.toContain('>Quelle<')
   })
 
-  it('QuelleKnopf nennt in der Variante kachel „Quelle anzeigen“ und den vollen Namen', async () => {
+  it('QuelleKnopf zeigt in der Variante kachel den Text „Quelle“ und trägt den vollen Namen', async () => {
     const html = await rendere(QuelleKnopf, {
       schluessel: gueltig,
       bezeichnung: 'Erträge',
       variante: 'kachel',
     })
     expect(html).toContain('aria-label="Quelle anzeigen: Erträge, PDF-Seite 62"')
-    expect(html).toContain('>Quelle anzeigen<')
+    expect(html).toContain('>Quelle<')
+    expect(html).toContain('name="file-lines"')
+  })
+
+  it('QuelleKnopf zeigt in der Variante produkt den Text „Quelle“ und trägt den vollen Namen', async () => {
+    const html = await rendere(QuelleKnopf, {
+      schluessel: gueltig,
+      bezeichnung: 'Erträge',
+      variante: 'produkt',
+    })
+    expect(html).toContain('aria-label="Quelle anzeigen: Erträge, PDF-Seite 62"')
+    expect(html).toContain('>Quelle<')
     expect(html).toContain('name="file-lines"')
   })
 
