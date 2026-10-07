@@ -96,6 +96,28 @@ def test_abweichendes_haushaltsjahr_wird_abgelehnt(tmp_path: Path) -> None:
         lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
 
 
+@pytest.mark.parametrize("schluessel", ["pdf_seiten", "produktbereiche", "produkte"])
+def test_negative_anzahl_wird_abgelehnt(tmp_path: Path, schluessel: str) -> None:
+    """01/IN-04: eine negative Anzahl ist eine Fehlkonfiguration, keine gültige Erwartung."""
+    text = re.sub(
+        rf"(?m)^{schluessel}\s*=\s*\d+", f"{schluessel} = -1", _jahrgangsdatei_text(), count=1
+    )
+    assert f"{schluessel} = -1" in text
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    with pytest.raises(KonfigurationsFehler, match=rf"anzahlen\.{schluessel}.*negativ"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
+@pytest.mark.parametrize("schluessel", ["produktbereiche", "produkte"])
+def test_anzahl_null_bleibt_erlaubt(tmp_path: Path, schluessel: str) -> None:
+    text = re.sub(
+        rf"(?m)^{schluessel}\s*=\s*\d+", f"{schluessel} = 0", _jahrgangsdatei_text(), count=1
+    )
+    _schreibe_jahrgangsdatei(tmp_path, text)
+    jahrgang = lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+    assert getattr(jahrgang.anzahlen, schluessel) == 0
+
+
 def test_absoluter_pdf_pfad_wird_abgelehnt(tmp_path: Path) -> None:
     text = re.sub(
         r'(?m)^pdf_pfad\s*=\s*".*"',
