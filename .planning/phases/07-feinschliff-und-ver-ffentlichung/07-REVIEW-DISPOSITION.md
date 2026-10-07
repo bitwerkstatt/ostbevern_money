@@ -5,7 +5,7 @@ titles: json
 findings:
   - id: CR-01
     severity: critical
-    disposition: skipped
+    disposition: deferred
     title: "Namen und Unterschriften zweier Personen stehen ungeschwärzt in einem ausgelieferten Belegbild"
   - id: CR-02
     severity: critical
@@ -92,7 +92,7 @@ recorded: 2026-10-07T10:01:30.255Z
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| CR-01 | critical | skipped | 07-REVIEW-FIX.md |
+| CR-01 | critical | deferred | Nutzerentscheidung 2026-10-07: bleibt so — öffentliche Satzung, Amtsträger unterzeichnen in amtlicher Funktion; Bild s009.webp unverändert |
 | CR-02 | critical | fixed | 07-REVIEW-FIX.md |
 | WR-01 | warning | fixed | 07-REVIEW-FIX.md |
 | WR-02 | warning | fixed | 07-REVIEW-FIX.md |

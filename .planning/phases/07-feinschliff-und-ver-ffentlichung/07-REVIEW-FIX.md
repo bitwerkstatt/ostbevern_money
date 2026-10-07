@@ -37,32 +37,32 @@ status: partial
 **Commit:** cbbf3db
 **Applied fix:** `LH_SCRATCH` ist jetzt nur das Elternverzeichnis (Standard `$TMPDIR` bzw. `/tmp`); das Skript legt per `mktemp -d "$BASIS/lighthouse-a11y.XXXXXX"` immer ein eigenes Unterverzeichnis an, und der `EXIT`-Trap löscht nur dieses. Zusätzlich verweigert der Trap das Löschen bei leerem Pfad, `/` oder `$HOME`. Kopfkommentar angepasst. `bash -n` fehlerfrei; das Skript selbst (Docker) wurde nicht ausgeführt.
 
-### WR-01: Geänderte Schwärzung wirkt nicht auf vorhandene Bilder
+### WR-01: Geänderte Schwärzung wirkt nicht auf vorhandene Bilder (veraltete, ungeschwärzte Datei bleibt erhalten)
 
 **Files modified:** `pipeline/ostbevern/belegbilder.py`, `pipeline/ostbevern/quellen.py`, `pipeline/08_quellenbelege.py`, `pipeline/tests/test_belegbilder.py`, `daten/zwischen/belegbilder_schwaerzung.json` (neu)
 **Commit:** 86f1858
 **Applied fix:** `rendere_seiten` bekommt `fingerprint_pfad`. Je Seite wird ein Hash der (auf 2 Nachkommastellen gerundeten) Schwärzungsrechtecke gespeichert; weicht er vom gespeicherten Wert ab, wird das vorhandene Bild neu gerendert. Ein vorhandenes Bild ohne gespeicherten Fingerprint wird nur übernommen (nicht neu gerendert), damit die veröffentlichten Bilder unverändert bleiben. Neu gerenderte Seiten bekommen ihren Fingerprint erst nach erfolgreichem Schreiben. Der Fingerprint liegt bewusst in `daten/zwischen/` statt unter `app/public/quellen`, damit nichts zusätzlich ausgeliefert wird. Hilfetext von `--neu-rendern` nennt das. Zwei neue Tests (geänderte Schwärzung rendert neu; Übernahme ohne Fingerprint).
 **Hinweis:** Das ist eine Änderung an generierten Daten (eine neue, kleine JSON-Datei, 231 Seiten); veröffentlichte Bilder und `app/src/data` sind unverändert. Der Fingerprint ersetzt keinen Beweis, dass bereits vorhandene Bilder zur aktuellen Schwärzung passen (sie werden beim ersten Lauf übernommen).
 
-### WR-02: `rendere_seiten` schreibt nicht atomar
+### WR-02: `rendere_seiten` schreibt nicht atomar; ein Abbruch hinterlässt ein kaputtes Bild, das nie erneuert wird
 
 **Files modified:** `pipeline/ostbevern/belegbilder.py`, `pipeline/tests/test_belegbilder.py`
 **Commit:** 3134eae
 **Applied fix:** Das Bild wird in `<name>.webp.tmp` geschrieben und per `Path.replace` an den Zielnamen verschoben; ein `finally` löscht die Temp-Datei. Neuer Test simuliert einen Abbruch beim Schreiben und prüft, dass nichts im Zielverzeichnis bleibt.
 
-### WR-03: Unbehandelte Indexfehler in der Beleg-Suche
+### WR-03: Unbehandelte Indexfehler in der Beleg-Suche umgehen die `QuellenFehler`-Behandlung
 
 **Files modified:** `pipeline/ostbevern/quellen.py`, `pipeline/tests/test_quellen.py`
 **Commit:** 3e56398
 **Applied fix:** `finde_tabellenzeile` prüft `ziel_index` gegen `len(werte)`, `_sammle_vorbericht` prüft auf eine vorhandene `ist_gesamt`-Zeile, `finde_stellenzeile` prüft die Gruppenbezeichnung der Nachwuchszeile; jeweils `QuellenFehler` mit klarer Meldung. Tests für den ersten und dritten Fall. Der Fall `ist_gesamt` hat keinen eigenen Test (nur über die Gesamtpipeline erreichbar).
 
-### WR-04: Leere Listen für jeden `[layout.*]`-Schlüssel erlaubt
+### WR-04: Leere Listen sind jetzt für jeden `[layout.*]`-Schlüssel erlaubt, auch für die Datenschutz-Prüfwörter
 
 **Files modified:** `pipeline/ostbevern/konfiguration.py`, `pipeline/tests/test_konfiguration.py`
 **Commit:** 93a4720
 **Applied fix:** Neue Konstante `LEERE_LISTE_ERLAUBT = {("quellenbelege", "schwaerzen_nach")}`; alle anderen Listen (insbesondere `pruefwoerter`) müssen wieder mindestens einen Eintrag haben. Neuer Test für `pruefwoerter = []` und `kennzahlen_ergebnisplan = []`.
 
-### WR-05: Kacheln „Erträge“ und „Aufwendungen“ ohne „berechnet“
+### WR-05: Startseiten-Kacheln „Erträge“ und „Aufwendungen“ tragen kein „berechnet“, die Seitenleiste nennt sie aber „nicht im PDF“
 
 **Files modified:** `app/src/lib/kennzahlen.ts`, `app/src/lib/__tests__/kennzahlen.test.ts`
 **Commit:** 3adbedf (plus ee70fc0, siehe unten)
@@ -70,14 +70,14 @@ status: partial
 **Applied fix:** `berechnet: true` für die Kacheln `ertraege` und `aufwendungen` (die Kachel zeigt dadurch das `BerechnetEtikett`). Der Test hält jetzt fest: berechnet sind `ertraege`, `aufwendungen` und die beiden Pro-Kopf-Werte, und `berechnet` gilt genau dann, wenn eine Herleitung vorhanden ist. Zunächst hatte ich in 3adbedf zusätzlich einen Hinweis „(berechnet)“ in `EbenenTabelle.vue` ergänzt; das ging über die Nutzerentscheidung hinaus und wurde in ee70fc0 wieder zurückgenommen. Die Ausgaben-Tabelle (Zeilen mit Zinsen) trägt damit weiterhin kein eigenes „berechnet“-Etikett, die Seitenleiste nennt sie aber „berechnet“. Das bleibt eine offene Inkonsistenz, falls gewünscht.
 **Status:** fixed: requires human verification (Entscheidung über die Linie „berechnet“ und optische Wirkung der zwei zusätzlichen Etiketten auf der Startseite; E2E/Lighthouse nicht gelaufen).
 
-### WR-06: Schriftannahme der Breitenkalibrierung wird nicht hergestellt oder geprüft
+### WR-06: Die Schriftannahme der Breitenkalibrierung wird in der CI weder hergestellt noch geprüft
 
 **Files modified:** `.github/workflows/ci.yml`, `app/e2e/kacheln.spec.ts`
 **Commit:** ef612e9
 **Applied fix:** Neuer Workflow-Schritt „Schrift der Kalibrierung sicherstellen“ (nach `playwright install --with-deps`, weil dieser weitere Schriften installiert): installiert `fonts-dejavu-core`, gibt die Version aus und bricht mit klarer Meldung ab, wenn `fc-match sans-serif` nicht DejaVu Sans liefert. Die Spec prüft pro Route, dass die gerenderte Schrift `DejaVu Sans` enthält (`KALIBRIERSCHRIFT`), mit der Meldung „Schrift weicht von der Kalibrierung ab …“. Der Kommentar „Festes Runner-Image“ wurde korrigiert. Abweichung vom Vorschlag: Das Paket wird nicht per `=2.37-8` gepinnt (Risiko, dass die exakte apt-Version auf dem Runner nicht existiert); stattdessen wird die installierte Version protokolliert.
 **Status:** fixed: requires human verification (nur auf einem echten GitHub-Runner prüfbar; ob `fc-match` dort nach Playwright-`--with-deps` DejaVu Sans liefert, ist ungeprüft).
 
-### WR-07: Breitentest ohne eigene Zeitgrenze
+### WR-07: Der Breitentest hat keine eigene Zeitgrenze; im Fehlerfall reißt er die Standardgrenze von 30 s und verliert seine Diagnose
 
 **Files modified:** `app/e2e/kacheln.spec.ts`
 **Commit:** 3db0795
