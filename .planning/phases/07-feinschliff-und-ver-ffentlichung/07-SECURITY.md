@@ -78,6 +78,7 @@ created: "2026-10-07"
 | AR-05 | T-07-15, T-07-23 | Impressum mit eigenem Namen und Anschrift; IP-Satz zu GitHub Pages | Nutzer (07-10-Abnahme) | 2026-10-06 |
 | AR-06 | T-07-28 | Einmalige Nutzung von lighthouse@13.5.0 ohne Lockfile für Unterabhängigkeiten | Nutzer („approved“, 07-12) | 2026-10-07 |
 | AR-07 | T-07-29 | Öffentliches Repository und GitHub-Pages-Deployment | Nutzer („veröffentlicht“, 07-12) | 2026-10-07 |
+| AR-08 | T-07-29 | `raw_data/haushalt-2026.pdf` (ungeschwärztes Original der Gemeinde) ist im öffentlichen Repository; dieselbe Datei ist bei der Gemeinde öffentlich verfügbar und verlinkt; nicht in `app/dist` | Nutzer (Sicherheitsprüfung) | 2026-10-07 |
 
 *Accepted risks do not resurface in future audit runs.*
 
@@ -87,7 +88,7 @@ created: "2026-10-07"
 
 1. **T-07-02:** Der `BelegbildFehler`-Guard greift in der Produktion praktisch nicht, weil Produktinformationen-Seiten ohne Rechtecke als `ohne_personenfelder` durchgereicht werden (`quellen.py:1446-1451`). Die wirksame Kontrolle ist `ProdukteFehler` (`produkte.py:879-884`) plus Geometrie- und Pixeltest.
 2. **T-07-22:** Die Prüfliste nennt auch S. 75 („Bürgermeister“, Z. 20) und S. 95 („Telefon“, Z. 22). Beide wurden im PDF geprüft: Fehltreffer ohne Personennamen (Aufwandsbeschreibungen). Keine Offenlegung.
-3. **T-07-29 / offen zur Bestätigung:** `raw_data/haushalt-2026.pdf` ist seit Phase 1 versioniert und wurde mit dem Push öffentlich, einschließlich der Mitarbeitendennamen, die die Seitenbilder schwärzen. Es ist dieselbe öffentliche Datei der Gemeinde, auf die `ORIGINAL_PDF_URL` verlinkt; das ausgelieferte `app/dist` enthält sie nicht. Kein bestehender Threat deckt dies ab — Bestätigung durch den Nutzer ausstehend.
+3. **T-07-29:** `raw_data/haushalt-2026.pdf` ist seit Phase 1 versioniert und wurde mit dem Push öffentlich, einschließlich der Mitarbeitendennamen, die die Seitenbilder schwärzen. Es ist dieselbe öffentliche Datei der Gemeinde, auf die `ORIGINAL_PDF_URL` verlinkt; das ausgelieferte `app/dist` enthält sie nicht. Vom Nutzer als Risiko akzeptiert (AR-08).
 4. **T-07-28 / T-07-SC:** lighthouse wurde ohne Lockfile installiert; Restrisiko begrenzt (keine Install-Skripte, Scratch-Verzeichnis, einmalig, nicht in CI).
 5. **T-07-01:** Zeilen mit Betrag 0 werden nur über die Zeilennummer gefunden (`quellen.py:291`), weiterhin mit genau einem Treffer.
 
