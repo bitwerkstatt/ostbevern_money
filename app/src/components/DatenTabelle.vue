@@ -17,6 +17,11 @@ const props = withDefaults(
     leerText?: string
     /** Quellen-/Hinweiszeile unter der Tabelle (Caption-Stil). */
     fussnote?: string
+    /**
+     * Vorangestellter Teil der Bezeichnung des Quellen-Knopfes, wenn die erste Spalte allein den
+     * Wert nicht benennt (z. B. nur das Jahr einer Zeitreihe): „Gewerbesteuer 2026“.
+     */
+    bezeichnungPraefix?: string
   }>(),
   {
     leerTitel: 'Keine Einzelwerte',
@@ -50,11 +55,15 @@ function hatBeleg(wert: string | number | null): boolean {
 
 const sichtbar = computed(() => sichtbareSpalten(props.spalten ?? [], props.zeilen ?? [], hatBeleg))
 
-/** Bezeichnung des Werts für den Namen des Knopfes: der Wert der ersten sichtbaren Spalte. */
+/**
+ * Bezeichnung des Werts für den Namen des Knopfes: der Wert der ersten sichtbaren Spalte,
+ * gegebenenfalls mit `bezeichnungPraefix` davor.
+ */
 function zeilenBezeichnung(zeile: DatenZeile): string {
   const erste = sichtbar.value[0]
   const wert = erste === undefined ? null : zeile[erste.schluessel]
-  return wert === null || wert === undefined ? '' : String(wert)
+  const text = wert === null || wert === undefined ? '' : String(wert)
+  return [props.bezeichnungPraefix, text].filter((teil) => teil).join(' ')
 }
 
 function herleitungVon(zeile: DatenZeile, spalte: DatenSpalte): string | null {

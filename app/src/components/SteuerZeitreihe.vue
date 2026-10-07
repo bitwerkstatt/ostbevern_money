@@ -102,6 +102,11 @@ const tabelle = computed<DatenZeile[]>(() =>
 
 const fussnote = computed(() => quellenFussnote(punkte.value))
 
+// Die Tabelle nennt je Zeile nur das Jahr; die Steuerart steht sonst nur im Auswahlfeld.
+const steuerartName = computed(
+  () => optionen.find((option) => option.posten === posten.value)?.name ?? '',
+)
+
 function beiAuswahl(ereignis: Event) {
   const wert = (ereignis.currentTarget as { value?: unknown } | null)?.value
   if (typeof wert === 'string' && optionen.some((option) => option.posten === wert)) {
@@ -133,6 +138,7 @@ function beiAuswahl(ereignis: Event) {
         :spalten="spalten"
         :zeilen="tabelle"
         :fussnote="fussnote"
+        :bezeichnung-praefix="steuerartName"
         :leer-titel="LEER_TITEL"
         :leer-text="LEER_TEXT"
       >
