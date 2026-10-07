@@ -25,25 +25,25 @@ findings:
     title: "`DatenTabelle`'s `spalten` prop is optional but required whenever `zeilen` is passed"
   - id: IN-01
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Unused icon asset `bars.svg`"
   - id: IN-02
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Duplicate `pdf_relativ` computation in `alle.py`"
   - id: IN-03
     severity: info
-    disposition: open
+    disposition: fixed
     title: "`circle-info` icon used inside a `warning`-variant callout"
   - id: IN-04
     severity: info
-    disposition: open
+    disposition: fixed
     title: "No overlap/positivity validation for Jahrgang config values"
   - id: IN-05
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Redundant double-labeling of data tables for screen readers"
-open: 5
+open: 0
 total: 10
 recorded: 2026-10-01T10:02:48.325Z
 ---
@@ -57,11 +57,11 @@ recorded: 2026-10-01T10:02:48.325Z
 | WR-03 | warning | fixed | 01-REVIEW-FIX.md |
 | WR-04 | warning | fixed | 01-REVIEW-FIX.md |
 | WR-05 | warning | fixed | 01-REVIEW-FIX.md |
-| IN-01 | info | open | - |
-| IN-02 | info | open | - |
-| IN-03 | info | open | - |
-| IN-04 | info | open | - |
-| IN-05 | info | open | - |
+| IN-01 | info | fixed | fixed in 05-07 (1c14077), bars.svg ist das Icon des Menüknopfs (D-17) |
+| IN-02 | info | fixed | fixed in 08-08 (c18a032), pdf_relativ wird in alle.py einmal berechnet |
+| IN-03 | info | fixed | fixed in 08-09 (96a23de), Warn-Icon im warning-Callout; das Flag beispieldaten bleibt, die verwaiste beispieldaten.json ist gelöscht (D-15) |
+| IN-04 | info | fixed | fixed in 08-08 (4c105ff, 35b3d51), negative anzahlen werden abgelehnt; die Überlappungsprüfung bestand schon |
+| IN-05 | info | fixed | fixed in 08-06 (fe416ab), Tabellenrahmen mit Rolle und genau einem Namen (D-20) |
 
 Dispositions: `open` (recorded, not yet triaged), `fixed`, `skipped`, `deferred`.
 Set `deferred` by hand and put the reason in the Source cell; both are preserved. A `|` in the reason is kept as prose and escaped on the next run.
