@@ -4,6 +4,10 @@ import { GLOSSAR_SCHLUESSEL, glossarVerwendungen } from '@/lib/glossar'
 
 // Quelltext-Prüfungen über alle Vue-Dateien der App (GLOS-03, UI-05). Die Quelltexte kommen
 // wie in `glossar.test.ts` über `import.meta.glob` mit `?raw`.
+// Warum Quelltext: Gesichert werden Konventionen, die nur im Template stehen (Glossarverlinkung
+// im Fließtext, getippte Zahlen und veraltete Größen, Typografie der Seiten). In der
+// Testumgebung (`environment: 'node'`) gibt es kein DOM und kein DOM-Paket, das die gerenderte
+// Seite prüfen könnte, deshalb lässt sich das nicht als Verhalten testen (D-14).
 const quelltexte = import.meta.glob<string>('/src/**/*.vue', {
   query: '?raw',
   import: 'default',

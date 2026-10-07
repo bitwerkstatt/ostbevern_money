@@ -6,6 +6,10 @@ import { findeText } from '@/lib/texte'
 
 // Strukturprüfung der Hinweisbox „Was nicht im Haushalt steht“ (UI-04, D-18). Die Quelltexte
 // kommen wie in `quelltext.test.ts` über `import.meta.glob` mit `?raw`.
+// Warum Quelltext: Gesichert werden die Einbindung der Hinweisbox in die Seiten (Variante,
+// Reihenfolge) und der Inhalt ihres Templates (Leitsätze, Verlinkung, keine getippten Zahlen).
+// Das steht im Template, und die Testumgebung (`environment: 'node'`) hat kein DOM und kein
+// DOM-Paket, um die gerenderte Seite zu prüfen (D-14).
 const quelltexte = import.meta.glob<string>('/src/**/*.vue', {
   query: '?raw',
   import: 'default',

@@ -15,6 +15,9 @@ import { texte } from '@/data/daten'
 // (können, müssen, sollten, …) fällt immer durch, auch mit Eintrag. Eine neue, nicht gelistete
 // Stelle lässt den Test scheitern und geht in den Text-Checkpoint (RESEARCH Pitfall 6).
 
+// Warum Quelltext: Die Du-Anrede ist eine Konvention über alle Texte der App, auch über solche, die
+// nur in Templates und Skriptblöcken stehen. Ohne DOM in der Testumgebung (`environment: 'node'`)
+// und ohne DOM-Paket lässt sie sich nicht an der gerenderten Seite prüfen, nur am Quelltext (D-14).
 const quelltexte = import.meta.glob<string>(
   ['/src/**/*.vue', '/src/**/*.ts', '!/src/**/__tests__/**'],
   { query: '?raw', import: 'default', eager: true },
