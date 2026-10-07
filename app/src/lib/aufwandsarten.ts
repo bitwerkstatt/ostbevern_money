@@ -27,11 +27,10 @@ export interface Aufwandsart {
 }
 
 /** Zeilen 11–16 (ohne Summen) plus 20 Zinsaufwendungen: fachliche Regel, Spez. 6.5. */
+const AUFWANDSART_NUMMERN: ReadonlySet<string> = new Set(['11', '12', '13', '14', '15', '16', '20'])
+
 function istAufwandsart(nummer: string, istSumme: boolean): boolean {
-  if (istSumme) {
-    return false
-  }
-  return (nummer >= '11' && nummer <= '16') || nummer === '20'
+  return !istSumme && AUFWANDSART_NUMMERN.has(nummer)
 }
 
 export function baueAufwandsarten(jahrIndex: number): Aufwandsart[] {
