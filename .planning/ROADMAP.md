@@ -36,6 +36,7 @@
 ## Phase Details
 
 ### Phase 8: Fixes und Triage
+
 **Goal**: Alles, was die App in Worten über Zahlen sagt, stimmt auch in Grenzfällen, und Datentabellen und das mobile Menü funktionieren für Screenreader und Touch ohne Lücken. Jeder der 28 offenen Review-Befunde aus den Phasen 1, 5 und 6 ist behoben, übersprungen oder begründet zurückgestellt, und das ist im jeweiligen Ledger belegt. Reihenfolge in der Phase: zuerst die Fixes an Zahlen und Texten, dann Barrierefreiheit und Hygiene, zum Schluss die Ledger auf `open: 0`.
 **Depends on**: Phase 7 (v1.0 abgeschlossen)
 **Requirements**: TXT-01, TXT-02, TXT-03, TXT-04, TXT-05, TXT-06, A11Y-01, A11Y-02, A11Y-03, TRI-01, TRI-02, TRI-03, TRI-04
@@ -45,24 +46,39 @@
   3. Der scrollbare Container von `DatenTabelle` hat immer Rolle und zugänglichen Namen, auch ohne `beschriftung`, und keine Datentabelle trägt ihren Namen doppelt (Region-Label und `<caption>`). Tippst du bei 360 px im geöffneten Menü auf den Link der Seite, auf der du gerade bist, schließt sich das Menü. vitest, der axe-Smoke-Test und ein Playwright-Test bestätigen das.
   4. `01-REVIEW-DISPOSITION.md`, `05-REVIEW-DISPOSITION.md` und `06-REVIEW-DISPOSITION.md` unter `.planning/milestones/v1.0-phases/` stehen auf `open: 0`, jede Zeile nennt Commit oder Begründung. Nebenbei behobene Befunde (z. B. 05/IN-09, Platzhalter-Kontaktdaten, erledigt mit D-17 in Phase 7) sind mit Beleg auf fixed gesetzt, 06/WR-01 (Rücklagen-Fußnote) ist mit der Begründung aus UAT 06 erfasst. Jeder reine Hygiene-Befund (Duplikate, toter Code, Hex-Fallbacks, Kopplung, Test-Nits, Doku-Drift) ist behoben, wenn das wenig kostet, sonst auf deferred mit Begründung in der Source-Spalte.
   5. Die Querschnittsbedingung hält: `alle.py --jahr 2026` ist byte-identisch oder begründet geändert, Prüfregeln 1–10 sind grün, die CI-Kette von Pipeline und App (Scratch-Kopie, inkl. axe-Smoke und 360-px-Prüfungen) ist grün.
+
 **Plans**: 12 plans in 5 waves
 
 Plans:
+**Wave 1**
 - [ ] 08-01-PLAN.md — Jahreszahlen nur als Platzhalter: pruefe_text, Titelprüfung, jahr.-Schlüssel, sieben Abschnitte, istJahrneutral (TXT-03; Welle 1)
 - [ ] 08-02-PLAN.md — rd./rund-Regel in format.ts, Lesehilfe in vier Fällen, gemeinsame Minderaufwand-Regel (TXT-01, TXT-02, TXT-04; Welle 1)
 - [ ] 08-03-PLAN.md — Stellenplan-Kacheln berechnet mit eigenen Seiten, einwohnerZahl() wirft laut (TXT-05, TXT-06; Welle 1)
+
+**Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 08-04-PLAN.md — zwölf rd.-Altkopien durch EuroBetrag bzw. betragMitHinweis ersetzt (TXT-04; Welle 2)
 - [ ] 08-05-PLAN.md — Zusammen-Zeile der Zuschüsse mit Kennzeichen, Prüfauftrag D-12, Filtersumme gekennzeichnet (TXT-05, TXT-04; Welle 2)
+
+**Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 08-06-PLAN.md — DatenTabelle mit Rolle und einem Namen, Drawer schließt bei jedem Link, menueVersatz im Browser (A11Y-01..03; Welle 3)
 - [ ] 08-07-PLAN.md — Wächter-Test der rd.-Regel, Token-Wächter-Grenzen, begründete Quelltext-Tests (TXT-04, TRI-04; Welle 3)
 - [ ] 08-08-PLAN.md — Pipeline- und Doku-Hygiene: Formelfehler, Glossar-Invariante, pdf_relativ, Anzahlen, CI-Doku (TRI-04; Welle 3)
 - [ ] 08-09-PLAN.md — Warn-Icon und verwaiste Beispieldaten, eine Flächenfarbe, alsRgb, Markup-Nits (TRI-04; Welle 3)
 - [ ] 08-10-PLAN.md — gemeinsame Jahr-Helfer, postenEintrag, anzahlText, Vorzeichen-Kommentar (TRI-04; Welle 3)
+
+**Wave 4** *(blocked on Wave 3 completion)*
 - [ ] 08-11-PLAN.md — schlankes Modul hilfsfunktionen.ts, Maßnahmenfilter einmal je Seite (TRI-04; Welle 4)
+
+**Wave 5** *(blocked on Wave 4 completion)*
 - [ ] 08-12-PLAN.md — Ledger 01/05/06 auf open: 0 mit Belegen, Abschlusslauf der Querschnittsbedingung (TRI-01..04; Welle 5)
+
+**Cross-cutting constraints:**
+- Alle Zahlen bleiben gleich: volle vitest-Suite grün, alle.py byte-identisch
+
 **UI hint**: yes
 
 ### Phase 9: Sicherheit und Audit
+
 **Goal**: Phase 4 (manuelle Daten und App-Daten) ist wie alle anderen v1.0-Phasen nachweislich sicherheitsgeprüft, v1.0 ist nachträglich auditiert, die Verifikationen aller sieben v1.0-Phasen beschreiben den Endstand nach den Restpunkten, und STATE.md nennt nur noch echte offene Punkte. Reihenfolge in der Phase: zuerst die Sicherheitsprüfung von Phase 4 gegen den Code nach Phase 8, zuletzt Audit und Re-Verifikation gegen den Endstand.
 **Depends on**: Phase 8
 **Requirements**: SEC-01, AUD-01, AUD-02, AUD-03
@@ -72,6 +88,7 @@ Plans:
   3. Die `*-VERIFICATION.md` der Phasen 1–7 sind gegen den Endstand erneuert, keine Phase meldet mehr „stale“. Die Human-Items aus `07-VERIFICATION.md` (Deploy- und Gerätecheck) bleiben als Aufgabe des Nutzers ausgewiesen und gelten nicht als bestanden.
   4. „Blockers/Concerns“ in STATE.md stimmt mit der Wirklichkeit überein. Die veralteten Einträge zu `02-REVIEW.md` und `04-REVIEW-DISPOSITION.md` sind entfernt (beide Ledger stehen schon auf `open: 0`), ebenso die in diesem Meilenstein erledigten Punkte (Security Phase 4, Milestone-Audit, stale-Verifikationen). Nur zutreffende Hinweise bleiben, z. B. die Scratch-Kopie für App-Prüfungen.
   5. Ein Abschlusslauf bestätigt die Querschnittsbedingung auf dem Endstand: `alle.py --jahr 2026` ist byte-identisch, Prüfregeln 1–10 sind grün, die CI-Kette von Pipeline und App ist grün.
+
 **Plans**: TBD
 
 ## Progress
