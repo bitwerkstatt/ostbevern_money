@@ -6,15 +6,35 @@ import { describe, expect, it } from 'vitest'
 // den es nicht gibt, macht die ganze CSS-Deklaration stillschweigend ungültig (so verlor
 // `scroll-margin-top` im Glossar seinen Kopfzeilen-Versatz). Die Quelltexte kommen wie in
 // `quelltext.test.ts` über `import.meta.glob` mit `?raw`.
+// Grenzen des Wächters (05/IN-04): Er kann keine dynamischen Tokennamen auflösen, etwa
+// `var(--wa-color-${name})` in einer Vorlagenzeichenkette. Solche Namen enden nach dem
+// festen Teil auf „-“ und werden übersprungen und gemeldet, statt als fehlend zu gelten.
+// Und er kennt nur die globalen Web-Awesome-Stylesheets (`dist/styles/**/*.css`): Ein Token,
+// das nur im CSS einer einzelnen Komponente innerhalb ihres JavaScript-Chunks steht, wird
+// nicht eingesammelt, ein `var()` darauf würde fälschlich als undefiniert gemeldet.
 const quelltexte = import.meta.glob<string>(['/src/**/*.vue', '/src/**/*.css', '/src/**/*.ts'], {
   query: '?raw',
   import: 'default',
   eager: true,
 })
 
-/** Alle `--wa-…`-Namen, die als `var(--wa-…)` benutzt werden (nicht `--scroll-margin-top` o. Ä.). */
-function verwendeteTokens(text: string): string[] {
+/** Alle `--wa-…`-Namen aus `var(--wa-…)`, auch unvollständige Namen auf „-“ (dynamischer Rest). */
+function benannteTokens(text: string): string[] {
   return Array.from(text.matchAll(/var\(\s*(--wa-[a-z0-9-]+)/g), (treffer) => treffer[1]!)
+}
+
+/**
+ * Alle vollständigen `--wa-…`-Namen, die als `var(--wa-…)` benutzt werden (nicht
+ * `--scroll-margin-top` o. Ä.). Ein Name auf „-“ ist der feste Teil eines dynamischen Namens
+ * wie `var(--wa-color-${name})` und nicht auflösbar; er steht in `dynamischeTokens`.
+ */
+function verwendeteTokens(text: string): string[] {
+  return benannteTokens(text).filter((name) => !name.endsWith('-'))
+}
+
+/** Die festen Teile dynamischer Namen (enden auf „-“), die `verwendeteTokens` überspringt. */
+function dynamischeTokens(text: string): string[] {
+  return benannteTokens(text).filter((name) => name.endsWith('-'))
 }
 
 /** Alle `--wa-…`-Namen, die als Custom Property deklariert werden (Name, dann Doppelpunkt). */
@@ -48,6 +68,12 @@ describe('verwendeteTokens und definierteTokens (Fail-first)', () => {
   it('findet nur --wa-Namen in var(), nicht --scroll-margin-top von wa-page', () => {
     const text = 'calc(var(--scroll-margin-top, 0px) + var(--wa-space-md))'
     expect(verwendeteTokens(text)).toEqual(['--wa-space-md'])
+  })
+
+  it('überspringt Namen auf „-“ aus dynamischen var()-Namen und meldet sie als dynamisch', () => {
+    const text = 'color: var(--wa-color-${name}); gap: var(--wa-space-m)'
+    expect(verwendeteTokens(text)).toEqual(['--wa-space-m'])
+    expect(dynamischeTokens(text)).toEqual(['--wa-color-'])
   })
 
   it('findet deklarierte --wa-Tokens', () => {
@@ -224,6 +250,17 @@ describe('Stiltokens der App (G-05-6)', () => {
   it('sieht die App-Quelltexte und die Web-Awesome-Definitionen', () => {
     expect(appDateien.length).toBeGreaterThan(20)
     expect(definiert.size).toBeGreaterThan(100)
+  })
+
+  it('meldet Namen auf „-“ als dynamisch, statt sie als fehlend zu zählen', ({ skip }) => {
+    const dynamisch = Array.from(
+      new Set(appDateien.flatMap(([, text]) => dynamischeTokens(text))),
+    ).sort()
+    if (dynamisch.length > 0) {
+      skip(
+        `Nicht prüfbar (dynamische Tokennamen, nur der feste Teil steht im Quelltext): ${dynamisch.join(', ')}`,
+      )
+    }
   })
 
   it('benutzt kein var(--wa-*), das weder Web Awesome noch die App definiert', () => {
