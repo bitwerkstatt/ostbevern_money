@@ -17,6 +17,7 @@
 
 import { haushalt } from '@/data/daten'
 import type { Meta, VorberichtTabelle } from '@/data/typen'
+import { haushaltsjahrIndex, wertartAn } from '@/lib/jahr'
 
 /** Posten-Schlüssel der Eigenkapitalübersicht (S. 311). */
 const ALLGEMEINE = 'allgemeine_ruecklage'
@@ -58,15 +59,6 @@ function pruefeIndex(index: number): void {
   if (!Number.isInteger(index) || index < 0 || index >= haushalt.jahre.length) {
     throw new Error(`Index ${String(index)} liegt außerhalb von haushalt.jahre`)
   }
-}
-
-/** Wertart je Jahr aus `haushalt.wertarten`; ein fehlender Eintrag ist ein Datenfehler. */
-function wertartAn(index: number): string {
-  const wertart = haushalt.wertarten[index]
-  if (wertart === undefined) {
-    throw new Error(`haushalt.wertarten hat keinen Eintrag für den Jahresindex ${String(index)}`)
-  }
-  return wertart
 }
 
 /** Eine Zeile je Jahr aus `haushalt.jahre` mit beiden Rücklagen und ihrer Summe (S. 311). */
@@ -195,7 +187,7 @@ export function hskSchwellen(meta: Meta = haushalt.meta): HskSchwellen {
 export function ausgleichsruecklageAufgebrauchtJahr(
   tabelle: VorberichtTabelle = haushalt.eigenkapital,
 ): number | null {
-  const start = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
+  const start = haushaltsjahrIndex()
   const ausgleich = postenWerte(tabelle, AUSGLEICH)
   for (let index = start + 1; index < haushalt.jahre.length; index += 1) {
     if (ausgleich[index] === 0) {
@@ -213,15 +205,6 @@ export interface Rueckgangsjahr {
   wertart: string
   /** Rückgang der allgemeinen Rücklage als Anteil (0–1); `null`, wenn ein Eingangswert fehlt. */
   anteil: number | null
-}
-
-/** Index des Haushaltsjahres in `haushalt.jahre`; fehlt es, ist das ein Datenfehler. */
-function haushaltsjahrIndex(): number {
-  const index = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
-  if (index < 0) {
-    throw new Error('haushalt.haushaltsjahr steht nicht in haushalt.jahre')
-  }
-  return index
 }
 
 /**

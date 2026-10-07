@@ -6,6 +6,7 @@
 
 import { euro, euroKurz, KEIN_WERT, prozent } from '@/charts/format'
 import { haushalt } from '@/data/daten'
+import { wertartAn } from '@/lib/jahr'
 
 /** Ein Wert je Jahr mit Wertart und Quellseite; die Reihen liegen in der Reihenfolge von `haushalt.jahre`. */
 export interface Jahreswert {
@@ -50,15 +51,6 @@ function gesamtWerte() {
     throw new Error(`ergebnisplan.${GESAMT} fehlt in haushalt.json`)
   }
   return gesamt
-}
-
-/** Wertart je Jahr aus `haushalt.wertarten`; ein fehlender Eintrag ist ein Datenfehler. */
-function wertartAn(index: number): string {
-  const wertart = haushalt.wertarten[index]
-  if (wertart === undefined) {
-    throw new Error(`haushalt.wertarten hat keinen Eintrag für den Jahresindex ${String(index)}`)
-  }
-  return wertart
 }
 
 /** Je Jahr aus `haushalt.jahre` einen Wert; `werte` kommt aus den Daten, `name` steht in der Fehlermeldung. */
