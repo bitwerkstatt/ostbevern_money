@@ -24,13 +24,23 @@ export function summe(werte: readonly (number | null)[]): number {
 }
 
 /**
- * Platzhalter der alten Regel aus `minderaufwandHinweis` (Stand vor D-08): ein Wert ab 0 ergibt
- * `null`, auch ein positiver. Wird im folgenden Schritt durch die vollständige Regel ersetzt.
+ * Die eine Minderaufwand-Regel für /geldfluss und /ausgaben (D-08, TXT-02). Der Gesamtergebnisplan
+ * führt den globalen Minderaufwand (Z. 27) mit negativem Vorzeichen: ein fehlender Wert oder 0 ist
+ * kein Minderaufwand (`null`), ein negativer Wert ergibt den positiven Betrag der Kürzung. Ein
+ * positiver Wert widerspricht der Struktur des Plans und ist ein Datenfehler: er wirft, statt den
+ * Hinweis still zu verbergen. `jahr` steht nur für die Fehlermeldung.
  */
 export function minderaufwandBetrag(
   zeile27: number | null | undefined,
   jahr: number,
 ): number | null {
-  void jahr
-  return zeile27 === null || zeile27 === undefined || zeile27 >= 0 ? null : -zeile27
+  if (zeile27 === null || zeile27 === undefined || zeile27 === 0) {
+    return null
+  }
+  if (zeile27 > 0) {
+    throw new Error(
+      `Globaler Minderaufwand ist positiv: Datenfehler (Jahr ${String(jahr)}, Z. 27 = ${String(zeile27)})`,
+    )
+  }
+  return -zeile27
 }

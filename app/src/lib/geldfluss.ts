@@ -33,7 +33,7 @@ import {
 } from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
 import { haushalt } from '@/data/daten'
-import { anteil } from '@/lib/berechnung'
+import { anteil, minderaufwandBetrag } from '@/lib/berechnung'
 import { findeKlKnoten } from '@/lib/kreisumlage'
 import { textFuerJahr } from '@/lib/texte'
 
@@ -240,7 +240,12 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
 
   // ---- links: Ausgleich (Defizit, Minderaufwand) und rechts: Überschuss --------------
   const nachMinderaufwand = planZeile('ergebnis_nach_minderaufwand', jahrIndex)
-  const minderaufwand = -planZeile('globaler_minderaufwand', jahrIndex)
+  const jahrDesIndex = haushalt.jahre[jahrIndex]
+  if (jahrDesIndex === undefined) {
+    throw new Error(`Jahresindex ${String(jahrIndex)} liegt außerhalb der Jahre`)
+  }
+  const minderaufwand =
+    minderaufwandBetrag(planZeile('globaler_minderaufwand', jahrIndex), jahrDesIndex) ?? 0
 
   if (nachMinderaufwand < 0) {
     knoten.push({
@@ -255,10 +260,7 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
       berechnet: false,
     })
   }
-  if (minderaufwand !== 0) {
-    if (minderaufwand < 0) {
-      throw new Error('Globaler Minderaufwand ist positiv: Datenfehler')
-    }
+  if (minderaufwand > 0) {
     knoten.push({
       id: 'ausgleich:minderaufwand',
       name: 'Globaler Minderaufwand',
