@@ -64,12 +64,29 @@ Bleiben im Backlog (siehe `milestones/v1.0-REQUIREMENTS.md`, Abschnitt v2):
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| TXT-01 | Phase 8 | Pending |
+| TXT-02 | Phase 8 | Pending |
+| TXT-03 | Phase 8 | Pending |
+| TXT-04 | Phase 8 | Pending |
+| TXT-05 | Phase 8 | Pending |
+| TXT-06 | Phase 8 | Pending |
+| A11Y-01 | Phase 8 | Pending |
+| A11Y-02 | Phase 8 | Pending |
+| A11Y-03 | Phase 8 | Pending |
+| TRI-01 | Phase 8 | Pending |
+| TRI-02 | Phase 8 | Pending |
+| TRI-03 | Phase 8 | Pending |
+| TRI-04 | Phase 8 | Pending |
+| SEC-01 | Phase 9 | Pending |
+| AUD-01 | Phase 9 | Pending |
+| AUD-02 | Phase 9 | Pending |
+| AUD-03 | Phase 9 | Pending |
 
 **Coverage:**
 - v1.0.1 requirements: 17 total
-- Mapped to phases: 0
-- Unmapped: 17 ⚠️
+- Mapped to phases: 17
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-10-07*
-*Last updated: 2026-10-07 after initial definition*
+*Last updated: 2026-10-07 after roadmap revision (zwei Phasen, 8–9)*
