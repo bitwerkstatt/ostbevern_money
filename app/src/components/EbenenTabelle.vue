@@ -116,9 +116,6 @@ function betragText(betrag: number, gerundet: boolean): string {
       <template v-else-if="spalte.schluessel === 'betrag'">
         {{ betragText(wert, zeile.gerundet === 1) }}
         <span v-if="zeile.ueberschuss === 1" class="om-ebenen-hinweis">(Überschuss)</span>
-        <span v-if="typeof zeile.quelleHerleitung === 'string'" class="om-ebenen-hinweis">
-          (berechnet)
-        </span>
       </template>
       <template v-else-if="spalte.schluessel === 'anteil'">{{ prozent(wert) }}</template>
       <template v-else>{{ euro(wert) }}</template>
