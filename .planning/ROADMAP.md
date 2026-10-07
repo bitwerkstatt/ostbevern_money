@@ -264,7 +264,7 @@ Plans:
   4. Ein Playwright-Smoke-Test bestätigt, dass jede Route ohne Konsolenfehler rendert und die Diagramme Daten enthalten. Ein Textdurchgang bestätigt, dass alle Texte deutsch und durchgehend in der Du-Anrede sind.
   5. GitHub Actions baut die App und deployt sie auf GitHub Pages (eigener Account), und die App ist unter einer öffentlichen URL erreichbar.
 
-**Plans**: 13/13 plans executed
+**Plans**: 13/14 plans executed
 **UI hint**: yes
 
 Plans:
@@ -296,6 +296,9 @@ Plans:
 
 **Gap closure** *(07-VERIFICATION A11Y-03 Kachel-Überlauf ab 400 px plus 07-UI-REVIEW BLOCKER 1 / WARNING 2; Wave 1 des Gap-Laufs, nach Wave 7)*
 - [x] 07-13-PLAN.md — Kennzahl-Kacheln ab 360 px bei jeder Breite: Breitentest `e2e/kacheln.spec.ts` im CI-Projekt (rot → grün), gemeinsames Raster `om-kachelraster` mit gemessener Mindestbreite, Betrag immer einzeilig in Größe l, Knopf „Quelle“ (Name unverändert), UI-SPEC-Nachtrag (Gap Closure)
+
+**Gap closure** *(07-UAT G-07-2: CI-Breitentest auf GitHub rot, Kachel-Mindestspur gegen falsche Schrift kalibriert, li-Einzug von Web Awesome; Wave 2 des Gap-Laufs, nach 07-13)*
+- [ ] 07-14-PLAN.md — CI-Schrift lokal nachgestellt (`scripts/e2e-wie-ci.sh`, fonts-dejavu-core 2.37-8 mit Prüfsumme), rote Messung identisch zur CI, `li` ohne Einzug, Mindestspur `--om-kachel-mindestbreite` unter DejaVu Sans kalibriert, Spaltensprünge im Breitentest, app-Job auf ubuntu-24.04, UI-SPEC- und README-Nachtrag; Push und öffentliche URL durch den Nutzer (Gap Closure)
 
 ## Progress
 
