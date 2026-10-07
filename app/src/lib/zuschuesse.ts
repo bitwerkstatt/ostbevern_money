@@ -131,16 +131,26 @@ export function weitereZuschuesse(): { transfer: ZuschussGruppe; lfdZwecke: Zusc
   }
 }
 
+/** Die Summe einer Gruppe; `berechnet` sagt, ob sie die App gebildet hat (D-12, TXT-05). */
+export interface ZuschussSumme {
+  wert: number
+  /** `true`, wenn der Wert die Summe der Einzelposten ist; `false`, wenn er im PDF gedruckt steht. */
+  berechnet: boolean
+}
+
 /**
- * Die Summe einer Gruppe für die Zeile „zusammen“: die gedruckte Gesamtzeile, sonst die Summe der
- * vorhandenen Werte; ohne einen einzigen Wert `null` (kein erfundenes 0).
+ * Die Summe einer Gruppe für die Zeile „zusammen“: die gedruckte Gesamtzeile (`berechnet` false),
+ * sonst die Summe der vorhandenen Werte (`berechnet` true, die App hat sie gebildet); ohne einen
+ * einzigen Wert `null` (kein erfundenes 0).
  */
-export function zusammen(gruppe: ZuschussGruppe): number | null {
+export function zusammen(gruppe: ZuschussGruppe): ZuschussSumme | null {
   if (gruppe.gesamt !== null) {
-    return gruppe.gesamt
+    return { wert: gruppe.gesamt, berechnet: false }
   }
   const werte = gruppe.posten.flatMap((p) => (p.wert === null ? [] : [p.wert]))
-  return werte.length === 0 ? null : werte.reduce((summe, wert) => summe + wert, 0)
+  return werte.length === 0
+    ? null
+    : { wert: werte.reduce((summe, wert) => summe + wert, 0), berechnet: true }
 }
 
 export interface NichtBeeinflussbar {

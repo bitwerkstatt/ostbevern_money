@@ -3,10 +3,11 @@ import { computed } from 'vue'
 
 import { balkenHoehe, horizontaleBalkenOption, type BalkenZeile } from '@/charts/balken'
 import { AUFWANDSART_FARBE } from '@/charts/echartsTheme'
-import { euro, euroKurz, jahr as formatJahr } from '@/charts/format'
+import { betragMitHinweis, jahr as formatJahr, kurzMitHinweis } from '@/charts/format'
 import BaseChart from '@/components/BaseChart.vue'
 import ChartCard from '@/components/ChartCard.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
+import EuroBetrag from '@/components/EuroBetrag.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import { haushalt } from '@/data/daten'
 import { useSchmalerBildschirm } from '@/lib/bildschirm'
@@ -17,10 +18,11 @@ import {
   zusammen,
   type Zuschuss,
   type ZuschussGruppe,
+  type ZuschussSumme,
 } from '@/lib/zuschuesse'
 
 // RAT-03, D-03: die Einzelzuschüsse aus dem Vorbericht in zwei Karten. Alle Beträge sind
-// T€-Werte × 1000 und stehen deshalb als „rd.“ da. Die Balken tragen `AUFWANDSART_FARBE`, nie
+// T€-Werte × 1000 und stehen deshalb als „rd.“ da (die Regel steht nur in `charts/format.ts`). Die Balken tragen `AUFWANDSART_FARBE`, nie
 // Produktbereichsfarben (UI-SPEC).
 
 interface GruppeAnsicht {
@@ -28,7 +30,8 @@ interface GruppeAnsicht {
   /** Überschrift der Quellgruppe; leer, wenn die Karte nur eine Gruppe zeigt. */
   titel: string
   quelle: string
-  zusammenText: string | null
+  /** Summe der Gruppe; `berechnet` steuert das Etikett (D-12, TXT-05); `null` ohne einen Wert. */
+  zusammen: ZuschussSumme | null
   zeilen: BalkenZeile[]
   tabelle: DatenZeile[]
   beschriftung: string
@@ -61,8 +64,9 @@ function absteigend(posten: readonly Zuschuss[]): Zuschuss[] {
   return [...posten].sort((a, b) => (b.wert ?? -1) - (a.wert ?? -1))
 }
 
+/** Alle Vorberichtswerte sind T€ × 1000, also immer „rd.“; ohne Wert bleibt die Zelle leer. */
 function betragText(wert: number | null): string | null {
-  return wert === null ? null : `rd. ${euro(wert)}`
+  return wert === null ? null : betragMitHinweis(wert, true)
 }
 
 function gruppeAnsicht(
@@ -76,17 +80,16 @@ function gruppeAnsicht(
     return null
   }
   const posten = absteigend(gruppe.posten)
-  const summe = zusammen(gruppe)
   return {
     schluessel,
     titel,
     quelle: `Quelle: ${quellenName}, ${seitenText(gruppe.pdfSeiten)}`,
-    zusammenText: summe === null ? null : `Zusammen rd. ${euro(summe)}`,
+    zusammen: zusammen(gruppe),
     zeilen: posten.map((p) => ({
       schluessel: p.schluessel,
       name: p.name,
       wert: p.wert,
-      label: p.wert === null ? '' : `rd. ${euroKurz(p.wert)}`,
+      label: p.wert === null ? '' : kurzMitHinweis(p.wert, true),
     })),
     tabelle: posten.map((p) => ({
       name: p.name,
@@ -99,6 +102,16 @@ function gruppeAnsicht(
 
 function nichtLeer<T>(wert: T | null): wert is T {
   return wert !== null
+}
+
+/**
+ * Die gedruckte Kita-Summe steht in der Beschreibung ohne Etikett. Wäre sie berechnet, stünde sie
+ * dort als Fließtext ohne Etikett; dann trägt die Zeile „Zusammen“ im Kartenkörper das Etikett.
+ */
+function kitaBeschreibung(summe: ZuschussSumme | null): string {
+  return summe !== null && !summe.berechnet
+    ? `Zusammen ${betragMitHinweis(summe.wert, true)}`
+    : 'Zuschuss je Einrichtung.'
 }
 
 const karten = computed<KarteAnsicht[]>(() => {
@@ -132,7 +145,7 @@ const karten = computed<KarteAnsicht[]>(() => {
     liste.push({
       schluessel: 'kita',
       titel: 'Kindertagesstätten',
-      beschreibung: kita.zusammenText ?? 'Zuschuss je Einrichtung.',
+      beschreibung: kitaBeschreibung(kita.zusammen),
       gruppen: [kita],
     })
   }
@@ -173,8 +186,16 @@ function beschreibung(gruppe: GruppeAnsicht): string {
       >
         <div v-for="gruppe in karte.gruppen" :key="gruppe.schluessel" class="om-zuschuesse__gruppe">
           <h3 v-if="gruppe.titel" class="om-zuschuesse__untertitel">{{ gruppe.titel }}</h3>
-          <p v-if="gruppe.titel && gruppe.zusammenText" class="om-zuschuesse__zeile">
-            {{ gruppe.zusammenText }}
+          <p
+            v-if="gruppe.zusammen !== null && (gruppe.titel || gruppe.zusammen.berechnet)"
+            class="om-zuschuesse__zeile"
+          >
+            Zusammen
+            <EuroBetrag
+              :wert="gruppe.zusammen.wert"
+              gerundet
+              :berechnet="gruppe.zusammen.berechnet"
+            />
           </p>
           <p class="om-zuschuesse__zeile om-zuschuesse__zeile--leise">{{ gruppe.quelle }}</p>
           <BaseChart
