@@ -62,6 +62,10 @@ created: "2026-10-07"
 | T-07-SC | Tampering | npm/pip-Installationen, CI-Browser-Download | high | mitigate | Exakte Pins, Lockfiles, `uv sync --locked`, keine neuen Abhängigkeiten außer 07-01 | closed |
 | T-07-30 | Repudiation | app/e2e/kacheln.spec.ts | medium | mitigate | Im Playwright-Projekt `ci` (`playwright.config.ts` ignoriert nur mobil/textliste); geschlossene Routenliste `KACHEL_ROUTEN` mit Klassifikationstest (`kacheln.spec.ts:32,362-368`); feste `TOLERANZ = 0.5` (`:29`); rote Ausgangsmessung in 07-13-SUMMARY | closed |
 | T-07-31 | Tampering | KennzahlKachel-Beträge | medium | mitigate | `git diff --quiet a02a28c HEAD -- pipeline daten app/src/data app/src/charts/format.ts` leer; Spec prüft eine Zeile (`getClientRects`, `:183`) und Größe `--wa-font-size-l` (`:112-175`) | closed |
+| T-07-32 | Tampering (Lieferkette) | `scripts/e2e-wie-ci.sh` Schriftdownload | medium | mitigate | `fonts-dejavu-core_2.37-8_all.deb` gepinnt, SHA-256 `40049660…fa73a` vor jeder Nutzung geprüft, bei Abweichung gelöscht und Abbruch (`e2e-wie-ci.sh:33-82`); nur im `--rm`-Container entpackt (`:89`); keine Schriftdatei in `app/public`, nicht in package.json | closed |
+| T-07-33 | Repudiation | Kalibrierumgebung `kacheln.spec.ts` | high | mitigate | Rote Ausgangsmessung byte-identisch in 07-14-SUMMARY; Schriftlog über `CSS.getPlatformFontsForNode` (`kacheln.spec.ts:130-146`); `SPALTENSPRUENGE` mit Selbstprüfung (`:44,462-466`); `TOLERANZ = 0.5` (`:52`); app-Job auf `ubuntu-24.04` (`ci.yml:67`) | closed |
+| T-07-34 | Tampering | KennzahlKachel-Beträge | medium | mitigate | `git diff --quiet 840c372 -- app/src/charts/format.ts app/src/data app/src/components app/src/pages pipeline daten` leer; `.om-zahl` unverändert (`basis.css:11-14`, `white-space: nowrap`) | closed |
+| T-07-35 | Elevation of Privilege | `.github/workflows/ci.yml` | low | mitigate | Diff gegen 840c372: nur `runs-on` des app-Jobs plus vier Kommentarzeilen; Rechte, SHA-Pins, Trigger und deploy-Job unverändert; kein Push durch den Executor (D-10) | closed |
 
 *Status: open · closed · open — below high threshold (non-blocking)*
 *Severity: critical > high > medium > low — only open threats at or above workflow.security_block_on count toward threats_open*
@@ -81,6 +85,7 @@ created: "2026-10-07"
 | AR-06 | T-07-28 | Einmalige Nutzung von lighthouse@13.5.0 ohne Lockfile für Unterabhängigkeiten | Nutzer („approved“, 07-12) | 2026-10-07 |
 | AR-07 | T-07-29 | Öffentliches Repository und GitHub-Pages-Deployment | Nutzer („veröffentlicht“, 07-12) | 2026-10-07 |
 | AR-09 | T-07-SC (07-13) | Keine neue Abhängigkeit (package.json, package-lock.json, uv.lock unverändert seit a02a28c); npm ci nur in Scratch-Kopien | Planer (07-13-PLAN) | 2026-10-07 |
+| AR-10 | T-07-SC (07-14) | Keine neue npm-/PyPI-Abhängigkeit (package.json, package-lock.json, uv.lock unverändert seit 840c372); npm ci nur in Scratch-Kopien; Schriftpaket unter T-07-32 | Planer (07-14-PLAN) | 2026-10-07 |
 | AR-08 | T-07-29 | `raw_data/haushalt-2026.pdf` (ungeschwärztes Original der Gemeinde) ist im öffentlichen Repository; dieselbe Datei ist bei der Gemeinde öffentlich verfügbar und verlinkt; nicht in `app/dist` | Nutzer (Sicherheitsprüfung) | 2026-10-07 |
 
 *Accepted risks do not resurface in future audit runs.*
@@ -102,6 +107,7 @@ created: "2026-10-07"
 | Audit Date | Threats Total | Closed | Open | Run By |
 |------------|---------------|--------|------|--------|
 | 2026-10-07 | 30 | 30 | 0 | gsd-security-auditor (ASVS L1, block_on high) |
+| 2026-10-07 | 36 | 36 | 0 | Orchestrator, L1-Grep-Prüfung (07-14: T-07-32 … T-07-35, AR-10) |
 
 ---
 
@@ -120,4 +126,12 @@ created: "2026-10-07"
 |---|---|
 | Threats found | 32 |
 | Closed | 32 |
+| Open | 0 |
+
+## Security Audit 2026-10-07
+
+| Metric | Count |
+|---|---|
+| Threats found | 36 |
+| Closed | 36 |
 | Open | 0 |
