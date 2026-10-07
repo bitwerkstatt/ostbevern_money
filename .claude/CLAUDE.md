@@ -57,7 +57,10 @@ CI lokal nachstellen (identisch zu `.github/workflows/ci.yml`):
 ```
 (cd pipeline && uv sync --locked && uv run ruff check . && uv run ruff format --check . && uv run pytest)
 (cd app && npm ci && npm run type-check && npm run lint && npm run format:check && npm run test && npm run build)
+uv run --directory pipeline python alle.py && git diff --stat --exit-code -- daten app/src/data && test -z "$(git status --porcelain --untracked-files=all -- daten app/src/data app/public/quellen)"
+(cd app && npm run build-only) && scripts/e2e-wie-ci.sh <scratch>/app
 ```
+Die dritte Zeile ist die Reproduzierbarkeitsprüfung der CI: Die Pipeline muss `daten/`, `app/src/data/` und `app/public/quellen` byte-identisch neu erzeugen. Die vierte Zeile ist der Playwright-Schritt; die CI selbst startet ihn als `npm run test:e2e` (Projekt `ci`). Enthält `app/node_modules` Binärdateien eines anderen Betriebssystems (macOS), laufen die App-Prüfungen in einer Scratch-Kopie von `app/` mit eigenem `npm ci`.
 <!-- GSD:stack-end -->
 
 <!-- GSD:conventions-start source:CONVENTIONS.md -->
