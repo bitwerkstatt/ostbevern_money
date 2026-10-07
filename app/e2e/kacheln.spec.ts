@@ -48,11 +48,21 @@ const GRUNDBREITEN = [360, 400, 480, 560, 600, 700, 720, 768, 952, 1024, 1280, 1
 // basis.css, müssen diese Breiten folgen; der Selbsttest auf der Startseite meldet es, wenn nicht.
 const SPALTENSPRUENGE: readonly number[] = [488, 732, 968, 1204, 1440]
 
+/** Längste Wartezeit je Breite, bis die Seite nicht mehr über den Rand reicht (`warteAufLayout`). */
+const LAYOUT_WARTEZEIT_MS = 2000
+
 /** Alle Breiten des Sweeps: Grundbreiten und Spaltensprünge, aufsteigend und ohne Doppelte. */
 const BREITEN: readonly number[] = [...new Set([...GRUNDBREITEN, ...SPALTENSPRUENGE])].sort(
   (a, b) => a - b,
 )
 const HOEHE = 800
+
+/**
+ * Zeitgrenze eines Routentests: Im Fehlerfall (dauerhafter Überlauf) wartet jede Breite die volle
+ * `LAYOUT_WARTEZEIT_MS`. Die Grenze deckt das mit Reserve für Laden und Messung ab, sonst bricht
+ * der Test mit einem Timeout ab, bevor die gesammelte Befundliste ausgegeben wird.
+ */
+const ROUTENTEST_ZEITGRENZE_MS = 60_000 + BREITEN.length * LAYOUT_WARTEZEIT_MS
 const MINDESTMASS = 44
 const TOLERANZ = 0.5
 
@@ -113,13 +123,13 @@ async function warteAufLayout(page: Page): Promise<void> {
   // Gewartet wird deshalb, bis die Seite nicht mehr über den Rand reicht, höchstens 2 s. Ein
   // dauerhafter Überlauf bleibt danach bestehen und wird von der Messung gemeldet.
   await page.evaluate(
-    () =>
+    (grenze) =>
       new Promise<void>((fertig) => {
         const beginn = performance.now()
         const pruefe = () => {
           if (
             document.documentElement.scrollWidth <= window.innerWidth ||
-            performance.now() - beginn > 2000
+            performance.now() - beginn > grenze
           ) {
             fertig()
           } else {
@@ -128,6 +138,7 @@ async function warteAufLayout(page: Page): Promise<void> {
         }
         pruefe()
       }),
+    LAYOUT_WARTEZEIT_MS,
   )
 }
 
@@ -439,6 +450,7 @@ function tabellenzeile(pfad: string, breite: number, messung: KachelMessung): st
 
 test.describe('Kennzahl-Kacheln über alle Breiten (A11Y-03, 07-13)', () => {
   test.use({ viewport: { width: GRUNDBREITEN[0], height: HOEHE } })
+  test.describe.configure({ timeout: ROUTENTEST_ZEITGRENZE_MS })
 
   for (const name of KACHEL_ROUTEN) {
     const route = routen().find((eintrag) => eintrag.name === name)
