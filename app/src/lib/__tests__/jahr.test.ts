@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
 import { haushalt } from '@/data/daten'
-import { jahrLinkFuer, leseJahr, wertartFuerJahr, wertartName } from '@/lib/jahr'
+import {
+  haushaltsjahrIndex,
+  jahrLinkFuer,
+  leseJahr,
+  wertartAn,
+  wertartFuerJahr,
+  wertartName,
+} from '@/lib/jahr'
 
 const { jahre, haushaltsjahr } = haushalt
 
@@ -92,5 +99,22 @@ describe('jahrLinkFuer (D-10)', () => {
 
   it('lässt Textziele unverändert', () => {
     expect(jahrLinkFuer('/glossar', 2027)).toBe('/glossar')
+  })
+})
+
+describe('haushaltsjahrIndex', () => {
+  it('liefert die Position des Haushaltsjahrs in haushalt.jahre', () => {
+    expect(haushaltsjahrIndex()).toBe(jahre.indexOf(haushaltsjahr))
+    expect(haushaltsjahrIndex()).toBeGreaterThanOrEqual(0)
+  })
+})
+
+describe('wertartAn', () => {
+  it('liefert die Wertart an der Position aus haushalt.wertarten', () => {
+    expect(wertartAn(0)).toBe(haushalt.wertarten[0])
+  })
+
+  it('wirft für einen Index außerhalb von haushalt.jahre und nennt den Jahresindex', () => {
+    expect(() => wertartAn(jahre.length)).toThrow(/Jahresindex/)
   })
 })

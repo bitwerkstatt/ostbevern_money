@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { datum, jahr as formatiereJahr, KEIN_WERT, vzae, zahl } from '@/charts/format'
+import { anzahlText, datum, jahr as formatiereJahr, KEIN_WERT, vzae, zahl } from '@/charts/format'
 import ChartCard from '@/components/ChartCard.vue'
 import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import KennzahlKachel from '@/components/KennzahlKachel.vue'
@@ -139,24 +139,19 @@ const kacheln: StellenKachel[] = [
   },
 ]
 
-/** „1 Person“ bzw. „5 Personen“. */
-function personenText(anzahl: number): string {
-  return `${zahl(anzahl)} ${anzahl === 1 ? 'Person' : 'Personen'}`
-}
-
 // Fehlen Personenzahlen für ein Jahr, nennt der Satz nur das vorhandene Jahr (UI-SPEC E10
 // partial); Nachwuchskräfte sind nie Stellen.
 const nachwuchsSatz = computed(() => {
   const { vorjahr: vorher, haushaltsjahr: dann } = personen
   const beleg = personen.pdfSeiten.length === 0 ? '' : ` (${seitenText(personen.pdfSeiten)})`
   if (vorher !== null && dann !== null) {
-    return `Nachwuchskräfte zählen nicht als Stellen. Im Haushaltsplan stehen ${personenText(vorher)} für ${vorjahr} und ${zahl(dann)} für ${haushaltsjahr}.${beleg}`
+    return `Nachwuchskräfte zählen nicht als Stellen. Im Haushaltsplan stehen ${anzahlText(vorher, 'Person', 'Personen')} für ${vorjahr} und ${zahl(dann)} für ${haushaltsjahr}.${beleg}`
   }
   if (dann !== null) {
-    return `Nachwuchskräfte zählen nicht als Stellen. Im Haushaltsplan stehen ${personenText(dann)} für ${haushaltsjahr}.${beleg}`
+    return `Nachwuchskräfte zählen nicht als Stellen. Im Haushaltsplan stehen ${anzahlText(dann, 'Person', 'Personen')} für ${haushaltsjahr}.${beleg}`
   }
   if (vorher !== null) {
-    return `Nachwuchskräfte zählen nicht als Stellen. Im Haushaltsplan stehen ${personenText(vorher)} für ${vorjahr}.${beleg}`
+    return `Nachwuchskräfte zählen nicht als Stellen. Im Haushaltsplan stehen ${anzahlText(vorher, 'Person', 'Personen')} für ${vorjahr}.${beleg}`
   }
   return null
 })

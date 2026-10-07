@@ -16,7 +16,8 @@
 // `rueckgangFormelText()` beschreibt diese Regel für die Fußnote auf /entwicklung aus denselben Konstanten.
 
 import { haushalt } from '@/data/daten'
-import type { Meta, VorberichtTabelle } from '@/data/typen'
+import type { Meta, VorberichtPosten, VorberichtTabelle } from '@/data/typen'
+import { haushaltsjahrIndex, wertartAn } from '@/lib/jahr'
 
 /** Posten-Schlüssel der Eigenkapitalübersicht (S. 311). */
 const ALLGEMEINE = 'allgemeine_ruecklage'
@@ -41,13 +42,18 @@ export interface Ruecklagenzeile {
   summe: number | null
 }
 
-/** Werte eines Postens je Jahr; ein fehlender Posten ist ein Datenfehler und nennt seinen Schlüssel. */
-function postenWerte(tabelle: VorberichtTabelle, schluessel: string): readonly (number | null)[] {
+/** Eintrag eines Postens; ein fehlender Posten ist ein Datenfehler und nennt seinen Schlüssel. */
+function postenEintrag(tabelle: VorberichtTabelle, schluessel: string): VorberichtPosten {
   const eintrag = tabelle.posten.find((kandidat) => kandidat.posten === schluessel)
   if (eintrag === undefined) {
     throw new Error(`eigenkapital.posten.${schluessel} fehlt in haushalt.json`)
   }
-  return eintrag.werte
+  return eintrag
+}
+
+/** Werte eines Postens je Jahr. */
+function postenWerte(tabelle: VorberichtTabelle, schluessel: string): readonly (number | null)[] {
+  return postenEintrag(tabelle, schluessel).werte
 }
 
 function wertAn(tabelle: VorberichtTabelle, schluessel: string, index: number): number | null {
@@ -58,15 +64,6 @@ function pruefeIndex(index: number): void {
   if (!Number.isInteger(index) || index < 0 || index >= haushalt.jahre.length) {
     throw new Error(`Index ${String(index)} liegt außerhalb von haushalt.jahre`)
   }
-}
-
-/** Wertart je Jahr aus `haushalt.wertarten`; ein fehlender Eintrag ist ein Datenfehler. */
-function wertartAn(index: number): string {
-  const wertart = haushalt.wertarten[index]
-  if (wertart === undefined) {
-    throw new Error(`haushalt.wertarten hat keinen Eintrag für den Jahresindex ${String(index)}`)
-  }
-  return wertart
 }
 
 /** Eine Zeile je Jahr aus `haushalt.jahre` mit beiden Rücklagen und ihrer Summe (S. 311). */
@@ -88,8 +85,13 @@ export function baueRuecklagen(
 
 /**
  * Abbau der allgemeinen Rücklage im Jahr `index` in Euro (S. 23): das Defizit des Jahres, soweit die
- * Ausgleichsrücklage es nicht deckt, plus die Verrechnung der Bilanzierungshilfe. `null`, wenn ein
- * Eingangswert fehlt.
+ * Ausgleichsrücklage es nicht deckt, zuzüglich der Verrechnung der Bilanzierungshilfe. `null`, wenn
+ * ein Eingangswert fehlt.
+ *
+ * Vorzeichen: Die Verrechnung ist im Druck negativ gebucht. Die Formel zieht sie ab (`… - verrechnung`);
+ * der Abzug eines negativen Wertes erhöht den Abbau um ihren Betrag. „Zuzüglich“ meint also die Beträge
+ * (|Verrechnung| kommt zum Defizit hinzu), nicht das Vorzeichen des gedruckten Wertes (D-17, UAT 06
+ * Test 1).
  */
 export function abbau(
   index: number,
@@ -102,7 +104,7 @@ export function abbau(
   if (ausgleich === null || verrechnung === null || ergebnis === null) {
     return null
   }
-  // Die Verrechnung steht im Druck negativ; ihr Abzug erhöht den Abbau.
+  // Die Verrechnung steht im Druck negativ; ihr Abzug erhöht den Abbau um ihren Betrag.
   return Math.max(0, -ergebnis - ausgleich) - verrechnung
 }
 
@@ -122,15 +124,6 @@ export function rueckgang(
   return verlust / bestand
 }
 
-/** Gedruckter Name eines Postens; ein fehlender Posten ist ein Datenfehler und nennt seinen Schlüssel. */
-function postenName(tabelle: VorberichtTabelle, schluessel: string): string {
-  const eintrag = tabelle.posten.find((kandidat) => kandidat.posten === schluessel)
-  if (eintrag === undefined) {
-    throw new Error(`eigenkapital.posten.${schluessel} fehlt in haushalt.json`)
-  }
-  return eintrag.name
-}
-
 /** Wahr, wenn mindestens ein Jahr eine Verrechnung der Bilanzierungshilfe ungleich 0 trägt. */
 function hatVerrechnung(tabelle: VorberichtTabelle): boolean {
   return postenWerte(tabelle, VERRECHNUNG).some((wert) => wert !== null && wert !== 0)
@@ -145,7 +138,7 @@ function hatVerrechnung(tabelle: VorberichtTabelle): boolean {
  */
 export function rueckgangFormelText(tabelle: VorberichtTabelle = haushalt.eigenkapital): string {
   // Immer lesen, damit ein fehlender Posten auch ohne Verrechnung als Datenfehler auffällt.
-  const verrechnungsName = postenName(tabelle, VERRECHNUNG)
+  const verrechnungsName = postenEintrag(tabelle, VERRECHNUNG).name
   const verrechnung = hatVerrechnung(tabelle)
     ? `, zuzüglich der Verrechnung aus der Zeile „${verrechnungsName}“`
     : ''
@@ -195,7 +188,7 @@ export function hskSchwellen(meta: Meta = haushalt.meta): HskSchwellen {
 export function ausgleichsruecklageAufgebrauchtJahr(
   tabelle: VorberichtTabelle = haushalt.eigenkapital,
 ): number | null {
-  const start = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
+  const start = haushaltsjahrIndex()
   const ausgleich = postenWerte(tabelle, AUSGLEICH)
   for (let index = start + 1; index < haushalt.jahre.length; index += 1) {
     if (ausgleich[index] === 0) {
@@ -213,15 +206,6 @@ export interface Rueckgangsjahr {
   wertart: string
   /** Rückgang der allgemeinen Rücklage als Anteil (0–1); `null`, wenn ein Eingangswert fehlt. */
   anteil: number | null
-}
-
-/** Index des Haushaltsjahres in `haushalt.jahre`; fehlt es, ist das ein Datenfehler. */
-function haushaltsjahrIndex(): number {
-  const index = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
-  if (index < 0) {
-    throw new Error('haushalt.haushaltsjahr steht nicht in haushalt.jahre')
-  }
-  return index
 }
 
 /**

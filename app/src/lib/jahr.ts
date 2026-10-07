@@ -33,6 +33,24 @@ export function wertartFuerJahr(jahr: number): string {
   return wertart
 }
 
+/** Index des Haushaltsjahrs in `haushalt.jahre`; fehlt es, ist das ein Datenfehler und wirft. */
+export function haushaltsjahrIndex(): number {
+  const index = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
+  if (index < 0) {
+    throw new Error(`Haushaltsjahr ${String(haushalt.haushaltsjahr)} steht nicht in haushalt.jahre`)
+  }
+  return index
+}
+
+/** Wertart je Jahresindex aus `haushalt.wertarten`; ein fehlender Eintrag ist ein Datenfehler. */
+export function wertartAn(index: number): string {
+  const wertart = haushalt.wertarten[index]
+  if (wertart === undefined) {
+    throw new Error(`haushalt.wertarten hat keinen Eintrag für den Jahresindex ${String(index)}`)
+  }
+  return wertart
+}
+
 export interface GelesenesJahr {
   /** Das gültige Jahr, sonst der Standard. */
   jahr: number

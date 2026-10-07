@@ -9,7 +9,7 @@ import type { Knoten } from '@/data/typen'
 import { proKopf } from '@/lib/berechnung'
 import { einwohnerZahl } from '@/lib/einwohner'
 import { baueErtragsarten } from '@/lib/ertragsarten'
-import { wertartFuerJahr, wertartName } from '@/lib/jahr'
+import { haushaltsjahrIndex, wertartFuerJahr, wertartName } from '@/lib/jahr'
 import { belegSchluessel } from '@/lib/quelle'
 
 export interface Kennzahl {
@@ -42,14 +42,6 @@ export function quellenZeile(wertart: string, jahr: number, pdfSeiten: readonly 
   return `${wertart} ${formatJahr(jahr)} · ${wort} ${seiten}`
 }
 
-function jahrIndex(): number {
-  const index = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
-  if (index < 0) {
-    throw new Error(`Haushaltsjahr ${String(haushalt.haushaltsjahr)} steht nicht in haushalt.jahre`)
-  }
-  return index
-}
-
 function wertAn(werte: readonly number[] | undefined, index: number, name: string): number {
   const wert = werte?.[index]
   if (wert === undefined) {
@@ -79,7 +71,7 @@ function zeilenBezug(schluessel: string): string {
 }
 
 export function baueKennzahlen(): Kennzahl[] {
-  const index = jahrIndex()
+  const index = haushaltsjahrIndex()
   const jahr = haushalt.haushaltsjahr
   const wertart = wertartName(wertartFuerJahr(jahr))
   const gesamt = haushalt.ergebnisplan.GESAMT
@@ -209,7 +201,7 @@ function seiteVon(code: string, name: string, pdfSeite: number | null): number {
  * Daten; weder ein Produktbereichscode noch ein Name steht im Code.
  */
 export function baueEinstiege(): Einstiege {
-  const index = jahrIndex()
+  const index = haushaltsjahrIndex()
   const jahr = haushalt.haushaltsjahr
   const wertart = wertartName(wertartFuerJahr(jahr))
 

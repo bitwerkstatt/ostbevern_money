@@ -16,7 +16,7 @@ import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import { haushalt, investitionen } from '@/data/daten'
 import type { Massnahme } from '@/data/typen'
 import { findeKnoten } from '@/lib/ansicht'
-import { wertartName } from '@/lib/jahr'
+import { haushaltsjahrIndex, wertartName } from '@/lib/jahr'
 import { jahrSchluessel, type Tabelle } from '@/lib/produkt'
 import { belegSchluessel } from '@/lib/quelle'
 
@@ -54,18 +54,9 @@ export function filterArt(art: string | null): Art {
   return (art === null ? undefined : ART_FILTER.get(art)) ?? 'sonstige'
 }
 
-/** Index des Haushaltsjahrs in `haushalt.jahre`; die Planjahre beginnen dort. */
-function planAb(): number {
-  const index = haushalt.jahre.indexOf(haushalt.haushaltsjahr)
-  if (index < 0) {
-    throw new Error('haushaltsjahr steht nicht in haushalt.jahre')
-  }
-  return index
-}
-
 /** Die Planjahre: vom Haushaltsjahr bis zum letzten Jahr der Daten. */
 export function planjahre(): number[] {
-  return haushalt.jahre.slice(planAb())
+  return haushalt.jahre.slice(haushaltsjahrIndex())
 }
 
 /** Eine gebündelte Investitionsmaßnahme der Planjahre. */
@@ -194,7 +185,7 @@ function gefilterteZeilen(auswahl: Auswahl): Massnahme[] {
 
 /** Alle gebündelten Gruppen der Auswahl, auch die mit Summe 0. */
 export function baueGruppen(auswahl: Auswahl): Vorhaben[] {
-  return buendeln(gefilterteZeilen(auswahl), planAb())
+  return buendeln(gefilterteZeilen(auswahl), haushaltsjahrIndex())
 }
 
 /**
@@ -238,7 +229,7 @@ export function klickIndex(params: unknown, anzahl: number): number | null {
  * Jahreswerte bleiben `null` und erscheinen als „–“, nie als 0.
  */
 export function baueMassnahmenTabelle(vorhaben: readonly Vorhaben[]): Tabelle {
-  const ab = planAb()
+  const ab = haushaltsjahrIndex()
   const jahre = planjahre()
   const spalten: DatenSpalte[] = [
     { schluessel: 'name', titel: 'Maßnahme', art: 'text' },
