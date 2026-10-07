@@ -170,6 +170,19 @@ def test_vorhandene_bilder_werden_ohne_neu_nicht_erneut_gerendert(
     assert (tmp_path / bild_name(62)).read_bytes() == inhalt
 
 
+def test_abbruch_beim_schreiben_hinterlaesst_kein_kaputtes_bild(
+    jahrgang: Jahrgang, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def kaputt(self: Image.Image, fp: object, *args: object, **kwargs: object) -> None:
+        Path(str(fp)).write_bytes(b"abgeschnitten")
+        raise OSError("Platte voll")
+
+    monkeypatch.setattr(Image.Image, "save", kaputt)
+    with pytest.raises(OSError, match="Platte voll"):
+        rendere_seiten(jahrgang.pdf_pfad, [62], tmp_path, seitentypen={62: "sonstige"})
+    assert list(tmp_path.iterdir()) == []
+
+
 def test_jedes_produkt_hat_rechtecke_auf_seiner_ersten_produktinformationen_seite(
     rechtecke: dict[int, tuple[tuple[float, float, float, float], ...]],
     kontext: tuple[pl.DataFrame, pl.DataFrame],

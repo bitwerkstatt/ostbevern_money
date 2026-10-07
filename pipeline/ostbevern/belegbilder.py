@@ -111,7 +111,14 @@ def rendere_seiten(
                         fill=_SCHWAERZUNG_FARBE,
                     )
             pfad = ziel_wurzel / bild_name(seite)
-            bild.save(pfad, "WEBP", quality=WEBP_QUALITAET, method=WEBP_METHODE)
+            # Atomar schreiben: Ein Abbruch mitten im Schreiben hinterlässt nie eine abgeschnittene
+            # .webp unter dem Zielnamen (sie würde wegen `exists()` nie erneuert).
+            temp = pfad.with_name(pfad.name + ".tmp")
+            try:
+                bild.save(temp, "WEBP", quality=WEBP_QUALITAET, method=WEBP_METHODE)
+                temp.replace(pfad)
+            finally:
+                temp.unlink(missing_ok=True)
             geschrieben.append(pfad)
     finally:
         pdf.close()
