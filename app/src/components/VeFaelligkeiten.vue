@@ -48,7 +48,7 @@ function massnahmenVon(faelligkeitsjahr: unknown) {
           <ul v-if="spalte.schluessel === 'massnahmen'" class="om-ve__liste" role="list">
             <li
               v-for="m in massnahmenVon(zeile['faelligkeitsjahr'])"
-              :key="m.produkt + m.massnahmeId"
+              :key="`${m.produkt}/${m.massnahmeId}`"
             >
               <RouterLink
                 class="om-ve__link"

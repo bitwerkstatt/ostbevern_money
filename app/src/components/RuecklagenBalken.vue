@@ -4,6 +4,7 @@ import type { BarSeriesOption, EChartsOption } from 'echarts'
 
 import { KATEGORIE_FARBEN } from '@/charts/echartsTheme'
 import { euro, euroKurz, jahr as formatiereJahr, KEIN_WERT } from '@/charts/format'
+import { zweizeilig } from '@/charts/beschriftung'
 import { tooltipZeilen } from '@/charts/tooltip'
 import { flaechenFarbe, jahresAchse, saeulenStil } from '@/charts/wertartStil'
 import BaseChart from '@/components/BaseChart.vue'
@@ -54,9 +55,12 @@ function segment(wert: number | null, wertart: string, farbe: string, flaeche: s
   }
 }
 
-/** Zweizeilig („38,8“ über „Mio. €“), damit die Summe über eine schmale Säule passt. */
+/**
+ * Zweizeilig („38,8“ über „Mio. €“), damit die Summe über eine schmale Säule passt. Auch Beträge
+ * unter 1 Mio. € („712.600“ über „€“) brechen vor „€“ um.
+ */
 function summenText(wert: number): string {
-  return euroKurz(wert).replace(' ', '\n')
+  return zweizeilig(euroKurz(wert))
 }
 
 function betragText(wert: number | null): string {

@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import type { BarSeriesOption, EChartsOption } from 'echarts'
 
 import { POL_FARBEN, SCHWELLE_FARBE } from '@/charts/echartsTheme'
+import { zweizeilig } from '@/charts/beschriftung'
 import { euroKurz, jahr as formatiereJahr } from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
 import { jahresAchse, saeulenStil } from '@/charts/wertartStil'
@@ -25,9 +26,12 @@ const achse = jahresAchse(haushalt.jahre, haushalt.wertarten)
 const hatWerte = reihen.ergebnisNach.some((eintrag) => eintrag.wert !== null)
 const letzterIndex = haushalt.jahre.length - 1
 
-/** Zweizeilig („Defizit“ über dem Betrag), damit die Beschriftung unter eine Säule passt. */
+/**
+ * Zweizeilig („Defizit“ über dem Betrag), damit die Beschriftung unter eine Säule passt. Auch Beträge
+ * unter 1 Mio. € brechen vor „€“ um, wie die größeren.
+ */
 function beschriftung(wert: number | null): string {
-  return ergebnisBeschriftung(wert).replace(' ', '\n')
+  return zweizeilig(ergebnisBeschriftung(wert))
 }
 
 const option = computed<EChartsOption>(() => {
