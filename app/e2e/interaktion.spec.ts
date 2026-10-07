@@ -423,3 +423,43 @@ test.describe('Reduzierte Bewegung bei Web-Awesome-Komponenten (A11Y-02)', () =>
     expect(await laufendeAnimationen(page)).toEqual([])
   })
 })
+
+test.describe('Maßnahmenfilter auf /investitionen (06/IN-05, T-08-18)', () => {
+  const ERGEBNIS = '.om-massnahmen-filter__ergebnis'
+
+  /** Zahl am Anfang der Ergebniszeile („1.234 Maßnahmen · zusammen …“), Tausenderpunkt entfernt. */
+  async function anzahl(page: Page): Promise<number> {
+    const zeile = page.locator(ERGEBNIS)
+    await expect(zeile).toBeVisible()
+    const text = (await zeile.innerText()).trim()
+    const treffer = /^([\d.]+)\s/.exec(text)
+    expect(treffer, `Ergebniszeile „${text}“ beginnt nicht mit einer Zahl`).not.toBeNull()
+    return Number((treffer?.[1] ?? '').replaceAll('.', ''))
+  }
+
+  test('ein gültiger Aufgabenbereich verringert die Zahl der Maßnahmen, ein ungültiger verschwindet aus der URL', async ({
+    page,
+  }) => {
+    await page.goto('/#/investitionen')
+    const alle = await anzahl(page)
+    expect(alle).toBeGreaterThan(0)
+
+    // Der Code kommt aus den Optionen der Auswahl, nichts davon ist getippt.
+    const codes = await page
+      .locator('.om-massnahmen-filter__pb wa-option')
+      .evaluateAll((optionen) =>
+        optionen.map((option) => (option as unknown as { value: string }).value),
+      )
+    const pb = codes.find((code) => code !== 'alle')
+    expect(pb, 'die Auswahl bietet keinen Aufgabenbereich an').toBeDefined()
+
+    await page.goto(`/#/investitionen?pb=${String(pb)}`)
+    await expect.poll(() => anzahl(page)).toBeLessThan(alle)
+    expect(page.url()).toContain(`pb=${String(pb)}`)
+
+    await page.goto('/#/investitionen?pb=zz')
+    await expect(page.locator(ERGEBNIS)).toBeVisible()
+    await expect.poll(() => page.url()).not.toContain('pb=')
+    expect(await anzahl(page)).toBe(alle)
+  })
+})

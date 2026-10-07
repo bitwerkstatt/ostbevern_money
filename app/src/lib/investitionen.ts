@@ -432,3 +432,6 @@ export function useMassnahmenFilter() {
 
   return { filter, vorhaben, setzePb, setzeArt, zuruecksetzen }
 }
+
+/** Zustand und Setzer des Maßnahmenfilters; die Seite erzeugt ihn einmal und reicht ihn weiter. */
+export type MassnahmenSteuerung = ReturnType<typeof useMassnahmenFilter>

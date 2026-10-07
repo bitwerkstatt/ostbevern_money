@@ -7,24 +7,29 @@ import {
   ARTEN,
   ergebnisText,
   MASSNAHMEN_AUFGABENBEREICHE,
-  useMassnahmenFilter,
+  type MassnahmenSteuerung,
 } from '@/lib/investitionen'
+
+// Der Filterzustand gehört der Seite (ein Zustand je Seite, 06/IN-05); die Filterzeile bekommt ihn
+// als Prop und liest und setzt nur darüber.
+const props = defineProps<{
+  steuerung: MassnahmenSteuerung
+}>()
 
 // Wert der Auswahl „Alle“; kein Aufgabenbereichscode und keine Art heißt so.
 const ALLE = 'alle'
 
 const istSchmal = useSchmalerBildschirm()
-const { filter, vorhaben, setzePb, setzeArt } = useMassnahmenFilter()
 
-const pbWert = computed(() => filter.value.pb ?? ALLE)
-const artWert = computed(() => filter.value.art ?? ALLE)
+const pbWert = computed(() => props.steuerung.filter.value.pb ?? ALLE)
+const artWert = computed(() => props.steuerung.filter.value.art ?? ALLE)
 
 const artOptionen = computed(() => [
   { wert: ALLE, text: 'Alle' },
   ...ARTEN.map((a) => ({ wert: a.art, text: a.text })),
 ])
 
-const ergebnis = computed(() => ergebnisText(vorhaben.value))
+const ergebnis = computed(() => ergebnisText(props.steuerung.vorhaben.value))
 
 // Das Ereignis kommt vom Web-Awesome-Host (Select bzw. Gruppe); der neue Wert steht in dessen
 // `value`. Die Bibliothek prüft ihn gegen die Allowlist, der Fokus bleibt auf dem Steuerelement.
@@ -36,7 +41,7 @@ function wertAus(ereignis: Event): string | null {
 function beiPb(ereignis: Event) {
   const wert = wertAus(ereignis)
   if (wert !== null) {
-    setzePb(wert === ALLE ? null : wert)
+    props.steuerung.setzePb(wert === ALLE ? null : wert)
   }
 }
 
@@ -47,9 +52,9 @@ function beiArt(ereignis: Event) {
   }
   const art = ARTEN.find((a) => a.art === wert)
   if (wert === ALLE) {
-    setzeArt(null)
+    props.steuerung.setzeArt(null)
   } else if (art !== undefined) {
-    setzeArt(art.art)
+    props.steuerung.setzeArt(art.art)
   }
 }
 </script>
