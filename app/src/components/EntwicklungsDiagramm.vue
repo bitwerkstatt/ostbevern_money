@@ -51,7 +51,11 @@ function serienDerLinie(linie: Linie, oben: boolean, flaeche: string): LineSerie
   const { serien } = zeitreihenSerien(linie.reihe)
   let traeger = -1
   serien.forEach((serie, index) => {
-    if (serie.werte[letzterIndex] != null && serie.geteilt[letzterIndex] !== true) {
+    if (
+      serie.werte[letzterIndex] !== null &&
+      serie.werte[letzterIndex] !== undefined &&
+      serie.geteilt[letzterIndex] !== true
+    ) {
       traeger = index
     }
   })

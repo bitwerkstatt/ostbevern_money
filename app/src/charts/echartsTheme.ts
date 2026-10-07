@@ -56,6 +56,16 @@ function token(name: string, ersatz: string): string {
   return wert === '' ? ersatz : wert
 }
 
+/**
+ * Flächenfarbe der Karten (Token `--wa-color-surface-default`): Trennerlinien, hohle Marker,
+ * Kachelbeschriftung und Muster-Streifen. Die einzige Quelle dafür (06/IN-01) — außerhalb dieser
+ * Datei steht kein Hex- oder `white`-Ersatz. Eine Funktion und keine Modulkonstante, weil der Token
+ * erst zur Aufrufzeit gelesen werden darf; ohne DOM gilt `#ffffff`.
+ */
+export function flaechenFarbe(): string {
+  return token('--wa-color-surface-default', '#ffffff')
+}
+
 export const CHART_THEME = 'ostbevern-money'
 
 /** Dunkles Grau der kategorischen Palette (zweite Serienfarbe) für Komponenten ohne Rückfallwert. */
@@ -145,8 +155,9 @@ export function abstufung(farbe: string, rang: number): string {
   return `#${kanaele.join('')}`
 }
 
-/** Unwahrscheinliche Farbe als Marker, um eine vom Browser abgelehnte Farbe zu erkennen. */
-const ABLEHNUNGSMARKER = '#010203'
+/** Zwei verschiedene, unwahrscheinliche Farben als Marker, um eine vom Browser abgelehnte Farbe zu erkennen. */
+const ABLEHNUNGSMARKER_A = '#010203'
+const ABLEHNUNGSMARKER_B = '#030201'
 
 /**
  * Löst eine beliebige CSS-Farbe (Schlüsselwort wie `white`, `rgb()`, `oklch()` …) zu RGB auf,
@@ -165,11 +176,16 @@ function alsRgb(farbe: string): [number, number, number] | null {
   kontext.canvas.height = 1
   kontext.clearRect(0, 0, 1, 1)
   // Eine Zeichenfläche ignoriert eine unlesbare Farbe und behält den vorherigen Wert (sonst
-  // Schwarz). Daher zuerst einen Marker setzen: bleibt er stehen, hat der Browser die Farbe
-  // abgelehnt, und es gibt kein stilles Schwarz.
-  kontext.fillStyle = ABLEHNUNGSMARKER
+  // Schwarz). Daher zweimal mit je einem anderen Marker davor zuweisen: Bleibt jedes Mal der eigene
+  // Marker stehen, hat der Browser die Farbe abgelehnt, und es gibt kein stilles Schwarz. Eine
+  // gültige Farbe, die zufällig wie ein Marker aussieht, besteht höchstens eine der beiden
+  // Prüfungen, nie beide — ein Vergleich mit dem Eingabetext ist dafür nicht nötig.
+  kontext.fillStyle = ABLEHNUNGSMARKER_A
   kontext.fillStyle = farbe
-  if (kontext.fillStyle === ABLEHNUNGSMARKER && farbe.trim().toLowerCase() !== ABLEHNUNGSMARKER) {
+  const ersterWert = kontext.fillStyle
+  kontext.fillStyle = ABLEHNUNGSMARKER_B
+  kontext.fillStyle = farbe
+  if (ersterWert === ABLEHNUNGSMARKER_A && kontext.fillStyle === ABLEHNUNGSMARKER_B) {
     return null
   }
   kontext.fillRect(0, 0, 1, 1)
@@ -206,7 +222,7 @@ export const KL_DECAL: Decal = {
   rotation: Math.PI / 4,
   dashArrayX: [1, 0],
   dashArrayY: [3, 5],
-  color: mitDeckkraft(token('--wa-color-surface-default', '#ffffff'), 0.45),
+  color: mitDeckkraft(flaechenFarbe(), 0.45),
 }
 
 /** Punktmuster für Überschuss und Minderaufwand (nie Farbe allein). */
@@ -215,7 +231,7 @@ export const PUNKT_DECAL: Decal = {
   symbolSize: 1,
   dashArrayX: [1, 0],
   dashArrayY: [2, 6],
-  color: mitDeckkraft(token('--wa-color-surface-default', '#ffffff'), 0.55),
+  color: mitDeckkraft(flaechenFarbe(), 0.55),
 }
 
 /** Erträge: Ertragsbalken, linke Sankey-Knoten, Zeitreihe (Akzent „Geld kommt herein“). */
@@ -262,7 +278,7 @@ export const BERECHNET_DECAL: Decal = {
   rotation: Math.PI / 2,
   dashArrayX: [1, 0],
   dashArrayY: [2, 2],
-  color: mitDeckkraft(token('--wa-color-surface-default', '#ffffff'), 0.45),
+  color: mitDeckkraft(flaechenFarbe(), 0.45),
 }
 
 /** Schwellenlinie (ENTW-03): ein Bezug, kein Alarm, deshalb nie farbig-rot. */

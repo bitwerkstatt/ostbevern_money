@@ -37,14 +37,17 @@ const ERGEBNIS_UNTERTITEL =
   'Jahresergebnis nach globalem Minderaufwand, wie in der Haushaltssatzung. Die Linien oben zeigen Erträge und Aufwendungen vor diesem Abzug. Ein Defizit liegt unter der Nulllinie.'
 
 const ergebnisplanSeite = baueErgebnisReihen().ertraege[0]?.pdfSeite
-const ergebnisplanQuelle = ergebnisplanSeite == null ? undefined : { seite: ergebnisplanSeite }
+const ergebnisplanQuelle =
+  ergebnisplanSeite === null || ergebnisplanSeite === undefined
+    ? undefined
+    : { seite: ergebnisplanSeite }
 
 /** Die fünf Posten-Karten mit ihrer Quellseite (erste Seite, die die Reihe nennt). */
 const karten = ENTWICKLUNG_POSTEN.map((posten) => {
   const seite = bauePostenReihe(posten.schluessel).find(
     (punkt) => punkt.pdfSeite !== null,
   )?.pdfSeite
-  return { posten, pdf: seite == null ? undefined : { seite } }
+  return { posten, pdf: seite === null || seite === undefined ? undefined : { seite } }
 })
 
 // Die Rücklagen stehen in der Eigenkapitalübersicht des Vorberichts (Quellseite aus den Daten).

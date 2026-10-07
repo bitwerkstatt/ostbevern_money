@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { BERECHNET_DECAL, SCHULDEN_FARBEN } from '@/charts/echartsTheme'
+import { BERECHNET_DECAL, SCHULDEN_FARBEN, flaechenFarbe } from '@/charts/echartsTheme'
 import { jahr as formatiereJahr } from '@/charts/format'
 import BaseChart from '@/components/BaseChart.vue'
 import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
@@ -27,7 +27,8 @@ const tabelle = schuldenTabelle()
 const satz = liquiditaetsSatz()
 const berechnetVorhanden = hatBerechneteJahre()
 // Die Legende zeichnet dieselben Streifen wie das Diagramm (Farbe des BERECHNET_DECAL).
-const streifenFarbe = typeof BERECHNET_DECAL.color === 'string' ? BERECHNET_DECAL.color : 'white'
+const streifenFarbe =
+  typeof BERECHNET_DECAL.color === 'string' ? BERECHNET_DECAL.color : flaechenFarbe()
 
 const option = computed(() => schuldenstandOption(istSchmal.value))
 

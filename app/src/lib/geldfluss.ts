@@ -13,6 +13,7 @@ import {
   abstufung,
   ERTRAG_FARBE,
   farbeFuerPb,
+  flaechenFarbe,
   GEMEINDE_FARBE,
   KL_DECAL,
   KL_FARBE,
@@ -584,17 +585,6 @@ export function baueGeldflussBalken(geldfluss: Geldfluss): GeldflussBalken {
   }
 }
 
-/** Trennerfarbe der Segmente: die Flächenfarbe aus dem Web-Awesome-Token, Ersatz Weiß (wie `token()` im Theme). */
-function trennerFarbe(): string {
-  if (typeof document === 'undefined') {
-    return '#ffffff'
-  }
-  const wert = getComputedStyle(document.documentElement)
-    .getPropertyValue('--wa-color-surface-default')
-    .trim()
-  return wert === '' ? '#ffffff' : wert
-}
-
 /**
  * Option für einen einzelnen gestapelten Balken (56 px, keine Achsen, keine Beschriftung in
  * den Segmenten, 2 px Trenner). Die Skala reicht von 0 bis zur Summe des Balkens, daher füllt
@@ -606,7 +596,7 @@ export function balkenOption(
   wertartText: string,
 ): EChartsOption {
   const nachId = new Map(segmenteDesBalkens.map((s) => [s.id, s] as const))
-  const trenner = trennerFarbe()
+  const trenner = flaechenFarbe()
 
   return {
     grid: { left: 0, right: 0, top: 0, bottom: 0 },
