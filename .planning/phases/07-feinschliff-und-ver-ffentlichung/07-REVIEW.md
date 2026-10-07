@@ -1,14 +1,15 @@
 ---
 phase: 07-feinschliff-und-veroeffentlichung
-reviewed: 2026-10-07T00:00:00Z
+reviewed: 2026-10-07T12:00:00Z
 depth: standard
-files_reviewed: 98
+files_reviewed: 100
 files_reviewed_list:
   - .github/workflows/ci.yml
   - README.md
   - app/.gitignore
   - app/.prettierignore
   - app/e2e/interaktion.spec.ts
+  - app/e2e/kacheln.spec.ts
   - app/e2e/inventar.spec.ts
   - app/e2e/mobil.spec.ts
   - app/e2e/quelle.spec.ts
@@ -80,12 +81,13 @@ files_reviewed_list:
   - pipeline/ostbevern/schema.py
   - pipeline/ostbevern/texte.py
   - pipeline/pyproject.toml
+  - scripts/e2e-wie-ci.sh
   - scripts/lighthouse-a11y.sh
 findings:
   critical: 2
-  warning: 5
-  info: 8
-  total: 15
+  warning: 7
+  info: 11
+  total: 20
 status: issues_found
 ---
 
@@ -107,7 +109,7 @@ Zwei Befunde zählen als BLOCKER:
 
 Daneben gibt es einen Workflow-Fallstrick bei der Schwärzung und mehrere Robustheitslücken in der Pipeline.
 
-**Querverweis (bekannt, nicht neu untersucht):** Der Kachel-Überlauf der Startseite zwischen 360 und 600 px durch `.om-zahl { white-space: nowrap }` in `app/src/styles/basis.css:12-16` ist als BLOCKER in `07-UI-REVIEW.md` nachgehalten.
+**Inkrementelle Nachprüfung (Pläne 07-13 und 07-14, Diff ab b4fdb9d):** Geprüft wurden das gemeinsame Raster `.om-kachelraster` (`basis.css`) und seine Verwendung auf vier Seiten, der Knopf „Quelle“, der Breitentest `app/e2e/kacheln.spec.ts`, das Skript `scripts/e2e-wie-ci.sh` und die Runner-Festlegung in `ci.yml`. Der frühere BLOCKER „Kachel-Überlauf durch `.om-zahl { white-space: nowrap }`“ (`07-UI-REVIEW.md`) ist durch das Raster mit Mindestspur 13,25rem und die entfernte Schriftvergrößerung ab 700 px behoben. Die Raster-Umstellung selbst ist sauber: Alle alten Klassen (`om-start__raster`, `om-investitionen__kacheln`, `om-stellenplan__raster`, `om-nicht-beeinflussbar__raster`) sind restlos entfernt, `tsc -p tsconfig.e2e.json` ist fehlerfrei, die Spaltensprung-Arithmetik (488, 732, 968, 1204, 1440 px) stimmt. Neu offen sind zwei WARNINGs (WR-06, WR-07) und drei Info-Punkte (IN-09 bis IN-11). Kein neuer BLOCKER.
 
 ## Critical Issues
 
@@ -192,6 +194,25 @@ if not woerter:
 **Issue:** `baueKennzahlen` setzt für Erträge und Aufwendungen `berechnet: false`, übergibt aber eine `herleitung` („Ordentliche Erträge (Zeile 10) plus Finanzerträge (Zeile 14)“). `belegHinweis` wertet jede Nicht-`null`-Herleitung als berechneten Wert. Die Seitenleiste zeigt dann „Berechneter Wert – Dieser Wert steht nicht im PDF. Er wird berechnet: …“. Die Kachel selbst zeigt kein „berechnet“-Etikett. Dasselbe gilt für `ebenenBeleg` im Modus Aufwand mit Zinsen. Die Kachel und ihre Quellenansicht widersprechen sich also auf der wichtigsten Seite der App, für den Kernwert „jede Zahl ist belegt“. Der Test `kennzahlen.test.ts:57-61` hält „nur die beiden Pro-Kopf-Werte sind berechnet“ ausdrücklich fest.
 **Fix:** Eine Linie ziehen. Entweder `berechnet: true` für alle Kacheln mit Herleitung und den Test anpassen. Oder die Herleitungstexte so formulieren, dass `belegHinweis` für gedruckte Summenzeilen die Art `markiert` zurückgibt (eigenes Feld `summe` statt Herleitung) und der Satz „Dieser Wert steht nicht im PDF“ nur bei echten Berechnungen erscheint.
 
+### WR-06: Die Schriftannahme der Breitenkalibrierung wird in der CI weder hergestellt noch geprüft
+
+**File:** `.github/workflows/ci.yml:63-67`, `app/e2e/kacheln.spec.ts:28-31,129-133`, `app/src/styles/basis.css:17-25`
+**Issue:** Die Mindestspur 13,25rem ist gegen DejaVu Sans Bold kalibriert; die Reserve beträgt nur 16,0 px bei „rd. 10,1 Mio. €“. Dass der Runner `ubuntu-24.04` tatsächlich DejaVu Sans hinter `system-ui` rendert, ist eine Annahme: Die Messung lief im Playwright-Docker-Image mit nachinstalliertem Paket, nicht auf einem echten Runner. `runs-on: ubuntu-24.04` fixiert nur das Label, nicht den Inhalt: GitHub aktualisiert das Image wöchentlich, Schriftpakete eingeschlossen. Der Kommentar „Festes Runner-Image“ ist deshalb irreführend. Die Spec protokolliert die Schrift nur (`console.log`) und prüft sie nie. Weicht die Runner-Schrift ab, scheitert die CI (zu breit) oder sie wird still lockerer (schmalere Schrift) und schützt dann nicht mehr. Dasselbe Muster hat G-07-2 schon einmal verursacht. Der Schritt `playwright install --with-deps` bringt zusätzlich weitere Schriften (u. a. WenQuanYi Zen Hei) mit, die die Auswahl für `system-ui` beeinflussen können.
+**Fix:** Die Umgebung im Workflow herstellen und prüfen, statt sie anzunehmen, z. B. vor dem E2E-Schritt:
+```yaml
+- name: Schrift der Kalibrierung sicherstellen
+  run: |
+    sudo apt-get install -y --no-install-recommends fonts-dejavu-core=2.37-8
+    fc-match sans-serif | tee /dev/stderr | grep -q 'DejaVu Sans'
+```
+Zusätzlich in der Spec für die Kalibrierungsroute prüfen, dass `schriftDerBetraege` „DejaVu Sans“ enthält, und andernfalls mit einer klaren Meldung („Schrift weicht von der Kalibrierung ab“) fehlschlagen, statt erst über Layoutbefunde. Den Kommentar in `ci.yml` korrigieren („Label fixiert nur das Betriebssystem“).
+
+### WR-07: Der Breitentest hat keine eigene Zeitgrenze; im Fehlerfall reißt er die Standardgrenze von 30 s und verliert seine Diagnose
+
+**File:** `app/e2e/kacheln.spec.ts:434-475`, `app/playwright.config.ts` (kein `timeout`)
+**Issue:** Jeder Routentest durchläuft 16 Breiten (`BREITEN`: 12 Grundbreiten plus 4 neue Spaltensprünge) nacheinander. `warteAufLayout` wartet pro Breite bis zu 2 s, solange die Seite waagerecht scrollt. Genau im Fehlerfall, den der Test finden soll (dauerhafter Seitenüberlauf über viele Breiten), summiert sich das auf bis zu 32 s plus Laden. Das übersteigt das Playwright-Standardlimit von 30 s (Konfiguration setzt keines). Der Test endet dann mit einem Timeout, und die gesammelte Befundliste im `expect` (mit Route, Breite und Betrag) wird nie ausgegeben. Auf einem langsamen Runner kann auch der Erfolgsfall an die Grenze kommen.
+**Fix:** In der Spec `test.setTimeout(120_000)` (oder im `describe` über `test.describe.configure({ timeout: 120_000 })`) setzen und die Wartegrenze von 2 s in eine benannte Konstante ziehen. Alternativ die Befunde nach jeder Breite per `test.info().annotations` ausgeben, damit sie auch bei einem Abbruch vorliegen.
+
 ## Info
 
 ### IN-01: Spalte „geschwärzt“ der Datenschutz-Prüfliste gilt je Seite, nicht je Treffer
@@ -246,8 +267,26 @@ if not woerter:
 **Issue:** `ORIGINAL_PDF_URL` enthält den Hash-Pfad `/_Resources/Persistent/3/2/6/0/3260f0ed…/Haushalt%202026%20komplett.pdf`. Ersetzt die Gemeinde die Datei (Korrektur, Nachtragshaushalt), liefert die URL 404. Dann brechen alle „Seite n im Original-PDF öffnen“-Links, ohne dass Tests es merken (die Smoke-Tests prüfen nur Anfragen an den eigenen Server).
 **Fix:** Einen kleinen CI- oder Release-Check (HEAD-Request) für die URL einplanen oder im README die Pflege der URL als Aufgabe beim Jahrgangswechsel festhalten.
 
+### IN-09: Die behauptete Mindestreserve von 16 px wird nirgends geprüft und hängt an den Daten
+
+**File:** `app/src/styles/basis.css:20-25`, `app/e2e/kacheln.spec.ts:254,366-372`
+**Issue:** Der CSS-Kommentar begründet 13,25rem mit „mindestens 16 px Reserve“. `reserve` und `spurreserve` werden aber nur protokolliert; geprüft wird lediglich `>= -0,5 px`. Die Reserve entspricht etwa einer Ziffer in DejaVu Sans Bold bei `--wa-font-size-l`. Ein anderer Jahrgang mit einem Betrag wie „rd. 100,1 Mio. €“ kann daher die Test-CI brechen, obwohl Layout und Kalibrierung unverändert sind (Nutzerschriften sind meist schmaler als DejaVu, die Praxis ist also unkritisch). Der Zusammenhang zwischen Daten und Mindestspur ist nirgends dokumentiert.
+**Fix:** Entweder eine Mindestreserve prüfen (`spurreserve >= 8`) und beim Jahrgangswechsel im README als Prüfpunkt vermerken, oder den Kommentar ehrlich formulieren („gemessene Reserve bei den Daten 2026“).
+
+### IN-10: `e2e-wie-ci.sh` führt ohne Argumente alle Playwright-Projekte aus und lädt ohne Zeitlimit über HTTP
+
+**File:** `scripts/e2e-wie-ci.sh:83-100,57-61`
+**Issue:** Das Skript heißt „wie CI“, startet ohne weitere Argumente aber `npx playwright test` mit allen Projekten (`ci`, `mobil`, `texte`); die CI nutzt `--project=ci`. Der Download per `curl -fsSL` hat kein `--max-time` und nutzt unverschlüsseltes HTTP (die feste SHA-256 fängt Manipulation ab, ein hängender Spiegel blockiert aber unbegrenzt).
+**Fix:** `if ! printf '%s\n' "$@" | grep -q -- '--project'; then set -- --project=ci "$@"; fi` vor dem `docker run` und `curl --max-time 60 --retry 2`.
+
+### IN-11: Neue Spec ist nicht prettier-konform, und `format:check` sieht `e2e/` nicht
+
+**File:** `app/e2e/kacheln.spec.ts:227`, `app/package.json:18-19`
+**Issue:** `prettier --check e2e/kacheln.spec.ts` meldet einen Verstoß (Zeile 227, überlange `befunde.push`-Zeile). Die CI fällt nicht darüber, weil `format:check` nur `src/` prüft (siehe IN-07). Ebenso trägt der Schritt „Smoke-Test (Playwright + axe)“ in `ci.yml` jetzt auch den Breitentest, der Name ist veraltet.
+**Fix:** `prettier --write e2e/kacheln.spec.ts`, `format`/`format:check` auf `src/ e2e/` erweitern (löst IN-07 teilweise) und den Schrittnamen in „Browser-Tests (Playwright + axe + Kachelbreiten)“ ändern.
+
 ---
 
-_Reviewed: 2026-10-07_
+_Reviewed: 2026-10-07T12:00:00Z_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
