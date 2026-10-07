@@ -55,10 +55,17 @@ def schwaerzung_fingerprint(rechtecke: Sequence[Sequence[float]]) -> str:
 def _lies_fingerprints(pfad: Path | None) -> dict[str, str]:
     if pfad is None or not pfad.exists():
         return {}
-    daten = json.loads(pfad.read_text(encoding="utf-8"))
-    if not isinstance(daten, dict):
-        raise BelegbildFehler(f"{pfad.name}: erwartet ein JSON-Objekt Seite -> Fingerprint")
-    return {str(seite): str(wert) for seite, wert in daten.items()}
+    try:
+        daten = json.loads(pfad.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as fehler:
+        raise BelegbildFehler(
+            f"{pfad.name}: nicht lesbar ({fehler}); aus Git wiederherstellen"
+        ) from fehler
+    if not isinstance(daten, dict) or not all(
+        str(seite).isdecimal() and isinstance(wert, str) for seite, wert in daten.items()
+    ):
+        raise BelegbildFehler(f"{pfad.name}: erwartet ein JSON-Objekt Seite -> Fingerprint-String")
+    return dict(daten)
 
 
 def _schreibe_fingerprints(pfad: Path, fingerprints: Mapping[str, str]) -> None:

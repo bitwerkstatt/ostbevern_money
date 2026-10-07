@@ -225,6 +225,31 @@ def test_vorhandenes_bild_ohne_gespeicherten_fingerprint_wird_nur_uebernommen(
     assert json.loads(fingerprints.read_text(encoding="utf-8")).keys() == {"62"}
 
 
+@pytest.mark.parametrize(
+    "inhalt",
+    [
+        "<<<<<<< HEAD\n{}\n=======\n{}\n>>>>>>> andere\n",
+        "[]",
+        '{"abc": "0123456789abcdef"}',
+        '{"62": 12345}',
+    ],
+)
+def test_kaputte_fingerprint_datei_wird_als_belegbildfehler_gemeldet(
+    jahrgang: Jahrgang, tmp_path: Path, inhalt: str
+) -> None:
+    fingerprints = tmp_path / "fingerprints.json"
+    fingerprints.write_text(inhalt, encoding="utf-8")
+    with pytest.raises(BelegbildFehler, match="fingerprints.json"):
+        rendere_seiten(
+            jahrgang.pdf_pfad,
+            [62],
+            tmp_path / "bilder",
+            seitentypen={62: "sonstige"},
+            fingerprint_pfad=fingerprints,
+        )
+    assert not (tmp_path / "bilder").exists() or list((tmp_path / "bilder").iterdir()) == []
+
+
 def test_abbruch_beim_schreiben_hinterlaesst_kein_kaputtes_bild(
     jahrgang: Jahrgang, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
