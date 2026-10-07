@@ -195,9 +195,10 @@ for (const route of routen()) {
       await page.goto(`/#${route.pfad}`)
       await warteAufRuhe(page)
       await oeffneAlleBereiche(page)
-      expect(await axeBefunde(page), `${route.pfad}: axe-Verstöße bei geöffneten Bereichen`).toEqual(
-        [],
-      )
+      expect(
+        await axeBefunde(page),
+        `${route.pfad}: axe-Verstöße bei geöffneten Bereichen`,
+      ).toEqual([])
     })
   })
 }

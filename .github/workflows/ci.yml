@@ -104,7 +104,7 @@ jobs:
             echo "Schrift weicht von der Kalibrierung ab: sans-serif ist nicht DejaVu Sans" >&2
             exit 1
           fi
-      - name: Smoke-Test (Playwright + axe)
+      - name: Browser-Tests (Playwright + axe + Kachelbreiten)
         run: npm run test:e2e
       - name: Seite für GitHub Pages hochladen
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'

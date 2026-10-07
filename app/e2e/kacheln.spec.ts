@@ -241,7 +241,9 @@ function messeKacheln(page: Page): Promise<KachelMessung> {
           if (element !== null && element !== undefined) {
             const overflowX = getComputedStyle(element).overflowX
             if (overflowX !== 'visible') {
-              befunde.push(`„${name}“: ${bezeichnung} hat overflow-x ${overflowX}, erwartet visible`)
+              befunde.push(
+                `„${name}“: ${bezeichnung} hat overflow-x ${overflowX}, erwartet visible`,
+              )
             }
           }
         }

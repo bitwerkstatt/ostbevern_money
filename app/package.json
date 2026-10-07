@@ -15,8 +15,8 @@
     "test:e2e:texte": "playwright test --project=texte",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write src/",
-    "format:check": "prettier --check src/"
+    "format": "prettier --write src/ e2e/",
+    "format:check": "prettier --check src/ e2e/"
   },
   "dependencies": {
     "@awesome.me/webawesome": "^3.14.0",
