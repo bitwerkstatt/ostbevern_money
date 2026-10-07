@@ -1,7 +1,8 @@
 // Einzige Quelle für Zahlenformatierung in der App (UI-05). Jede Zahl, die in
 // der Oberfläche erscheint, wird über diese Funktionen oder die hier
 // exportierten Formatoptionen (EURO_OPTIONEN) formatiert — niemals mit einer
-// eigenen, pro Komponente duplizierten Formatierungslogik.
+// eigenen, pro Komponente duplizierten Formatierungslogik. Das gilt auch für die
+// Regel „rd.“/„rund“ (nur auf T€ genaue Beträge): sie steht nur hier (D-22).
 
 export const LOCALE = 'de-DE'
 
@@ -38,6 +39,35 @@ export function euroKurz(wert: number): string {
     return `${MIO_FORMAT.format(wert / 1_000_000)} Mio. €`
   }
   return euro(wert)
+}
+
+/** „rd.“ mit geschütztem Leerzeichen (U+00A0), damit der Zusatz nie allein am Zeilenende steht. */
+export const RD_PRAEFIX = 'rd. '
+
+/** „rund“ mit geschütztem Leerzeichen (U+00A0) für Fließtext, damit der Betrag nicht abreißt. */
+export const RUND_PRAEFIX = 'rund '
+
+/** Betrag mit „rd.“ davor, wenn er nur auf T€ genau ist; sonst der genaue Euro-Betrag. */
+export function betragMitHinweis(wert: number, gerundet: boolean): string {
+  return gerundet ? `${RD_PRAEFIX}${euro(wert)}` : euro(wert)
+}
+
+/** Wie `betragMitHinweis`, aber gekürzt über `euroKurz` (Diagrammbeschriftungen). */
+export function kurzMitHinweis(wert: number, gerundet: boolean): string {
+  return gerundet ? `${RD_PRAEFIX}${euroKurz(wert)}` : euroKurz(wert)
+}
+
+/** Betrag im Fließtext: „rund“ davor nur bei einem Betrag, der nur auf T€ genau ist. */
+export function rundMitHinweis(wert: number, gerundet: boolean): string {
+  return gerundet ? `${RUND_PRAEFIX}${euro(wert)}` : euro(wert)
+}
+
+/**
+ * Gekürzter Betrag im Fließtext, immer mit „rund“ davor, weil `euroKurz` auf drei
+ * signifikante Stellen rundet (z. B. „rund 30,5 Mio. €“).
+ */
+export function rundKurz(wert: number): string {
+  return `${RUND_PRAEFIX}${euroKurz(wert)}`
 }
 
 /**

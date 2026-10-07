@@ -2,15 +2,13 @@ import { readFileSync } from 'node:fs'
 
 import { describe, expect, it } from 'vitest'
 
-import { euro, jahr as formatiereJahr } from '@/charts/format'
+import { betragMitHinweis, euro, jahr as formatiereJahr, RD_PRAEFIX } from '@/charts/format'
 import { haushalt, texte } from '@/data/daten'
 import {
   baueGeldfluss,
-  betragMitHinweis,
   baueGeldflussBalken,
   geldflussOption,
   lesehilfeSatz,
-  RD_PRAEFIX,
   welcheLesetexte,
   zielCodeAusKlick,
 } from '@/lib/geldfluss'
@@ -205,17 +203,24 @@ describe('Vorbericht-Beträge im Geldfluss (WR-01: „rd.“ und „berechnet“
     const kantenTooltip = (quelle: string, ziel: string) => {
       const kante = fluss.kanten.find((k) => k.quelle === quelle && k.ziel === ziel)
       expect(kante, `${quelle} → ${ziel}`).toBeDefined()
-      return tooltip.formatter({
-        dataType: 'edge',
-        data: { source: kante?.quelle, target: kante?.ziel, value: kante?.wert },
-      })
+      return {
+        html: tooltip.formatter({
+          dataType: 'edge',
+          data: { source: kante?.quelle, target: kante?.ziel, value: kante?.wert },
+        }),
+        wert: kante?.wert ?? Number.NaN,
+      }
     }
     // Ertrag (gerundet) → Gemeinde: Kante erbt das Flag des Ertragsknotens (links).
-    expect(kantenTooltip('ertrag:gewerbesteuer', 'mitte:gemeinde')).toContain(RD_PRAEFIX)
+    expect(kantenTooltip('ertrag:gewerbesteuer', 'mitte:gemeinde').html).toContain(RD_PRAEFIX)
     // Gemeinde → Kreisumlage (Ergebnisplan-Wert): Kante erbt das Flag des Zielknotens (rechts).
     const kl = fluss.knoten.find((k) => k.art === 'kl')
     expect(kl?.gerundet).toBe(false)
-    expect(kantenTooltip('mitte:gemeinde', kl?.id ?? '')).not.toContain(RD_PRAEFIX)
+    const klKante = kantenTooltip('mitte:gemeinde', kl?.id ?? '')
+    expect(klKante.html).not.toContain(RD_PRAEFIX)
+    // 05/IN-03: nicht nur „kein rd.“, sondern positiv der Betrag der Kante im Tooltip.
+    expect(klKante.wert).toBeGreaterThan(0)
+    expect(klKante.html).toContain(euro(klKante.wert))
   })
 
   it('übernimmt die Flags in die Balkensegmente', () => {
@@ -225,9 +230,20 @@ describe('Vorbericht-Beträge im Geldfluss (WR-01: „rd.“ und „berechnet“
     expect(segment?.berechnet).toBe(true)
   })
 
-  it('betragMitHinweis setzt „rd.“ nur bei gerundeten Beträgen', () => {
+  it('betragMitHinweis (aus charts/format) setzt „rd.“ nur bei gerundeten Beträgen', () => {
     expect(betragMitHinweis(7_800_000, true)).toBe(`${RD_PRAEFIX}${euro(7_800_000)}`)
     expect(betragMitHinweis(7_800_000, false)).toBe(euro(7_800_000))
+  })
+
+  it('beschriftet gerundete Knoten im Diagramm mit „rd.“ vor dem gekürzten Betrag', () => {
+    const option = geldflussOption(fluss, { wertartText: 'Ansatz 2026' })
+    const serie = (option.series as unknown[])[0] as {
+      label: { formatter: (params: unknown) => string }
+    }
+    const knoten = nachId('ertrag:gewerbesteuer')
+    expect(serie.label.formatter({ name: knoten?.id })).toContain(RD_PRAEFIX)
+    const ziel = fluss.knoten.find((k) => k.art === 'kl')
+    expect(serie.label.formatter({ name: ziel?.id })).not.toContain(RD_PRAEFIX)
   })
 })
 

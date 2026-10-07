@@ -23,7 +23,13 @@ import {
   ZINSEN_FARBE,
   type Decal,
 } from '@/charts/echartsTheme'
-import { euro, euroKurz, jahr as formatiereJahr } from '@/charts/format'
+import {
+  betragMitHinweis,
+  euro,
+  jahr as formatiereJahr,
+  kurzMitHinweis,
+  rundKurz,
+} from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
 import { haushalt } from '@/data/daten'
 import { anteil } from '@/lib/berechnung'
@@ -118,14 +124,6 @@ function postenGerundet(tabelle: string, posten: string): boolean {
     throw new Error(`Posten „${posten}“ fehlt in der Vorbericht-Tabelle „${tabelle}“`)
   }
   return eintrag.gerundet
-}
-
-/** „rd.“ mit geschütztem Leerzeichen, damit der Zusatz nie allein am Zeilenende steht. */
-export const RD_PRAEFIX = 'rd.\u00a0'
-
-/** Betrag mit „rd.“ davor, wenn er nur auf T€ genau ist; sonst der genaue Euro-Betrag. */
-export function betragMitHinweis(wert: number, gerundet: boolean): string {
-  return gerundet ? `${RD_PRAEFIX}${euro(wert)}` : euro(wert)
 }
 
 /** Z. 17 (ordentliche Aufwendungen) eines Knotens; ohne Eintrag 0. */
@@ -511,8 +509,7 @@ export function geldflussOption(
             if (eintrag === undefined) {
               return ''
             }
-            const betrag = euroKurz(eintrag.wert)
-            return `${eintrag.name}\n${eintrag.gerundet ? `${RD_PRAEFIX}${betrag}` : betrag}`
+            return `${eintrag.name}\n${kurzMitHinweis(eintrag.wert, eintrag.gerundet)}`
           },
         },
         labelLayout: { hideOverlap: false, moveOverlap: 'shiftY' },
@@ -658,7 +655,7 @@ export function lesehilfeSatz(geldfluss: Geldfluss, jahr: number, wertart: strin
   const minderaufwand = geldfluss.knoten.find((k) => k.art === 'minderaufwand')
 
   const saetze = [
-    `Für ${formatiereJahr(jahr)} (${wertart}) sind beide Seiten gleich groß: rund ${euroKurz(geldfluss.summeLinks)}.`,
+    `Für ${formatiereJahr(jahr)} (${wertart}) sind beide Seiten gleich groß: ${rundKurz(geldfluss.summeLinks)}.`,
   ]
   if (defizit) {
     saetze.push(
