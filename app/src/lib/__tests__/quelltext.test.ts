@@ -148,7 +148,7 @@ describe('getippteZahlen (UI-05, Fail-first)', () => {
   })
 
   it.each([
-    '<span v-if="zeile[\'gerundet\'] === 1">rd. </span>',
+    '<EuroBetrag :wert="wert" :gerundet="zeile[\'gerundet\'] === 1" />',
     '<wa-details :open="gruppe.id === \'steuern\'" class="om-a-1">',
     '<p>{{ euro(wert) }} und {{ prozent(anteil) }}</p>',
     '<h2 id="om-start-kennzahlen">Die wichtigsten Zahlen {{ jahrText }}</h2>',
