@@ -94,23 +94,37 @@ describe('zusammen', () => {
     beleg: null,
   })
 
-  it('nimmt die gedruckte Gesamtzeile, wenn es sie gibt', () => {
-    expect(zusammen({ posten: [posten(1000)], gesamt: 5000, pdfSeiten: [1] })).toBe(5000)
+  it('nimmt die gedruckte Gesamtzeile, wenn es sie gibt, ohne Kennzeichen berechnet', () => {
+    expect(zusammen({ posten: [posten(1000)], gesamt: 5000, pdfSeiten: [1] })).toEqual({
+      wert: 5000,
+      berechnet: false,
+    })
   })
 
-  it('summiert ohne Gesamtzeile nur vorhandene Werte', () => {
+  it('summiert ohne Gesamtzeile nur vorhandene Werte und kennzeichnet sie als berechnet', () => {
     expect(
       zusammen({
         posten: [posten(1000), posten(null), posten(2000)],
         gesamt: null,
         pdfSeiten: [1],
       }),
-    ).toBe(3000)
+    ).toEqual({ wert: 3000, berechnet: true })
   })
 
   it('liefert null, wenn kein einziger Wert vorhanden ist', () => {
     expect(zusammen({ posten: [posten(null)], gesamt: null, pdfSeiten: [1] })).toBeNull()
     expect(zusammen({ posten: [], gesamt: null, pdfSeiten: [] })).toBeNull()
+  })
+
+  it('die Gruppe transfer hat keine gedruckte Gesamtzeile und ist immer berechnet', () => {
+    const summeTransfer = zusammen(weitereZuschuesse().transfer)
+    expect(summeTransfer?.berechnet).toBe(true)
+    expect(summeTransfer?.wert).toBe(summe(weitereZuschuesse().transfer.posten))
+  })
+
+  it('die gedruckten Gesamtzeilen von Kita und laufenden Zwecken sind nicht berechnet', () => {
+    expect(zusammen(kitaZuschuesse())?.berechnet).toBe(false)
+    expect(zusammen(weitereZuschuesse().lfdZwecke)?.berechnet).toBe(false)
   })
 })
 
