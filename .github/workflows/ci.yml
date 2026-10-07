@@ -7,9 +7,9 @@
 # Er braucht beide Jobs, läuft nie für Pull Requests oder andere Branches als `main` und ist der
 # einzige Job mit Schreibrechten für Pages und den OIDC-Token (least privilege).
 #
-# Hinweis (D-10): Es gibt noch kein GitHub-Remote. Der Workflow läuft erst, wenn die Nutzerin
-# bzw. der Nutzer das öffentliche Repository `ostbevern_money` anlegt und `main` pusht; die
-# Schritte stehen im README (Abschnitt „Veröffentlichung auf GitHub Pages“).
+# Der Workflow läuft im Repository `github.com/bitwerkstatt/ostbevern_money` (Remote `origin`
+# seit Phase 7) und veröffentlicht die Seite über GitHub Pages; die Einrichtung steht im README
+# (Abschnitt „Veröffentlichung auf GitHub Pages“).
 name: CI
 
 on:

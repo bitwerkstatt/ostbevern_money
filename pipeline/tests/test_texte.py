@@ -285,7 +285,9 @@ Der Begriff A ist etwas Erklärtes. Er hat keine Zahl.
 Titel: Begriff B
 Quelle: S. 24, S. 25
 
-Begriff B betrifft {{meta.einwohner|zahl}} Menschen.
+Begriff B ist erklärt.
+
+Er betrifft {{meta.einwohner|zahl}} Menschen.
 """
 
 
@@ -313,6 +315,22 @@ def test_lies_glossar_platzhalter_ohne_quelle_bricht_ab(tmp_path: Path) -> None:
     inhalt = _GUELTIGES_GLOSSAR.replace("Quelle: S. 24, S. 25\n", "")
     with pytest.raises(TexteFehler, match="begriff_b"):
         lies_glossar(_glossar(tmp_path, inhalt))
+
+
+def test_lies_glossar_platzhalter_im_ersten_absatz_bricht_ab(tmp_path: Path) -> None:
+    # Begriff B hat eine Quelle-Zeile, trotzdem darf der erste Absatz keinen Platzhalter tragen
+    # (05/IN-11, Invariante aus typen.ts).
+    inhalt = _GUELTIGES_GLOSSAR.replace(
+        "Begriff B ist erklärt.\n\n", "Begriff B hat {{meta.einwohner|zahl}} Menschen.\n\n"
+    )
+    with pytest.raises(TexteFehler, match="begriff_b.*darf keinen Platzhalter enthalten"):
+        lies_glossar(_glossar(tmp_path, inhalt))
+
+
+def test_lies_glossar_echtes_glossar_erfuellt_die_invariante() -> None:
+    texte = lies_glossar(DATEN_WURZEL / GLOSSAR_MD)
+    assert texte
+    assert all("{{" not in t.absaetze[0] for t in texte)
 
 
 def test_lies_glossar_doppelter_schluessel_bricht_ab(tmp_path: Path) -> None:
@@ -693,6 +711,17 @@ def test_allgemeine_ruecklage_rueckgang_ist_relativ_zum_haushaltsjahr(
         erwartet
     )
     assert 0 < erwartet < 100
+
+
+def test_allgemeine_ruecklage_rueckgang_bei_anfangsstand_null_ist_texte_fehler() -> None:
+    """06/IN-08: kein ZeroDivisionError, sondern ein TexteFehler, der die Formel nennt."""
+    werte = {
+        "jahr.haushaltsjahr": 2026,
+        "jahr.letztes_jahr": 2029,
+        "eigenkapital.allgemeine_ruecklage.2026": 0,
+    }
+    with pytest.raises(TexteFehler, match="allgemeine_ruecklage_rueckgang_bis_letztes_jahr"):
+        ABGELEITET["allgemeine_ruecklage_rueckgang_bis_letztes_jahr"](werte)
 
 
 def test_schulden_formeln_kreditaufnahme_minus_tilgung_ist_anstieg_der_investitionskredite(
