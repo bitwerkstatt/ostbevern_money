@@ -2,12 +2,18 @@ import { describe, expect, it } from 'vitest'
 
 import {
   anzahlText,
+  betragMitHinweis,
   datum,
   euro,
   euroKurz,
   formatiere,
   jahr,
+  kurzMitHinweis,
   prozent,
+  RD_PRAEFIX,
+  rundKurz,
+  rundMitHinweis,
+  RUND_PRAEFIX,
   type FormatKuerzel,
 } from '@/charts/format'
 
@@ -114,4 +120,33 @@ describe('datum (UI-03, D-18)', () => {
       expect(datum(roh)).toBe('–')
     },
   )
+})
+
+describe('Regel „rd.“ und „rund“ (D-22, TXT-04)', () => {
+  it('trennt „rd.“ und „rund“ vom Betrag durch ein geschütztes Leerzeichen (U+00A0)', () => {
+    expect(RD_PRAEFIX).toBe('rd.\u00a0')
+    expect(RD_PRAEFIX.charCodeAt(3)).toBe(0xa0)
+    expect(RUND_PRAEFIX).toBe('rund\u00a0')
+    expect(RUND_PRAEFIX.charCodeAt(4)).toBe(0xa0)
+  })
+
+  it('betragMitHinweis setzt „rd.“ nur bei gerundeten Beträgen', () => {
+    expect(betragMitHinweis(7_800_000, true)).toBe(`${RD_PRAEFIX}${euro(7_800_000)}`)
+    expect(betragMitHinweis(7_800_000, false)).toBe(euro(7_800_000))
+  })
+
+  it('kurzMitHinweis kürzt über euroKurz und setzt „rd.“ nur bei gerundeten Beträgen', () => {
+    expect(kurzMitHinweis(27_502_063, true)).toBe(`${RD_PRAEFIX}${euroKurz(27_502_063)}`)
+    expect(kurzMitHinweis(27_502_063, false)).toBe(euroKurz(27_502_063))
+    expect(kurzMitHinweis(5_000, true)).toBe(`${RD_PRAEFIX}${euro(5_000)}`)
+  })
+
+  it('rundMitHinweis setzt „rund“ im Fließtext nur bei gerundeten Beträgen', () => {
+    expect(rundMitHinweis(600_000, true)).toBe(`${RUND_PRAEFIX}${euro(600_000)}`)
+    expect(rundMitHinweis(600_000, false)).toBe(euro(600_000))
+  })
+
+  it('rundKurz setzt „rund“ immer vor den gekürzten Betrag', () => {
+    expect(rundKurz(30_455_569)).toBe(`${RUND_PRAEFIX}${euroKurz(30_455_569)}`)
+  })
 })

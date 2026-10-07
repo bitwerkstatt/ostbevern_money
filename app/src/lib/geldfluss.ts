@@ -23,10 +23,17 @@ import {
   ZINSEN_FARBE,
   type Decal,
 } from '@/charts/echartsTheme'
-import { euro, euroKurz, jahr as formatiereJahr } from '@/charts/format'
+import {
+  betragMitHinweis,
+  euro,
+  jahr as formatiereJahr,
+  kurzMitHinweis,
+  rundKurz,
+  rundMitHinweis,
+} from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
 import { haushalt } from '@/data/daten'
-import { anteil } from '@/lib/berechnung'
+import { anteil, minderaufwandBetrag } from '@/lib/berechnung'
 import { findeKlKnoten } from '@/lib/kreisumlage'
 import { textFuerJahr } from '@/lib/texte'
 
@@ -118,14 +125,6 @@ function postenGerundet(tabelle: string, posten: string): boolean {
     throw new Error(`Posten „${posten}“ fehlt in der Vorbericht-Tabelle „${tabelle}“`)
   }
   return eintrag.gerundet
-}
-
-/** „rd.“ mit geschütztem Leerzeichen, damit der Zusatz nie allein am Zeilenende steht. */
-export const RD_PRAEFIX = 'rd.\u00a0'
-
-/** Betrag mit „rd.“ davor, wenn er nur auf T€ genau ist; sonst der genaue Euro-Betrag. */
-export function betragMitHinweis(wert: number, gerundet: boolean): string {
-  return gerundet ? `${RD_PRAEFIX}${euro(wert)}` : euro(wert)
 }
 
 /** Z. 17 (ordentliche Aufwendungen) eines Knotens; ohne Eintrag 0. */
@@ -241,7 +240,12 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
 
   // ---- links: Ausgleich (Defizit, Minderaufwand) und rechts: Überschuss --------------
   const nachMinderaufwand = planZeile('ergebnis_nach_minderaufwand', jahrIndex)
-  const minderaufwand = -planZeile('globaler_minderaufwand', jahrIndex)
+  const jahrDesIndex = haushalt.jahre[jahrIndex]
+  if (jahrDesIndex === undefined) {
+    throw new Error(`Jahresindex ${String(jahrIndex)} liegt außerhalb der Jahre`)
+  }
+  const minderaufwand =
+    minderaufwandBetrag(planZeile('globaler_minderaufwand', jahrIndex), jahrDesIndex) ?? 0
 
   if (nachMinderaufwand < 0) {
     knoten.push({
@@ -256,10 +260,7 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
       berechnet: false,
     })
   }
-  if (minderaufwand !== 0) {
-    if (minderaufwand < 0) {
-      throw new Error('Globaler Minderaufwand ist positiv: Datenfehler')
-    }
+  if (minderaufwand > 0) {
     knoten.push({
       id: 'ausgleich:minderaufwand',
       name: 'Globaler Minderaufwand',
@@ -511,8 +512,7 @@ export function geldflussOption(
             if (eintrag === undefined) {
               return ''
             }
-            const betrag = euroKurz(eintrag.wert)
-            return `${eintrag.name}\n${eintrag.gerundet ? `${RD_PRAEFIX}${betrag}` : betrag}`
+            return `${eintrag.name}\n${kurzMitHinweis(eintrag.wert, eintrag.gerundet)}`
           },
         },
         labelLayout: { hideOverlap: false, moveOverlap: 'shiftY' },
@@ -651,6 +651,12 @@ export function balkenOption(
  * Satz aus den Daten des gewählten Jahres (D-11, Pitfall 6): nennt Defizit bzw. Überschuss
  * und den Globalen Minderaufwand mit ihren Beträgen und die PDF-Seite. `wertart` ist der
  * Anzeigename der Wertart („Ist“, „Ansatz“, „Planung“). Zahlen kommen nur aus `geldfluss`.
+ *
+ * Nach Satz 1 unterscheidet der Text vier Fälle der Bilanz (D-06, TXT-01):
+ *   A Defizit (links), dazu ggf. der Minderaufwand „ebenfalls links“;
+ *   B Überschuss (rechts), dazu ggf. der Minderaufwand ohne „ebenfalls“, weil kein Defizit davor steht;
+ *   C nur der Minderaufwand: erst er gleicht beide Seiten aus, „rund“ nur bei gerundetem Betrag;
+ *   D nichts davon: nur hier gleichen sich Erträge und Aufwendungen „genau“ aus.
  */
 export function lesehilfeSatz(geldfluss: Geldfluss, jahr: number, wertart: string): string {
   const defizit = geldfluss.knoten.find((k) => k.art === 'defizit')
@@ -658,24 +664,35 @@ export function lesehilfeSatz(geldfluss: Geldfluss, jahr: number, wertart: strin
   const minderaufwand = geldfluss.knoten.find((k) => k.art === 'minderaufwand')
 
   const saetze = [
-    `Für ${formatiereJahr(jahr)} (${wertart}) sind beide Seiten gleich groß: rund ${euroKurz(geldfluss.summeLinks)}.`,
+    `Für ${formatiereJahr(jahr)} (${wertart}) sind beide Seiten gleich groß: ${rundKurz(geldfluss.summeLinks)}.`,
   ]
   if (defizit) {
+    // Fall A
     saetze.push(
       `Das Defizit von ${euro(defizit.wert)} steht links, weil die Gemeinde diesen Betrag aus ihren Rücklagen deckt.`,
     )
-  }
-  if (minderaufwand) {
-    saetze.push(
-      `Der globale Minderaufwand von ${euro(minderaufwand.wert)} steht ebenfalls links: Er senkt die geplanten Aufwendungen rechnerisch, ohne dass dafür ein Ertrag eingeht.`,
-    )
-  }
-  if (ueberschuss) {
+    if (minderaufwand) {
+      saetze.push(
+        `Der globale Minderaufwand von ${euro(minderaufwand.wert)} steht ebenfalls links: Er senkt die geplanten Aufwendungen rechnerisch, ohne dass dafür ein Ertrag eingeht.`,
+      )
+    }
+  } else if (ueberschuss) {
+    // Fall B
+    if (minderaufwand) {
+      saetze.push(
+        `Der globale Minderaufwand von ${euro(minderaufwand.wert)} steht links: Er senkt die geplanten Aufwendungen rechnerisch, ohne dass dafür ein Ertrag eingeht.`,
+      )
+    }
     saetze.push(
       `Der Überschuss von ${euro(ueberschuss.wert)} steht rechts, weil er den Rücklagen zugeführt wird.`,
     )
-  }
-  if (!defizit && !ueberschuss) {
+  } else if (minderaufwand) {
+    // Fall C
+    saetze.push(
+      `Die Aufwendungen sind höher als die Erträge. Erst der globale Minderaufwand von ${rundMitHinweis(minderaufwand.wert, minderaufwand.gerundet)} gleicht beide Seiten aus. Er steht links und senkt die geplanten Aufwendungen rechnerisch, ohne dass dafür ein Ertrag eingeht.`,
+    )
+  } else {
+    // Fall D
     saetze.push('Erträge und Aufwendungen gleichen sich in diesem Jahr genau aus.')
   }
   if (geldfluss.pdfSeite !== null) {

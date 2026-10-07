@@ -236,6 +236,16 @@ describe('minderaufwandHinweis (AUSG-02, Pitfall 6)', () => {
     expect(hinweis?.jahr).toBe(haushalt.jahre[i])
   })
 
+  it.each(JAHRE)('Jahr %i: der Hinweis zeigt nie ein Minuszeichen (TXT-02)', (_j, i) => {
+    const hinweis = minderaufwandHinweis(i)
+    if (hinweis === null) {
+      return
+    }
+    expect(hinweis.betrag).toBeGreaterThan(0)
+    expect(hinweis.satz).not.toMatch(/[-−]\s?\d/)
+    expect(hinweis.satz).toContain(`von ${euro(hinweis.betrag)}`)
+  })
+
   it.each(JAHRE)('Jahr %i: geprüfter Text nur im Haushaltsjahr', (jahr, i) => {
     const hinweis = minderaufwandHinweis(i)
     if (hinweis === null) {

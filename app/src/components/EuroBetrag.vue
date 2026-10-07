@@ -1,20 +1,26 @@
 <script setup lang="ts">
 import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
-import { betragMitHinweis } from '@/lib/geldfluss'
+import { betragMitHinweis, kurzMitHinweis } from '@/charts/format'
 
 /**
  * Ein Euro-Betrag in einer Tabellenzelle: „rd.“ davor, wenn er nur auf T€ genau ist, und das
- * Etikett „berechnet“ dahinter, wenn er nicht im PDF steht. Die Regel steht nur hier (und in
- * `betragMitHinweis`), damit Tabellen und Tooltips nicht auseinanderlaufen.
+ * Etikett „berechnet“ dahinter, wenn er nicht im PDF steht. Die Regel „rd.“/„rund“ steht nur in
+ * `charts/format.ts`; diese Komponente ist ihre Template-Form plus das Etikett „berechnet“.
+ * Mit `kurz` erscheint der Betrag gekürzt (`euroKurz`, z. B. „27,5 Mio. €“).
  */
 defineProps<{
   wert: number
   gerundet?: boolean
   berechnet?: boolean
+  kurz?: boolean
 }>()
 </script>
 
 <template>
-  {{ betragMitHinweis(wert, gerundet === true) }}
+  {{
+    kurz === true
+      ? kurzMitHinweis(wert, gerundet === true)
+      : betragMitHinweis(wert, gerundet === true)
+  }}
   <BerechnetEtikett v-if="berechnet" />
 </template>
