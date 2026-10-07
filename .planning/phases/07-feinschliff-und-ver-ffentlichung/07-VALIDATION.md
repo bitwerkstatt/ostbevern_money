@@ -75,6 +75,9 @@ created: "2026-10-06"
 | 07-13-01 | 07-13 | 1 | A11Y-03, UI-02 | T-07-SC | Betrag nie umbrochen/abgeschnitten; zugänglicher Name unverändert | Playwright (Docker) + vitest | Scratch-Kette mit `quelle.test.ts` + `npx playwright test --project=ci e2e/kacheln.spec.ts` (rot vor dem Fix belegt) | ✅ | ✅ green |
 | 07-13-02 | 07-13 | 1 | A11Y-03 | — | keine Kachelroute ungeprüft (Klassifikationstest `KACHEL_ROUTEN`) | Playwright (Docker) + vitest | volle Scratch-Kette + `--project=ci --project=mobil` | ✅ | ✅ green |
 | 07-13-03 | 07-13 | 1 | A11Y-03, UI-02 | — | gesperrte Pfade unverändert seit `a02a28c` | statisch (git diff/grep) + CI-identisches Gate | `git diff --quiet a02a28c -- …`; UI-SPEC-grep; Scratch-Kette + `--project=ci --project=mobil --project=texte` | ✅ | ✅ green |
+| 07-14-01 | 07-14 | 2 | A11Y-03, QUAL-02 | — | Betrag nie verkleinert/umbrochen; nur CI-Schrift-Umgebung misst | Playwright (Docker, DejaVu) + vitest | Scratch-Kette + `bash scripts/e2e-wie-ci.sh <app> --project=ci e2e/kacheln.spec.ts` (rot vor dem Fix byte-identisch belegt) | ✅ | ✅ green |
+| 07-14-02 | 07-14 | 2 | A11Y-03, QUAL-02 | — | kleinste Spurreserve ≥ 16 px; Spaltensprünge, schmalste Spur, li-Rand geprüft | Playwright (Docker, DejaVu) + vitest | Scratch-Kette + `e2e-wie-ci.sh … --project=ci e2e/kacheln.spec.ts`, Schriftlog DejaVu Sans auf allen vier Routen | ✅ | ✅ green |
+| 07-14-03 | 07-14 | 2 | DEPL-01, DEPL-02 | — | gesperrte Pfade unverändert seit `840c372`; ci.yml nur `runs-on` des app-Jobs | statisch (git diff/grep) + CI-identisches Gate | `git diff --quiet 840c372 -- …`; UI-SPEC/README-grep; Scratch-Kette + `e2e-wie-ci.sh … --project=ci --project=mobil --project=texte` | ✅ | ✅ green |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
