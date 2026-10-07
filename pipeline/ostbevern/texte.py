@@ -178,9 +178,17 @@ def lies_glossar(pfad: Path) -> list[Erklaertext]:
     Gleiche Regeln wie `lies_erklaerungen`, aber die Quelle ist nur Pflicht, sobald ein
     Absatz des Abschnitts einen Platzhalter (also eine Zahl) enthält — sonst bricht der
     Parser mit `TexteFehler` ab (Seitenverweis bei Zahlen, D-14).
+
+    Der erste Absatz eines Begriffs steht allein (sein erster Satz ist der Tooltip-Text) und
+    darf nie einen Platzhalter enthalten (Invariante aus `typen.ts`); sonst `TexteFehler`.
     """
     texte = _lies_abschnitte(pfad, kopfzeile=_KOPFZEILE_GLOSSAR, quelle_pflicht=False)
     for text in texte:
+        if PLATZHALTER_MUSTER.search(text.absaetze[0]) or "{{" in text.absaetze[0]:
+            raise TexteFehler(
+                f"{pfad}: Glossarbegriff {text.schluessel!r}: der erste Absatz steht allein "
+                "und darf keinen Platzhalter enthalten"
+            )
         if not text.quelle_seiten and any(
             PLATZHALTER_MUSTER.search(absatz) or "{{" in absatz for absatz in text.absaetze
         ):
@@ -362,6 +370,11 @@ def _allgemeine_ruecklage_rueckgang_bis_letztes_jahr(w: dict[str, int | float]) 
     # Prozentpunkte (Formatkürzel "prozent"), bezogen auf den Stand der allgemeinen Rücklage
     # zu Beginn des Haushaltsjahrs (Bezugsgröße der Schwellen aus § 76 GO NRW, S. 23).
     anfang = w[f"eigenkapital.allgemeine_ruecklage.{int(w['jahr.haushaltsjahr'])}"]
+    if anfang == 0:
+        raise TexteFehler(
+            "Formel 'allgemeine_ruecklage_rueckgang_bis_letztes_jahr': allgemeine Rücklage "
+            "zu Beginn des Haushaltsjahrs ist 0, ein Rückgang in Prozent ist nicht definiert"
+        )
     ende = _allgemeine_ruecklage_ende_letztes_jahr(w)
     return (anfang - ende) / anfang * 100
 
