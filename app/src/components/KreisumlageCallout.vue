@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 
 import { euroKurz, jahr as formatJahr } from '@/charts/format'
 import ErklaerText from '@/components/ErklaerText.vue'
+import EuroBetrag from '@/components/EuroBetrag.vue'
 import { haushalt } from '@/data/daten'
 import { baueKreisumlage } from '@/lib/kreisumlage'
 import { textFuerJahr } from '@/lib/texte'
@@ -67,7 +68,7 @@ const aufteilungSeiten = computed(() => {
       <ul class="om-kreisumlage__liste">
         <li v-for="u in kreisumlage.unterposten" :key="u.code">
           {{ u.name }}:
-          <span class="om-zahl">rd. {{ euroKurz(u.wert) }}</span>
+          <span class="om-zahl"><EuroBetrag :wert="u.wert" gerundet kurz /></span>
         </li>
       </ul>
       <p class="om-kreisumlage__quelle">

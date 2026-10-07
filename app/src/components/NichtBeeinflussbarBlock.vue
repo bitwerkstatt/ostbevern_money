@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { euroKurz, jahr as formatJahr, prozent } from '@/charts/format'
+import { euroKurz, jahr as formatJahr, kurzMitHinweis, prozent } from '@/charts/format'
 import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
 import KennzahlKachel from '@/components/KennzahlKachel.vue'
 import { haushalt } from '@/data/daten'
@@ -49,7 +49,7 @@ const kacheln = computed(() =>
   posten.value.posten.map((p) => ({
     schluessel: p.schluessel,
     bezeichnung: p.name,
-    wert: p.wert === null ? '' : `rd. ${euroKurz(p.wert)}`,
+    wert: p.wert === null ? '' : kurzMitHinweis(p.wert, p.gerundet),
     quelle: p.beleg ?? undefined,
     zeile:
       p.pdfSeite === null

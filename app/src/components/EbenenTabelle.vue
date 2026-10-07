@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { euro, jahr as formatiereJahr, KEIN_WERT, prozent } from '@/charts/format'
+import { betragMitHinweis, euro, jahr as formatiereJahr, KEIN_WERT, prozent } from '@/charts/format'
 import DatenTabelle from '@/components/DatenTabelle.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import { haushalt } from '@/data/daten'
@@ -76,10 +76,6 @@ function codeVon(zeile: DatenZeile): string {
 function produktZiel(zeile: DatenZeile) {
   return { name: 'produkt', params: { code: codeVon(zeile) }, query: props.produktQuery }
 }
-
-function betragText(betrag: number, gerundet: boolean): string {
-  return gerundet ? `rd. ${euro(betrag)}` : euro(betrag)
-}
 </script>
 
 <template>
@@ -116,7 +112,7 @@ function betragText(betrag: number, gerundet: boolean): string {
         }}</span>
       </template>
       <template v-else-if="spalte.schluessel === 'betrag'">
-        {{ betragText(wert, zeile.gerundet === 1) }}
+        {{ betragMitHinweis(wert, zeile.gerundet === 1) }}
         <span v-if="zeile.ueberschuss === 1" class="om-ebenen-hinweis">(Überschuss)</span>
       </template>
       <template v-else-if="spalte.schluessel === 'anteil'">{{ prozent(wert) }}</template>
