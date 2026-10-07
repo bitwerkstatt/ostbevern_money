@@ -53,6 +53,10 @@ PFLICHT_SEITENTYPEN = (
 _VIERSTELLIGER_CODE_MUSTER = re.compile(r"^\d{4}$")
 _SECHSSTELLIGER_PRODUKTCODE_MUSTER = re.compile(r"^\d{6}$")
 _SYNTHETISCHE_PG_PFLICHTFELDER = frozenset({"produkt", "name", "pdf_seite"})
+# [layout.*]-Listen, die bewusst leer sein dürfen: (Bereich, Schlüssel). Alle anderen Listen
+# müssen mindestens einen Eintrag haben (insbesondere quellenbelege.pruefwoerter, die
+# Datenschutz-Prüfliste).
+LEERE_LISTE_ERLAUBT = frozenset({("quellenbelege", "schwaerzen_nach")})
 
 
 class KonfigurationsFehler(ValueError):
@@ -381,12 +385,16 @@ def lade_jahrgang(jahr: int, *, verzeichnis: Path = JAHRGAENGE_VERZEICHNIS) -> J
                     )
                 bereich_werte[schluessel] = wert
             elif isinstance(wert, list):
-                # Eine leere Liste ist erlaubt ("bewusst keine Einträge", z. B. schwaerzen_nach);
-                # jeder vorhandene Eintrag ist ein nicht-leerer String.
-                if not all(isinstance(w, str) and w for w in wert):
+                # Eine leere Liste ist nur für die ausdrücklich erlaubten Schlüssel zulässig
+                # (LEERE_LISTE_ERLAUBT, "bewusst keine Einträge"); überall sonst ist sie ein
+                # Tippfehler bzw. schaltet z. B. die Datenschutz-Prüfwörter lautlos ab.
+                leer_erlaubt = (bereich, schluessel) in LEERE_LISTE_ERLAUBT
+                if (not wert and not leer_erlaubt) or not all(
+                    isinstance(w, str) and w for w in wert
+                ):
                     raise KonfigurationsFehler(
-                        f"Jahrgangsdatei {pfad}: {pfad_hinweis} enthält leere bzw. "
-                        "nicht-String-Einträge"
+                        f"Jahrgangsdatei {pfad}: {pfad_hinweis} ist eine leere Liste oder "
+                        "enthält leere bzw. nicht-String-Einträge"
                     )
                 if len(set(wert)) != len(wert):
                     raise KonfigurationsFehler(

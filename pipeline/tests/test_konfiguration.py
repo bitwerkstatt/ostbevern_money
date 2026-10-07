@@ -571,6 +571,28 @@ def test_layout_leere_liste_ist_erlaubt_leerer_eintrag_nicht(tmp_path: Path) -> 
         lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
 
 
+def test_layout_leere_liste_ist_nur_fuer_erlaubte_schluessel_zulaessig(tmp_path: Path) -> None:
+    text = _jahrgangsdatei_text()
+    # Datenschutz-Prüfwörter dürfen nicht lautlos geleert werden.
+    leer_pruefwoerter = re.sub(r"(?m)^pruefwoerter = \[.*\]$", "pruefwoerter = []", text, count=1)
+    assert leer_pruefwoerter != text
+    _schreibe_jahrgangsdatei(tmp_path, leer_pruefwoerter)
+    with pytest.raises(KonfigurationsFehler, match="layout.quellenbelege.pruefwoerter"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+    # Ein beliebiger anderer Layout-Schlüssel behält die alte Prüfung.
+    leer_kennzahlen = re.sub(
+        r"(?ms)^kennzahlen_ergebnisplan\s*=\s*\[.*?\]",
+        "kennzahlen_ergebnisplan = []",
+        text,
+        count=1,
+    )
+    assert leer_kennzahlen != text
+    _schreibe_jahrgangsdatei(tmp_path, leer_kennzahlen)
+    with pytest.raises(KonfigurationsFehler, match="layout.querschnitte.kennzahlen_ergebnisplan"):
+        lade_jahrgang(STANDARD_JAHR, verzeichnis=tmp_path)
+
+
 # [stichproben] (Phase 3, 03-04): PDF-geprüfte Testreferenzen, keine Extraktions-
 # Steuerung (keine Pflichttabelle, muss aber eine Tabelle von Tabellen sein). Steht am
 # Dateiende der echten Sollwertdatei, daher reicht das Muster bis zum Dateiende.
