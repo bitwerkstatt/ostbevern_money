@@ -21,6 +21,7 @@ import { tooltipZeilen } from '@/charts/tooltip'
 import { flaechenFarbe, jahresAchse } from '@/charts/wertartStil'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import { haushalt, investitionen } from '@/data/daten'
+import { jahreListe } from '@/lib/hilfsfunktionen'
 import { wertartName } from '@/lib/jahr'
 import { quellenZeile } from '@/lib/kennzahlen'
 import { belegSchluessel } from '@/lib/quelle'
@@ -86,16 +87,6 @@ export function baueSchuldenstand(): Schuldenreihen {
 export function jahreOhneLiquiditaetskredite(): number[] {
   const reihen = baueSchuldenstand()
   return reihen.jahre.filter((_jahr, index) => reihen.liquiditaetskredite[index] === null)
-}
-
-/** Jahreszahlen als Aufzählung: „2027“, „2027 und 2028“, „2027, 2028 und 2029“. */
-export function jahreListe(jahre: readonly number[]): string {
-  const texte = jahre.map(formatiereJahr)
-  const letztes = texte.at(-1)
-  if (letztes === undefined) {
-    return ''
-  }
-  return texte.length === 1 ? letztes : `${texte.slice(0, -1).join(', ')} und ${letztes}`
 }
 
 /** Der datengetriebene Satz zu fehlenden Liquiditätskrediten; `null`, wenn keine fehlen. */

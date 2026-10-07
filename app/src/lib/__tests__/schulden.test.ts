@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { BERECHNET_DECAL, SCHULDEN_FARBEN } from '@/charts/echartsTheme'
 import { euro, euroKurz, jahr as formatiereJahr } from '@/charts/format'
 import { haushalt, investitionen } from '@/data/daten'
+import { jahreListe } from '@/lib/hilfsfunktionen'
 import { quellenZeile } from '@/lib/kennzahlen'
 import { belegSchluessel, findeBeleg } from '@/lib/quelle'
 // Warum Quelltext: Der Block „die Seite rendert die Kacheln“ unten pinnt bewusst die Verdrahtung
@@ -15,7 +16,6 @@ import {
   achsenZusatz,
   baueSchuldenstand,
   hatBerechneteJahre,
-  jahreListe,
   jahreOhneLiquiditaetskredite,
   liquiditaetsSatz,
   schuldenKacheln,

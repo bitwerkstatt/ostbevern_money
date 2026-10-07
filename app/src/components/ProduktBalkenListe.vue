@@ -10,7 +10,7 @@ import DatenTabelle from '@/components/DatenTabelle.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import { segmentZusammenfassung, type BindungsSegment } from '@/lib/bindungsgrad'
 import { useSchmalerBildschirm } from '@/lib/bildschirm'
-import { klickIndex } from '@/lib/investitionen'
+import { klickIndex } from '@/lib/hilfsfunktionen'
 
 // D-04: die Produkte eines Bindungsgrads als Aufklapper mit horizontalen Balken, absteigend nach
 // Zuschussbedarf, in der Farbe des Aufgabenbereichs. Ein Klick auf einen Balken öffnet das
