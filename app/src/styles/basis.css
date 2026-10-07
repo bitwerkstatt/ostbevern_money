@@ -19,10 +19,14 @@ body {
    kalibriert, und zwar unter der CI-Schrift DejaVu Sans Bold (fonts-dejavu-core 2.37-8 wie auf
    GitHub ubuntu-24.04, Lauf über scripts/e2e-wie-ci.sh). Der Betrag bricht nie um und wird nie
    abgeschnitten, der Platz kommt allein aus dem Raster, nicht aus einer kleineren Schrift.
-   13,25rem ist der kleinste getestete Wert (13 bis 14rem) mit mindestens 16 px Reserve zwischen
-   breitestem Betrag und Kachelrand in der schmalsten möglichen Spur (gemessen 16,0 px für
-   „rd. 10,1 Mio. €“ auf /rat-entscheidet; 13rem ergab nur 12,0 px). Die 13rem aus 07-13 waren mit
-   einer CJK-Ersatzschrift gemessen und deshalb zu schmal. Messung: 07-14-SUMMARY. */
+   13,25rem ist der kleinste getestete Wert (13 bis 14rem). Gemessene Reserve zwischen breitestem
+   Betrag und Kachelrand in der schmalsten möglichen Spur bei den Daten 2026: 16,0 px für
+   „rd. 10,1 Mio. €“ auf /rat-entscheidet (13rem ergab nur 12,0 px). Der Test verlangt nur, dass
+   nichts überläuft (Reserve >= -0,5 px); die Reserve selbst hängt an den Beträgen des Jahrgangs
+   (ein breiterer Betrag wie „rd. 100,1 Mio. €“ kann sie aufbrauchen) und wird protokolliert, nicht
+   erzwungen. Bei einem neuen Jahrgang das Protokoll des Breitentests prüfen und den Wert bei
+   Bedarf anheben. Die 13rem aus 07-13 waren mit einer CJK-Ersatzschrift gemessen und deshalb zu
+   schmal. Messung: 07-14-SUMMARY. */
 .om-kachelraster {
   --om-kachel-mindestbreite: 13.25rem;
   display: grid;

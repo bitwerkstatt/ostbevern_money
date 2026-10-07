@@ -60,6 +60,7 @@ Die App funktioniert unter jedem Unterpfad: Vite baut mit `base: './'` und die A
 Neben der Pipeline-Konfiguration (`pipeline/jahrgaenge/{jahr}.toml`) prüfst du bei einem neuen Haushaltsjahr diese Stellen von Hand:
 
 - **Link auf das Original-PDF:** `ORIGINAL_PDF_URL` in `app/src/config.ts` zeigt auf eine Datei der Gemeinde mit inhaltsgebundenem Pfad. Ersetzt die Gemeinde die Datei (Korrektur, Nachtragshaushalt), liefert der alte Link 404, und alle Links „Seite n im Original-PDF öffnen“ laufen ins Leere, ohne dass ein Test es merkt. Öffne die URL deshalb vor jeder Veröffentlichung einmal und trage bei einem neuen Jahrgang die neue Adresse ein.
+- **Breite der Kennzahl-Kacheln:** Die Mindestspur `--om-kachel-mindestbreite` in `app/src/styles/basis.css` ist an die breitesten Beträge des Jahrgangs 2026 und an die CI-Schrift gekoppelt. Der Breitentest (`app/e2e/kacheln.spec.ts`) schlägt nur bei Überlauf an und protokolliert die Reserve; bei einem Jahrgang mit breiteren Beträgen liest du das Protokoll und hebst den Wert bei Bedarf an.
 
 ## Lizenz
 
