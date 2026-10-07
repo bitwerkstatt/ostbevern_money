@@ -335,11 +335,15 @@ test.describe('Weitere Auslöser der Seitenleiste', () => {
   test('ein Beleg nur mit Seite nennt „Zeile nicht automatisch markiert“ und zeichnet keine Markierung', async ({
     page,
   }) => {
-    await page.goto('/#/stellenplan')
+    await page.goto('/#/ausgaben')
     await expect(page.locator('h1')).toBeVisible()
-    // Die Kacheln der Stellenplan-Seite zeigen die Seite als Ganzes (kein Zeilenrechteck).
+    // Die Zeile „Weitergabe an Kreis und Land“ zeigt die Seite als Ganzes (kein Zeilenrechteck).
+    // Die Stellenplan-Kacheln taugen hier nicht mehr: sie sind berechnet (08-03, D-10) und zeigen
+    // „Berechneter Wert“ statt „nicht automatisch markiert“.
     const knopf = page
-      .getByRole('button', { name: /^Quelle anzeigen: Stellen .*PDF-Seite \d+$/ })
+      .getByRole('button', {
+        name: /^Quelle anzeigen: Weitergabe an Kreis und Land, PDF-Seite \d+$/,
+      })
       .first()
     await expect(knopf).toBeVisible()
     const seite = await seiteDesKnopfs(knopf)
