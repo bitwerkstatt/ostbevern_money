@@ -127,21 +127,21 @@ Detailquelle für alle Anforderungen: `discussion/SPEZIFIKATION.md` (Abschnittsn
 - [x] **UI-03**: Die Fußzeile zeigt Datenstand, Link zum Original-PDF, den Hinweis „inoffizielles Projekt“ und einen Kontakt
 - [x] **UI-04**: Ein Hinweis „Was nicht im Haushalt steht“ erklärt BBO (Hallenbad) und TEO AöR (Abwasser)
 - [x] **UI-05**: Zahlen in Texten werden aus den Daten erzeugt, nicht fest eingetippt; jeder Erklärtext mit Zahl verweist auf eine PDF-Seite
-- [x] **UI-06**: Alle Texte sind deutsch und durchgehend in der Du-Anrede
+- [ ] **UI-06**: Alle Texte sind deutsch und durchgehend in der Du-Anrede
 
 ### Barrierefreiheit und Qualität
 
 - [ ] **A11Y-01**: Zu jedem Diagramm gibt es eine Tabellenalternative
 - [ ] **A11Y-02**: Fokussteuerung beim Routenwechsel, ausreichende Kontraste und `prefers-reduced-motion` werden beachtet
-- [x] **A11Y-03**: Alle Seiten sind ab 360 px Breite nutzbar
-- [x] **A11Y-04**: Lighthouse-Barrierefreiheit ≥ 95 auf allen Routen
+- [ ] **A11Y-03**: Alle Seiten sind ab 360 px Breite nutzbar
+- [ ] **A11Y-04**: Lighthouse-Barrierefreiheit ≥ 95 auf allen Routen
 - [x] **QUAL-01**: `vue-tsc` und ESLint laufen fehlerfrei in der CI
 - [ ] **QUAL-02**: Ein Playwright-Smoke-Test stellt sicher, dass jede Route ohne Konsolenfehler rendert und Diagramme Daten enthalten
 
 ### Deployment
 
 - [ ] **DEPL-01**: GitHub Actions baut die App und deployt sie auf GitHub Pages (eigener Account)
-- [x] **DEPL-02**: Die App ist unter einer öffentlichen URL erreichbar
+- [ ] **DEPL-02**: Die App ist unter einer öffentlichen URL erreichbar
 
 ## v2 Requirements
 
@@ -254,15 +254,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-03 | Phase 5 | Complete |
 | UI-04 | Phase 6 | Complete |
 | UI-05 | Phase 5 | Complete |
-| UI-06 | Phase 7 | Complete |
+| UI-06 | Phase 7 | Gaps Found |
 | A11Y-01 | Phase 7 | Pending |
 | A11Y-02 | Phase 7 | Pending |
-| A11Y-03 | Phase 7 | Complete |
-| A11Y-04 | Phase 7 | Complete |
+| A11Y-03 | Phase 7 | Gaps Found |
+| A11Y-04 | Phase 7 | Gaps Found |
 | QUAL-01 | Phase 1 | Complete |
 | QUAL-02 | Phase 7 | Pending |
 | DEPL-01 | Phase 7 | Pending |
-| DEPL-02 | Phase 7 | Complete |
+| DEPL-02 | Phase 7 | Gaps Found |
 
 **Coverage:**
 - v1 requirements: 85 total
