@@ -68,12 +68,11 @@ def main(
         typer.echo(f"Fehler: {fehler}", err=True)
         raise typer.Exit(code=1) from fehler
 
+    pdf_relativ = jahrgang.pdf_pfad.relative_to(PROJEKT_WURZEL)
     if not jahrgang.pdf_pfad.is_file():
-        pdf_relativ = jahrgang.pdf_pfad.relative_to(PROJEKT_WURZEL)
         typer.echo(f"Fehler: PDF nicht gefunden: {pdf_relativ}", err=True)
         raise typer.Exit(code=1)
 
-    pdf_relativ = jahrgang.pdf_pfad.relative_to(PROJEKT_WURZEL)
     typer.echo(
         f"Jahrgang {jahrgang.haushaltsjahr}: {pdf_relativ} "
         f"({jahrgang.anzahlen.pdf_seiten} Seiten erwartet), "
