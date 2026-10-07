@@ -131,4 +131,52 @@ describe('istJahrneutral', () => {
       istJahrneutral({ schluessel: 'a', titel: 'a', quelle_seiten: [1], absaetze: ['x', 'y'] }),
     ).toBe(true)
   })
+
+  it('ignoriert jahr.*-Platzhalter: nur feste Jahre machen den Text nicht jahrgebunden', () => {
+    expect(
+      istJahrneutral({
+        schluessel: 'a',
+        titel: 'a',
+        quelle_seiten: [1],
+        absaetze: ['Von {{jahr.fest_2020|jahr}} bis {{jahr.fest_2024|jahr}}.'],
+      }),
+    ).toBe(true)
+  })
+
+  it('bindet einen Text an das Haushaltsjahr, sobald ein Betrags-Platzhalter vorkommt', () => {
+    expect(
+      istJahrneutral({
+        schluessel: 'a',
+        titel: 'a',
+        quelle_seiten: [1],
+        absaetze: ['Im Jahr {{jahr.fest_2020|jahr}} waren es {{a.b|mio}}.'],
+      }),
+    ).toBe(false)
+  })
+
+  it('hält ueberschuss_ruecklage für jedes Jahr sichtbar (jahr.fest_*-Platzhalter)', () => {
+    expect(findeText('ueberschuss_ruecklage')).toBeDefined()
+    for (const jahr of haushalt.jahre) {
+      expect(textFuerJahr('ueberschuss_ruecklage', jahr), `${jahr}`).not.toBeNull()
+    }
+  })
+
+  it('hält ueberschuss_pb_11 für jedes Jahr sichtbar (jahr.fest_*-Platzhalter)', () => {
+    expect(findeText('ueberschuss_pb_11')).toBeDefined()
+    for (const jahr of haushalt.jahre) {
+      expect(textFuerJahr('ueberschuss_pb_11', jahr), `${jahr}`).not.toBeNull()
+    }
+  })
+
+  it('jahrneutrale Texte nennen nur feste Jahre (jahr.fest_*), nie relative Schlüssel (D-04)', () => {
+    const neutrale = texte.texte.filter((t) => istJahrneutral(t))
+    expect(neutrale.length).toBeGreaterThan(0)
+    for (const text of neutrale) {
+      for (const absatz of text.absaetze) {
+        for (const treffer of absatz.matchAll(/\{\{([a-z0-9_.]+)\|[a-z]+\}\}/g)) {
+          expect(treffer[1], text.schluessel).toMatch(/^jahr\.fest_/)
+        }
+      }
+    }
+  })
 })

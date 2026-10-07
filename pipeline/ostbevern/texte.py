@@ -45,6 +45,10 @@ _JAHR_MUSTER = re.compile(r"\b(?:19|20)\d{2}\b")
 _PARAGRAF_MUSTER = re.compile(r"§\s*\d+")
 _SEITE_MUSTER = re.compile(r"S\.\s*\d+(?:[-/]\d+)*")
 
+# Feste Ereignisjahre (D-02): `jahr.fest_JJJJ` steht für genau dieses Jahr (z. B. ein
+# historisches Ergebnisjahr) und wird aus dem Schlüsselnamen aufgelöst, nicht aus `werte`.
+_FESTES_JAHR_MUSTER = re.compile(r"^jahr\.fest_((?:19|20)\d{2})$")
+
 # Format von erklaerungen.md: "## schluessel"-Abschnitte, je mit einer Titel- und einer
 # Quelle-Zeile direkt danach (kein Leerzeilenabstand), dann eine Leerzeile, dann
 # Absätze, durch Leerzeilen getrennt.
@@ -184,6 +188,12 @@ def lies_glossar(pfad: Path) -> list[Erklaertext]:
                 "aber keine 'Quelle:'-Zeile (Seitenverweis bei Zahlen, D-14)"
             )
     return texte
+
+
+def festes_jahr(schluessel: str) -> int | None:
+    """Das Jahr eines Schlüssels `jahr.fest_JJJJ` (nur 19xx/20xx) oder `None` (D-02)."""
+    treffer = _FESTES_JAHR_MUSTER.fullmatch(schluessel)
+    return int(treffer.group(1)) if treffer is not None else None
 
 
 def pruefe_text(text: str) -> None:
@@ -421,6 +431,10 @@ def textwerte(
     vorjahr = haushaltsjahr - 1
     werte["jahr.haushaltsjahr"] = haushaltsjahr
     werte["jahr.vorjahr"] = vorjahr
+    # Relative Jahre (D-02): wandern mit dem Jahrgang, nie als Jahreszahl getippt.
+    werte["jahr.vorvorjahr"] = haushaltsjahr - 2
+    werte["jahr.haushaltsjahr_plus_1"] = haushaltsjahr + 1
+    werte["jahr.haushaltsjahr_plus_2"] = haushaltsjahr + 2
     # Letztes Planjahr des Jahrgangs (D-14): Grenze für Polster- und Schuldenformeln.
     werte["jahr.letztes_jahr"] = int(jahre[-1])
 
@@ -539,13 +553,18 @@ def loese_auf(
         for absatz in text.absaetze:
             for treffer in PLATZHALTER_MUSTER.finditer(absatz):
                 schluessel, format_kuerzel = treffer.groups()
-                if schluessel not in werte:
+                if schluessel in verwendet:
+                    continue
+                if schluessel in werte:
+                    verwendet[schluessel] = (werte[schluessel], format_kuerzel)
+                    continue
+                fest = festes_jahr(schluessel)
+                if fest is None:
                     raise TexteFehler(
                         f"Unbekannter Datenschlüssel {schluessel!r} in Text "
                         f"{text.schluessel!r}: {absatz!r}"
                     )
-                if schluessel not in verwendet:
-                    verwendet[schluessel] = (werte[schluessel], format_kuerzel)
+                verwendet[schluessel] = (fest, format_kuerzel)
     return verwendet
 
 
@@ -594,7 +613,7 @@ def vorschau(texte: Sequence[Erklaertext], werte: Mapping[str, int | float]) -> 
 
     def _annotiere(treffer: re.Match[str]) -> str:
         schluessel, _format_kuerzel = treffer.groups()
-        wert = werte.get(schluessel, "???")
+        wert = werte.get(schluessel, festes_jahr(schluessel) or "???")
         return f"{treffer.group(0)}[{wert}]"
 
     zeilen: list[str] = []

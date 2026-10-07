@@ -20,8 +20,10 @@ from ostbevern.schema import DATEN_WURZEL, ERKLAERUNGEN_MD, GLOSSAR_MD
 from ostbevern.texte import (
     ABGELEITET,
     FORMATKUERZEL,
+    PLATZHALTER_MUSTER,
     Erklaertext,
     TexteFehler,
+    festes_jahr,
     lies_erklaerungen,
     lies_glossar,
     loese_auf,
@@ -454,6 +456,66 @@ def test_textwerte_enthaelt_erwartete_schluessel(
         assert f"abgeleitet.{name}" in werte
 
 
+def test_textwerte_relative_jahre_folgen_dem_haushaltsjahr(
+    app_daten: tuple[dict, dict, list[dict]], werte: dict[str, int | float]
+) -> None:
+    """D-02: relative Jahres-Schlüssel werden aus dem Haushaltsjahr gerechnet, nie getippt."""
+    haushalt, _investitionen, _produkte = app_daten
+    haushaltsjahr = haushalt["haushaltsjahr"]
+    assert werte["jahr.vorjahr"] == haushaltsjahr - 1
+    assert werte["jahr.vorvorjahr"] == haushaltsjahr - 2
+    assert werte["jahr.haushaltsjahr_plus_1"] == haushaltsjahr + 1
+    assert werte["jahr.haushaltsjahr_plus_2"] == haushaltsjahr + 2
+
+
+@pytest.mark.parametrize(
+    ("schluessel", "erwartet"),
+    [
+        ("jahr.fest_2022", 2022),
+        ("jahr.fest_1900", 1900),
+        ("jahr.fest_2099", 2099),
+        ("jahr.fest_1899", None),
+        ("jahr.fest_2100", None),
+        ("jahr.fest_abcd", None),
+        ("jahr.fest_20226", None),
+        ("jahr.vorjahr", None),
+        ("xjahr.fest_2022", None),
+    ],
+)
+def test_festes_jahr(schluessel: str, erwartet: int | None) -> None:
+    assert festes_jahr(schluessel) == erwartet
+
+
+def test_loese_auf_loest_festes_jahr_ohne_werteintrag_auf(
+    werte: dict[str, int | float],
+) -> None:
+    assert "jahr.fest_2020" not in werte
+    texte = [
+        Erklaertext(
+            schluessel="test",
+            titel="Test",
+            quelle_seiten=(1,),
+            absaetze=("Von {{jahr.fest_2020|jahr}} bis {{jahr.vorvorjahr|jahr}}.",),
+        )
+    ]
+    aufgeloest = loese_auf(texte, werte)
+    assert aufgeloest["jahr.fest_2020"] == (2020, "jahr")
+    assert aufgeloest["jahr.vorvorjahr"] == (werte["jahr.vorvorjahr"], "jahr")
+
+
+def test_loese_auf_lehnt_ungueltiges_festes_jahr_ab(werte: dict[str, int | float]) -> None:
+    texte = [
+        Erklaertext("test", "Test", (1,), ("Im Jahr {{jahr.fest_1899|jahr}}.",)),
+    ]
+    with pytest.raises(TexteFehler, match=r"jahr\.fest_1899"):
+        loese_auf(texte, werte)
+
+
+def test_vorschau_zeigt_festes_jahr(werte: dict[str, int | float]) -> None:
+    texte = [Erklaertext("test", "Test", (1,), ("Seit {{jahr.fest_2021|jahr}}.",))]
+    assert "{{jahr.fest_2021|jahr}}[2021]" in vorschau(texte, werte)
+
+
 def _ohne_folgejahr_ausgleichsruecklage(haushalt: dict) -> dict:
     """Kopie von `haushalt`, in der die Ausgleichsrücklage des Folgejahrs fehlt (WR-06)."""
     kopie = copy.deepcopy(haushalt)
@@ -720,12 +782,17 @@ def test_erklaerungen_jeder_text_hat_quelle(echte_erklaerungen: list[Erklaertext
 def test_jahrneutrale_erklaerungen_ohne_platzhalter(
     echte_erklaerungen: list[Erklaertext],
 ) -> None:
-    """Pitfall 6: die sieben neuen Texte gelten für jedes wählbare Jahr, enthalten also
-    keinen Platzhalter (und damit keinen Wert, der nur für ein Jahr stimmt)."""
+    """Pitfall 6 / D-04: die sieben Texte gelten für jedes wählbare Jahr; sie enthalten
+    höchstens feste Jahre `{{jahr.fest_JJJJ|jahr}}`, keinen Wert, der nur für ein Jahr stimmt."""
     je_schluessel = {text.schluessel: text for text in echte_erklaerungen}
     for schluessel in _JAHRNEUTRAL_SCHLUESSEL:
         for absatz in je_schluessel[schluessel].absaetze:
-            assert "{{" not in absatz, f"{schluessel}: Platzhalter in jahrneutralem Text"
+            for treffer in PLATZHALTER_MUSTER.finditer(absatz):
+                assert festes_jahr(treffer.group(1)) is not None, (
+                    f"{schluessel}: nur jahr.fest_*-Platzhalter in jahrneutralem Text, "
+                    f"gefunden {treffer.group(0)!r}"
+                )
+            assert not re.search(r"\{\{(?!jahr\.fest_)", absatz), schluessel
 
 
 def test_phase6_texte_ohne_platzhalter(echte_erklaerungen: list[Erklaertext]) -> None:
