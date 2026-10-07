@@ -54,11 +54,14 @@ describe('baueKennzahlen', () => {
     expect(kennzahl('steuern_pro_kopf').wert).toBe(Math.round(steuern / EINWOHNER))
   })
 
-  it('nur die beiden Pro-Kopf-Werte sind berechnet', () => {
+  it('berechnet sind genau die Kennzahlen mit Herleitung (Kachel und Quellenansicht stimmen überein)', () => {
     const berechnet = baueKennzahlen()
       .filter((k) => k.berechnet)
       .map((k) => k.schluessel)
-    expect(berechnet).toEqual(['aufwand_pro_kopf', 'steuern_pro_kopf'])
+    expect(berechnet).toEqual(['ertraege', 'aufwendungen', 'aufwand_pro_kopf', 'steuern_pro_kopf'])
+    for (const k of baueKennzahlen()) {
+      expect(k.berechnet, k.schluessel).toBe(k.herleitung !== null)
+    }
   })
 
   it('Defizit trägt das Wort „Defizit“, ein Überschuss das Wort „Überschuss“', () => {
