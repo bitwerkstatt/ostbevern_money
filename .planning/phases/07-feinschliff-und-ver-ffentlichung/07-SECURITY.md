@@ -60,6 +60,8 @@ created: "2026-10-07"
 | T-07-28 | Tampering | lighthouse-Installation | high | mitigate | Version 13.5.0 gepinnt, `--ignore-scripts`, nur Scratch-Verzeichnis, nicht in package.json/CI; Freigabe „approved“ | closed |
 | T-07-29 | Information Disclosure | Erster öffentlicher Push | high | mitigate | Datenschutzprüfung (07-10) vor dem Push; Push durch den Nutzer | closed |
 | T-07-SC | Tampering | npm/pip-Installationen, CI-Browser-Download | high | mitigate | Exakte Pins, Lockfiles, `uv sync --locked`, keine neuen Abhängigkeiten außer 07-01 | closed |
+| T-07-30 | Repudiation | app/e2e/kacheln.spec.ts | medium | mitigate | Im Playwright-Projekt `ci` (`playwright.config.ts` ignoriert nur mobil/textliste); geschlossene Routenliste `KACHEL_ROUTEN` mit Klassifikationstest (`kacheln.spec.ts:32,362-368`); feste `TOLERANZ = 0.5` (`:29`); rote Ausgangsmessung in 07-13-SUMMARY | closed |
+| T-07-31 | Tampering | KennzahlKachel-Beträge | medium | mitigate | `git diff --quiet a02a28c HEAD -- pipeline daten app/src/data app/src/charts/format.ts` leer; Spec prüft eine Zeile (`getClientRects`, `:183`) und Größe `--wa-font-size-l` (`:112-175`) | closed |
 
 *Status: open · closed · open — below high threshold (non-blocking)*
 *Severity: critical > high > medium > low — only open threats at or above workflow.security_block_on count toward threats_open*
@@ -78,6 +80,7 @@ created: "2026-10-07"
 | AR-05 | T-07-15, T-07-23 | Impressum mit eigenem Namen und Anschrift; IP-Satz zu GitHub Pages | Nutzer (07-10-Abnahme) | 2026-10-06 |
 | AR-06 | T-07-28 | Einmalige Nutzung von lighthouse@13.5.0 ohne Lockfile für Unterabhängigkeiten | Nutzer („approved“, 07-12) | 2026-10-07 |
 | AR-07 | T-07-29 | Öffentliches Repository und GitHub-Pages-Deployment | Nutzer („veröffentlicht“, 07-12) | 2026-10-07 |
+| AR-09 | T-07-SC (07-13) | Keine neue Abhängigkeit (package.json, package-lock.json, uv.lock unverändert seit a02a28c); npm ci nur in Scratch-Kopien | Planer (07-13-PLAN) | 2026-10-07 |
 | AR-08 | T-07-29 | `raw_data/haushalt-2026.pdf` (ungeschwärztes Original der Gemeinde) ist im öffentlichen Repository; dieselbe Datei ist bei der Gemeinde öffentlich verfügbar und verlinkt; nicht in `app/dist` | Nutzer (Sicherheitsprüfung) | 2026-10-07 |
 
 *Accepted risks do not resurface in future audit runs.*
@@ -110,3 +113,11 @@ created: "2026-10-07"
 - [x] `status: verified` set in frontmatter
 
 **Approval:** verified 2026-10-07
+
+## Security Audit 2026-10-07
+
+| Metric | Count |
+|---|---|
+| Threats found | 32 |
+| Closed | 32 |
+| Open | 0 |
