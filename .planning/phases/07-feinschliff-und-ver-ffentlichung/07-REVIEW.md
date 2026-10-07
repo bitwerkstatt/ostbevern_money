@@ -1,93 +1,38 @@
 ---
 phase: 07-feinschliff-und-veroeffentlichung
-reviewed: 2026-10-07T12:00:00Z
+reviewed: 2026-10-07T14:00:00Z
 depth: standard
-files_reviewed: 100
+files_reviewed: 24
 files_reviewed_list:
   - .github/workflows/ci.yml
-  - README.md
-  - app/.gitignore
-  - app/.prettierignore
-  - app/e2e/interaktion.spec.ts
   - app/e2e/kacheln.spec.ts
-  - app/e2e/inventar.spec.ts
-  - app/e2e/mobil.spec.ts
-  - app/e2e/quelle.spec.ts
-  - app/e2e/routen.ts
-  - app/e2e/smoke.spec.ts
-  - app/e2e/textliste.spec.ts
-  - app/package.json
-  - app/playwright.config.ts
-  - app/src/App.vue
-  - app/src/components/AufwandsartBalken.vue
-  - app/src/components/BaseChart.vue
-  - app/src/components/BerechnetEtikett.vue
-  - app/src/components/DatenTabelle.vue
-  - app/src/components/EbenenTabelle.vue
-  - app/src/components/EinstiegsKachel.vue
-  - app/src/components/ErtragsBalken.vue
-  - app/src/components/GlossarListe.vue
-  - app/src/components/KennzahlKachel.vue
-  - app/src/components/NichtBeeinflussbarBlock.vue
-  - app/src/components/PostenZeitreihe.vue
-  - app/src/components/QuelleKnopf.vue
-  - app/src/components/QuelleSeite.vue
-  - app/src/components/QuelleSeitenleiste.vue
-  - app/src/components/SankeyDiagramm.vue
-  - app/src/components/StellenNachBereich.vue
-  - app/src/components/StellenNachGruppe.vue
-  - app/src/components/SteuerZeitreihe.vue
-  - app/src/components/WertartEtikett.vue
-  - app/src/components/ZuschussListe.vue
-  - app/src/components/datenTabelle.ts
-  - app/src/config.ts
-  - app/src/data/daten.ts
-  - app/src/data/typen.ts
-  - app/src/lib/aufwandsarten.ts
-  - app/src/lib/ebenenBeleg.ts
-  - app/src/lib/einnahmen.ts
-  - app/src/lib/investitionen.ts
+  - app/src/lib/__tests__/kennzahlen.test.ts
   - app/src/lib/kennzahlen.ts
-  - app/src/lib/menue.ts
-  - app/src/lib/produkt.ts
-  - app/src/lib/quelle.ts
-  - app/src/lib/schulden.ts
-  - app/src/lib/stellen.ts
-  - app/src/lib/zeitreihen.ts
-  - app/src/lib/zuschuesse.ts
-  - app/src/pages/AusgabenPage.vue
-  - app/src/pages/EinnahmenPage.vue
-  - app/src/pages/GlossarPage.vue
-  - app/src/pages/InvestitionenPage.vue
-  - app/src/pages/ProduktPage.vue
-  - app/src/pages/StartPage.vue
-  - app/src/pages/StellenplanPage.vue
-  - app/src/pages/UeberPage.vue
-  - app/src/router/index.ts
-  - app/src/styles/basis.css
-  - app/tsconfig.e2e.json
-  - app/tsconfig.json
+  - daten/zwischen/belegbilder_schwaerzung.json
   - pipeline/08_quellenbelege.py
-  - pipeline/alle.py
-  - pipeline/jahrgaenge/2026.toml
-  - pipeline/jahrgaenge/2026_sollwerte.toml
-  - pipeline/ostbevern/app_daten.py
   - pipeline/ostbevern/belegbilder.py
   - pipeline/ostbevern/konfiguration.py
-  - pipeline/ostbevern/pdf.py
-  - pipeline/ostbevern/produkte.py
-  - pipeline/ostbevern/pruefung.py
   - pipeline/ostbevern/quellen.py
-  - pipeline/ostbevern/schema.py
-  - pipeline/ostbevern/texte.py
-  - pipeline/pyproject.toml
-  - scripts/e2e-wie-ci.sh
+  - pipeline/tests/test_belegbilder.py
+  - pipeline/tests/test_konfiguration.py
+  - pipeline/tests/test_quellen.py
   - scripts/lighthouse-a11y.sh
+  - README.md
+  - app/package.json
+  - app/tsconfig.node.json
+  - app/src/lib/aufwandsarten.ts
+  - app/src/lib/schulden.ts
+  - app/src/components/StellenNachGruppe.vue
+  - app/src/components/DatenTabelle.vue
+  - app/src/components/SteuerZeitreihe.vue
+  - app/src/config.ts
+  - app/src/styles/basis.css
+  - scripts/e2e-wie-ci.sh
 findings:
-  critical: 2
-  warning: 7
-  info: 11
-  total: 20
+  critical: 0
+  warning: 1
+  info: 13
+  total: 14
 status: issues_found
 ---
 
@@ -95,123 +40,44 @@ status: issues_found
 
 **Reviewed:** 2026-10-07
 **Depth:** standard
-**Files Reviewed:** 98 (Testdateien unter `__tests__/` und `pipeline/tests/` nur auf Zuverlässigkeit überflogen, nicht Zeile für Zeile)
+**Files Reviewed:** 24 (13 Dateien des Fix-Diffs `a866275..HEAD` plus die Dateien der weitergeführten Info-Befunde)
 
 ## Summary
 
-Geprüft wurden der Quellenbeleg-Pfad (Pipeline-Schritt 08, `belegbilder.py`, `quellen.py`; App-Seite `lib/quelle.ts`, `QuelleKnopf`, `QuelleSeite`, `QuelleSeitenleiste`), CI und Veröffentlichung (`ci.yml`, README), das Lighthouse-Skript, die Datenaufbereitung der Seiten und die Phase-7-Änderungen an `pruefung.py`, `texte.py`, `app_daten.py` und `konfiguration.py`.
+Inkrementelle Nachprüfung der Fix-Commits `cbbf3db..3db0795` (CR-02, WR-01 bis WR-07). CR-01 bleibt nach Nutzerentscheidung vom 2026-10-07 unverändert und wird hier nicht erneut gemeldet.
 
-Der Kern ist sauber gebaut. Die Suche nach Zeilenrechtecken rät nie, sondern liefert bei Mehrdeutigkeit `bbox: null`. Die Prüfung gegen die Schwärzflächen ist konsequent. Die Schlüsselgrammatik ist zwischen Pipeline und App identisch. Es gibt kein `v-html`, kein `eval` und keine Drittanbieter-Requests. Die gerenderten Seiten `s072` und `s074` habe ich stichprobenartig angesehen: Verantwortliche/r und Sachbearbeiter/innen sind korrekt und deckend geschwärzt.
+Die Korrekturen sind im Kern richtig und vollständig. Geprüft habe ich sie durch Lesen des Diffs und der Gegenstellen. Außerdem sind `pytest` für `test_belegbilder.py`, `test_konfiguration.py` und `test_quellen.py` (130 Tests) und die Zählung der Fingerprints in `daten/zwischen/belegbilder_schwaerzung.json` gelaufen. App-Werkzeug und Playwright habe ich in der Sandbox nicht ausgeführt.
 
-Zwei Befunde zählen als BLOCKER:
-- Auf PDF-Seite 9 werden Namen und Unterschriften ausgeliefert.
-- Das Lighthouse-Skript löscht ein vom Nutzer übergebenes Verzeichnis.
+- **CR-02 (`lighthouse-a11y.sh`):** Das Skript legt immer ein eigenes Unterverzeichnis per `mktemp -d` an, und der Trap löscht nur dieses. `LH_SCRATCH` wird nie gelöscht. Der Schutz vor `""`, `/` und `$HOME` ist beim Aufbau mit `mktemp` nicht erreichbar, schadet aber nicht.
+- **WR-01 (Schwärz-Fingerprint):** Die Logik stimmt. Neu gerendert wird bei fehlendem Bild, bei `neu` und bei geändertem Fingerprint. Ein vorhandenes Bild ohne Fingerprint wird nur übernommen, und der Fingerprint wird erst nach dem Schreiben gespeichert. In der eingecheckten Datei stehen 231 Seiten: 168 mit dem Fingerprint der leeren Rechteckliste, 63 mit Rechtecken. Offen bleibt die Robustheit beim Lesen der Datei (WR-08).
+- **WR-02 (atomares Schreiben):** `.tmp` plus `replace` plus `finally`-Aufräumen ist korrekt. Der Test deckt den Abbruch ab.
+- **WR-03 (Indexfehler):** Die drei benannten Stellen sind abgesichert. Schwestern derselben Fehlerklasse bleiben (IN-13).
+- **WR-04 (leere Listen):** `LEERE_LISTE_ERLAUBT` ist eng gefasst. `pruefwoerter = []` und `kennzahlen_ergebnisplan = []` werden abgewiesen. In `2026.toml` ist `schwaerzen_nach` die einzige leere Liste.
+- **WR-05 (Kennzeichnung „berechnet“):** `berechnet` wird für `ertraege` und `aufwendungen` gesetzt, so wie es die Nutzerentscheidung vorgibt. Die Etikett-Zeile bricht um, weil das `BerechnetEtikett` ein Inline-Block ist. Das ist auf der Seite der Pro-Kopf-Kacheln schon erprobt. Dort verlängert sich nur die Höhe.
+- **WR-06 und WR-07 (E2E):** Beide Änderungen sind plausibel. Neu ist der Workflow-Schritt für die Schrift (siehe IN-12 zu den Grenzen der Prüfung).
 
-Daneben gibt es einen Workflow-Fallstrick bei der Schwärzung und mehrere Robustheitslücken in der Pipeline.
+Neu offen sind eine WARNING (WR-08) und zwei Info-Punkte (IN-12, IN-13). Kein neuer BLOCKER.
 
-**Inkrementelle Nachprüfung (Pläne 07-13 und 07-14, Diff ab b4fdb9d):** Geprüft wurden das gemeinsame Raster `.om-kachelraster` (`basis.css`) und seine Verwendung auf vier Seiten, der Knopf „Quelle“, der Breitentest `app/e2e/kacheln.spec.ts`, das Skript `scripts/e2e-wie-ci.sh` und die Runner-Festlegung in `ci.yml`. Der frühere BLOCKER „Kachel-Überlauf durch `.om-zahl { white-space: nowrap }`“ (`07-UI-REVIEW.md`) ist durch das Raster mit Mindestspur 13,25rem und die entfernte Schriftvergrößerung ab 700 px behoben. Die Raster-Umstellung selbst ist sauber: Alle alten Klassen (`om-start__raster`, `om-investitionen__kacheln`, `om-stellenplan__raster`, `om-nicht-beeinflussbar__raster`) sind restlos entfernt, `tsc -p tsconfig.e2e.json` ist fehlerfrei, die Spaltensprung-Arithmetik (488, 732, 968, 1204, 1440 px) stimmt. Neu offen sind zwei WARNINGs (WR-06, WR-07) und drei Info-Punkte (IN-09 bis IN-11). Kein neuer BLOCKER.
-
-## Critical Issues
-
-### CR-01: Namen und Unterschriften zweier Personen stehen ungeschwärzt in einem ausgelieferten Belegbild
-
-**File:** `app/public/quellen/s009.webp` (erzeugt von `pipeline/ostbevern/quellen.py:1427-1434`, Konfiguration `pipeline/jahrgaenge/2026.toml:209-210`)
-**Issue:** Der Projektgrundsatz lautet: „Mitarbeitendennamen werden extrahiert, aber nicht ausgeliefert.“ Der eigene Bericht `daten/pruefberichte/quellenbelege.md` (Datenschutz-Prüfliste) meldet für Seite 9 „Bürgermeister“ und „Kämmerin“ mit `geschwärzt = nein`. Das Bild `s009.webp` zeigt am Seitenende den Satzungsabschluss mit Klarnamen („Julia Klein, Kämmerin“, „Karl Piochowiak, Bürgermeister“) und beiden handschriftlichen Unterschriften. Die Kämmerin ist Verwaltungsmitarbeiterin. Die Seite wird über `seite:9` und die `meta:satzung.*`-Belege (Satzungsbeschluss) tatsächlich referenziert und deshalb gerendert und veröffentlicht.
-
-`schwaerzen_nach = []` ist „bewusst leer“. Die Prüfliste ist aber nur ein Bericht: Kein Test und keine CI-Prüfung schlägt an, wenn ein Treffer ungeschwärzt bleibt. AR-08 deckt nur das öffentliche Roh-PDF im Repo ab. Es deckt nicht die ausdrückliche Zusage „nicht ausgeliefert“. Falls die Namen der Amtsträger bewusst bleiben sollen, muss das als Entscheidung dokumentiert werden. Die Unterschriften sind biometrische Merkmale und sollten trotzdem weg.
-
-Auf den übrigen Treffer-Seiten (17, 18, 32, 48, 75, 95) habe ich nur Amtsbezeichnungen, Fließtext und „Telefonbucheintrag“ gesehen, also falsch-positive Treffer.
-**Fix:** Eine seitenbezogene Schwärzkonfiguration einführen, weil `schwaerzen_nach` (Folgezeile eines Etiketts) die Namenszeilen unter den Unterschriften nicht trifft. Zum Beispiel in `2026.toml`:
-```toml
-[layout.quellenbelege]
-schwaerzen_bereiche = [ { seite = 9, rechtecke = [[90, 700, 300, 780], [400, 700, 600, 780]] } ]
-```
-`_Schwaerzung.fuer` führt diese Rechtecke mit den Personenfeldern zusammen. Danach alle Bilder dieser Seiten mit `--neu-rendern` neu erzeugen (siehe WR-01). Zusätzlich die Prüfliste zum Test machen: Ein Treffer ohne Schwärzung und ohne Eintrag in einer Allowlist (`pruefwoerter_ok = [{ seite = 18, stichwort = "Bürgermeister" }]`) bricht Schritt 08 ab.
-
-### CR-02: `lighthouse-a11y.sh` löscht ein vom Nutzer übergebenes `LH_SCRATCH`-Verzeichnis vollständig
-
-**File:** `scripts/lighthouse-a11y.sh:35-52`
-**Issue:** Die Kopfdokumentation nennt `LH_SCRATCH` ein „vorhandenes Verzeichnis für die Scratch-Kopien“. Das Skript legt es bei Bedarf mit `mkdir -p` an und behandelt es dann wie ein eigenes Wegwerfverzeichnis. Der `EXIT`-Trap führt `rm -rf "$S"` aus, sofern nicht `LH_KEEP=1` gesetzt ist. Wer `LH_SCRATCH=$HOME/work ./scripts/lighthouse-a11y.sh` aufruft (der dokumentierte Weg), verliert beim Skriptende das gesamte Verzeichnis samt fremdem Inhalt. Der Trap greift auch bei einem Abbruch durch `set -e`. `LH_SCRATCH=/` oder ein leerer, aber falsch gesetzter Pfad wäre fatal. Die Fehlerunterdrückung `2>/dev/null || true` verdeckt zusätzlich, dass root-eigene Container-Dateien stehen bleiben.
-**Fix:** Nur ein selbst angelegtes Unterverzeichnis löschen und `LH_SCRATCH` nur als Elternverzeichnis verwenden:
-```bash
-BASIS="${LH_SCRATCH:-${TMPDIR:-/tmp}}"
-mkdir -p "$BASIS"
-S="$(mktemp -d "$BASIS/lighthouse-a11y.XXXXXX")"   # immer ein frisches, eigenes Verzeichnis
-```
-Der Trap löscht dann nur `$S`. Zusätzlich vor dem `rm -rf` prüfen, dass `$S` nicht leer ist und nicht `/` oder `$HOME` entspricht.
+Hinweis zur Fortschreibung: IN-01 bis IN-11 sind unverändert offen und mit ihren Original-IDs und -Titeln übernommen. Zeilennummern, die sich durch die Fixes verschoben haben, sind angepasst (IN-09, IN-11). Kein Befund ist entfallen.
 
 ## Warnings
 
-### WR-01: Geänderte Schwärzung wirkt nicht auf vorhandene Bilder (veraltete, ungeschwärzte Datei bleibt erhalten)
+### WR-08: Eine beschädigte oder von Hand geänderte `belegbilder_schwaerzung.json` bricht Schritt 08 mit rohem Traceback ab
 
-**File:** `pipeline/ostbevern/belegbilder.py:87-96`, `pipeline/alle.py:176`, `.github/workflows/ci.yml:57-63`
-**Issue:** `rendere_seiten` rendert nur Seiten, deren Datei fehlt (`neu or not exists`). `alle.py` ruft Schritt 08 ohne `neu_rendern` auf, und CI prüft nur, dass `alle.py` unter `app/public/quellen` nichts anlegt oder ändert. Trägt jemand später ein Etikett in `schwaerzen_nach` ein (der Bericht fordert das ausdrücklich: „trägt es in `schwaerzen_nach` ein“) oder ändert er die Personenfeld-Erkennung, bleibt das alte, womöglich ungeschwärzte Bild liegen. Weder Pipeline noch CI melden das. Die Prüfung am Funktionsanfang gilt nur für `produktinformationen`-Seiten ohne Rechtecke und prüft nicht den Inhalt vorhandener Dateien.
-**Fix:** Einen Schwärzungs-Fingerprint je Seite in `quellen.json` oder in einer Datei `app/public/quellen/.schwaerzung.json` ablegen (Hash der Rechtecke je Seite). `rendere_seiten` rendert dann jede Seite neu, deren Fingerprint von dem der vorhandenen Datei abweicht. Mindestens in `quellenbelege.md` und in den Hilfetext von `08_quellenbelege.py` den Hinweis „nach Änderung der Schwärzung `--neu-rendern` aufrufen“ aufnehmen.
-
-### WR-02: `rendere_seiten` schreibt nicht atomar; ein Abbruch hinterlässt ein kaputtes Bild, das nie erneuert wird
-
-**File:** `pipeline/ostbevern/belegbilder.py:96-113`
-**Issue:** `bild.save(pfad, "WEBP", ...)` schreibt direkt ins Ziel. Bricht der Lauf mitten im Schreiben ab (Strg-C, Plattenvoll, Container-Kill), steht eine abgeschnittene `.webp` im Verzeichnis. Beim nächsten Lauf gilt sie wegen `.exists()` als vorhanden und wird nicht erneuert. Das widerspricht dem sonst konsequent atomaren Schreiben (`schreibe_app_json` nutzt tempfile + `os.replace`). Die App zeigt dann im Seitenbild den Fehlerhinweis, CI merkt es nicht.
+**File:** `pipeline/ostbevern/belegbilder.py:55-72`
+**Issue:** Die neue Datei ist eingecheckt, generiert und damit ein typischer Kandidat für Merge-Konflikte (Konfliktmarker `<<<<<<<` in 231 Zeilen). `_lies_fingerprints` ruft `json.loads` ohne Absicherung auf. Ein Syntaxfehler löst `json.JSONDecodeError` aus, und `08_quellenbelege.py:48-55` fängt nur `QuellenFehler`, `BelegbildFehler` und die weiteren Projektfehler, nicht `ValueError`. Das Ergebnis ist ein Traceback statt `Fehler: …` mit Exit 1, also genau die Fehlerklasse, die WR-03 gerade bereinigt hat. `_schreibe_fingerprints` sortiert außerdem mit `int(e[0])`. Ein nicht numerischer Schlüssel (von Hand geändert, Fremdwerte) wirft ebenfalls `ValueError`, und zwar erst am Ende des Laufs, nachdem Bilder neu gerendert wurden. Die Prüfung `isinstance(daten, dict)` deckt nur die Obertypen ab. Ein Wert, der kein String ist, wird still per `str(wert)` umgedeutet und führt zu einem unnötigen Neurendern.
 **Fix:**
 ```python
-tmp = pfad.with_suffix(".webp.tmp")
-bild.save(tmp, "WEBP", quality=WEBP_QUALITAET, method=WEBP_METHODE)
-tmp.replace(pfad)
+try:
+    daten = json.loads(pfad.read_text(encoding="utf-8"))
+except (OSError, ValueError) as fehler:
+    raise BelegbildFehler(f"{pfad.name}: nicht lesbar ({fehler}); aus Git wiederherstellen") from fehler
+if not isinstance(daten, dict) or not all(
+    str(k).isdecimal() and isinstance(v, str) for k, v in daten.items()
+):
+    raise BelegbildFehler(f"{pfad.name}: erwartet ein JSON-Objekt Seite -> Fingerprint-String")
 ```
-Ein `try/finally` räumt die Temp-Datei bei Fehlern weg.
-
-### WR-03: Unbehandelte Indexfehler in der Beleg-Suche umgehen die `QuellenFehler`-Behandlung
-
-**File:** `pipeline/ostbevern/quellen.py:371`, `:1045`, `:652`; `pipeline/08_quellenbelege.py:36-47`, `pipeline/alle.py:150-165`
-**Issue:** Mehrere Stellen setzen gültige Eingaben voraus und werfen sonst rohe `IndexError`s:
-- `finde_tabellenzeile` liest `werte[ziel_index]` (Zeile 371). Ist die Werteliste kürzer als die Jahre, folgt ein `IndexError`.
-- `_sammle_vorbericht` liest `gesamt_df["posten_name"][0]` (Zeile 1045), obwohl `gesamt["quelle"]` nur geprüft wird, nicht ob die CSV eine `ist_gesamt`-Zeile hat.
-- `finde_stellenzeile` ruft `gruppe.split()[0]` auf (Zeile 652). Eine leere oder rein aus Leerraum bestehende Gruppenbezeichnung einer Nachwuchszeile führt zum Absturz.
-
-`08_quellenbelege.py` und `alle.py` fangen nur die dokumentierten Fehlerklassen und geben bei den obigen Fällen einen Traceback statt `Fehler: …` mit Exit 1 aus.
-**Fix:** Die Eingaben vor dem Zugriff prüfen und als `QuellenFehler` melden, zum Beispiel:
-```python
-if ziel_index >= len(werte):
-    raise QuellenFehler(f"Tabellenzeile {bezeichnung!r}: kein Wert für Jahresindex {ziel_index}")
-...
-if gesamt_df.height == 0:
-    raise QuellenFehler(f"Tabelle {tabelle}: gesamt_vorbericht.quelle gesetzt, aber keine ist_gesamt-Zeile")
-...
-woerter = gruppe.split()
-if not woerter:
-    raise QuellenFehler(f"{schluessel}: leere Gruppenbezeichnung")
-```
-
-### WR-04: Leere Listen sind jetzt für jeden `[layout.*]`-Schlüssel erlaubt, auch für die Datenschutz-Prüfwörter
-
-**File:** `pipeline/ostbevern/konfiguration.py:381-391`, `pipeline/jahrgaenge/2026.toml:209`
-**Issue:** Für `schwaerzen_nach = []` wurde die Validierung global gelockert: Jede Layout-Liste darf jetzt leer sein. Bisher fing der Ladevorgang so Tippfehler und ein versehentliches Leeren ab. Ein leeres `pruefwoerter = []` schaltet die Datenschutz-Prüfliste lautlos ab. Der Bericht enthält dann einfach keine Treffer und sieht „sauber“ aus. Auch in `layout.investitionen` und anderen Bereichen würden leere Listen jetzt durchgehen.
-**Fix:** Die Lockerung auf eine ausdrückliche Allowlist beschränken, zum Beispiel `LEERE_LISTE_ERLAUBT = {("quellenbelege", "schwaerzen_nach")}`, und für `pruefwoerter` eine nicht-leere Liste verlangen. Alle anderen Schlüssel behalten die alte Prüfung.
-
-### WR-05: Startseiten-Kacheln „Erträge“ und „Aufwendungen“ tragen kein „berechnet“, die Seitenleiste nennt sie aber „nicht im PDF“
-
-**File:** `app/src/lib/kennzahlen.ts:117-138`, `app/src/lib/quelle.ts:162-172`
-**Issue:** `baueKennzahlen` setzt für Erträge und Aufwendungen `berechnet: false`, übergibt aber eine `herleitung` („Ordentliche Erträge (Zeile 10) plus Finanzerträge (Zeile 14)“). `belegHinweis` wertet jede Nicht-`null`-Herleitung als berechneten Wert. Die Seitenleiste zeigt dann „Berechneter Wert – Dieser Wert steht nicht im PDF. Er wird berechnet: …“. Die Kachel selbst zeigt kein „berechnet“-Etikett. Dasselbe gilt für `ebenenBeleg` im Modus Aufwand mit Zinsen. Die Kachel und ihre Quellenansicht widersprechen sich also auf der wichtigsten Seite der App, für den Kernwert „jede Zahl ist belegt“. Der Test `kennzahlen.test.ts:57-61` hält „nur die beiden Pro-Kopf-Werte sind berechnet“ ausdrücklich fest.
-**Fix:** Eine Linie ziehen. Entweder `berechnet: true` für alle Kacheln mit Herleitung und den Test anpassen. Oder die Herleitungstexte so formulieren, dass `belegHinweis` für gedruckte Summenzeilen die Art `markiert` zurückgibt (eigenes Feld `summe` statt Herleitung) und der Satz „Dieser Wert steht nicht im PDF“ nur bei echten Berechnungen erscheint.
-
-### WR-06: Die Schriftannahme der Breitenkalibrierung wird in der CI weder hergestellt noch geprüft
-
-**File:** `.github/workflows/ci.yml:63-67`, `app/e2e/kacheln.spec.ts:28-31,129-133`, `app/src/styles/basis.css:17-25`
-**Issue:** Die Mindestspur 13,25rem ist gegen DejaVu Sans Bold kalibriert; die Reserve beträgt nur 16,0 px bei „rd. 10,1 Mio. €“. Dass der Runner `ubuntu-24.04` tatsächlich DejaVu Sans hinter `system-ui` rendert, ist eine Annahme: Die Messung lief im Playwright-Docker-Image mit nachinstalliertem Paket, nicht auf einem echten Runner. `runs-on: ubuntu-24.04` fixiert nur das Label, nicht den Inhalt: GitHub aktualisiert das Image wöchentlich, Schriftpakete eingeschlossen. Der Kommentar „Festes Runner-Image“ ist deshalb irreführend. Die Spec protokolliert die Schrift nur (`console.log`) und prüft sie nie. Weicht die Runner-Schrift ab, scheitert die CI (zu breit) oder sie wird still lockerer (schmalere Schrift) und schützt dann nicht mehr. Dasselbe Muster hat G-07-2 schon einmal verursacht. Der Schritt `playwright install --with-deps` bringt zusätzlich weitere Schriften (u. a. WenQuanYi Zen Hei) mit, die die Auswahl für `system-ui` beeinflussen können.
-**Fix:** Die Umgebung im Workflow herstellen und prüfen, statt sie anzunehmen, z. B. vor dem E2E-Schritt:
-```yaml
-- name: Schrift der Kalibrierung sicherstellen
-  run: |
-    sudo apt-get install -y --no-install-recommends fonts-dejavu-core=2.37-8
-    fc-match sans-serif | tee /dev/stderr | grep -q 'DejaVu Sans'
-```
-Zusätzlich in der Spec für die Kalibrierungsroute prüfen, dass `schriftDerBetraege` „DejaVu Sans“ enthält, und andernfalls mit einer klaren Meldung („Schrift weicht von der Kalibrierung ab“) fehlschlagen, statt erst über Layoutbefunde. Den Kommentar in `ci.yml` korrigieren („Label fixiert nur das Betriebssystem“).
-
-### WR-07: Der Breitentest hat keine eigene Zeitgrenze; im Fehlerfall reißt er die Standardgrenze von 30 s und verliert seine Diagnose
-
-**File:** `app/e2e/kacheln.spec.ts:434-475`, `app/playwright.config.ts` (kein `timeout`)
-**Issue:** Jeder Routentest durchläuft 16 Breiten (`BREITEN`: 12 Grundbreiten plus 4 neue Spaltensprünge) nacheinander. `warteAufLayout` wartet pro Breite bis zu 2 s, solange die Seite waagerecht scrollt. Genau im Fehlerfall, den der Test finden soll (dauerhafter Seitenüberlauf über viele Breiten), summiert sich das auf bis zu 32 s plus Laden. Das übersteigt das Playwright-Standardlimit von 30 s (Konfiguration setzt keines). Der Test endet dann mit einem Timeout, und die gesammelte Befundliste im `expect` (mit Route, Breite und Betrag) wird nie ausgegeben. Auf einem langsamen Runner kann auch der Erfolgsfall an die Grenze kommen.
-**Fix:** In der Spec `test.setTimeout(120_000)` (oder im `describe` über `test.describe.configure({ timeout: 120_000 })`) setzen und die Wartegrenze von 2 s in eine benannte Konstante ziehen. Alternativ die Befunde nach jeder Breite per `test.info().annotations` ausgeben, damit sie auch bei einem Abbruch vorliegen.
+Dazu ein Test mit kaputtem JSON, der `BelegbildFehler` erwartet.
 
 ## Info
 
@@ -269,7 +135,7 @@ Zusätzlich in der Spec für die Kalibrierungsroute prüfen, dass `schriftDerBet
 
 ### IN-09: Die behauptete Mindestreserve von 16 px wird nirgends geprüft und hängt an den Daten
 
-**File:** `app/src/styles/basis.css:20-25`, `app/e2e/kacheln.spec.ts:254,366-372`
+**File:** `app/src/styles/basis.css:20-25`, `app/e2e/kacheln.spec.ts:197-198,271,384` (Zeilen seit den Fixes verschoben)
 **Issue:** Der CSS-Kommentar begründet 13,25rem mit „mindestens 16 px Reserve“. `reserve` und `spurreserve` werden aber nur protokolliert; geprüft wird lediglich `>= -0,5 px`. Die Reserve entspricht etwa einer Ziffer in DejaVu Sans Bold bei `--wa-font-size-l`. Ein anderer Jahrgang mit einem Betrag wie „rd. 100,1 Mio. €“ kann daher die Test-CI brechen, obwohl Layout und Kalibrierung unverändert sind (Nutzerschriften sind meist schmaler als DejaVu, die Praxis ist also unkritisch). Der Zusammenhang zwischen Daten und Mindestspur ist nirgends dokumentiert.
 **Fix:** Entweder eine Mindestreserve prüfen (`spurreserve >= 8`) und beim Jahrgangswechsel im README als Prüfpunkt vermerken, oder den Kommentar ehrlich formulieren („gemessene Reserve bei den Daten 2026“).
 
@@ -281,12 +147,27 @@ Zusätzlich in der Spec für die Kalibrierungsroute prüfen, dass `schriftDerBet
 
 ### IN-11: Neue Spec ist nicht prettier-konform, und `format:check` sieht `e2e/` nicht
 
-**File:** `app/e2e/kacheln.spec.ts:227`, `app/package.json:18-19`
-**Issue:** `prettier --check e2e/kacheln.spec.ts` meldet einen Verstoß (Zeile 227, überlange `befunde.push`-Zeile). Die CI fällt nicht darüber, weil `format:check` nur `src/` prüft (siehe IN-07). Ebenso trägt der Schritt „Smoke-Test (Playwright + axe)“ in `ci.yml` jetzt auch den Breitentest, der Name ist veraltet.
+**File:** `app/e2e/kacheln.spec.ts:244`, `app/package.json:18-19` (Zeile seit den Fixes verschoben, vorher 227)
+**Issue:** `prettier --check e2e/kacheln.spec.ts` meldet einen Verstoß (überlange `befunde.push`-Zeile mit `overflow-x`). Die CI fällt nicht darüber, weil `format:check` nur `src/` prüft (siehe IN-07). Ebenso trägt der Schritt „Smoke-Test (Playwright + axe)“ in `ci.yml` jetzt auch den Breitentest, der Name ist veraltet.
 **Fix:** `prettier --write e2e/kacheln.spec.ts`, `format`/`format:check` auf `src/ e2e/` erweitern (löst IN-07 teilweise) und den Schrittnamen in „Browser-Tests (Playwright + axe + Kachelbreiten)“ ändern.
+
+### IN-12: Die Schriftprüfung der CI ist schwächer als ihre Beschreibung (Teilzeichenfolge, Version nur protokolliert)
+
+**File:** `app/e2e/kacheln.spec.ts:36,466-473`, `.github/workflows/ci.yml:96-106`
+**Issue:** Die Spec prüft `schrift` mit `toContain('DejaVu Sans')`. Der Test trifft auch `DejaVu Sans Mono`, `DejaVu Sans Condensed` oder `DejaVu Sans ExtraLight`, die andere Zeichenbreiten haben. `schriftDerBetraege` fügt mehrere Plattformschriften zu einem String zusammen, sodass ein Fallback-Glyph aus DejaVu die Prüfung erfüllt, obwohl der Betrag überwiegend in einer anderen Schrift steht. Der Workflow installiert `fonts-dejavu-core` ohne Version (bewusst, siehe Fix-Bericht) und gibt die Version nur aus. Der Kommentar nennt 2.37-8 als Kalibrierstand, aber nichts bricht, wenn der Runner eine andere Version liefert. `fc-match sans-serif` ist außerdem nur ein Indiz für die Auswahl von `system-ui` in Chromium; es hat in der CI noch nie auf einem echten Runner gelaufen (Hinweis „requires human verification“ im Fix-Bericht).
+**Fix:** Die Spec exakt gegen `^DejaVu Sans \(` (Familienname vor der PostScript-Klammer) für alle gemeldeten Einträge prüfen oder die Liste der Plattformschriften auf genau einen Eintrag begrenzen. Im Workflow die Version vergleichen: `test "$(dpkg-query -W -f='${Version}' fonts-dejavu-core)" = "2.37-8"` mit klarer Meldung, oder im Kommentar festhalten, dass die Version nur informativ ist. Den ersten echten Lauf auf dem Runner abwarten, bevor `main` damit geschützt wird.
+
+### IN-13: Die Absicherung aus WR-03 ist lückenhaft platziert, und gleichartige Zugriffe bleiben ungeschützt
+
+**File:** `pipeline/ostbevern/quellen.py:374-379`, `:1121`, `:1061`
+**Issue:**
+- In `finde_tabellenzeile` steht die neue Prüfung `0 <= ziel_index < len(werte)` hinter `if not kandidaten: return None, GRUND_NICHT_GEFUNDEN`. Ein zu kurzes `werte` bleibt unbemerkt, solange keine Kandidatenzeile gefunden wird, und fällt erst auf, sobald eine gefunden wird. Das Verhalten hängt vom PDF-Inhalt ab.
+- `name = teil["posten_name"][0]` in Zeile 1121 hat dieselbe Fehlerklasse wie die behobenen Stellen: Eine leere Gruppe führt zu `IndexError` statt `QuellenFehler`.
+- Für die neue Prüfung in `_sammle_vorbericht` (Zeile 1056-1060, `ist_gesamt` fehlt) gibt es keinen Test; der Fix-Bericht nennt das selbst.
+**Fix:** Die Prüfung der Indexgrenze an den Funktionsanfang verlegen. Eine Gruppe `teil` vor Zeile 1121 auf `height == 0` prüfen und `QuellenFehler` auslösen. Für den `ist_gesamt`-Fall einen Test mit einer Tabelle ohne Gesamtzeile ergänzen.
 
 ---
 
-_Reviewed: 2026-10-07T12:00:00Z_
+_Reviewed: 2026-10-07T14:00:00Z_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
