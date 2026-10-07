@@ -4,7 +4,7 @@ Ostbevern Money erklärt dir den Haushalt 2026 der Gemeinde Ostbevern. Die App b
 
 ## Stand
 
-Phase 1: Gerüst für Pipeline, App und CI.
+Die Phasen 1 bis 7 sind umgesetzt: Pipeline mit Prüfregeln, alle Seiten der App, Quellenbelege, Barrierefreiheit, Browser-Tests und der CI-Workflow mit Veröffentlichung auf GitHub Pages. Online geht die App, sobald das Repository auf GitHub angelegt und `main` gepusht ist (Abschnitt „Veröffentlichung auf GitHub Pages“).
 
 ## Aufbau
 

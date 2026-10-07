@@ -1,6 +1,6 @@
 # CI-Workflow und Veröffentlichung für Ostbevern Money.
 #
-# Ablauf: Die Jobs `pipeline` und `app` prüfen jeden Push und jeden Pull Request. Der Job
+# Ablauf: Die Jobs `pipeline` und `app` prüfen jeden Push auf `main` und jeden Pull Request. Der Job
 # `app` baut die Seite, startet den Smoke-Test (Playwright und axe, QUAL-02) gegen den Build
 # und lädt das Ergebnis nur bei einem Push oder manuellen Start auf `main` als
 # Pages-Artefakt hoch. Der Job `deploy` veröffentlicht dieses Artefakt auf GitHub Pages (D-09).
@@ -13,7 +13,9 @@
 name: CI
 
 on:
+  # Nur `main` per Push; Branches mit offenem Pull Request prüft `pull_request` (kein Doppellauf).
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
