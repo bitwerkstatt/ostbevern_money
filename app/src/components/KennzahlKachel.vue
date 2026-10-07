@@ -10,7 +10,7 @@ withDefaults(
     /** Zeile unter dem Wert: „{Wertart} {jahr} · PDF-Seite {n}“. */
     zeile: string
     berechnet?: boolean
-    /** Belegschlüssel (`lib/quelle.ts`); mit Beleg steht unter der Zeile „Quelle anzeigen“. */
+    /** Belegschlüssel (`lib/quelle.ts`); mit Beleg steht unter der Zeile der Knopf „Quelle“ (QuelleKnopf, Variante kachel). */
     quelle?: string
     /** Herleitung eines berechneten Werts für die Quell-Seitenleiste (D-03). */
     herleitung?: string | null
@@ -87,11 +87,5 @@ withDefaults(
 
 .om-kennzahl__quelle {
   margin-top: var(--wa-space-xs);
-}
-
-@media (min-width: 700px) {
-  .om-kennzahl__wert {
-    font-size: var(--wa-font-size-2xl);
-  }
 }
 </style>

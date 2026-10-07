@@ -21,9 +21,9 @@ const props = defineProps<{
 const beleg = computed(() => findeBeleg(props.schluessel))
 
 // Zugänglicher Name: „Quelle anzeigen: {Bezeichnung}, PDF-Seite {n}“. Er beginnt mit dem
-// sichtbaren Text („Quelle anzeigen“ bzw. „PDF-Seite {n}“ ist darin enthalten, WCAG 2.5.3). Als
-// `aria-label` statt als versteckte Textspanne, weil Chromium zwischen sichtbarem Text und einer
-// absolut positionierten Spanne ein Leerzeichen einfügt („Quelle anzeigen : Erträge“).
+// sichtbaren Text „Quelle“ (Kachel, Produktseite) bzw. enthält „PDF-Seite {n}“ (Tabellenzeile),
+// WCAG 2.5.3. Als `aria-label` statt als versteckte Textspanne, weil Chromium zwischen sichtbarem
+// Text und einer absolut positionierten Spanne ein Leerzeichen einfügt („Quelle : Erträge“).
 const zugaenglicherName = computed(() =>
   beleg.value === null
     ? ''
@@ -58,7 +58,7 @@ function beiKlick(ereignis: MouseEvent) {
     >
     <template v-else>
       <wa-icon name="file-lines" aria-hidden="true"></wa-icon>
-      <span class="om-quelle-knopf__text">Quelle anzeigen</span>
+      <span class="om-quelle-knopf__text">Quelle</span>
     </template>
   </button>
 </template>
@@ -96,7 +96,8 @@ function beiKlick(ereignis: MouseEvent) {
   white-space: nowrap;
 }
 
-/* Kachel und Produktseite: darf bei 360 px auf zwei Zeilen umbrechen, nie mit Auslassungspunkten. */
+/* Kachel und Produktseite: ein Wort „Quelle“; es bricht um, statt abgeschnitten zu werden, falls
+   eine Spalte je zu schmal wird, nie mit Auslassungspunkten. */
 .om-quelle-knopf--kachel .om-quelle-knopf__text,
 .om-quelle-knopf--produkt .om-quelle-knopf__text {
   hyphens: auto;

@@ -14,6 +14,31 @@ body {
   white-space: nowrap;
 }
 
+/* Gemeinsames Raster der Kachellisten auf Start, Investitionen, Stellenplan und Rat entscheidet.
+   Die Mindestbreite einer Spalte ist durch e2e/kacheln.spec.ts (Plan 07-13) kalibriert: Der Betrag
+   bricht nie um und wird nie abgeschnitten, der Platz kommt allein aus dem Raster, nicht aus einer
+   kleineren Schrift. 13rem ist der kleinste getestete Wert (10 bis 13rem) mit mindestens 16 px
+   Reserve zwischen breitestem Betrag und Kachelrand (gemessen 16,9 px bei 480 px auf
+   /rat-entscheidet). Messung: 07-13-SUMMARY. */
+.om-kachelraster {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: var(--wa-space-m);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.om-kachelraster > li {
+  min-width: 0;
+}
+
+@media (min-width: 700px) {
+  .om-kachelraster {
+    gap: var(--wa-space-l);
+  }
+}
+
 .om-visually-hidden {
   position: absolute;
   width: 1px;
