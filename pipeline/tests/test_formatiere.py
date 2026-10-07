@@ -25,6 +25,7 @@ from ostbevern.schema import DATEN_WURZEL, ERKLAERUNGEN_MD
 from ostbevern.texte import (
     FORMATKUERZEL,
     PLATZHALTER_MUSTER,
+    festes_jahr,
     lies_erklaerungen,
     loese_auf,
     textwerte,
@@ -299,7 +300,9 @@ def _pruefe_absaetze(absaetze: Sequence[str], werte: Mapping[str, int | float]) 
 
     def _ersetze(treffer: re.Match[str]) -> str:
         schluessel, format_kuerzel = treffer.groups()
-        wert = werte[schluessel]
+        # `jahr.fest_JJJJ` steht nicht in `werte`, sondern im Schlüsselnamen (D-02).
+        wert = werte[schluessel] if schluessel in werte else festes_jahr(schluessel)
+        assert wert is not None, schluessel
         for eintrag in _verstoesse(schluessel, wert, format_kuerzel):
             verstoesse.append(f"{treffer.group(0)}: {eintrag}")
         return formatiere_port(wert, format_kuerzel)
