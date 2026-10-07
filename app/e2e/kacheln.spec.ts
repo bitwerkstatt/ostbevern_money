@@ -19,7 +19,9 @@ import { routen } from './routen'
 //   und ist mindestens 44 × 44 px groß (G-03),
 // - jede Kachel steht in einem Raster `.om-kachelraster` (G-04),
 // - das `li` um jede Kachel hat Außenabstand 0 (07-14, Einzug aus Web Awesome),
-// - je Route wird die Schrift der Beträge protokolliert (nicht geprüft).
+// - je Route wird die Schrift der Beträge protokolliert und gegen die Kalibrierschrift geprüft
+//   (`KALIBRIERSCHRIFT`): Weicht sie ab, bricht der Test mit einer klaren Meldung ab, bevor
+//   Layoutbefunde entstehen, die nur an der Schrift liegen.
 // Ein eigener Test hält die Routenliste geschlossen: Zeigt eine weitere Route Kacheln, schlägt er
 // fehl, statt sie ungeprüft zu lassen.
 // Alle Befunde einer Route werden gesammelt, damit ein Lauf jeden Überlauf mit Route, Breite und
@@ -29,6 +31,9 @@ import { routen } from './routen'
 // hinter `system-ui` ab. GitHub Actions (ubuntu-24.04) rendert DejaVu Sans. Lokale Läufe und jede
 // Kalibrierung gehen deshalb über `scripts/e2e-wie-ci.sh`. Das nackte Playwright-Image rendert
 // WenQuanYi Zen Hei (rund 16 % schmaler) und ist keine gültige Kalibrierumgebung.
+
+/** Schrift, gegen die die Mindestspur der Kacheln kalibriert ist (Familienname laut Chromium). */
+const KALIBRIERSCHRIFT = 'DejaVu Sans'
 
 // Grundbreiten des Sweeps. 720 und 952 px sind die Spaltensprünge der Mindestspur 13rem aus 07-13,
 // die zuvor niemand testete (G-07-2).
@@ -128,8 +133,9 @@ async function warteAufLayout(page: Page): Promise<void> {
 
 /**
  * Die Plattformschrift, die die Beträge rendert (CDP `CSS.getPlatformFontsForNode`). Das Projekt
- * `ci` ist Chromium, CDP steht also zur Verfügung. Die Schrift wird nur protokolliert, nie
- * geprüft, weil GitHub sein Image ändern kann.
+ * `ci` ist Chromium, CDP steht also zur Verfügung. Der Aufrufer prüft sie gegen
+ * `KALIBRIERSCHRIFT`; die CI stellt sie im Workflow her (Schritt „Schrift der Kalibrierung
+ * sicherstellen“), das Runner-Image allein garantiert sie nicht.
  */
 async function schriftDerBetraege(page: Page): Promise<string> {
   const sitzung = await page.context().newCDPSession(page)
@@ -445,7 +451,14 @@ test.describe('Kennzahl-Kacheln über alle Breiten (A11Y-03, 07-13)', () => {
       await page.goto(`/#${pfad}`)
       await expect(page.locator('h1')).toBeVisible()
       await page.waitForLoadState('networkidle')
-      console.log(`Schrift der Beträge auf ${pfad}: ${await schriftDerBetraege(page)}`)
+      const schrift = await schriftDerBetraege(page)
+      console.log(`Schrift der Beträge auf ${pfad}: ${schrift}`)
+      expect(
+        schrift,
+        `Schrift weicht von der Kalibrierung ab: erwartet ${KALIBRIERSCHRIFT}, gerendert ${schrift}. ` +
+          'Die Breitenmessung gilt nur mit dieser Schrift (Lauf über scripts/e2e-wie-ci.sh bzw. ' +
+          'den Workflow-Schritt „Schrift der Kalibrierung sicherstellen“).',
+      ).toContain(KALIBRIERSCHRIFT)
 
       // Aufsteigende Breiten: Diagramme ziehen nach dem Viewport nach, sie sind nie breiter.
       const befunde: string[] = []

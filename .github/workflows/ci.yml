@@ -60,10 +60,12 @@ jobs:
           fi
 
   app:
-    # Festes Runner-Image statt des wandernden Labels: Die Kachelbreiten in app/e2e/kacheln.spec.ts
-    # sind gegen die Sans-Schrift dieses Images kalibriert (DejaVu Sans aus fonts-dejavu-core
-    # 2.37-8). Ein anderes Image kann andere Schriften rendern. scripts/e2e-wie-ci.sh stellt diese
-    # Umgebung lokal nach; beides ändert sich nur gemeinsam (G-07-2).
+    # Das Label ubuntu-24.04 fixiert nur das Betriebssystem, nicht den Inhalt des Images: GitHub
+    # aktualisiert es regelmäßig, Schriftpakete eingeschlossen. Die Kachelbreiten in
+    # app/e2e/kacheln.spec.ts sind gegen DejaVu Sans (fonts-dejavu-core 2.37-8) kalibriert. Diese
+    # Schrift wird deshalb im Schritt „Schrift der Kalibrierung sicherstellen“ installiert und
+    # geprüft; die Spec prüft zusätzlich die gerenderte Schrift. scripts/e2e-wie-ci.sh stellt
+    # dieselbe Umgebung lokal nach; beides ändert sich nur gemeinsam (G-07-2).
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -91,6 +93,17 @@ jobs:
         run: npm run build
       - name: Playwright-Chromium installieren
         run: npx playwright install --with-deps chromium
+      - name: Schrift der Kalibrierung sicherstellen
+        # Nach dem Playwright-Schritt, weil dieser weitere Schriften installiert (z. B.
+        # WenQuanYi Zen Hei), die die Auswahl für sans-serif/system-ui beeinflussen können.
+        working-directory: ${{ github.workspace }}
+        run: |
+          sudo apt-get install -y --no-install-recommends fonts-dejavu-core
+          dpkg-query -W -f='fonts-dejavu-core ${Version}\n' fonts-dejavu-core
+          if ! fc-match sans-serif | tee /dev/stderr | grep -q 'DejaVu Sans'; then
+            echo "Schrift weicht von der Kalibrierung ab: sans-serif ist nicht DejaVu Sans" >&2
+            exit 1
+          fi
       - name: Smoke-Test (Playwright + axe)
         run: npm run test:e2e
       - name: Seite für GitHub Pages hochladen
