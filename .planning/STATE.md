@@ -1,43 +1,42 @@
 ---
 gsd_state_version: "1.0"
 current_phase: 07
-current_phase_name: Feinschliff und Veröffentlichung
-status: executing
-stopped_at: Completed 07-14-PLAN.md
-last_updated: "2026-10-07T09:01:49.789Z"
+status: completed
+stopped_at: Phase 07 complete — all phases complete
+last_updated: "2026-10-07T09:31:49.038Z"
 last_activity: 2026-10-07
-last_activity_desc: Phase 07 execution resumed (wave continue)
-state_head: 80f7838ac7aa56769b6da10d47a8b6bc0f478f1c
+last_activity_desc: Phase 07 complete
+state_head: 79d291f369ea4926dc1b000bc03f0a060ad775c0
 progress:
   total_phases: 7
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 68
   completed_plans: 68
-  percent: 86
+  percent: 100
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-10-06)
+See: .planning/PROJECT.md (updated 2026-10-07)
 
 **Core value:** Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch automatische Prüfungen belegt. Die Leitfragen „Woher?“ und „Wofür?“ sind für Laien verständlich beantwortet.
-**Current focus:** Phase 07 — Feinschliff und Veröffentlichung
+**Current focus:** Meilenstein v1 abschließen (alle 7 Phasen fertig)
 
 ## Current Position
 
-Phase: 07 (Feinschliff und Veröffentlichung) — EXECUTING
-Plan: 1 of 13
-Status: Executing Phase 07
-Last activity: 2026-10-07 — Phase 07 execution resumed (wave continue)
+Phase: 07
+Plan: Not started
+Status: All phases complete
+Last activity: 2026-10-07 — Phase 07 complete
 
-Progress: [█████████░] 86%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 54
+- Total plans completed: 68
 - Average duration: -
 - Total execution time: 0.0 hours
 
@@ -51,6 +50,7 @@ Progress: [█████████░] 86%
 | 04 | 6 | - | - |
 | 05 | 16 | - | - |
 | 06 | 17 | - | - |
+| 07 | 14 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: -
@@ -95,6 +95,7 @@ Recent decisions affecting current work:
 - [Phase 07]: 07-10: Commits direkt auf main (git.allow_default_branch_commits: true)
 - [Phase 07]: 07-10: Impressum Thomas Manthey, Lehmbrock 1, 48346 Ostbevern; IP-Satz im Datenschutz auf /ueber; Texte, Schwaerzung/Pruefliste und Veroeffentlichung der Gemeinde-Seitenbilder freigegeben; Fokus der Quelle-Leiste: WA-Standard beibehalten
 - [Phase 07]: 07-12: lighthouse@13.5.0 nur als Einmal-Werkzeug im Scratch-Verzeichnis (--ignore-scripts), alle 11 Routen Lighthouse-a11y 100; nie in package.json oder CI
+- [Phase 07]: 07-14: Kachelraster gegen DejaVu Sans Bold (CI-Schrift) kalibriert, `li`-Einzug zurückgesetzt; UAT 2/2, G-07-2 resolved
 - [Phase 07]: 07-12: Echter Repository-Name ist ostbevern_money (Unterstrich); Pages-URL https://bitwerkstatt.github.io/ostbevern_money/, erster CI-Lauf inkl. deploy grün
 
 ### Pending Todos
@@ -103,7 +104,6 @@ None yet.
 
 ### Blockers/Concerns
 
-- [Phase 1]: Die CI ist nur lokal nachgestellt; der erste Lauf auf GitHub steht aus, bis ein Remote angelegt ist.
 - [Phase 1]: `app/node_modules` im gemounteten Repo enthält macOS-Binaries; im Linux-Sandbox App-Checks in einer Scratch-Kopie ausführen.
 - [Phase 2]: Code-Review 02-REVIEW.md: 3 Warnungen offen (u. a. Vorzeichen-Beschreibung in `befunde.md`, Kommentar zu PB 09/15 sollte S. 296/299 zitieren).
 - [Phase 4]: Code-Review 04-REVIEW-DISPOSITION.md: Befunde WR-01…WR-05, IN-02 offen, alle ohne Auswirkung auf die heutigen Daten (Nutzerentscheidung 2026-10-03). WR-06/IN-01 (`formatiere()`-Fallback) in Plan 05-01 behoben.
@@ -128,6 +128,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-07T09:01:49.704Z
-Stopped at: Completed 07-14-PLAN.md
+Last session: 2026-10-07
+Stopped at: Phase 07 complete (UAT 2/2), ready to complete milestone
 Resume file: None

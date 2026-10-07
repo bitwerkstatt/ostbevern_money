@@ -23,7 +23,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Manuelle Daten und App-Daten** - Vorberichtstabellen, meta.json, Erklärtexte, Stellenplan, App-JSON; Prüfregel 5 grün, `alle.py` reproduzierbar (Spez. P3) (completed 2026-10-04)
 - [x] **Phase 5: Leitfragen-Seiten** - Start, Einnahmen, Ausgaben, Geldfluss und Glossar beantworten „Woher?“ und „Wofür?“ (Spez. P4) (completed 2026-10-05)
 - [x] **Phase 6: Kontext-Seiten** - Entwicklung, Investitionen und Schulden, Rat entscheidet, Stellenplan, „Was nicht im Haushalt steht“ (Spez. P5) (completed 2026-10-06)
-- [ ] **Phase 7: Feinschliff und Veröffentlichung** - Quellenbelege, Barrierefreiheit, Mobilansicht, Textdurchgang, Smoke-Test, Deployment auf GitHub Pages (Spez. P7)
+- [x] **Phase 7: Feinschliff und Veröffentlichung** - Quellenbelege, Barrierefreiheit, Mobilansicht, Textdurchgang, Smoke-Test, Deployment auf GitHub Pages (Spez. P7) (completed 2026-10-07)
 
 ## Phase Details
 
@@ -264,7 +264,7 @@ Plans:
   4. Ein Playwright-Smoke-Test bestätigt, dass jede Route ohne Konsolenfehler rendert und die Diagramme Daten enthalten. Ein Textdurchgang bestätigt, dass alle Texte deutsch und durchgehend in der Du-Anrede sind.
   5. GitHub Actions baut die App und deployt sie auf GitHub Pages (eigener Account), und die App ist unter einer öffentlichen URL erreichbar.
 
-**Plans**: 14/14 plans executed
+**Plans**: 14/14 plans complete
 **UI hint**: yes
 
 Plans:
@@ -313,4 +313,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
 | 6. Kontext-Seiten | 17/17 | Complete    | 2026-10-06 |
-| 7. Feinschliff und Veröffentlichung | 14/14 | In Progress | - |
+| 7. Feinschliff und Veröffentlichung | 14/14 | Complete    | 2026-10-07 |

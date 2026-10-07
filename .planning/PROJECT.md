@@ -33,17 +33,16 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 - ✓ Worüber entscheidet der Rat? Bindungsgrad-Balken mit Produkten, „Was der Rat nicht beeinflussen kann“, Einzelzuschüsse (Regel 5), Selbstauskunft-Hinweis — Phase 6
 - ✓ Stellenplan 2026/2025/besetzt, nach Aufgabenbereich und Gruppe, Personalaufwand je Aufgabenbereich — Phase 6
 - ✓ Hinweis „Was nicht im Haushalt steht“ (BBO, TEO AöR) — Phase 6
+- ✓ Quellenbelege: Zeilenrechteck + gerenderte WebP-Seiten, `quellen.json`, „Quelle anzeigen“-Leiste — Phase 7
+- ✓ Jahr-Umschalter, Fußzeile mit Datenstand, Hinweis „inoffizielles Projekt“, echte Kontakt-Adresse und PDF-Link der Gemeinde (D-17) — Phase 7
+- ✓ Barrierefreiheit (Lighthouse-a11y 100 auf allen 11 Routen), Tabellenalternative zu jedem Diagramm, responsiv ab 360 px (Kachel-Raster über alle Spaltensprünge geprüft) — Phase 7
+- ✓ Deployment über GitHub Actions auf GitHub Pages: https://bitwerkstatt.github.io/ostbevern_money/ — Phase 7
+- ✓ Pipeline ist für das ProFIS-Layout generisch konfigurierbar (Jahr, Spalten, Seitenbereiche in `jahrgaenge/{jahr}.toml`) — Phase 1; der Nachweis mit echtem Haushalt 2027 ist ERW-03 (v2)
+
 
 ### Active
 
-**Pipeline (Python, uv):**
-- [ ] Quellenbelege: Zeilenrechteck + gerenderte WebP-Seiten, `quellen.json`
-- [ ] Pipeline ist für das ProFIS-Layout generisch: Jahr, Spalten und Seitenbereiche konfigurierbar, sodass der Haushalt 2027 mit wenig Änderung verarbeitet werden kann
-
-**App (Vue 3, TS, Vite, Web Awesome, ECharts):**
-- [ ] Jahr-Umschalter, „Quelle anzeigen“, Fußzeile mit Datenstand und Hinweis „inoffizielles Projekt“ (Jahr-Umschalter und Fußzeile seit Phase 5; offen: „Quelle anzeigen“, echte Kontakt-/PDF-Links in Phase 7, D-17)
-- [ ] Barrierefreiheit (Lighthouse ≥ 95), Tabellenalternative zu jedem Diagramm, responsiv ab 360 px
-- [ ] Deployment über GitHub Actions auf GitHub Pages (eigener Account)
+- (keine offenen v1-Anforderungen — Meilenstein bereit zum Abschluss)
 
 ### Out of Scope
 
@@ -90,7 +89,7 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 | Münster-Code übernehmen | Erlaubnis von Code for Münster liegt vor, spart Aufwand bei Charts und Komponenten | — Pending |
 | Einwohnerzahl 11.741 | Im Haushalt selbst begründet (Vorbericht), Stichtag bekannt | — Pending |
 | Du-Anrede überall | Einheitlich und nahbar, wird später auch für die Spiele passen | — Pending |
-| GitHub Pages, eigener Account | Einfachstes Hosting, Umzug später möglich | — Pending |
+| GitHub Pages, eigener Account | Einfachstes Hosting, Umzug später möglich | ✓ Good — Phase 7 (Repo `ostbevern_money`, CI inkl. deploy grün) |
 | Kämmerei erst nach Fertigstellung informieren | Kein Abstimmungs-Gate; Hinweis „inoffizielles Projekt“ | — Pending |
 | Pipeline generisch für ProFIS-Layout | Haushalt 2027 soll mit wenig Änderung verarbeitbar sein | — Pending |
 | v1 = Pipeline + Leitfragen + Kontextseiten + Feinschliff; Spiele in v2 | Fokus auf korrekte Kernaussagen; Planspiel-Regeln brauchen fachliche Klärung | — Pending |
@@ -116,6 +115,8 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 | Rücklagen-Fußnote nennt Beträge ohne Vorzeichen („zuzüglich der Verrechnung“) | Beträge-Lesart ergibt die gedruckten 1,77 %; Vorzeichen-Zusatz nicht nötig (UAT 06, WR-01) | ✓ Good — Phase 6 |
 | Kontextseiten über Menügruppe „Mehr wissen“ (Disclosure, Drawer-Gruppe mobil), Position rein rechnerisch | Navigation bleibt bei 360 px und nach Resize erreichbar | ✓ Good — Phase 6 |
 | Phase-6-Dateien stehen unter einem Typografie-Wächter (`stiltokens.test.ts`), Bestand aus Phase 5 wird in Phase 7 bereinigt | UI-SPEC-Skala gilt für neuen Code ohne Ausnahme | ✓ Good — Quick 261006-f1w |
+| Kachelraster gegen die CI-Schrift kalibriert: `li`-Einzug von Web Awesome zurückgesetzt, Mindestspalte neu gegen DejaVu Sans Bold, e2e prüft alle Spaltensprünge und loggt die gerenderte Schrift | Lokale Kalibrierung lief mit anderer Fallback-Schrift als der GitHub-Runner (G-07-2) | ✓ Good — Phase 7 (07-14, UAT 2/2) |
+| Lighthouse nur als Einmal-Werkzeug im Scratch-Verzeichnis, nie in package.json/CI | Keine neue Abhängigkeit für einen einmaligen Nachweis | ✓ Good — Phase 7 (alle 11 Routen a11y 100) |
 
 ## Evolution
 
@@ -135,4 +136,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-06 after Phase 6*
+*Last updated: 2026-10-07 after Phase 7*
