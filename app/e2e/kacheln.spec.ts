@@ -17,13 +17,22 @@ import { routen } from './routen'
 // - die Betragsgröße ist `--wa-font-size-l` bei jeder Breite (G-02),
 // - der Knopf zeigt „Quelle“, behält den zugänglichen Namen „Quelle anzeigen: …, PDF-Seite {n}“
 //   und ist mindestens 44 × 44 px groß (G-03),
-// - jede Kachel steht in einem Raster `.om-kachelraster` (G-04).
+// - jede Kachel steht in einem Raster `.om-kachelraster` (G-04),
+// - das `li` um jede Kachel hat Außenabstand 0 (07-14, Einzug aus Web Awesome),
+// - je Route wird die Schrift der Beträge protokolliert (nicht geprüft).
 // Ein eigener Test hält die Routenliste geschlossen: Zeigt eine weitere Route Kacheln, schlägt er
 // fehl, statt sie ungeprüft zu lassen.
 // Alle Befunde einer Route werden gesammelt, damit ein Lauf jeden Überlauf mit Route, Breite und
 // Betrag nennt.
+//
+// Messumgebung (Lücke G-07-2, Plan 07-14): Die gerenderten Breiten hängen von der Systemschrift
+// hinter `system-ui` ab. GitHub Actions (ubuntu-24.04) rendert DejaVu Sans. Lokale Läufe und jede
+// Kalibrierung gehen deshalb über `scripts/e2e-wie-ci.sh`. Das nackte Playwright-Image rendert
+// WenQuanYi Zen Hei (rund 16 % schmaler) und ist keine gültige Kalibrierumgebung.
 
-const BREITEN = [360, 400, 480, 560, 600, 700, 768, 1024, 1280, 1440] as const
+// Spaltensprünge sind der ungünstigste Fall, weil die Spur dort genau der Mindestbreite entspricht
+// (720 und 952 px sind die Sprünge der Mindestspur 13rem aus 07-13, die zuvor niemand testete).
+const BREITEN = [360, 400, 480, 560, 600, 700, 720, 768, 952, 1024, 1280, 1440] as const
 const HOEHE = 800
 const MINDESTMASS = 44
 const TOLERANZ = 0.5
@@ -95,6 +104,34 @@ async function warteAufLayout(page: Page): Promise<void> {
         pruefe()
       }),
   )
+}
+
+/**
+ * Die Plattformschrift, die die Beträge rendert (CDP `CSS.getPlatformFontsForNode`). Das Projekt
+ * `ci` ist Chromium, CDP steht also zur Verfügung. Die Schrift wird nur protokolliert, nie
+ * geprüft, weil GitHub sein Image ändern kann.
+ */
+async function schriftDerBetraege(page: Page): Promise<string> {
+  const sitzung = await page.context().newCDPSession(page)
+  try {
+    await sitzung.send('DOM.enable')
+    await sitzung.send('CSS.enable')
+    const dokument = await sitzung.send('DOM.getDocument', { depth: -1 })
+    const knoten = await sitzung.send('DOM.querySelectorAll', {
+      nodeId: dokument.root.nodeId,
+      selector: '.om-kennzahl .om-zahl',
+    })
+    const schriften = new Set<string>()
+    for (const nodeId of knoten.nodeIds) {
+      const antwort = await sitzung.send('CSS.getPlatformFontsForNode', { nodeId })
+      for (const eintrag of antwort.fonts) {
+        schriften.add(`${eintrag.familyName} (${eintrag.postScriptName})`)
+      }
+    }
+    return schriften.size > 0 ? [...schriften].join(', ') : '(keine)'
+  } finally {
+    await sitzung.detach()
+  }
 }
 
 /** Misst alle sichtbaren Kacheln der Seite im aktuellen Zustand (eine Auswertung im Browser). */
@@ -257,6 +294,23 @@ function messeKacheln(page: Page): Promise<KachelMessung> {
             `„${name}“: Kachel scrollWidth ${String(kachel.scrollWidth)} > clientWidth ${String(kachel.clientWidth)}`,
           )
         }
+
+        // (i) das li des Rasters hat keinen Außenabstand (Einzug aus Web Awesome native.css)
+        const eintrag = kachel.closest('li')
+        if (eintrag !== null) {
+          const eintragStil = getComputedStyle(eintrag)
+          const raender = [
+            eintragStil.marginLeft,
+            eintragStil.marginRight,
+            eintragStil.marginTop,
+            eintragStil.marginBottom,
+          ]
+          if (raender.some((rand) => Math.abs(zahl(rand)) > toleranz)) {
+            befunde.push(
+              `„${name}“: li hat Außenabstand links ${eintragStil.marginLeft}, rechts ${eintragStil.marginRight}, oben ${eintragStil.marginTop}, unten ${eintragStil.marginBottom}, erwartet 0 (Einzug des li aus Web Awesome (native.css) nicht zurückgesetzt)`,
+            )
+          }
+        }
       }
 
       // Seite: kein waagerechtes Scrollen, die breitesten Verursacher nennen.
@@ -325,6 +379,7 @@ test.describe('Kennzahl-Kacheln über alle Breiten (A11Y-03, 07-13)', () => {
       await page.goto(`/#${pfad}`)
       await expect(page.locator('h1')).toBeVisible()
       await page.waitForLoadState('networkidle')
+      console.log(`Schrift der Beträge auf ${pfad}: ${await schriftDerBetraege(page)}`)
 
       // Aufsteigende Breiten: Diagramme ziehen nach dem Viewport nach, sie sind nie breiter.
       const befunde: string[] = []

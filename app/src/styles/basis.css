@@ -29,8 +29,11 @@ body {
   list-style: none;
 }
 
+/* Setzt den li-Einzug aus Web Awesome native.css zurück (`margin-inline-start: 1.125em`, 18 px):
+   Er verkleinerte jede Kachel um 18 px und rückte sie gegen die Überschrift ein (G-07-2). */
 .om-kachelraster > li {
   min-width: 0;
+  margin: 0;
 }
 
 @media (min-width: 700px) {
