@@ -5,7 +5,7 @@
 
 import type { BarSeriesOption, LineSeriesOption } from 'echarts'
 
-import { HOHL_FLAECHE } from '@/charts/echartsTheme'
+import { HOHL_FLAECHE, flaechenFarbe } from '@/charts/echartsTheme'
 import { jahr as formatiereJahr } from '@/charts/format'
 import { wertartName } from '@/lib/jahr'
 import type { ZeitreihenSerie } from '@/lib/zeitreihen'
@@ -33,16 +33,8 @@ const BERECHNET_ZEILE = 'berechnet'
 /** Randbreite hohler Säulen (UI-SPEC: Rand 2 px). */
 const HOHL_RAND = 2
 
-/** Fläche für hohle Marker (Ansatz, Planung): der Token der Kartenfläche, sonst Weiß. */
-export function flaechenFarbe(): string {
-  if (typeof document === 'undefined') {
-    return 'white'
-  }
-  const wert = getComputedStyle(document.documentElement)
-    .getPropertyValue('--wa-color-surface-default')
-    .trim()
-  return wert === '' ? 'white' : wert
-}
+// Flächenfarbe für hohle Marker: eine Quelle in echartsTheme.ts (06/IN-01), Importeure bleiben unverändert.
+export { flaechenFarbe }
 
 /**
  * Eine Linienserie in der Farbe `farbe` mit dem Stil ihrer Wertart; `flaeche` füllt die hohlen
