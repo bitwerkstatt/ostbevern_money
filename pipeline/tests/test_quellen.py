@@ -858,6 +858,31 @@ def test_pruefwoerter_liefern_nur_stichwort_und_zeilenindex() -> None:
     ]
 
 
+def test_pruefliste_markiert_nur_die_zeile_im_schwaerzrechteck() -> None:
+    innen = _zeile(_wort("Verantwortlich", 40, 120, 100, 108))
+    nachbar = _zeile(_wort("Bürgermeister", 40, 120, 110, 118))
+    rechts_daneben = _zeile(_wort("Kämmerin", 300, 360, 100, 108))
+    rechteck = (38.0, 98.0, 125.0, 110.0)  # reicht mit Rand bis in die Nachbarzeile
+    assert quellen._zeile_geschwaerzt(innen, [rechteck])
+    assert not quellen._zeile_geschwaerzt(nachbar, [rechteck])
+    assert not quellen._zeile_geschwaerzt(rechts_daneben, [rechteck])
+    assert not quellen._zeile_geschwaerzt(innen, [])
+
+
+def test_bericht_markiert_geschwaerzt_je_treffer(tmp_path: Path) -> None:
+    pfad = tmp_path / "bericht.md"
+    quellen.schreibe_quellenbericht(
+        {},
+        {},
+        pfad,
+        pruefliste=[(79, "Bürgermeister", 31, True), (79, "Bürgermeister", 45, False)],
+        schwaerzungen={79: 2},
+    )
+    text = pfad.read_text(encoding="utf-8")
+    assert "| 79 | Bürgermeister | 31 | ja |" in text
+    assert "| 79 | Bürgermeister | 45 | nein |" in text
+
+
 def test_zeile_nach_etikett_wird_zum_schwaerzungsrechteck() -> None:
     zeilen = [
         _zeile(_wort("Aufgestellt", 40, 100, 100, 108)),

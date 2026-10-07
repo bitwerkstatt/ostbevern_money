@@ -919,6 +919,18 @@ def _schneidet(bbox: Sequence[float], rechteck: Rechteck) -> bool:
     )
 
 
+def _zeile_geschwaerzt(zeile: RahmenZeile, rechtecke: Iterable[Rechteck]) -> bool:
+    """Liegt die Zeile (Mitte der Zeilenhöhe, waagerecht überlappend) in einem Schwärzrechteck?
+
+    Die Mitte statt der ganzen Zeilenhöhe, damit der 2-pt-Rand eines Rechtecks nicht die
+    Nachbarzeile mitzählt.
+    """
+    mitte = (zeile.top + zeile.bottom) / 2
+    x0 = min(wort.x0 for wort in zeile.woerter)
+    x1 = max(wort.x1 for wort in zeile.woerter)
+    return any(r[1] < mitte < r[3] and x0 < r[2] and r[0] < x1 for r in rechtecke)
+
+
 @dataclass
 class _Sammler:
     """Sammelt die Belege einer Erzeugung und merkt sich die Gründe fehlender Rechtecke."""
@@ -1317,13 +1329,14 @@ def schreibe_quellenbericht(
     gruende: Mapping[str, str],
     pfad: Path,
     *,
-    pruefliste: Sequence[tuple[int, str, int]] | None = None,
+    pruefliste: Sequence[tuple[int, str, int, bool]] | None = None,
     schwaerzungen: Mapping[int, int] | None = None,
 ) -> None:
     """Schreibt den Bericht aller Belege ohne Rechteck (D-03), deterministisch sortiert.
 
     Seitenbelege (`seite:{n}`) stehen nie in den Tabellen: sie haben absichtlich kein Rechteck.
-    Mit `pruefliste` (`(Seite, Stichwort, Zeilenindex)`) und `schwaerzungen` (Seite -> Anzahl
+    Mit `pruefliste` (`(Seite, Stichwort, Zeilenindex, geschwärzt)`; `geschwärzt` gilt für die
+    Zeile des Treffers, nicht für die ganze Seite) und `schwaerzungen` (Seite -> Anzahl
     Rechtecke) folgen die Datenschutz-Prüfliste und die Liste der geschwärzten Seiten, jeweils
     ohne Textauszug.
     """
@@ -1378,8 +1391,8 @@ def schreibe_quellenbericht(
             "| Seite | Stichwort | Zeile | geschwärzt |",
             "|---|---|---|---|",
         ]
-        for seite, wort, index in sorted(pruefliste):
-            markiert = "ja" if seite in geschwaerzt else "nein"
+        for seite, wort, index, zeile_geschwaerzt in sorted(pruefliste):
+            markiert = "ja" if zeile_geschwaerzt else "nein"
             zeilen.append(f"| {seite} | {wort} | {index} | {markiert} |")
         zeilen += [
             "",
@@ -1441,7 +1454,12 @@ def erzeuge_quellen(
         _sammle_seiten(sammler, jahrgang, [haushalt, produkte, investitionen, stellenplan, texte])
         masse = zugriff.alle_masse
         pruefliste = [
-            (seite, wort, index)
+            (
+                seite,
+                wort,
+                index,
+                _zeile_geschwaerzt(zugriff.zeilen(seite)[index - 1], schwaerzung.fuer(seite)),
+            )
             for seite in masse
             for wort, index in finde_pruefwoerter(zugriff.zeilen(seite), pruefwoerter)
         ]
