@@ -323,6 +323,11 @@ export function schuldenstandOption(schmal: boolean): EChartsOption {
   }
 }
 
+/** Betrag in Euro; ein fehlender Wert erscheint als `KEIN_WERT`, nie als erfundene 0 €. */
+function euroOderKeinWert(wert: number | null | undefined): string {
+  return wert === null || wert === undefined ? KEIN_WERT : euro(wert)
+}
+
 /** Tooltip-Zeilen eines Jahres (noch unmaskiert, `tooltipZeilen` maskiert). */
 function tooltipTexte(reihen: Schuldenreihen, index: number): string[] {
   const jahr = reihen.jahre[index]
@@ -334,11 +339,11 @@ function tooltipTexte(reihen: Schuldenreihen, index: number): string[] {
   const kopf = `${formatiereJahr(jahr)} · ${wertartName(wertart)}${reihen.berechnet[index] === true ? ' · berechnet' : ''}`
   return [
     kopf,
-    `${NAME_INVESTITIONSKREDITE}: ${euro(reihen.investitionskredite[index] ?? 0)}`,
-    `${NAME_NRW_BANK}: ${euro(reihen.nrwBank[index] ?? 0)}`,
-    `Schuldenstand: ${euro(reihen.gesamt[index] ?? 0)}`,
-    `Je Einwohner: ${euro(reihen.proKopf[index] ?? 0)}`,
-    `Liquiditätskredite (nicht im Schuldenstand): ${liquiditaet === null ? KEIN_WERT : euro(liquiditaet)}`,
+    `${NAME_INVESTITIONSKREDITE}: ${euroOderKeinWert(reihen.investitionskredite[index])}`,
+    `${NAME_NRW_BANK}: ${euroOderKeinWert(reihen.nrwBank[index])}`,
+    `Schuldenstand: ${euroOderKeinWert(reihen.gesamt[index])}`,
+    `Je Einwohner: ${euroOderKeinWert(reihen.proKopf[index])}`,
+    `Liquiditätskredite (nicht im Schuldenstand): ${euroOderKeinWert(liquiditaet)}`,
   ]
 }
 
