@@ -582,6 +582,43 @@ def test_tabellenzeile_mit_zu_kurzer_werteliste_wird_als_quellenfehler_gemeldet(
         )
 
 
+def test_tabellenzeile_pruefung_der_werteliste_haengt_nicht_vom_pdf_ab() -> None:
+    # Keine Zeile passt zur Bezeichnung: die zu kurze Werteliste fällt trotzdem auf.
+    zeilen = [_zeile(_wort("Grundsteuer", 40, 90, 120, 128), _wort("160", 300, 320, 120, 128))]
+    with pytest.raises(QuellenFehler, match="Jahresindex 2"):
+        quellen.finde_tabellenzeile(
+            zeilen, "Hundesteuer", [1, 2], ziel_index=2, breite=595.28, hoehe=841.89
+        )
+
+
+def test_produkt_ohne_pdf_seiten_wird_als_quellenfehler_gemeldet(jahrgang: Jahrgang) -> None:
+    with pytest.raises(QuellenFehler, match="keine pdf_seiten"):
+        quellen._sammle_produkte(None, jahrgang, [{"code": "010101", "pdf_seiten": []}])  # type: ignore[arg-type]
+
+
+def test_vorbericht_gesamtzeile_ohne_ist_gesamt_wird_als_quellenfehler_gemeldet(
+    monkeypatch: pytest.MonkeyPatch, jahrgang: Jahrgang
+) -> None:
+    tabelle = {
+        "quelle_einheit": "teur",
+        "posten": [],
+        "gesamt_vorbericht": {"quelle": 27, "werte": [1, 2, 3]},
+    }
+    haushalt = {
+        "jahre": [jahrgang.haushaltsjahr - 1, jahrgang.haushaltsjahr],
+        "vorbericht": {"steuerarten": tabelle},
+        "eigenkapital": {**tabelle, "gesamt_vorbericht": {"quelle": None, "werte": []}},
+    }
+    ohne_gesamt = pl.DataFrame({"ist_gesamt": [False], "posten_name": ["Gewerbesteuer"]})
+    monkeypatch.setattr(
+        quellen,
+        "_lies_vorbericht_tabellen",
+        lambda _wurzel: {"steuerarten": ohne_gesamt, "eigenkapital": ohne_gesamt},
+    )
+    with pytest.raises(QuellenFehler, match="keine ist_gesamt-Zeile"):
+        quellen._sammle_vorbericht(None, jahrgang, Path("."), haushalt)  # type: ignore[arg-type]
+
+
 def test_nachwuchszeile_mit_leerer_gruppe_wird_als_quellenfehler_gemeldet() -> None:
     zeilen = [_zeile(_wort("Anwärter", 40, 90, 120, 128), _wort("Beamte", 100, 140, 120, 128))]
     with pytest.raises(QuellenFehler, match="leere Gruppenbezeichnung"):

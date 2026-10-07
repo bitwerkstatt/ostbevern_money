@@ -364,6 +364,13 @@ def finde_tabellenzeile(
     die vollständige Folge aller gedruckten Werte. Ohne Zielwert zählt die Beschriftung allein.
     Zwei oder mehr Treffer ergeben `mehrdeutig`, keiner `nicht_gefunden` bzw. `betrag_fehlt`.
     """
+    # Vor der Suche prüfen: Ein zu kurzes `werte` darf nicht vom PDF-Inhalt abhängen (nur dann
+    # auffallen, wenn eine Kandidatenzeile gefunden wird).
+    if not 0 <= ziel_index < len(werte):
+        raise QuellenFehler(
+            f"Tabellenzeile {bezeichnung!r}: kein Wert für Jahresindex {ziel_index} "
+            f"({len(werte)} Werte)"
+        )
     kandidaten: list[tuple[RahmenZeile, list[float]]] = []
     for zeile in zeilen:
         label, zahlen = _zerlege_tabellenzeile(zeile)
@@ -371,11 +378,6 @@ def finde_tabellenzeile(
             kandidaten.append((zeile, zahlen))
     if not kandidaten:
         return None, GRUND_NICHT_GEFUNDEN
-    if not 0 <= ziel_index < len(werte):
-        raise QuellenFehler(
-            f"Tabellenzeile {bezeichnung!r}: kein Wert für Jahresindex {ziel_index} "
-            f"({len(werte)} Werte)"
-        )
     ziel = werte[ziel_index]
     if ziel is not None:
         kandidaten = [(z, b) for z, b in kandidaten if any(_gleich(x, ziel) for x in b)]
@@ -1271,6 +1273,8 @@ def _sammle_produkte(sammler: _Sammler, jahrgang: Jahrgang, produkte: Sequence[d
     """pr für die Startseite jedes Produkts, gz für jede Grundzahl."""
     for produkt in produkte:
         code = produkt["code"]
+        if not produkt["pdf_seiten"]:
+            raise QuellenFehler(f"Produkt {code}: keine pdf_seiten")
         seite = produkt["pdf_seiten"][0]
         sammler.suche(
             schluessel_pr(code),
