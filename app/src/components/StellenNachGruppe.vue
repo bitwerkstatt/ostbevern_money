@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import type { BarSeriesOption, EChartsOption } from 'echarts'
 
-import { KATEGORIE_FARBEN } from '@/charts/echartsTheme'
+import { NEUTRAL_DUNKEL_FARBE } from '@/charts/echartsTheme'
 import { jahr as formatiereJahr, vzae } from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
 import BaseChart from '@/components/BaseChart.vue'
@@ -28,7 +28,7 @@ const KOPFRAUM_SCHMAL = 1.35
 /** Höchstbreite einer Säule in px, damit eine einzelne Gruppe nicht wie ein Block wirkt. */
 const SAEULE_MAX = 48
 
-const farbe = KATEGORIE_FARBEN[1] ?? '#545868'
+const farbe = NEUTRAL_DUNKEL_FARBE
 
 const info = computed(() => TEILE.find((eintrag) => eintrag.teil === props.teil))
 const zeilen = computed(() => stellenNachGruppe(props.teil))

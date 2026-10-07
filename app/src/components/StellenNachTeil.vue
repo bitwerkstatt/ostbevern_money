@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import type { BarSeriesOption, EChartsOption } from 'echarts'
 
-import { HOHL_FLAECHE, KATEGORIE_FARBEN } from '@/charts/echartsTheme'
+import { HOHL_FLAECHE, NEUTRAL_DUNKEL_FARBE, NEUTRAL_MITTEL_FARBE } from '@/charts/echartsTheme'
 import { datum, jahr as formatiereJahr, KEIN_WERT, vzae } from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
 import BaseChart from '@/components/BaseChart.vue'
@@ -46,8 +46,8 @@ const legende = computed(
     }`,
 )
 
-const FARBE_DUNKEL = KATEGORIE_FARBEN[1] ?? '#545868'
-const FARBE_HELL = KATEGORIE_FARBEN[2] ?? '#9194a2'
+const FARBE_DUNKEL = NEUTRAL_DUNKEL_FARBE
+const FARBE_HELL = NEUTRAL_MITTEL_FARBE
 
 type Feld = 'haushaltsjahr' | 'vorjahr' | 'besetzt'
 

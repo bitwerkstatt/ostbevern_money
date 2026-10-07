@@ -58,11 +58,16 @@ function token(name: string, ersatz: string): string {
 
 export const CHART_THEME = 'ostbevern-money'
 
+/** Dunkles Grau der kategorischen Palette (zweite Serienfarbe) für Komponenten ohne Rückfallwert. */
+export const NEUTRAL_DUNKEL_FARBE = token('--wa-color-neutral-40', '#545868')
+/** Mittleres Grau der kategorischen Palette (dritte Serienfarbe). */
+export const NEUTRAL_MITTEL_FARBE = token('--wa-color-neutral-60', '#9194a2')
+
 /** Kategorische Serienfarben: Ostbevern-Gold zuerst, dann Grautöne. */
 export const KATEGORIE_FARBEN = [
   token('--wa-color-brand-60', '#da7e00'),
-  token('--wa-color-neutral-40', '#545868'),
-  token('--wa-color-neutral-60', '#9194a2'),
+  NEUTRAL_DUNKEL_FARBE,
+  NEUTRAL_MITTEL_FARBE,
   token('--wa-color-neutral-80', '#c7c9d0'),
 ]
 
