@@ -47,13 +47,13 @@
   4. `01-REVIEW-DISPOSITION.md`, `05-REVIEW-DISPOSITION.md` und `06-REVIEW-DISPOSITION.md` unter `.planning/milestones/v1.0-phases/` stehen auf `open: 0`, jede Zeile nennt Commit oder Begründung. Nebenbei behobene Befunde (z. B. 05/IN-09, Platzhalter-Kontaktdaten, erledigt mit D-17 in Phase 7) sind mit Beleg auf fixed gesetzt, 06/WR-01 (Rücklagen-Fußnote) ist mit der Begründung aus UAT 06 erfasst. Jeder reine Hygiene-Befund (Duplikate, toter Code, Hex-Fallbacks, Kopplung, Test-Nits, Doku-Drift) ist behoben, wenn das wenig kostet, sonst auf deferred mit Begründung in der Source-Spalte.
   5. Die Querschnittsbedingung hält: `alle.py --jahr 2026` ist byte-identisch oder begründet geändert, Prüfregeln 1–10 sind grün, die CI-Kette von Pipeline und App (Scratch-Kopie, inkl. axe-Smoke und 360-px-Prüfungen) ist grün.
 
-**Plans**: 12 plans in 5 waves
+**Plans**: 3/12 plans executed in 5 waves
 
 Plans:
 **Wave 1**
-- [ ] 08-01-PLAN.md — Jahreszahlen nur als Platzhalter: pruefe_text, Titelprüfung, jahr.-Schlüssel, sieben Abschnitte, istJahrneutral (TXT-03; Welle 1)
-- [ ] 08-02-PLAN.md — rd./rund-Regel in format.ts, Lesehilfe in vier Fällen, gemeinsame Minderaufwand-Regel (TXT-01, TXT-02, TXT-04; Welle 1)
-- [ ] 08-03-PLAN.md — Stellenplan-Kacheln berechnet mit eigenen Seiten, einwohnerZahl() wirft laut (TXT-05, TXT-06; Welle 1)
+- [x] 08-01-PLAN.md — Jahreszahlen nur als Platzhalter: pruefe_text, Titelprüfung, jahr.-Schlüssel, sieben Abschnitte, istJahrneutral (TXT-03; Welle 1)
+- [x] 08-02-PLAN.md — rd./rund-Regel in format.ts, Lesehilfe in vier Fällen, gemeinsame Minderaufwand-Regel (TXT-01, TXT-02, TXT-04; Welle 1)
+- [x] 08-03-PLAN.md — Stellenplan-Kacheln berechnet mit eigenen Seiten, einwohnerZahl() wirft laut (TXT-05, TXT-06; Welle 1)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 08-04-PLAN.md — zwölf rd.-Altkopien durch EuroBetrag bzw. betragMitHinweis ersetzt (TXT-04; Welle 2)
@@ -105,5 +105,5 @@ Phases execute in numeric order: 8 → 9
 | 5. Leitfragen-Seiten | v1.0 | 16/16 | Complete | 2026-10-05 |
 | 6. Kontext-Seiten | v1.0 | 17/17 | Complete | 2026-10-06 |
 | 7. Feinschliff und Veröffentlichung | v1.0 | 14/14 | Complete | 2026-10-07 |
-| 8. Fixes und Triage | v1.0.1 | 0/12 | Planned | - |
+| 8. Fixes und Triage | v1.0.1 | 3/12 | In Progress | - |
 | 9. Sicherheit und Audit | v1.0.1 | 0/TBD | Not started | - |
