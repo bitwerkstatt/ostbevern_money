@@ -1,186 +1,267 @@
-# Phase 07 — UI Review
+# Phase 07 — UI Review (Re-Audit nach Gap-Schließung 07-13)
 
-**Audited:** 2026-10-07
-**Baseline:** 07-UI-SPEC.md (design contract, approved 2026-10-06)
-**Screenshots:** Not captured (Playwright browser installation blocked by sandbox firewall; code-based audit conducted)
-**Interaction captures:** off (workflow.ui_interaction_capture is false)
-
----
-
-## Pillar Scores
-
-| Pillar | Score | Key Finding |
-|--------|-------|-------------|
-| 1. Copywriting | 3/4 | Du-Anrede consistent, German throughout; minor: verify "PDF-Seite {n}" text wrapping in tile at 360px |
-| 2. Visuals | 2/4 | Responsive grid layout breaks at 400–560px: tiles shrink to 128–176px content width while amount font stays 20px bold with `white-space: nowrap` |
-| 3. Color | 4/4 | Brand accent (gold) used only in spec'd places; no hardcoded colors; token-compliant |
-| 4. Typography | 4/4 | Exactly 4 font sizes (s, m, l, 2xl) and 2 weights (normal, bold) in use; no prohibited tokens |
-| 5. Spacing | 3/4 | 7-token scale compliant per spec; tolerated `--wa-space-s` at 25 usages acceptable; grid gap and tile padding correct |
-| 6. Experience Design | 3/4 | Loading, error, and empty states implemented; modal source drawer with focus management; **BLOCKER: tile overflow at 400–560px breaks A11Y-03 (44px target and no h-scroll) |
-
-**Overall: 19/24**
+**Auditiert:** 2026-10-07 (nach Gap-Schließung 07-13)  
+**Basis:** 07-UI-SPEC.md mit Nachtrag 2026-10-07 (Entscheidungen G-01 bis G-05)  
+**Screenshots:** Nicht erfasst (Playwright-Captures im Sandbox-Bild nicht möglich; Code-Audit durchgeführt)  
+**Interaktions-Captures:** aus (workflow.ui_interaction_capture = false)
 
 ---
 
-## Top 3 Priority Fixes
+## Zusammenfassung Gap-Schließung
 
-1. **BLOCKER: Responsive tile overflow at 400–560px widths** — User cannot read amounts in KennzahlKachel tiles (violates A11Y-03 layout principle). **Root cause:** `.om-zahl { white-space: nowrap }` at `app/src/styles/basis.css:14` prevents wrapping while grid creates 2–3 columns with only 128–176px content width. **Fix:** Modify `.om-zahl` to allow wrapping in tile context (e.g., `.om-kennzahl .om-zahl { white-space: normal; }`) or add `overflow-wrap: break-word` to `.om-zahl` globally. **Test:** Add widths 400, 480, 560px to Playwright `mobil` project; assert `tile.scrollWidth <= tile.clientWidth` for all `.om-kennzahl` elements at each breakpoint.
+Die vorherige Prüfung (07-UI-REVIEW.md, 2026-10-06) meldete:
+- **BLOCKER 1:** Kachel-Überläufe bei 400–560px (A11Y-03-Verletzung), verursacht durch `.om-zahl { white-space: nowrap }` bei enger Spalte
+- **WARNING 2:** „Quelle anzeigen"-Text-Umbruch nicht getestet bei mittleren Breiten
+- **WARNING 3:** Typografie-Konsistenz von h3-Elementen nicht vollständig geprüft
 
-2. **WARNING: "Quelle anzeigen" button text wrapping not tested at intermediate widths** — UI-SPEC allows wrap at 360px in kachel variant (`inner width 124px`); no test confirms it doesn't overflow at 400–560px. **Fix:** Add assertions to mobile Playwright test: `button.scrollWidth <= button.clientWidth` for `.om-quelle-knopf--kachel` at 400, 480, 560px.
+**Gap-Plan 07-13** (abgeschlossen 2026-10-07, 13 min) adressiert alle drei mit:
 
-3. **WARNING: Typography consistency check incomplete for h3 elements** — UI-SPEC D-18 requires `h3` in StellenplanPage and `.om-zuschuesse__untertitel` to use Heading role (font-size l, weight bold). Stiltokens test confirms prohibition of `--wa-font-size-xl` and `--wa-font-weight-semibold`, but manual verification of visual consistency at each breakpoint missing.
+1. **Gemeinsames Kachelraster** `.om-kachelraster` mit 13rem Mindestspur (`G-04`, kalibriert durch e2e-Test)
+2. **Betrag bleibt font-size-l** bei jeder Breite (Display-Regel entfernt, `G-02`)
+3. **Knopftext zu „Quelle"** gekürzt (Zugänglichkeitsname „Quelle anzeigen: ..." unverändert, `G-03`)
+4. **Breitentest** `e2e/kacheln.spec.ts` mit 10 Breiten (360–1440px), 4 Routen, CI-Projekt (GitHub Actions)
+5. **UI-SPEC-Nachtrag** mit datierten Änderungsmarken
+
+**Verifikation:** Abschluss-Gate zeigt 96 Tests bestanden (ci 81, mobil 14, texte 1).
 
 ---
 
-## Detailed Findings
+## Pillar-Scores (Re-Audit)
 
-### Pillar 1: Copywriting (3/4)
+| Pillar | Score | Befund |
+|--------|-------|--------|
+| 1. Copywriting | 4/4 | Du-Anrede konsistent; Knopftext „Quelle" konkret; keine Platzhalter |
+| 2. Visuals | 4/4 | Rastergrößen bei allen Breiten im Inhaltsbereich; Überlauf geschlossen |
+| 3. Color | 4/4 | Brand-Accent sparsam genutzt (unverändert); kein Hardcoding |
+| 4. Typography | 4/4 | 4 Größen, 2 Gewichte; Betrag bei jeder Breite Heading 20px (G-02 erfüllt) |
+| 5. Spacing | 4/4 | 7-Token-Skala + tolerated `space-s`; Kachelraster-Gap korrekt |
+| 6. Experience Design | 4/4 | Modal-Fokus, Laden/Fehler/Leer-Zustände, E2E-Breitentests in CI |
 
-**Audit method:** Grep for German/English patterns, reviewed component text.
+**Gesamt: 24/24**
 
-**Findings:**
+---
 
-- ✅ **Du-Anrede:** Consistent throughout templates and data bindings (verified in PageIntro, QuelleKnopf, Impressum text patterns, no "Sie" forms in UI strings).
-- ✅ **No generic labels:** CTA "Quelle anzeigen" (source button) is specific and meaningful; link text "Original-Haushaltsplan (PDF) der Gemeinde Ostbevern" is descriptive; footer link "Über dieses Projekt, Impressum und Datenschutz" clear.
-- ✅ **All numbers via data:** KennzahlKachel amounts formatted via `charts/format.ts`, not hardcoded.
-- ⚠️ **Text wrapping edge case:** The button text "Quelle anzeigen" in tile variant is allowed to wrap at 360px per spec (max 124px inner tile width); however, test coverage at 400–560px missing (see Priority Fix #2).
-- ⚠️ **Empty state text:** Spec requires no text when beleg is missing (kachel shows no button); verified in QuelleKnopf (`if beleg !== null`), but no test prevents silent regression.
+## Geschlossene Mängel
 
-**Files examined:** `app/src/components/KennzahlKachel.vue`, `QuelleKnopf.vue`, `App.vue` (footer), `pages/StartPage.vue`, `config.ts`.
+### BLOCKER 1: Kachel-Überlauf bei 400–560px ✓ GESCHLOSSEN
 
-### Pillar 2: Visuals (2/4)
+**Vorher (07-VERIFICATION):**
+- Start, Investitionen, Rat-entscheidet bei 400 px zwei Spalten, Betrag ragt 7–28 px über Inhaltsbereich
+- Bei 560 px und 700 px Beträge bis 37 px über Kante
+- `/stellenplan` bei 768 px seitlicher Seiten-Scroll (scrollWidth 912 > innerWidth 768)
 
-**Audit method:** Examined grid layout CSS, calculated tile widths at responsive breakpoints.
+**Änderungen:**
+1. **Raster (basis.css, Zeile 17–40):** `.om-kachelraster { grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)) }`
+   - Mindestspur 13rem ist der kleinste getestete Wert (10–13rem) mit ≥16 px Reserve (gemessen 16,9 px bei 480 px auf `/rat-entscheidet`)
+   - Gap `--wa-space-m` (16px) bis 699 px, `--wa-space-l` (24px) ab 700 px
+   - Alle vier Seiten (Start, Investitionen, Stellenplan, NichtBeeinflussbarBlock) nutzen dieselbe Klasse
 
-**BLOCKER Finding: Responsive Tile Overflow at 400–560px**
+2. **Betrag-Größe (KennzahlKachel.vue, Zeile 69):** `.om-kennzahl__wert { font-size: var(--wa-font-size-l) }`
+   - Display-Regel ab 700 px entfernt (war Display 32px statt 20px)
+   - Platz kommt allein aus dem Raster, nie aus Schrift-Verkleinerung
+   - Betrag steht in einer Zeile (`white-space: nowrap` bleibt, G-01)
 
-The start page uses a CSS Grid with `minmax(160px, 1fr)` at `app/src/pages/StartPage.vue:129`. Combined with:
-- **Page padding:** 24px (--wa-space-l) on sides = 48px total
-- **Grid gap:** 16px (--wa-space-m)
-- **Tile padding:** 16px per side = 32px total
+3. **E2E-Verifikation (kacheln.spec.ts, Zeilen 1–371):**
+   - Projekt `ci` (läuft in GitHub Actions)
+   - 10 Breiten: 360, 400, 480, 560, 600, 700, 768, 1024, 1280, 1440 px
+   - 4 Kachel-Routen: `/`, `/investitionen`, `/rat-entscheidet`, `/stellenplan`
+   - Geprüft pro Route×Breite: scrollWidth ≤ clientWidth, Betrag im Inhaltsbereich (0,5 px Toleranz), Knopf ≥44×44 px
+   - Klassifikationstest hält Routenliste geschlossen (keine ungetesteten neuen Routen)
 
-**Calculated tile content widths:**
+**Status:** ✅ BLOCKER geschlossen — Beträge und Knöpfe bleiben bei 360–1440 px im Inhaltsbereich der Kachel, kein seitlicher Scroll.
 
-| Viewport | Available | Columns | Per tile | Content width | Font size | Issue |
-|----------|-----------|---------|----------|----------------|-----------|-------|
-| 360px | 312px | 1 col | 312px | 280px | 20px | ✅ OK |
-| 400px | 352px | 2 cols | 168px | 136px | 20px | ❌ **OVERFLOW** |
-| 480px | 432px | 2 cols | 208px | 176px | 20px | ❌ **OVERFLOW** |
-| 560px | 512px | 3 cols | 160px | 128px | 20px | ❌ **OVERFLOW** |
-| 600px | 552px | 3 cols | 173px | 141px | 20px | ⚠️ Tight |
-| 1280px | 1232px | 8 cols | 151px | 119px | 32px | ✅ OK (larger font) |
+**Test-Ergebnis:** E2E-Breitentests im Projekt `ci` grün (enthalten in 96 bestandenen Tests, Abschluss-Gate 07-13).
 
-**Root cause:** The `.om-zahl` class has `white-space: nowrap` (`app/src/styles/basis.css:14`), which prevents the amount (e.g., "999.999.999 €") from wrapping. At 400–560px, the tile is too narrow to display a 20px font amount without wrapping.
+### WARNING 2: Knopf-Text-Umbruch bei mittleren Breiten ✓ GESCHLOSSEN
 
-**Spec violation:** 
-- **A11Y-03 (360px, no h-scroll):** At 400px, the amount will overflow the tile's right edge or shift to overflow-x, creating unwanted horizontal scroll.
-- **Visual hierarchy:** The amount is Heading role (20px) and should never be truncated; wrapping is the only option at tight widths.
+**Vorher:**
+- Knopf-Text „Quelle anzeigen" konnte bei 360 px auf zwei Zeilen umbrechen (innere Kachelbreite 124 px)
+- Keine Tests bei 400–560 px
+
+**Änderung:**
+- Visible text gekürzt zu „Quelle" (ein Wort, sichtbar 41 px Breite Roboto statt 120 px)
+- Zugänglicher Name unverändert: `aria-label="Quelle anzeigen: {Bezeichnung}, PDF-Seite {n}"`
+- QuelleKnopf.vue, Zeile 61: `<span class="om-quelle-knopf__text">Quelle</span>`
+- Alle Varianten (kachel, produkt, zeile) bestätigt durch Unit-Tests (quelle.test.ts, Zeilen 280–325)
+
+**Status:** ✅ Knopf-Text gekürzt; kein Umbruch mehr möglich. E2E-Breitentests bestätigen Buttons ≥44×44 px bei allen Breiten.
+
+### WARNING 3: Typografie h3-Konsistenz ✓ ADRESSIERT
+
+**Vorher:**
+- Manuelle Verifikation der h3-Heading-Größe (font-size-l, weight-bold) bei allen Breiten nicht durchgeführt
+
+**Audit-Befunde:**
+- `StellenplanPage.vue`: h3 mit Heading-Klasse, font-size-l korrekt
+- `KennzahlKachel.vue`: Betrag bleibt font-size-l bei jeder Breite (keine Media-Queries außer Spacing ab 700 px)
+- Stiltokens-Test (stiltokens.test.ts) verbietet `-xl`, `-2xl`, `-semibold` — alle Pass
+- E2E-Betrag-Größen-Check (kacheln.spec.ts, Zeilen 194–208) misst `getComputedStyle` und assertet `--wa-font-size-l` bei jeder Breite
+
+**Status:** ✅ Typografie G-02 bestätigt durch Code-Audit und E2E-Tests.
+
+---
+
+## Detaillierte Befunde
+
+### Pillar 1: Copywriting (4/4)
+
+**Audit-Methode:** Grep auf deutsche Formen, Knopf-Text, Platzhalter.
+
+**Befunde:**
+- ✅ **Du-Anrede:** Durchgehend konsistent; keine Höflichkeitsformen in Nutzer-Texten (test: duanrede.test.ts)
+- ✅ **Konkrete Knopf-Labels:** 
+  - Kachel/Produkt: „Quelle" (konkret, nicht „Quelle anzeigen" sichtbar)
+  - Tabelle: „PDF-Seite {n}" (spezifisch)
+  - Aria-Label: „Quelle anzeigen: {Bezeichnung}, PDF-Seite {n}" (vollständig)
+- ✅ **Keine generischen Labels:** Keine „OK", „Click Here", „Submit" im UI
+- ✅ **Alle Zahlen aus Daten:** Beträge formatiert via `charts/format.ts`, kein Hardcoding
+- ✅ **Leer-Zustände:** Kacheln ohne Beleg zeigen keinen Knopf (nur Text-Zeile mit PDF-Seite)
+
+**Dateien:** QuelleKnopf.vue, KennzahlKachel.vue, quelle.test.ts (Zeilen 280–325).
+
+### Pillar 2: Visuals (4/4)
+
+**Audit-Methode:** Grid-Layout, Tile-Breiten, Overflow-Prüfung.
+
+**Befunde:**
+- ✅ **Klare Hierarchie:** Betrag (20px bold) > Bezeichnung (14px) > Zeile (14px, grau)
+- ✅ **Raster-Responsive:** `minmax(min(100%, 13rem), 1fr)` — 13rem Mindestspur kalibr…iert
+  - 360 px: 1 Spalte (Inhalt 262 px) ✓
+  - 400–560 px: 2 Spalten (Inhalt ~158 px bei 480 px) ✓
+  - 700+ px: 3–8 Spalten ✓
+  - Engster Punkt (480 px, `/rat-entscheidet`): breitester Betrag 141 px, Inhalt 158 px, Reserve 16,9 px ✓
+- ✅ **Keine Überläufe:** E2E-Test bei 10 Breiten, 4 Routen — alle Beträge und Knöpfe im Inhaltsbereich
+- ✅ **Seiten-Scroll:** Keine Route zeigt `scrollWidth > innerWidth` bei getesteten Breiten (Abweichung 1 in 07-13 behoben mit `warteAufLayout`)
+
+**Dateien:** basis.css (`.om-kachelraster`), KennzahlKachel.vue, StartPage.vue, kacheln.spec.ts.
 
 ### Pillar 3: Color (4/4)
 
-**Audit method:** Counted token usage, checked for hardcoded hex.
+**Audit-Methode:** Token-Usage, Hardcoded-Farben-Suche.
 
-**Findings:**
+**Befunde:**
+- ✅ **Brand-Accent sparsam:** 11 Vorkommen von `--wa-color-brand-40` / `--wa-color-brand-60` (unverändert)
+  - Links (QuelleKnopf, Fußzeilen): `brand-40`
+  - Markierung im Beleg: `brand-40` (outline) + `brand-60` (25% fill)
+- ✅ **Keine Hardcodes in UI:** Farbkonfs nur in Daten-Arrays (KATEGORIE_FARBEN, Chart-Fallback) oder Tokens
+- ✅ **Kontrast:** `brand-40` 7,02:1 auf Weiß, 6,3:1 auf `surface-lowered` — alle ≥4,5:1 (WCAG AA)
+- ✅ **Farbe nicht alleiniger Träger:** Links haben auch Unterstreichung; Markierungen haben auch Rand
 
-- ✅ **Brand accent (gold) used sparingly:** 10 uses of `--wa-color-brand-40` and `--wa-color-brand-60` across components, all compliant with spec:
-  - Text links (QuelleKnopf, footer links): `brand-40`
-  - Zeilenmarkierung in source sidebar: `brand-40` (outline) + `brand-60` (fill 25%)
-  - No use on backgrounds, tiles, or accent on decorative elements
-- ✅ **No hardcoded colors in UI:** Found only 4 literals (`#ffffff`, `#545868`, `#9194a2`), all in chart fallback defaults or KATEGORIE_FARBEN arrays (data-driven, acceptable per prior reviews).
-- ✅ **Contrast:** All spec'd color combinations (brand-40 on white 7.02:1, text-quiet on surface-lowered ~6.3:1) meet or exceed 4.5:1 WCAG AA.
-- ✅ **Color never sole carrier:** All colored elements (links, markings) also have underlines, outline, or positional cues.
-
-**Score rationale:** No findings; all color usage aligns with 07-UI-SPEC approved palette.
+**Score:** Keine neuen Befunde; Farb-Pillar unverändert seit 07-CONTEXT.md.
 
 ### Pillar 4: Typography (4/4)
 
-**Audit method:** Audited all font-size and font-weight token usage, verified stiltokens.test.ts rules.
+**Audit-Methode:** Font-Size/Weight-Token-Grep, Media-Query-Prüfung.
 
-**Findings:**
-
-- ✅ **Exactly 4 font sizes in use:**
-  - `--wa-font-size-s` (14px)
-  - `--wa-font-size-m` (16px)
-  - `--wa-font-size-l` (20px)
-  - `--wa-font-size-2xl` (32px)
-  - Zero use of prohibited sizes (`-xs`, `-xl`, `-3xl`, `-4xl`, `-5xl`).
-- ✅ **Exactly 2 font weights in use:**
+**Befunde:**
+- ✅ **Exakt 4 Größen in Nutzung:**
+  - `--wa-font-size-s` (14px): Beschriftung, Zeile, Caption
+  - `--wa-font-size-m` (16px): Knopf „Quelle"
+  - `--wa-font-size-l` (20px): Betrag (G-02 erfüllt — bei jeder Breite)
+  - `--wa-font-size-2xl` (32px): h1 PageIntro
+  - Verboten (nicht genutzt): `-xs`, `-xl`, `-3xl`, `-4xl`, `-5xl` ✓
+- ✅ **Exakt 2 Gewichte:**
   - `--wa-font-weight-normal` (400)
   - `--wa-font-weight-bold` (600)
-  - Zero use of literals (no `font-weight: 600` hard values).
-  - Zero use of prohibited weights (`-light`, `-semibold`, `-extrabold`).
-- ✅ **Token hygiene per D-17:** All hard values replaced with `--wa-font-weight-bold` in App.vue headers; `GlossarListe.vue` and other D-17 targets cleaned.
-- ✅ **Caption role (14/400):** Used for source drawer text and footer, correct.
-- ✅ **Heading h2 and h3 assignment:** Per D-18, checked usage in StartPage (h2 display role via PageIntro), StellenplanPage (h3 now Heading size), all pass.
+  - Verboten (nicht genutzt): `-light`, `-semibold`, `-extrabold` ✓
+- ✅ **KennzahlKachel-Betrag:** `.om-kennzahl__wert { font-size: var(--wa-font-size-l); }` — keine `@media (min-width: 700px)` Größen-Änderung
+- ✅ **Test-Abdeckung:** stiltokens.test.ts und kacheln.spec.ts (getComputedStyle bei 10 Breiten)
 
-**Score rationale:** No violations; stiltokens.test.ts enforces rules; typography contract complete.
+**Dateien:** KennzahlKachel.vue (Zeile 69), basis.css, stiltokens.test.ts, kacheln.spec.ts.
 
-### Pillar 5: Spacing (3/4)
+### Pillar 5: Spacing (4/4)
 
-**Audit method:** Scanned for token usage, verified against 7-token approved scale and Offene Annahmen 5.
+**Audit-Methode:** Token-Grep, Kachel-Gap-Verifikation.
 
-**Findings:**
+**Befunde:**
+- ✅ **7-Token-Skala + 1 Tolerated Exception:**
+  - `--wa-space-xs` (4px): 29 Nutzungen — Icon-Abstand, Fokus-Offset
+  - `--wa-space-s` (12px): 25 Nutzungen — tolerated per Offene Annahmen 5
+  - `--wa-space-m` (16px): 66 Nutzungen — Seite-Padding, Grid-Gap, Tile-Padding
+  - `--wa-space-l` (24px): 21 Nutzungen — Seite-Seitenrand, Drawer-Margin, Gap ab 700 px
+  - `--wa-space-xl` (32px): 20 Nutzungen — Abschnitt-Abstände
+  - `--wa-space-2xs` (2px): 20 Nutzungen — Haarlinien
+  - `--wa-space-3xl` (64px): 4 Nutzungen — Seite Top/Bottom
+- ✅ **Keine arbiträren Werte:** Kein `[8px]`, `[12rem]` o. ä. in Komponenten (nur in Daten-Grendefs)
+- ✅ **Kachel-Raster-Gap:** 
+  - Bis 699 px: `--wa-space-m` (16px)
+  - Ab 700 px: `--wa-space-l` (24px) — auch auf `/investitionen` (G-04)
+  - Tile-Padding: `--wa-space-m` (16px) — konsistent
 
-- ✅ **7-token scale compliance:** All critical gaps/padding use approved tokens:
-  - `--wa-space-xs` (4px): Icon–text, focus-offset — 29 uses
-  - `--wa-space-m` (16px): Page padding, grid gap, tile padding — 66 uses (highest)
-  - `--wa-space-l` (24px): Page side padding, drawer margin — 21 uses
-  - `--wa-space-xl` (32px): Section spacers — 20 uses
-  - `--wa-space-2xs` (2px): Hairlines — 20 uses
-  - `--wa-space-3xl` (64px): Page top/bottom — 4 uses
-- ⚠️ **Tolerated exception:** `--wa-space-s` (12px) used 25 times (per Offene Annahmen 5, tolerated, not cleaned). Spec explicitly allows this deviation from the 7-token scale.
-- ⚠️ **Grid minmax tightness:** The `minmax(160px, 1fr)` breakpoint is a layout constraint, not a spacing token, but it combines with fixed tile padding to create the responsive overflow issue (see Pillar 2).
-- ✅ **Hairline borders:** Spec allows 1px (outline border) and 2px (within graphics); used correctly in source drawer.
+**Dateien:** basis.css (`.om-kachelraster`), alle `.vue`-Komponenten.
 
-**Score rationale:** Token scale followed; one acceptable exception documented; no new out-of-spec tokens introduced.
+### Pillar 6: Experience Design (4/4)
 
-### Pillar 6: Experience Design (3/4)
+**Audit-Methode:** State-Handler, Modal-Patterns, E2E-Breitentests.
 
-**Audit method:** Checked loading/error/empty states, focus management, modal behavior, accessibility features.
+**Befunde:**
+- ✅ **Lade-Zustände:** `wa-skeleton` mit `aria-busy` in QuelleSeite und DatenTabelle; kein Layout-Shift
+- ✅ **Fehler-Zustände:** QuelleSeite zeigt `wa-callout variant="warning"` bei Bild-Fehler; Link zum Original bleibt
+- ✅ **Leer-Zustände:** 
+  - Kachel ohne Beleg: Knopf unsichtbar, Zeile mit PDF-Seite bleibt
+  - Tabellen-Zeile ohne Beleg: Quelle-Zelle leer (kein „–")
+- ✅ **Modal-Fokus (D-04):**
+  - `oeffneQuelle` speichert `document.activeElement`
+  - `fokusNachSchliessen()` (quelle.ts) stellt Fokus in `wa-after-hide` wieder her
+  - Escape schließt (WA-Standard), light-dismiss auch
+- ✅ **Tastatur:**
+  - QuelleKnopf: native `<button>`, Click+Enter+Space funktionieren
+  - Drawer: Escape schließt, Focus-Trap durch `wa-drawer` (Dialog-Element)
+- ✅ **Reduktion von Bewegung (D-12):**
+  - `wa-drawer` auf 0s Duration unter `prefers-reduced-motion`
+  - Transition-Tokens auf 0ms (basis.css, Zeile 60–77)
+- ✅ **A11Y-03 Responsiv-Test (G-05):**
+  - `e2e/kacheln.spec.ts` in CI-Projekt (GitHub Actions)
+  - 10 Breiten: 360, 400, 480, 560, 600, 700, 768, 1024, 1280, 1440 px
+  - 4 Routen: `/`, `/investitionen`, `/rat-entscheidet`, `/stellenplan`
+  - Prüft: Betrag 1 Zeile, Knopf ≥44×44 px, Betrag-Größe `--wa-font-size-l`, Kein Seiten-Scroll
+  - Klassifikations-Test: genau diese 4 Routen mit Kacheln
 
-**Findings:**
-
-- ✅ **Loading states:** `wa-skeleton` shown while source image loads (QuelleSeite, DatenTabelle); aria-busy set; no layout shift.
-- ✅ **Error states:** Source image load failure shows warning callout ("Die Seite konnte nicht geladen werden"); link to original PDF remains; no retry button (static content, correct).
-- ✅ **Empty states:** Tiles without source beleg show no button; tabelle rows without beleg have empty cell (no "–"). No dead UI.
-- ✅ **Modal behavior:** Source drawer (`wa-drawer` right, light-dismiss) is modal (focus trap, Escape closes, background inert), aligns with spec D-04.
-- ✅ **Focus restoration:** Source drawer stores `document.activeElement` and returns focus on close (D-04); spec verified in code.
-- ✅ **Keyboard support:** Source button responds to Click, Enter, Space (native button); drawer Escape closes; no ARIA violations.
-- ⚠️ **Reduced motion:** Web Awesome transition tokens set to 0ms under `prefers-reduced-motion`; drawer duration set to 0s. No manual testing reported (D-12 scope).
-- ⚠️ **BLOCKER: Responsive tile overflow (A11Y-03 violation):** At 400–560px, the tile layout violates spec requirement "all Ziele ≥ 44 px" and "kein waagerechtes Scrollen der Seite" because tile content overflow may force horizontal scroll or truncate text (see Priority Fix #1).
-- ⚠️ **44px touch targets:** Source button has `min-height: 44px, min-width: 44px`; footer link `min-height: 44px` (verified in CSS). However, if the button text overflows the tile, the visual target becomes unclear.
-
-**Score rationale:** Modal, focus, and keyboard patterns complete; loading/error/empty covered. **Critical issue:** A11Y-03 constraint violated by responsive tile overflow.
+**Dateien:** QuelleSeitenleiste.vue (beiAfterHide), QuelleSeite.vue (Fehler), QuelleKnopf.vue (Focus-Outline), kacheln.spec.ts, basis.css.
 
 ---
 
 ## Registry Safety
 
-No shadcn initialization and no third-party registries declared in 07-UI-SPEC.md (confirmed at line 410). Audit not applicable.
+Shadcn nicht initialisiert; kein Drittanbieter-Registry in 07-UI-SPEC.md (Zeile 410). Audit nicht erforderlich.
 
 ---
 
-## Files Audited
+## Dateien geprüft
 
-- `app/src/App.vue` (footer, header, drawer placeholder)
-- `app/src/pages/StartPage.vue` (grid layout, tile grid CSS)
-- `app/src/components/KennzahlKachel.vue` (tile structure, padding, font sizes)
-- `app/src/components/QuelleKnopf.vue` (button styling, size, text wrapping)
-- `app/src/components/QuelleSeitenleiste.vue` (modal structure, focus)
-- `app/src/components/DatenTabelle.vue` (empty state, error state)
-- `app/src/components/BaseChart.vue` (loading, error via ChartCard)
-- `app/src/styles/basis.css` (global token definitions, `.om-zahl` white-space rule)
-- `app/src/config.ts` (copywriting, email, PDF URL)
-- `app/src/lib/quelle.ts` (focus restoration logic)
-
----
-
-## Recommendation for Next Steps
-
-1. **Immediate (before shipping):** Fix Priority #1 (tile overflow) by modifying `.om-zahl` wrapping behavior. Re-test at 400, 480, 560px with Playwright before merge.
-2. **Before UAT:** Add missing Playwright assertions for button overflow at intermediate widths (Priority #2).
-3. **Documentation:** Confirm visual consistency of h3/heading at all breakpoints (Priority #3); no code change likely needed, but spot-check in browser.
+- `app/src/styles/basis.css` (`.om-kachelraster`, `.om-zahl` `white-space: nowrap`)
+- `app/src/components/KennzahlKachel.vue` (Betrag-Größe font-size-l, Quelle-Prop, keine Display-Regel)
+- `app/src/components/QuelleKnopf.vue` (sichtbarer Text „Quelle", aria-label unverändert)
+- `app/src/components/QuelleSeitenleiste.vue` (Fokus-Verwaltung, beiAfterHide)
+- `app/src/components/QuelleSeite.vue` (Skeleton, Fehler-Callout)
+- `app/src/pages/StartPage.vue`, `InvestitionenPage.vue`, `StellenplanPage.vue` (`.om-kachelraster` Klasse)
+- `app/src/components/NichtBeeinflussbarBlock.vue` (`.om-kachelraster` Klasse)
+- `app/e2e/kacheln.spec.ts` (Breitentests, Klassifikationstest)
+- `app/src/lib/__tests__/quelle.test.ts` (Knopf-Text, Accessible Name)
+- `app/src/lib/__tests__/stiltokens.test.ts` (Font-Size/Weight-Verbote)
+- `.planning/phases/07-feinschliff-und-ver-ffentlichung/07-UI-SPEC.md` (Nachtrag 2026-10-07)
 
 ---
 
-**Overall assessment:** Phase 07 UI is **functionally complete** per spec but has a **critical responsive layout bug** at 400–560px that violates A11Y-03 and must be fixed before public release. The bug is localized to one CSS rule and one grid breakpoint; the fix is straightforward. All other pillars (copywriting, color, typography, spacing) pass contract requirements.
+## Empfehlungen
+
+1. **Geräte-Verifikation (offener Mensch-Check):** `07-VERIFICATION.md` fordert, auf dem eigenen Gerät/Browser bei 360, 400, 600, 768 und 1280 px zu prüfen, dass jeder Betrag und Knopf in der Kachel bleibt (Schriften auf Gerät weichen vom Docker-Testbild ab). Gap 07-13 liefert 16 px Reserve; die Prüfung bleibt beim Nutzer.
+
+2. **Public Release Ready:** 
+   - BLOCKER geschlossen (Kachel-Überlauf) ✓
+   - WARNING 2 geschlossen (Knopf-Text) ✓
+   - WARNING 3 adressiert (Typography-Tests) ✓
+   - E2E-Tests grün (96 Tests, CI-Job) ✓
+   - Keine neuen Mängel identifiziert ✓
+
+3. **Nachtrag dokumentiert:** 07-UI-SPEC.md trägt fünf datierte Änderungsmarken; Entscheidungen G-01–G-05 sind nachvollziehbar.
+
+---
+
+**Gesamt-Assessment:** Phase 07 UI ist **produktionsreif**. Die BLOCKER und WARNING aus der ersten Prüfung sind durch Gap 07-13 geschlossen. Alle 6 Pillars erreichen vollen Score (4/4). E2E-Tests in GitHub Actions verhindern Regressionen.
+
+---
+
+*Phase: 07-feinschliff-und-veröffentlichung*  
+*Re-Auditiert: 2026-10-07*  
+*Status: APPROVED*
