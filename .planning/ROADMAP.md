@@ -47,7 +47,7 @@
   4. `01-REVIEW-DISPOSITION.md`, `05-REVIEW-DISPOSITION.md` und `06-REVIEW-DISPOSITION.md` unter `.planning/milestones/v1.0-phases/` stehen auf `open: 0`, jede Zeile nennt Commit oder Begründung. Nebenbei behobene Befunde (z. B. 05/IN-09, Platzhalter-Kontaktdaten, erledigt mit D-17 in Phase 7) sind mit Beleg auf fixed gesetzt, 06/WR-01 (Rücklagen-Fußnote) ist mit der Begründung aus UAT 06 erfasst. Jeder reine Hygiene-Befund (Duplikate, toter Code, Hex-Fallbacks, Kopplung, Test-Nits, Doku-Drift) ist behoben, wenn das wenig kostet, sonst auf deferred mit Begründung in der Source-Spalte.
   5. Die Querschnittsbedingung hält: `alle.py --jahr 2026` ist byte-identisch oder begründet geändert, Prüfregeln 1–10 sind grün, die CI-Kette von Pipeline und App (Scratch-Kopie, inkl. axe-Smoke und 360-px-Prüfungen) ist grün.
 
-**Plans**: 3/12 plans executed in 5 waves
+**Plans**: 5/12 plans executed in 5 waves
 
 Plans:
 **Wave 1**
@@ -56,8 +56,8 @@ Plans:
 - [x] 08-03-PLAN.md — Stellenplan-Kacheln berechnet mit eigenen Seiten, einwohnerZahl() wirft laut (TXT-05, TXT-06; Welle 1)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 08-04-PLAN.md — zwölf rd.-Altkopien durch EuroBetrag bzw. betragMitHinweis ersetzt (TXT-04; Welle 2)
-- [ ] 08-05-PLAN.md — Zusammen-Zeile der Zuschüsse mit Kennzeichen, Prüfauftrag D-12, Filtersumme gekennzeichnet (TXT-05, TXT-04; Welle 2)
+- [x] 08-04-PLAN.md — zwölf rd.-Altkopien durch EuroBetrag bzw. betragMitHinweis ersetzt (TXT-04; Welle 2)
+- [x] 08-05-PLAN.md — Zusammen-Zeile der Zuschüsse mit Kennzeichen, Prüfauftrag D-12, Filtersumme gekennzeichnet (TXT-05, TXT-04; Welle 2)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 08-06-PLAN.md — DatenTabelle mit Rolle und einem Namen, Drawer schließt bei jedem Link, menueVersatz im Browser (A11Y-01..03; Welle 3)
@@ -105,5 +105,5 @@ Phases execute in numeric order: 8 → 9
 | 5. Leitfragen-Seiten | v1.0 | 16/16 | Complete | 2026-10-05 |
 | 6. Kontext-Seiten | v1.0 | 17/17 | Complete | 2026-10-06 |
 | 7. Feinschliff und Veröffentlichung | v1.0 | 14/14 | Complete | 2026-10-07 |
-| 8. Fixes und Triage | v1.0.1 | 3/12 | In Progress | - |
+| 8. Fixes und Triage | v1.0.1 | 5/12 | In Progress | - |
 | 9. Sicherheit und Audit | v1.0.1 | 0/TBD | Not started | - |
