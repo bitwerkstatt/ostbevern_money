@@ -25,45 +25,45 @@ findings:
     title: "Nachwuchs person counts treat a missing `personen` as 0"
   - id: WR-01
     severity: warning
-    disposition: open
+    disposition: skipped
     title: "Fußnote \"zuzüglich der Verrechnung\" nennt das Vorzeichen nicht; wörtlich angewandt ergibt sie eine andere Zahl (Restmangel von CR-01)"
   - id: IN-01
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Hard-coded hex fallback colors in components"
   - id: IN-02
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Dead or test-only production exports"
   - id: IN-03
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Duplicated helpers across lib modules"
   - id: IN-04
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Cross-module coupling for small helpers"
   - id: IN-05
     severity: info
-    disposition: open
+    disposition: fixed
     title: "`useMassnahmenFilter` is instantiated twice per page"
   - id: IN-06
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Minor markup and equality nits"
   - id: IN-07
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Derived sum shown without \"berechnet\" label; source line cites all pages on every tile"
   - id: IN-08
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Pipeline formulas raise untyped errors"
   - id: IN-09
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Neue Tests prüfen Quelltext statt Verhalten"
-open: 10
+open: 0
 total: 15
 recorded: 2026-10-06T08:17:24.991Z
 ---
@@ -77,16 +77,16 @@ recorded: 2026-10-06T08:17:24.991Z
 | WR-03 | warning | fixed | fixed in 06-16 (gate 06-17) |
 | WR-04 | warning | fixed | fixed in 06-13 (gate 06-17) |
 | WR-05 | warning | fixed | fixed in 06-16 (gate 06-17) |
-| WR-01 | warning | open | - |
-| IN-01 | info | open | - |
-| IN-02 | info | open | - |
-| IN-03 | info | open | - |
-| IN-04 | info | open | - |
-| IN-05 | info | open | - |
-| IN-06 | info | open | - |
-| IN-07 | info | open | - |
-| IN-08 | info | open | - |
-| IN-09 | info | open | - |
+| WR-01 | warning | skipped | skipped: UAT 06 Test 1 (pass) und PROJECT.md:138, die Beträge-Lesart der Fußnote ergibt die gedruckten 1,77 % und ein Vorzeichen-Zusatz ist nicht nötig (D-17); Kommentare zum Vorzeichen präzisiert in 08-07 (81fcd86) und 08-10 (507d787) |
+| IN-01 | info | fixed | fixed in 08-09 (b9d3a68), Flächenfarbe nur aus echartsTheme, zwei Marker |
+| IN-02 | info | fixed | fixed in 08-10 (656c73e), ausgleichsruecklageAufgebrauchtJahr nutzt haushaltsjahrIndex; menueLinks bleibt, e2e/routen.ts nutzt es |
+| IN-03 | info | fixed | fixed in 08-03 (2a8e5a5) Einwohnerzahl und 08-10 (656c73e, fad1da9, 507d787) gemeinsame Jahr-Helfer, postenEintrag, anzahlText |
+| IN-04 | info | fixed | fixed in 08-02 (dde7341) EuroBetrag ohne geldfluss und 08-11 (487df23, 31d0334) klickIndex, jahreListe und quellenZeile in hilfsfunktionen.ts |
+| IN-05 | info | fixed | fixed in 08-11 (af2f80b), Massnahmenfilter einmal je Seite |
+| IN-06 | info | fixed | fixed in 08-09 (7f85070), Key-Trenner, strikte Vergleiche, zweizeilig |
+| IN-07 | info | fixed | fixed in 08-03 (1d4e359, c3b1406) Kacheln berechnet, Seiten je Kachel und 08-05 (af0a3eb, 470a149) Zusammen-Zeile und Filtersumme mit Etikett |
+| IN-08 | info | fixed | fixed in 08-08 (c1da62e), TexteFehler statt Division durch 0 |
+| IN-09 | info | fixed | fixed in 08-06 (01c800b) menueVersatz im Browser statt Quelltext und 08-07 (4b45a07, 81fcd86) Begründungen, Quelltext-Prüfung der Formelprosa entfernt (D-14) |
 
 Dispositions: `open` (recorded, not yet triaged), `fixed`, `skipped`, `deferred`.
 Set `deferred` by hand and put the reason in the Source cell; both are preserved. A `|` in the reason is kept as prose and escaped on the next run.
