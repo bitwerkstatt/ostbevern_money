@@ -55,6 +55,12 @@ Schlägt eine Prüfung fehl, bleibt die bisherige Seite unverändert online. Du 
 
 Die App funktioniert unter jedem Unterpfad: Vite baut mit `base: './'` und die App nutzt den Hash-Router, deshalb ist keine Anpassung nötig, wenn das Repository anders heißt.
 
+## Pflege beim Jahrgangswechsel
+
+Neben der Pipeline-Konfiguration (`pipeline/jahrgaenge/{jahr}.toml`) prüfst du bei einem neuen Haushaltsjahr diese Stellen von Hand:
+
+- **Link auf das Original-PDF:** `ORIGINAL_PDF_URL` in `app/src/config.ts` zeigt auf eine Datei der Gemeinde mit inhaltsgebundenem Pfad. Ersetzt die Gemeinde die Datei (Korrektur, Nachtragshaushalt), liefert der alte Link 404, und alle Links „Seite n im Original-PDF öffnen“ laufen ins Leere, ohne dass ein Test es merkt. Öffne die URL deshalb vor jeder Veröffentlichung einmal und trage bei einem neuen Jahrgang die neue Adresse ein.
+
 ## Lizenz
 
 MIT, siehe [`LICENSE`](LICENSE).
