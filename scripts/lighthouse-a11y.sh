@@ -21,8 +21,10 @@
 # erstes Produkt nach Code mit Grundzahl, Erläuterung und Maßnahme.
 #
 # Umgebung:
-#   LH_SCRATCH  vorhandenes Verzeichnis für die Scratch-Kopien (Standard: mktemp -d)
-#   LH_KEEP=1   Scratch-Verzeichnis am Ende behalten
+#   LH_SCRATCH  Elternverzeichnis für die Scratch-Kopien (Standard: $TMPDIR bzw. /tmp). Das Skript
+#               legt darin immer ein frisches eigenes Unterverzeichnis an und löscht am Ende nur
+#               dieses, nie LH_SCRATCH selbst oder fremden Inhalt.
+#   LH_KEEP=1   Scratch-Unterverzeichnis am Ende behalten
 set -euo pipefail
 
 BILD="mcr.microsoft.com/playwright:v1.63.0-noble"
@@ -30,15 +32,19 @@ LIGHTHOUSE_VERSION="13.5.0"
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-if [ -n "${LH_SCRATCH:-}" ]; then
-  S="$LH_SCRATCH"
-  mkdir -p "$S"
-else
-  S="$(mktemp -d)"
-fi
+BASIS="${LH_SCRATCH:-${TMPDIR:-/tmp}}"
+mkdir -p "$BASIS"
+S="$(mktemp -d "$BASIS/lighthouse-a11y.XXXXXX")" # immer ein frisches, eigenes Verzeichnis
 
 aufraeumen() {
   if [ "${LH_KEEP:-0}" != "1" ]; then
+    # Nie ein leeres, Wurzel- oder Home-Verzeichnis löschen (Schutz vor Fehlbelegung von $S).
+    case "${S:-}" in
+      "" | "/" | "$HOME" | "$HOME/")
+        echo "Scratch-Verzeichnis '$S' wird aus Sicherheitsgründen nicht gelöscht" >&2
+        return 0
+        ;;
+    esac
     # Vom Container angelegte Dateien können root gehören; ein Fehlschlag ist unkritisch.
     rm -rf "$S" 2>/dev/null || true
   else
