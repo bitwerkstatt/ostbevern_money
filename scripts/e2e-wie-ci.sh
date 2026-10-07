@@ -12,6 +12,8 @@
 # Nutzung:
 #   scripts/e2e-wie-ci.sh <app-verzeichnis> [playwright-argumente …]
 #   Beispiel: scripts/e2e-wie-ci.sh /tmp/scratch/app --project=ci e2e/kacheln.spec.ts
+#   Ohne `--project` unter den Argumenten läuft wie in der CI nur `--project=ci`; ein anderes
+#   Projekt (`mobil`, `texte`) gibst du ausdrücklich an.
 #
 # Voraussetzung: <app-verzeichnis> ist eine installierte und gebaute Kopie von app/ mit
 # Linux-node_modules (`npm ci` und `npm run build-only` in einer Scratch-Kopie; auf macOS beides
@@ -65,7 +67,7 @@ mkdir -p "$CACHE"
 if [ ! -f "$PAKET" ]; then
   echo "Lade $SCHRIFT_PAKET nach $CACHE" >&2
   TEMP="$PAKET.tmp.$$"
-  curl -fsSL "$SCHRIFT_URL" -o "$TEMP"
+  curl -fsSL --max-time 60 --retry 2 "$SCHRIFT_URL" -o "$TEMP"
   mv "$TEMP" "$PAKET"
 fi
 
@@ -80,6 +82,12 @@ if [ "$ISTWERT" != "$SCHRIFT_SHA256" ]; then
   echo "  erwartet: $SCHRIFT_SHA256" >&2
   echo "  gefunden: $ISTWERT" >&2
   exit 1
+fi
+
+# Wie die CI nur das Projekt `ci` ausführen, wenn der Aufruf kein Projekt nennt; ohne diese
+# Vorgabe liefe `npx playwright test` alle Projekte (`ci`, `mobil`, `texte`).
+if ! printf '%s\n' "$@" | grep -q -- '--project'; then
+  set -- --project=ci "$@"
 fi
 
 echo "Playwright im Image $BILD mit DejaVu Sans ($SCHRIFT_PAKET)" >&2
