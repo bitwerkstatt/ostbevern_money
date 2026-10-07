@@ -10,6 +10,7 @@ import { haushalt, investitionen } from '@/data/daten'
 import type { Grundzahl, KnotenWerte, Massnahme, Produkt } from '@/data/typen'
 import { findeKnoten, findeProdukt, leseAnsicht } from '@/lib/ansicht'
 import { proKopf } from '@/lib/berechnung'
+import { einwohnerZahl } from '@/lib/einwohner'
 import { wertartFuerJahr, wertartName } from '@/lib/jahr'
 import { belegSchluessel } from '@/lib/quelle'
 
@@ -154,14 +155,6 @@ const IMMER_ZEIGEN: ReadonlySet<string> = new Set([
   'jahresergebnis',
 ])
 
-function einwohnerzahl(): number {
-  const wert = haushalt.meta.einwohner.wert
-  if (typeof wert !== 'number') {
-    throw new TypeError('meta.einwohner.wert muss eine Zahl sein')
-  }
-  return wert
-}
-
 function jahrSpalte(jahr: number, wertart: string, art: DatenSpalte['art']): DatenSpalte {
   return {
     schluessel: jahrSchluessel(jahr),
@@ -232,7 +225,7 @@ export function baueTeilergebnisplan(code: unknown): Teilergebnisplan | null {
     }
   }
 
-  const einwohner = einwohnerzahl()
+  const einwohner = einwohnerZahl()
   const zuschussbedarf = werte.berechnet.zuschussbedarf
   zeilen.push(
     zeile('zuschussbedarf', 'Zuschussbedarf (berechnet)', BERECHNET, zuschussbedarf, null),

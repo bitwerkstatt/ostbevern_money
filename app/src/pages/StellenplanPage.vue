@@ -56,24 +56,36 @@ interface StellenKachel {
   wertart: string
 }
 
-/** Zeile unter dem Wert: optional die berechnete Differenz, dann Quelle mit PDF-Seiten. */
-function kachelZeile(quelle: string, differenz: string | null): string {
-  const beleg = `${quelle} · ${seitenText(summen.pdfSeiten)}`
+/**
+ * Zeile unter dem Wert: optional die berechnete Differenz, dann Quelle mit den PDF-Seiten der
+ * eigenen Kachel (D-11). Ohne Seiten (Kachel ohne Wert) steht keine Seitenangabe.
+ */
+function kachelZeile(quelle: string, differenz: string | null, seiten: readonly number[]): string {
+  const beleg = seiten.length === 0 ? quelle : `${quelle} · ${seitenText(seiten)}`
   return differenz === null ? beleg : `${differenz} · ${beleg}`
 }
 
 const stichtagText = summen.stichtag === null ? null : datum(summen.stichtag)
 
 // Der Stellenplan enthält keine gedruckte Gesamtzeile als Datensatz (`stellenplan.json` hat nur
-// die Stellen je Position); die Summen entstehen aus diesen Zeilen. Jede Kachel zeigt deshalb die
-// erste Seite der Stellenübersicht als Seitenbeleg ohne Markierung, die Seitenleiste nennt dazu
-// den Hinweis „nicht automatisch markiert“ (D-03). Die berechnete Differenz bleibt in der Zeile.
+// die Stellen je Position); alle drei Summen entstehen aus diesen Zeilen und tragen deshalb das
+// Etikett „berechnet“ samt Herleitung (D-10). Jede Kachel zeigt die erste Seite der
+// Stellenübersicht als Seitenbeleg ohne Markierung, die Seitenleiste nennt dazu den Hinweis
+// „nicht automatisch markiert“ (D-03). Der Belegschlüssel bleibt auf der Vereinigung der Seiten,
+// damit `quellen.json` unverändert bleibt; die Quellzeile nennt nur die Seiten der eigenen Kachel
+// (D-11). Die berechnete Differenz bleibt in der Zeile.
 const seitenBeleg = belegSchluessel.seite(summen.pdfSeiten[0] ?? 0)
 
-// Die Differenzen in Kachel 1 und 3 sind berechnet (nicht im PDF gedruckt) und tragen das
-// Etikett; fehlt ein Vergleichswert, entfällt die Differenzzeile.
+// Fehlt ein Vergleichswert, entfällt die Differenzzeile.
 const diffVorjahr = differenzText(summen.haushaltsjahr, summen.vorjahr)
 const diffBesetzt = differenzText(summen.besetzt, summen.haushaltsjahr)
+
+/** Herleitung einer Kachel; ohne Wert gibt es keine (D-10). */
+function herleitungVon(wert: number | null, text: string): string | null {
+  return wert === null ? null : text
+}
+
+const herleitungHaushaltsjahr = `Summe der Stellen aller Zeilen des Stellenplans ${haushaltsjahr}`
 
 const kacheln: StellenKachel[] = [
   {
@@ -83,20 +95,29 @@ const kacheln: StellenKachel[] = [
     zeile: kachelZeile(
       `Stellenplan ${haushaltsjahr}`,
       diffVorjahr === null ? null : `${diffVorjahr} gegenüber Stellen ${vorjahr}`,
+      summen.seitenHaushaltsjahr,
     ),
-    berechnet: diffVorjahr !== null,
+    berechnet: summen.haushaltsjahr !== null,
     quelle: seitenBeleg,
-    herleitung: null,
+    herleitung: herleitungVon(
+      summen.haushaltsjahr,
+      diffVorjahr === null
+        ? herleitungHaushaltsjahr
+        : `${herleitungHaushaltsjahr}; die Differenz ist die Summe minus die Summe des Vorjahrs`,
+    ),
     wertart: `Stellenplan ${haushaltsjahr}`,
   },
   {
     schluessel: 'vorjahr',
     bezeichnung: `Stellen ${vorjahr}`,
     wert: kachelWert(summen.vorjahr),
-    zeile: kachelZeile(`Stellenplan ${vorjahr}`, null),
-    berechnet: false,
+    zeile: kachelZeile(`Stellenplan ${vorjahr}`, null, summen.seitenVorjahr),
+    berechnet: summen.vorjahr !== null,
     quelle: seitenBeleg,
-    herleitung: null,
+    herleitung: herleitungVon(
+      summen.vorjahr,
+      `Summe der Stellen aller Zeilen des Stellenplans ${vorjahr}`,
+    ),
     wertart: `Stellenplan ${vorjahr}`,
   },
   {
@@ -106,10 +127,14 @@ const kacheln: StellenKachel[] = [
     zeile: kachelZeile(
       'Stellenplan',
       diffBesetzt === null ? null : `${diffBesetzt} gegenüber Stellen ${haushaltsjahr}`,
+      summen.seitenBesetzt,
     ),
-    berechnet: diffBesetzt !== null,
+    berechnet: summen.besetzt !== null,
     quelle: seitenBeleg,
-    herleitung: null,
+    herleitung: herleitungVon(
+      summen.besetzt,
+      'Summe der besetzten Stellen aller Zeilen des Stellenplans',
+    ),
     wertart: stichtagText === null ? 'Stellenplan' : `Stellenplan, Stand ${stichtagText}`,
   },
 ]

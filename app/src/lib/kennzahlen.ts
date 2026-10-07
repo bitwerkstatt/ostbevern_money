@@ -7,6 +7,7 @@ import { jahr as formatJahr } from '@/charts/format'
 import { haushalt, investitionen } from '@/data/daten'
 import type { Knoten } from '@/data/typen'
 import { proKopf } from '@/lib/berechnung'
+import { einwohnerZahl } from '@/lib/einwohner'
 import { baueErtragsarten } from '@/lib/ertragsarten'
 import { wertartFuerJahr, wertartName } from '@/lib/jahr'
 import { belegSchluessel } from '@/lib/quelle'
@@ -53,14 +54,6 @@ function wertAn(werte: readonly number[] | undefined, index: number, name: strin
   const wert = werte?.[index]
   if (wert === undefined) {
     throw new Error(`Kein Wert für ${name} im Jahresindex ${String(index)}`)
-  }
-  return wert
-}
-
-function einwohnerZahl(): number {
-  const wert = haushalt.meta.einwohner.wert
-  if (typeof wert !== 'number') {
-    throw new Error('meta.einwohner.wert muss eine Zahl sein')
   }
   return wert
 }

@@ -103,8 +103,14 @@ export interface StellenSummen {
   besetzt: number | null
   /** ISO-Stichtag der besetzten Stellen, `null` ohne Zeilen. */
   stichtag: string | null
-  /** Belegende PDF-Seiten, aufsteigend. */
+  /** Belegende PDF-Seiten, aufsteigend: Vereinigung der drei Kacheln (Belegschlüssel, D-11). */
   pdfSeiten: number[]
+  /** PDF-Seiten der Zeilen des Haushaltsjahrs; leer, wenn die Kachel keinen Wert hat (D-11). */
+  seitenHaushaltsjahr: number[]
+  /** PDF-Seiten der Zeilen des Vorjahrs; leer, wenn die Kachel keinen Wert hat (D-11). */
+  seitenVorjahr: number[]
+  /** PDF-Seiten der besetzten Zeilen; leer, wenn die Kachel keinen Wert hat (D-11). */
+  seitenBesetzt: number[]
 }
 
 /** Der eine Stichtag des besetzten Standes; mehrere verschiedene Stichtage sind ein Datenfehler. */
@@ -123,12 +129,20 @@ export function stellenSummen(daten: Stellenplan = stellenplan): StellenSummen {
   const hj = stellenZeilen(daten, daten.haushaltsjahr)
   const vj = stellenZeilen(daten, vorjahrVon(daten))
   const besetzt = besetztZeilen(daten)
+  const summeHj = summe(hj)
+  const summeVj = summe(vj)
+  const summeBesetzt = summe(besetzt)
   return {
-    haushaltsjahr: summe(hj),
-    vorjahr: summe(vj),
-    besetzt: summe(besetzt),
+    haushaltsjahr: summeHj,
+    vorjahr: summeVj,
+    besetzt: summeBesetzt,
     stichtag: stichtagVon(besetzt),
     pdfSeiten: seiten([...hj, ...vj, ...besetzt]),
+    // Eine Kachel ohne Wert nennt keine Seiten (D-11); `summe` ist genau dann null, wenn die
+    // Zeilen fehlen, und `seiten` einer leeren Liste ist leer.
+    seitenHaushaltsjahr: summeHj === null ? [] : seiten(hj),
+    seitenVorjahr: summeVj === null ? [] : seiten(vj),
+    seitenBesetzt: summeBesetzt === null ? [] : seiten(besetzt),
   }
 }
 
@@ -162,7 +176,7 @@ export interface Nachwuchs {
    * Personenzahl hat; nie 0 erfinden (WR-05).
    */
   haushaltsjahr: number | null
-  /** Belegende PDF-Seiten, aufsteigend. */
+  /** PDF-Seiten der Jahre, die eine Personenzahl haben, aufsteigend (D-11, 06/IN-07). */
   pdfSeiten: number[]
 }
 
@@ -192,10 +206,16 @@ export function nachwuchs(daten: Stellenplan = stellenplan): Nachwuchs {
   const haushaltsjahr = zeilen.filter(
     (zeile) => zeile.merkmal === 'vorgesehen' && zeile.jahr === daten.haushaltsjahr,
   )
+  const personenVorjahr = personen(vorjahr)
+  const personenHaushaltsjahr = personen(haushaltsjahr)
   return {
-    vorjahr: personen(vorjahr),
-    haushaltsjahr: personen(haushaltsjahr),
-    pdfSeiten: seiten([...vorjahr, ...haushaltsjahr]),
+    vorjahr: personenVorjahr,
+    haushaltsjahr: personenHaushaltsjahr,
+    // Nur Jahre mit Personenzahl: der Satz zitiert keine Seite, aus der er keine Zahl nimmt (D-11).
+    pdfSeiten: seiten([
+      ...(personenVorjahr === null ? [] : vorjahr),
+      ...(personenHaushaltsjahr === null ? [] : haushaltsjahr),
+    ]),
   }
 }
 
