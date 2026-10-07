@@ -39,11 +39,16 @@ PLATZHALTER_MUSTER = re.compile(r"\{\{([a-z0-9_.]+)\|([a-z]+)\}\}")
 # es ein ungültiger Platzhalter, kein unbekanntes Formatkürzel).
 _PLATZHALTER_SPAN_MUSTER = re.compile(r"\{\{[^{}]*\}\}")
 
-# Ausnahmen der Ziffernregel (D-15): Jahreszahlen, Paragraphen, Seitenverweise
-# (inkl. Spannen wie "S. 24/25" oder "S. 309-311").
-_JAHR_MUSTER = re.compile(r"\b(?:19|20)\d{2}\b")
+# Ausnahmen der Ziffernregel (D-15): Paragraphen und Seitenverweise (inkl. Spannen wie
+# "S. 24/25" oder "S. 309-311"). Jahreszahlen sind keine Ausnahme mehr (D-01): sie stehen
+# nur als Platzhalter `{{jahr.…|jahr}}`; das Muster dient als Detektor für die Fehlermeldung.
+_JAHRESZAHL_MUSTER = re.compile(r"\b(?:19|20)\d{2}\b")
 _PARAGRAF_MUSTER = re.compile(r"§\s*\d+")
 _SEITE_MUSTER = re.compile(r"S\.\s*\d+(?:[-/]\d+)*")
+
+# Feste Ereignisjahre (D-02): `jahr.fest_JJJJ` steht für genau dieses Jahr (z. B. ein
+# historisches Ergebnisjahr) und wird aus dem Schlüsselnamen aufgelöst, nicht aus `werte`.
+_FESTES_JAHR_MUSTER = re.compile(r"^jahr\.fest_((?:19|20)\d{2})$")
 
 # Format von erklaerungen.md: "## schluessel"-Abschnitte, je mit einer Titel- und einer
 # Quelle-Zeile direkt danach (kein Leerzeilenabstand), dann eine Leerzeile, dann
@@ -186,15 +191,23 @@ def lies_glossar(pfad: Path) -> list[Erklaertext]:
     return texte
 
 
-def pruefe_text(text: str) -> None:
+def festes_jahr(schluessel: str) -> int | None:
+    """Das Jahr eines Schlüssels `jahr.fest_JJJJ` (nur 19xx/20xx) oder `None` (D-02)."""
+    treffer = _FESTES_JAHR_MUSTER.fullmatch(schluessel)
+    return int(treffer.group(1)) if treffer is not None else None
+
+
+def pruefe_text(text: str, *, abschnitt: str | None = None) -> None:
     """Prüft einen Absatz gegen die Ziffernregel und das HTML-Verbot (D-15).
 
     Bricht mit `TexteFehler` ab bei: einem unbekannten Formatkürzel in einem sonst
     wohlgeformten Platzhalter, einem unvollständigen/unverschachtelten Platzhalter
-    (z. B. fehlende schließende Klammer), einem HTML-Zeichen ("<"/">") oder einer
-    Ziffer außerhalb eines gültigen Platzhalters, einer Jahreszahl (19xx/20xx), eines
-    Paragraphen ("§ n") oder eines Seitenverweises ("S. n", auch als Spanne). Ein
-    Platzhalter im Namensraum "jahr." muss das Formatkürzel "jahr" tragen.
+    (z. B. fehlende schließende Klammer), einem HTML-Zeichen ("<"/">"), einer getippten
+    Jahreszahl (19xx/20xx, D-01; Ausweg: `{{jahr.haushaltsjahr|jahr}}` bzw.
+    `{{jahr.fest_JJJJ|jahr}}`) oder einer Ziffer außerhalb eines gültigen Platzhalters.
+    Ausgenommen bleiben Paragraphen ("§ n") und Seitenverweise ("S. n", auch als Spanne).
+    Ein Platzhalter im Namensraum "jahr." muss das Formatkürzel "jahr" tragen. `abschnitt`
+    benennt den Abschnitt in der Jahres-Meldung.
     """
     if "<" in text or ">" in text:
         raise TexteFehler(f"Text enthält ein HTML-Zeichen: {text!r}")
@@ -218,18 +231,41 @@ def pruefe_text(text: str) -> None:
     if "{{" in rest or "}}" in rest:
         raise TexteFehler(f"Unvollständiger Platzhalter in Text: {text!r}")
 
-    rest = _JAHR_MUSTER.sub("", rest)
     rest = _PARAGRAF_MUSTER.sub("", rest)
     rest = _SEITE_MUSTER.sub("", rest)
+
+    jahr_treffer = _JAHRESZAHL_MUSTER.search(rest)
+    if jahr_treffer is not None:
+        ort = f" in Abschnitt „{abschnitt}“" if abschnitt is not None else ""
+        raise TexteFehler(
+            f"Handgetippte Jahreszahl „{jahr_treffer.group(0)}“{ort}. Jahreszahlen stehen "
+            "nur als Platzhalter, zum Beispiel {{jahr.haushaltsjahr|jahr}}. "
+            f"(voller Text: {text!r})"
+        )
 
     ziffer_treffer = re.search(r"\d", rest)
     if ziffer_treffer is not None:
         start = max(0, ziffer_treffer.start() - 15)
         ende = min(len(rest), ziffer_treffer.start() + 15)
         raise TexteFehler(
-            "Nackte Ziffer außerhalb Platzhalter/Jahreszahl/§/S.: "
+            "Nackte Ziffer außerhalb Platzhalter/§/S.: "
             f"{rest[start:ende]!r} (voller Text: {text!r})"
         )
+
+
+def pruefe_titel(titel: str, abschnitt: str) -> None:
+    """Prüft den Titel eines Abschnitts (D-05).
+
+    Titel werden von der App roh ausgegeben und nicht aufgelöst; ein Platzhalter im Titel
+    wäre dort sichtbarer Rohtext und wird abgelehnt. Sonst gelten dieselben Regeln wie
+    für Absätze (`pruefe_text`, auch die Jahresregel).
+    """
+    if "{{" in titel or "}}" in titel:
+        raise TexteFehler(
+            f"Titel von Abschnitt „{abschnitt}“ enthält einen Platzhalter; "
+            f"Titel werden nicht aufgelöst: {titel!r}"
+        )
+    pruefe_text(titel, abschnitt=abschnitt)
 
 
 def _ist_zahl(wert: object) -> bool:
@@ -421,6 +457,10 @@ def textwerte(
     vorjahr = haushaltsjahr - 1
     werte["jahr.haushaltsjahr"] = haushaltsjahr
     werte["jahr.vorjahr"] = vorjahr
+    # Relative Jahre (D-02): wandern mit dem Jahrgang, nie als Jahreszahl getippt.
+    werte["jahr.vorvorjahr"] = haushaltsjahr - 2
+    werte["jahr.haushaltsjahr_plus_1"] = haushaltsjahr + 1
+    werte["jahr.haushaltsjahr_plus_2"] = haushaltsjahr + 2
     # Letztes Planjahr des Jahrgangs (D-14): Grenze für Polster- und Schuldenformeln.
     werte["jahr.letztes_jahr"] = int(jahre[-1])
 
@@ -539,13 +579,18 @@ def loese_auf(
         for absatz in text.absaetze:
             for treffer in PLATZHALTER_MUSTER.finditer(absatz):
                 schluessel, format_kuerzel = treffer.groups()
-                if schluessel not in werte:
+                if schluessel in verwendet:
+                    continue
+                if schluessel in werte:
+                    verwendet[schluessel] = (werte[schluessel], format_kuerzel)
+                    continue
+                fest = festes_jahr(schluessel)
+                if fest is None:
                     raise TexteFehler(
                         f"Unbekannter Datenschlüssel {schluessel!r} in Text "
                         f"{text.schluessel!r}: {absatz!r}"
                     )
-                if schluessel not in verwendet:
-                    verwendet[schluessel] = (werte[schluessel], format_kuerzel)
+                verwendet[schluessel] = (fest, format_kuerzel)
     return verwendet
 
 
@@ -594,7 +639,7 @@ def vorschau(texte: Sequence[Erklaertext], werte: Mapping[str, int | float]) -> 
 
     def _annotiere(treffer: re.Match[str]) -> str:
         schluessel, _format_kuerzel = treffer.groups()
-        wert = werte.get(schluessel, "???")
+        wert = werte.get(schluessel, festes_jahr(schluessel) or "???")
         return f"{treffer.group(0)}[{wert}]"
 
     zeilen: list[str] = []

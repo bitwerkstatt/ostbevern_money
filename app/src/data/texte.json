@@ -8,7 +8,7 @@
         28
       ],
       "absaetze": [
-        "Die Schlüsselzuweisung ist Geld vom Land NRW für Gemeinden, deren eigene Steuerkraft im Vergleich gering ist. Schau dir die Entwicklung an: Im Jahr 2025 flossen noch {{vorbericht.zuwendungen.schluesselzuweisung.2025|mio}} nach Ostbevern, für {{jahr.haushaltsjahr|jahr}} rechnet die Gemeinde nur noch mit {{vorbericht.zuwendungen.schluesselzuweisung.2026|mio}}. Das ist ein Rückgang um {{abgeleitet.schluesselzuweisung_rueckgang_haushaltsjahr|mio}}. Laut Vorbericht liegt das daran, dass die eigene Steuerkraft Ostbeverns im Vergleich zum Land gestiegen ist – du bekommst also weniger Ausgleich, weil es der Gemeinde (relativ) besser geht."
+        "Die Schlüsselzuweisung ist Geld vom Land NRW für Gemeinden, deren eigene Steuerkraft im Vergleich gering ist. Schau dir die Entwicklung an: Im Jahr {{jahr.vorjahr|jahr}} flossen noch {{vorbericht.zuwendungen.schluesselzuweisung.2025|mio}} nach Ostbevern, für {{jahr.haushaltsjahr|jahr}} rechnet die Gemeinde nur noch mit {{vorbericht.zuwendungen.schluesselzuweisung.2026|mio}}. Das ist ein Rückgang um {{abgeleitet.schluesselzuweisung_rueckgang_haushaltsjahr|mio}}. Laut Vorbericht liegt das daran, dass die eigene Steuerkraft Ostbeverns im Vergleich zum Land gestiegen ist – du bekommst also weniger Ausgleich, weil es der Gemeinde (relativ) besser geht."
       ]
     },
     {
@@ -18,7 +18,7 @@
         27
       ],
       "absaetze": [
-        "Die Gewerbesteuer gehört zu den unsichersten Einnahmen im Haushalt, weil sie von der wirtschaftlichen Lage der Betriebe vor Ort abhängt. Du siehst das deutlich an den tatsächlichen Einnahmen der letzten Jahre: 2022 kamen {{grundzahlen.160101.1.2022|mio}} herein, 2023 brachen sie auf {{grundzahlen.160101.1.2023|mio}} ein und 2024 lagen sie laut Vorbericht bei {{vorbericht.steuerarten.gewerbesteuer.2024|mio}} (vorläufiges Ergebnis). Für {{jahr.haushaltsjahr|jahr}} plant Ostbevern mit {{vorbericht.steuerarten.gewerbesteuer.2026|mio}} bei einem Hebesatz von {{meta.hebesaetze.gewerbesteuer|prozent}}. Weil niemand die Zukunft einzelner Betriebe sicher kennt, bleibt dieser Ansatz eine vorsichtige Schätzung."
+        "Die Gewerbesteuer gehört zu den unsichersten Einnahmen im Haushalt, weil sie von der wirtschaftlichen Lage der Betriebe vor Ort abhängt. Du siehst das deutlich an den tatsächlichen Einnahmen der letzten Jahre: {{jahr.fest_2022|jahr}} kamen {{grundzahlen.160101.1.2022|mio}} herein, {{jahr.fest_2023|jahr}} brachen sie auf {{grundzahlen.160101.1.2023|mio}} ein und {{jahr.vorvorjahr|jahr}} lagen sie laut Vorbericht bei {{vorbericht.steuerarten.gewerbesteuer.2024|mio}} (vorläufiges Ergebnis). Für {{jahr.haushaltsjahr|jahr}} plant Ostbevern mit {{vorbericht.steuerarten.gewerbesteuer.2026|mio}} bei einem Hebesatz von {{meta.hebesaetze.gewerbesteuer|prozent}}. Weil niemand die Zukunft einzelner Betriebe sicher kennt, bleibt dieser Ansatz eine vorsichtige Schätzung."
       ]
     },
     {
@@ -29,7 +29,7 @@
         47
       ],
       "absaetze": [
-        "Die Kreisumlage ist der Betrag, den Ostbevern an den Kreis Warendorf abgibt – sie ist der größte einzelne Ausgabenposten im Haushalt. Netto zahlt Ostbevern über diesen Posten {{vorbericht.transferaufwendungen.kreisumlage.2026|mio}} (Hebesatz {{meta.kreisumlage.hebesatz_kreisumlage|promille}}, im Vorjahr noch {{meta.kreisumlage.hebesatz_kreisumlage.vorjahr|promille}}). Dazu kommt die Jugendamtsumlage mit einem Hebesatz von {{meta.kreisumlage.hebesatz_jugendamtsumlage|promille}}. Weil Ostbevern {{jahr.haushaltsjahr|jahr}} eine Rückstellung aus dem Jahresabschluss 2024 in Höhe von {{meta.kreisumlage.rueckstellungsaufloesung|mio}} auflöst, liegt die tatsächliche Belastung brutto bei rund {{meta.kreisumlage.brutto|mio}} – diese Entlastung wirkt nur einmalig."
+        "Die Kreisumlage ist der Betrag, den Ostbevern an den Kreis Warendorf abgibt – sie ist der größte einzelne Ausgabenposten im Haushalt. Netto zahlt Ostbevern über diesen Posten {{vorbericht.transferaufwendungen.kreisumlage.2026|mio}} (Hebesatz {{meta.kreisumlage.hebesatz_kreisumlage|promille}}, im Vorjahr noch {{meta.kreisumlage.hebesatz_kreisumlage.vorjahr|promille}}). Dazu kommt die Jugendamtsumlage mit einem Hebesatz von {{meta.kreisumlage.hebesatz_jugendamtsumlage|promille}}. Weil Ostbevern {{jahr.haushaltsjahr|jahr}} eine Rückstellung aus dem Jahresabschluss {{jahr.vorvorjahr|jahr}} in Höhe von {{meta.kreisumlage.rueckstellungsaufloesung|mio}} auflöst, liegt die tatsächliche Belastung brutto bei rund {{meta.kreisumlage.brutto|mio}} – diese Entlastung wirkt nur einmalig."
       ]
     },
     {
@@ -85,7 +85,7 @@
         310
       ],
       "absaetze": [
-        "Zum Schuldenstand zählt der Vorbericht die Investitionskredite plus die Mittel, die Ostbevern über ein Förderprogramm der NRW.Bank für Flüchtlingsunterkünfte aufgenommen hat. Ende 2025 waren das zusammen {{schulden.gesamt.2025|mio}}, pro Kopf rund {{schulden.pro_kopf.2025|euro}}. Für Ende {{jahr.haushaltsjahr|jahr}} rechnet die Gemeinde mit {{schulden.investitionskredite.2026|mio}} Investitionskrediten plus {{schulden.nrw_bank.2026|mio}} NRW.Bank-Mitteln, zusammen {{schulden.gesamt.2026|mio}} oder {{schulden.pro_kopf.2026|euro}} pro Kopf. Die geplanten Investitionen der kommenden Jahre lassen diesen Wert weiter steigen."
+        "Zum Schuldenstand zählt der Vorbericht die Investitionskredite plus die Mittel, die Ostbevern über ein Förderprogramm der NRW.Bank für Flüchtlingsunterkünfte aufgenommen hat. Ende {{jahr.vorjahr|jahr}} waren das zusammen {{schulden.gesamt.2025|mio}}, pro Kopf rund {{schulden.pro_kopf.2025|euro}}. Für Ende {{jahr.haushaltsjahr|jahr}} rechnet die Gemeinde mit {{schulden.investitionskredite.2026|mio}} Investitionskrediten plus {{schulden.nrw_bank.2026|mio}} NRW.Bank-Mitteln, zusammen {{schulden.gesamt.2026|mio}} oder {{schulden.pro_kopf.2026|euro}} pro Kopf. Die geplanten Investitionen der kommenden Jahre lassen diesen Wert weiter steigen."
       ]
     },
     {
@@ -96,7 +96,7 @@
         309
       ],
       "absaetze": [
-        "Eine Verpflichtungsermächtigung erlaubt es Ostbevern, schon heute einen Vertrag für eine Investition abzuschließen, auch wenn das Geld erst in einem späteren Haushaltsjahr fließt. Der Rat hat dafür insgesamt {{ve.gesamt|mio}} genehmigt. Davon werden {{ve.faellig.2027|mio}} im Jahr 2027 und {{ve.faellig.2028|mio}} im Jahr 2028 fällig – diese Beträge belasten dann die Haushalte dieser Jahre, nicht den von {{jahr.haushaltsjahr|jahr}}."
+        "Eine Verpflichtungsermächtigung erlaubt es Ostbevern, schon heute einen Vertrag für eine Investition abzuschließen, auch wenn das Geld erst in einem späteren Haushaltsjahr fließt. Der Rat hat dafür insgesamt {{ve.gesamt|mio}} genehmigt. Davon werden {{ve.faellig.2027|mio}} im Jahr {{jahr.haushaltsjahr_plus_1|jahr}} und {{ve.faellig.2028|mio}} im Jahr {{jahr.haushaltsjahr_plus_2|jahr}} fällig – diese Beträge belasten dann die Haushalte dieser Jahre, nicht den von {{jahr.haushaltsjahr|jahr}}."
       ]
     },
     {
@@ -158,7 +158,7 @@
       ],
       "absaetze": [
         "In der Ver- und Entsorgung, zum Beispiel bei der Abfallbeseitigung, bezahlen die Bürgerinnen und Bürger über Gebühren für die Leistung. Ein Überschuss entsteht, wenn die Gebühren in einem Jahr mehr einbringen, als die Leistung kostet.",
-        "Dieser Überschuss ist kein Gewinn zugunsten des übrigen Haushalts. Laut Vorbericht wird er bei der Gebührenberechnung gebührenmindernd berücksichtigt: Ein Jahresüberschuss der Abfallbeseitigung aus dem Jahr 2023 ist im Jahr 2025 in die Gebühren eingeflossen."
+        "Dieser Überschuss ist kein Gewinn zugunsten des übrigen Haushalts. Laut Vorbericht wird er bei der Gebührenberechnung gebührenmindernd berücksichtigt: Ein Jahresüberschuss der Abfallbeseitigung aus dem Jahr {{jahr.fest_2023|jahr}} ist im Jahr {{jahr.fest_2025|jahr}} in die Gebühren eingeflossen."
       ]
     },
     {
@@ -182,7 +182,7 @@
       ],
       "absaetze": [
         "Schließt ein Jahr mit einem Überschuss ab, ist mehr Ertrag übrig geblieben, als Aufwand angefallen ist. Dieser Betrag wird den Rücklagen zugeführt, und das Eigenkapital der Gemeinde steigt.",
-        "Der Vorbericht zeigt das an der Ausgleichsrücklage, die sich über die Jahresergebnisse der Jahre 2020 bis 2024 wieder aufgebaut hat. Das ist kein Geld, das schon ausgegeben wurde, sondern ein Polster, das später ein Defizit auffangen kann."
+        "Der Vorbericht zeigt das an der Ausgleichsrücklage, die sich über die Jahresergebnisse der Jahre {{jahr.fest_2020|jahr}} bis {{jahr.fest_2024|jahr}} wieder aufgebaut hat. Das ist kein Geld, das schon ausgegeben wurde, sondern ein Polster, das später ein Defizit auffangen kann."
       ]
     },
     {
@@ -566,12 +566,16 @@
     }
   ],
   "werte": {
+    "jahr.vorjahr": 2025,
     "vorbericht.zuwendungen.schluesselzuweisung.2025": 2807000,
     "jahr.haushaltsjahr": 2026,
     "vorbericht.zuwendungen.schluesselzuweisung.2026": 890000,
     "abgeleitet.schluesselzuweisung_rueckgang_haushaltsjahr": 1917000,
+    "jahr.fest_2022": 2022,
     "grundzahlen.160101.1.2022": 9737018,
+    "jahr.fest_2023": 2023,
     "grundzahlen.160101.1.2023": 4771497,
+    "jahr.vorvorjahr": 2024,
     "vorbericht.steuerarten.gewerbesteuer.2024": 9511000,
     "vorbericht.steuerarten.gewerbesteuer.2026": 7800000,
     "meta.hebesaetze.gewerbesteuer": 418,
@@ -599,9 +603,14 @@
     "schulden.pro_kopf.2026": 1053,
     "ve.gesamt": 11600000,
     "ve.faellig.2027": 9400000,
+    "jahr.haushaltsjahr_plus_1": 2027,
     "ve.faellig.2028": 2200000,
+    "jahr.haushaltsjahr_plus_2": 2028,
     "meta.vorbericht_werte.bbo_verlustausgleich_wirtschaftsplan": 584000,
     "vorbericht.transferaufwendungen.verlustuebernahme_bbo.2026": 270000,
+    "jahr.fest_2025": 2025,
+    "jahr.fest_2020": 2020,
+    "jahr.fest_2024": 2024,
     "abgeleitet.ausgleichsruecklage_aufgebraucht_jahr": 2026,
     "jahr.letztes_jahr": 2029,
     "abgeleitet.allgemeine_ruecklage_ende_letztes_jahr": 31866316,
@@ -609,7 +618,6 @@
     "meta.vorbericht_werte.hsk_schwelle_ein_jahr": 25,
     "meta.vorbericht_werte.hsk_schwelle_zwei_jahre": 5,
     "abgeleitet.schulden_gesamt_vorjahr": 7710000,
-    "jahr.vorjahr": 2025,
     "abgeleitet.schulden_gesamt_letztes_jahr": 19625000,
     "abgeleitet.kreditaufnahme_ab_haushaltsjahr": 14700000,
     "abgeleitet.tilgung_ab_haushaltsjahr": 2700000,

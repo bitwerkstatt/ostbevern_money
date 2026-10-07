@@ -58,9 +58,15 @@ export function findeText(schluessel: string): Erklaertext | undefined {
   return TEXTE_NACH_SCHLUESSEL.get(schluessel)
 }
 
-/** `true`, wenn kein Absatz einen Platzhalter enthält, der Text also für jedes Jahr gilt. */
+/**
+ * `true`, wenn der Text für jedes Jahr gilt. `jahr.*`-Platzhalter hängen am Haushaltsjahr,
+ * nicht am gewählten Jahr; nur Betrags-Platzhalter binden einen Text an ein Jahr (D-04).
+ * Jahrneutrale Texte dürfen deshalb nur feste Jahre (`jahr.fest_JJJJ`) nennen.
+ */
 export function istJahrneutral(text: Erklaertext): boolean {
-  return text.absaetze.every((absatz) => !new RegExp(PLATZHALTER_MUSTER.source).test(absatz))
+  return text.absaetze.every((absatz) =>
+    [...absatz.matchAll(PLATZHALTER_MUSTER)].every((treffer) => treffer[1]?.startsWith('jahr.')),
+  )
 }
 
 /**

@@ -20,13 +20,16 @@ from ostbevern.schema import DATEN_WURZEL, ERKLAERUNGEN_MD, GLOSSAR_MD
 from ostbevern.texte import (
     ABGELEITET,
     FORMATKUERZEL,
+    PLATZHALTER_MUSTER,
     Erklaertext,
     TexteFehler,
+    festes_jahr,
     lies_erklaerungen,
     lies_glossar,
     loese_auf,
     pruefe_grundzahl_jahre,
     pruefe_text,
+    pruefe_titel,
     textwerte,
     vorschau,
 )
@@ -385,7 +388,6 @@ def test_grundzahl_jahre_andere_platzhalter_bleiben_unberuehrt() -> None:
     "text",
     [
         "{{meta.einwohner|zahl}} Menschen",
-        "im Jahr 2026",
         "§ 4",
         "S. 311",
         "S. 24/25",
@@ -410,6 +412,61 @@ def test_pruefe_text_gueltig(text: str) -> None:
 def test_pruefe_text_ungueltig(text: str) -> None:
     with pytest.raises(TexteFehler):
         pruefe_text(text)
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "im Jahr 2026",
+        "2022 kamen 5 ",
+        "von 2020 bis 2024",
+        "1900",
+        "2099",
+    ],
+)
+def test_pruefe_text_lehnt_getippte_jahreszahl_ab(text: str) -> None:
+    """D-01: jede getippte Zahl von 1900 bis 2099 ist ein Fehler, nicht nur Ziffernreste."""
+    with pytest.raises(TexteFehler, match="Jahreszahl"):
+        pruefe_text(text)
+
+
+def test_pruefe_text_akzeptiert_jahr_platzhalter() -> None:
+    pruefe_text("im Jahr {{jahr.haushaltsjahr|jahr}} und {{jahr.fest_2022|jahr}}")
+
+
+def test_pruefe_text_1990er_trifft_die_allgemeine_ziffernregel() -> None:
+    with pytest.raises(TexteFehler, match="Nackte Ziffer"):
+        pruefe_text("die 1990er")
+
+
+def test_pruefe_text_jahresmeldung_nennt_zahl_abschnitt_und_ausweg() -> None:
+    with pytest.raises(TexteFehler) as fehler:
+        pruefe_text("im Jahr 2026", abschnitt="gewerbesteuer")
+    meldung = str(fehler.value)
+    assert meldung.startswith("Handgetippte Jahreszahl")
+    assert "2026" in meldung
+    assert "gewerbesteuer" in meldung
+    assert "{{jahr.haushaltsjahr|jahr}}" in meldung
+
+
+def test_pruefe_text_jahresmeldung_ohne_abschnitt() -> None:
+    with pytest.raises(TexteFehler) as fehler:
+        pruefe_text("im Jahr 2026")
+    assert "Abschnitt" not in str(fehler.value)
+
+
+def test_pruefe_titel_lehnt_platzhalter_ab() -> None:
+    with pytest.raises(TexteFehler, match="Platzhalter"):
+        pruefe_titel("Haushalt {{jahr.haushaltsjahr|jahr}}", "x")
+
+
+def test_pruefe_titel_lehnt_getippte_jahreszahl_ab() -> None:
+    with pytest.raises(TexteFehler, match="Jahreszahl"):
+        pruefe_titel("Haushalt 2026", "x")
+
+
+def test_pruefe_titel_akzeptiert_normalen_titel() -> None:
+    pruefe_titel("Die Schlüsselzuweisung bricht ein", "x")
 
 
 def test_pruefe_text_fehlermeldung_nennt_ausschnitt() -> None:
@@ -452,6 +509,66 @@ def test_textwerte_enthaelt_erwartete_schluessel(
     assert "ve.gesamt" in werte
     for name in ABGELEITET:
         assert f"abgeleitet.{name}" in werte
+
+
+def test_textwerte_relative_jahre_folgen_dem_haushaltsjahr(
+    app_daten: tuple[dict, dict, list[dict]], werte: dict[str, int | float]
+) -> None:
+    """D-02: relative Jahres-Schlüssel werden aus dem Haushaltsjahr gerechnet, nie getippt."""
+    haushalt, _investitionen, _produkte = app_daten
+    haushaltsjahr = haushalt["haushaltsjahr"]
+    assert werte["jahr.vorjahr"] == haushaltsjahr - 1
+    assert werte["jahr.vorvorjahr"] == haushaltsjahr - 2
+    assert werte["jahr.haushaltsjahr_plus_1"] == haushaltsjahr + 1
+    assert werte["jahr.haushaltsjahr_plus_2"] == haushaltsjahr + 2
+
+
+@pytest.mark.parametrize(
+    ("schluessel", "erwartet"),
+    [
+        ("jahr.fest_2022", 2022),
+        ("jahr.fest_1900", 1900),
+        ("jahr.fest_2099", 2099),
+        ("jahr.fest_1899", None),
+        ("jahr.fest_2100", None),
+        ("jahr.fest_abcd", None),
+        ("jahr.fest_20226", None),
+        ("jahr.vorjahr", None),
+        ("xjahr.fest_2022", None),
+    ],
+)
+def test_festes_jahr(schluessel: str, erwartet: int | None) -> None:
+    assert festes_jahr(schluessel) == erwartet
+
+
+def test_loese_auf_loest_festes_jahr_ohne_werteintrag_auf(
+    werte: dict[str, int | float],
+) -> None:
+    assert "jahr.fest_2020" not in werte
+    texte = [
+        Erklaertext(
+            schluessel="test",
+            titel="Test",
+            quelle_seiten=(1,),
+            absaetze=("Von {{jahr.fest_2020|jahr}} bis {{jahr.vorvorjahr|jahr}}.",),
+        )
+    ]
+    aufgeloest = loese_auf(texte, werte)
+    assert aufgeloest["jahr.fest_2020"] == (2020, "jahr")
+    assert aufgeloest["jahr.vorvorjahr"] == (werte["jahr.vorvorjahr"], "jahr")
+
+
+def test_loese_auf_lehnt_ungueltiges_festes_jahr_ab(werte: dict[str, int | float]) -> None:
+    texte = [
+        Erklaertext("test", "Test", (1,), ("Im Jahr {{jahr.fest_1899|jahr}}.",)),
+    ]
+    with pytest.raises(TexteFehler, match=r"jahr\.fest_1899"):
+        loese_auf(texte, werte)
+
+
+def test_vorschau_zeigt_festes_jahr(werte: dict[str, int | float]) -> None:
+    texte = [Erklaertext("test", "Test", (1,), ("Seit {{jahr.fest_2021|jahr}}.",))]
+    assert "{{jahr.fest_2021|jahr}}[2021]" in vorschau(texte, werte)
 
 
 def _ohne_folgejahr_ausgleichsruecklage(haushalt: dict) -> dict:
@@ -720,12 +837,17 @@ def test_erklaerungen_jeder_text_hat_quelle(echte_erklaerungen: list[Erklaertext
 def test_jahrneutrale_erklaerungen_ohne_platzhalter(
     echte_erklaerungen: list[Erklaertext],
 ) -> None:
-    """Pitfall 6: die sieben neuen Texte gelten für jedes wählbare Jahr, enthalten also
-    keinen Platzhalter (und damit keinen Wert, der nur für ein Jahr stimmt)."""
+    """Pitfall 6 / D-04: die sieben Texte gelten für jedes wählbare Jahr; sie enthalten
+    höchstens feste Jahre `{{jahr.fest_JJJJ|jahr}}`, keinen Wert, der nur für ein Jahr stimmt."""
     je_schluessel = {text.schluessel: text for text in echte_erklaerungen}
     for schluessel in _JAHRNEUTRAL_SCHLUESSEL:
         for absatz in je_schluessel[schluessel].absaetze:
-            assert "{{" not in absatz, f"{schluessel}: Platzhalter in jahrneutralem Text"
+            for treffer in PLATZHALTER_MUSTER.finditer(absatz):
+                assert festes_jahr(treffer.group(1)) is not None, (
+                    f"{schluessel}: nur jahr.fest_*-Platzhalter in jahrneutralem Text, "
+                    f"gefunden {treffer.group(0)!r}"
+                )
+            assert not re.search(r"\{\{(?!jahr\.fest_)", absatz), schluessel
 
 
 def test_phase6_texte_ohne_platzhalter(echte_erklaerungen: list[Erklaertext]) -> None:
