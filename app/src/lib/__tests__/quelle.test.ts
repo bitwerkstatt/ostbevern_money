@@ -4,6 +4,10 @@ import { renderToString } from 'vue/server-renderer'
 
 import DatenTabelle from '@/components/DatenTabelle.vue'
 import QuelleKnopf from '@/components/QuelleKnopf.vue'
+// Warum Quelltext (die drei `?raw`-Importe der Beleg-Komponenten): Gesichert wird die Konvention
+// „keine Drittanbieter-Requests, keine Absolutpfade“ (D-05) im Template. Ein Rendertest sieht nur die
+// Ausgabe der Testdaten, nicht jede Zeichenkette im Template, und in der Testumgebung
+// (`environment: 'node'`) gibt es kein DOM und kein DOM-Paket (D-14).
 import quelleKnopfQuelltext from '@/components/QuelleKnopf.vue?raw'
 import quelleSeiteQuelltext from '@/components/QuelleSeite.vue?raw'
 import quelleSeitenleisteQuelltext from '@/components/QuelleSeitenleiste.vue?raw'

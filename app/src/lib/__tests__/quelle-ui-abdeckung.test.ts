@@ -6,6 +6,10 @@
 
 import { describe, expect, it } from 'vitest'
 
+// Warum Quelltext: Gesichert wird die Belegabdeckung an beliebiger Stelle von `src/`, auch für eine
+// später ergänzte Kachel oder Spalte, die noch keine Seite rendert. Das kann nur ein Scan der
+// Quelltexte leisten; ohne DOM in der Testumgebung (`environment: 'node'`, kein DOM-Paket) gibt es
+// keine gerenderte Seite, die man durchsuchen könnte (D-14).
 const vueDateien = import.meta.glob<string>('/src/**/*.vue', {
   query: '?raw',
   import: 'default',

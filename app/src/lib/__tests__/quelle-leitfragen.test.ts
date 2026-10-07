@@ -20,6 +20,10 @@ import { findeKlKnoten } from '@/lib/kreisumlage'
 import { findeBeleg } from '@/lib/quelle'
 import { ZEITREIHEN_POSTEN, baueZeitreihe } from '@/lib/zeitreihen'
 
+// Warum Quelltext: Gesichert wird die Belegabdeckung der Leitfragen-Seiten, nämlich dass die
+// Spaltendefinitionen in `EinnahmenPage.vue` und `AusgabenPage.vue` genau eine Spalte „Quelle“ mit
+// `art: 'quelle'` tragen. Ohne DOM in der Testumgebung (`environment: 'node'`, kein DOM-Paket) lässt
+// sich das nicht an der gerenderten Seite prüfen (D-14).
 const quelltexte = import.meta.glob<string>('/src/**/*.vue', {
   query: '?raw',
   import: 'default',

@@ -6,6 +6,9 @@ import { describe, expect, it } from 'vitest'
 // den es nicht gibt, macht die ganze CSS-Deklaration stillschweigend ungültig (so verlor
 // `scroll-margin-top` im Glossar seinen Kopfzeilen-Versatz). Die Quelltexte kommen wie in
 // `quelltext.test.ts` über `import.meta.glob` mit `?raw`.
+// Warum Quelltext: Gesichert werden Stil-Konventionen (nur definierte Tokens, vier Schriftgrößen,
+// zwei Gewichte), die im CSS der Dateien stehen. Die Testumgebung (`environment: 'node'`) berechnet
+// keine Stile und hat weder ein DOM noch ein DOM-Paket (D-14).
 // Grenzen des Wächters (05/IN-04): Er kann keine dynamischen Tokennamen auflösen, etwa
 // `var(--wa-color-${name})` in einer Vorlagenzeichenkette. Solche Namen enden nach dem
 // festen Teil auf „-“ und werden übersprungen und gemeldet, statt als fehlend zu gelten.

@@ -361,6 +361,10 @@ describe('nachwuchs', () => {
 // Stellen und Personalaufwand je Aufgabenbereich (STEL-02, STEL-03, D-16)
 // ---------------------------------------------------------------------------------------------
 
+// Warum Quelltext: Gesichert wird die Fachregel „kein Aufwand je Stelle“ (D-16): `stellen.ts` darf
+// keine solche Größe exportieren und keine solche Division enthalten. Das Fehlen einer Funktion
+// lässt sich nicht als Verhalten prüfen, es gibt nichts aufzurufen; zudem fehlt in der
+// Testumgebung (`environment: 'node'`) ein DOM-Paket (D-14).
 const quelltexte = import.meta.glob<string>('/src/lib/stellen.ts', {
   query: '?raw',
   import: 'default',

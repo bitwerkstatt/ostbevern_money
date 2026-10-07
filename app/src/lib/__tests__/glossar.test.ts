@@ -199,6 +199,9 @@ describe('glossarVerwendungen', () => {
 })
 
 describe('Verwendungsprüfung aller .vue-Dateien (D-16, GLOS-03)', () => {
+  // Warum Quelltext: Geprüft wird die Glossarverlinkung, also welche `GlossarBegriff`-Schlüssel die
+  // Templates der Seiten verwenden. Ohne DOM in der Testumgebung (`environment: 'node'`) und ohne
+  // DOM-Paket lässt sich das nicht an der gerenderten Seite prüfen, nur am Quelltext (D-14).
   const quelltexte = import.meta.glob<string>('/src/**/*.vue', {
     query: '?raw',
     import: 'default',

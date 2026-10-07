@@ -11,6 +11,10 @@ import { findeBeleg } from '@/lib/quelle'
 import { stellenNachGruppe, TEILE } from '@/lib/stellen'
 import { kitaZuschuesse, nichtBeeinflussbar, weitereZuschuesse } from '@/lib/zuschuesse'
 
+// Warum Quelltext: Gesichert wird, dass die Seiten ihre Beleg-Spalten über die Spaltenart `quelle`
+// definieren und keine Seitenspalte mehr als bloßen Text. Das ist eine Eigenschaft der
+// Spaltendefinitionen im Quelltext; ohne DOM in der Testumgebung (`environment: 'node'`,
+// kein DOM-Paket) gibt es keine gerenderte Seite, an der sich das ablesen ließe (D-14).
 const quelltexte = import.meta.glob<string>('/src/**/*.vue', {
   query: '?raw',
   import: 'default',
