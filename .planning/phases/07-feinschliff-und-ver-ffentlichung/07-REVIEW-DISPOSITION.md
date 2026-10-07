@@ -13,31 +13,31 @@ findings:
     title: "`lighthouse-a11y.sh` löscht ein vom Nutzer übergebenes `LH_SCRATCH`-Verzeichnis vollständig"
   - id: WR-01
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "Geänderte Schwärzung wirkt nicht auf vorhandene Bilder (veraltete, ungeschwärzte Datei bleibt erhalten)"
   - id: WR-02
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "`rendere_seiten` schreibt nicht atomar; ein Abbruch hinterlässt ein kaputtes Bild, das nie erneuert wird"
   - id: WR-03
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "Unbehandelte Indexfehler in der Beleg-Suche umgehen die `QuellenFehler`-Behandlung"
   - id: WR-04
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "Leere Listen sind jetzt für jeden `[layout.*]`-Schlüssel erlaubt, auch für die Datenschutz-Prüfwörter"
   - id: WR-05
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "Startseiten-Kacheln „Erträge“ und „Aufwendungen“ tragen kein „berechnet“, die Seitenleiste nennt sie aber „nicht im PDF“"
   - id: WR-06
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "Die Schriftannahme der Breitenkalibrierung wird in der CI weder hergestellt noch geprüft"
   - id: WR-07
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "Der Breitentest hat keine eigene Zeitgrenze; im Fehlerfall reißt er die Standardgrenze von 30 s und verliert seine Diagnose"
   - id: IN-01
     severity: info
@@ -83,9 +83,9 @@ findings:
     severity: info
     disposition: open
     title: "Neue Spec ist nicht prettier-konform, und `format:check` sieht `e2e/` nicht"
-open: 18
+open: 11
 total: 20
-recorded: 2026-10-07T10:01:17.064Z
+recorded: 2026-10-07T10:01:30.255Z
 ---
 
 # Phase 07: Code Review Disposition
@@ -94,13 +94,13 @@ recorded: 2026-10-07T10:01:17.064Z
 |---------|----------|-------------|--------|
 | CR-01 | critical | skipped | 07-REVIEW-FIX.md |
 | CR-02 | critical | fixed | 07-REVIEW-FIX.md |
-| WR-01 | warning | open | - |
-| WR-02 | warning | open | - |
-| WR-03 | warning | open | - |
-| WR-04 | warning | open | - |
-| WR-05 | warning | open | - |
-| WR-06 | warning | open | - |
-| WR-07 | warning | open | - |
+| WR-01 | warning | fixed | 07-REVIEW-FIX.md |
+| WR-02 | warning | fixed | 07-REVIEW-FIX.md |
+| WR-03 | warning | fixed | 07-REVIEW-FIX.md |
+| WR-04 | warning | fixed | 07-REVIEW-FIX.md |
+| WR-05 | warning | fixed | 07-REVIEW-FIX.md |
+| WR-06 | warning | fixed | 07-REVIEW-FIX.md |
+| WR-07 | warning | fixed | 07-REVIEW-FIX.md |
 | IN-01 | info | open | - |
 | IN-02 | info | open | - |
 | IN-03 | info | open | - |
