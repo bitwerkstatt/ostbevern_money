@@ -99,6 +99,11 @@ jobs:
         # Nach dem Playwright-Schritt, weil dieser weitere Schriften installiert (z. B.
         # WenQuanYi Zen Hei), die die Auswahl für sans-serif/system-ui beeinflussen können.
         working-directory: ${{ github.workspace }}
+        # Die Paketversion wird nur ausgegeben (Kalibrierstand: 2.37-8) und nicht erzwungen, damit
+        # ein Update des Runner-Images die Veröffentlichung nicht ohne Not blockiert. Verbindlich
+        # sind zwei Prüfungen: `fc-match` (unten) ist nur ein Indiz dafür, was `system-ui` in
+        # Chromium wählt; die eigentliche Prüfung ist die Spec, die für jeden Betrag die
+        # gerenderte Familie (ausschließlich `DejaVu Sans`) meldet, und der Breitentest selbst.
         run: |
           sudo apt-get install -y --no-install-recommends fonts-dejavu-core
           dpkg-query -W -f='fonts-dejavu-core ${Version}\n' fonts-dejavu-core

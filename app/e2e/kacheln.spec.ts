@@ -146,9 +146,10 @@ async function warteAufLayout(page: Page): Promise<void> {
  * Die Plattformschrift, die die Beträge rendert (CDP `CSS.getPlatformFontsForNode`). Das Projekt
  * `ci` ist Chromium, CDP steht also zur Verfügung. Der Aufrufer prüft sie gegen
  * `KALIBRIERSCHRIFT`; die CI stellt sie im Workflow her (Schritt „Schrift der Kalibrierung
- * sicherstellen“), das Runner-Image allein garantiert sie nicht.
+ * sicherstellen“), das Runner-Image allein garantiert sie nicht. Jeder Eintrag hat die Form
+ * `Familienname (PostScript-Name)`, z. B. `DejaVu Sans (DejaVuSans-Bold)`.
  */
-async function schriftDerBetraege(page: Page): Promise<string> {
+async function schriftDerBetraege(page: Page): Promise<string[]> {
   const sitzung = await page.context().newCDPSession(page)
   try {
     await sitzung.send('DOM.enable')
@@ -165,7 +166,7 @@ async function schriftDerBetraege(page: Page): Promise<string> {
         schriften.add(`${eintrag.familyName} (${eintrag.postScriptName})`)
       }
     }
-    return schriften.size > 0 ? [...schriften].join(', ') : '(keine)'
+    return [...schriften]
   } finally {
     await sitzung.detach()
   }
@@ -465,14 +466,19 @@ test.describe('Kennzahl-Kacheln über alle Breiten (A11Y-03, 07-13)', () => {
       await page.goto(`/#${pfad}`)
       await expect(page.locator('h1')).toBeVisible()
       await page.waitForLoadState('networkidle')
-      const schrift = await schriftDerBetraege(page)
+      const schriften = await schriftDerBetraege(page)
+      const schrift = schriften.length > 0 ? schriften.join(', ') : '(keine)'
       console.log(`Schrift der Beträge auf ${pfad}: ${schrift}`)
+      // Jeder gemeldete Eintrag muss die Familie selbst sein: `DejaVu Sans Mono` oder `DejaVu Sans
+      // Condensed` haben andere Zeichenbreiten, und ein Ersatzglyph aus einer anderen Schrift
+      // zeigt, dass der Betrag nicht vollständig in der Kalibrierschrift steht.
       expect(
-        schrift,
-        `Schrift weicht von der Kalibrierung ab: erwartet ${KALIBRIERSCHRIFT}, gerendert ${schrift}. ` +
+        schriften.length > 0 &&
+          schriften.every((eintrag) => eintrag.startsWith(`${KALIBRIERSCHRIFT} (`)),
+        `Schrift weicht von der Kalibrierung ab: erwartet ausschließlich ${KALIBRIERSCHRIFT}, gerendert ${schrift}. ` +
           'Die Breitenmessung gilt nur mit dieser Schrift (Lauf über scripts/e2e-wie-ci.sh bzw. ' +
           'den Workflow-Schritt „Schrift der Kalibrierung sicherstellen“).',
-      ).toContain(KALIBRIERSCHRIFT)
+      ).toBe(true)
 
       // Aufsteigende Breiten: Diagramme ziehen nach dem Viewport nach, sie sind nie breiter.
       const befunde: string[] = []
