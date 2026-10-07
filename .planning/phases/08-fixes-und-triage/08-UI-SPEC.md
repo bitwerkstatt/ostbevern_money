@@ -1,7 +1,7 @@
 ---
 phase: "8"
 slug: "fixes-und-triage"
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: "2026-10-07"
@@ -293,25 +293,57 @@ Der bewusste Diff in `app/src/data/texte.json` (`absaetze`, `werte`) wird im Com
 
 ## UI Considerations
 
-Applicable state considerations resolved: 11 covered, 3 backstop, 1 unresolved
+Ergebnis der UI-Consideration-Probe (9 Elemente, 42 anwendbare Kategorien; E9 manuell als `static-content` eingeordnet). 23 resolved (19 explicit, 4 backstop), 19 dismissed mit Begründung. Dazu kommt 1 unresolved außerhalb der Taxonomie (D-20). Leer- und Fehlertexte stehen im Copywriting Contract, hier wird nur darauf verwiesen.
 
-| Category | Element(s) | Status | Resolution / Reason |
-|----------|------------|--------|---------------------|
-| zero-one-many | Lesehilfe-Satz (Fälle A bis D) | ✅ covered | Vier Fälle laut Tabelle „Lesehilfe“; „genau“ steht nur in Fall D; vitest mit konstruierten Daten für C und D. |
-| edge | Minderaufwand = 0 (2024) | ✅ covered | Kein Hinweis, kein „0 €“; bestehender Test bleibt, vitest ergänzt den Grenzfall. |
-| error | Minderaufwand > 0 (Datenfehler) | ✅ covered | `/geldfluss` und `/ausgaben` werfen mit derselben Meldung; vitest je Seite. |
-| partial | Stellenplan-Kachel ohne Vorjahres- oder Vergleichswert | ✅ covered | Kein Etikett und keine Seiten für fehlende Jahre, Differenz entfällt samt Trenner, nie 0 erfinden. |
-| populated | Stellenplan-Kacheln mit Werten | ✅ covered | Alle drei tragen „berechnet“ und eine Herleitung; Quellzeile nennt nur eigene Seiten (vitest gegen `stellenSummen()`). |
-| zero-one-many | „Zusammen“ der Zuschüsse | ✅ covered | Gedruckt: ohne Etikett; berechnet: mit Etikett; kein Wert: Zeile entfällt. vitest für `zusammen()` mit den drei Fällen. |
-| error | Fehlende Einwohnerzahl in `EbenenTabelle` | ✅ covered | Laut abbrechen mit klarer Meldung, kein „–“-Spalte, kein Seitenhinweis; vitest ruft `einwohnerZahl()` mit fehlendem und nicht numerischem Wert auf. |
-| overflow | `DatenTabelle` bei 360 px | ✅ covered | Rahmen mit `tabindex`, `role="region"`, `aria-labelledby` nur bei Überlauf; Seite scrollt nie waagerecht (Playwright `mobil`). |
-| populated | `DatenTabelle` mit Name | ✅ covered | Genau ein Namensweg (Caption); kein `aria-label` daneben (vitest). |
-| populated | Mobiles Menü, Klick auf aktuellen Link | ✅ covered | Drawer schließt, Fokus nicht auf Menüknopf (Playwright `mobil`). |
-| long-text | Jahres-Platzhalter in Erklärtexten (Texte mit nur festen Jahren sichtbar bei jedem Jahr) | ✅ covered | Jahrneutrale Texte nutzen nur feste Schlüssel; vitest sichert Sichtbarkeit von `ueberschuss_ruecklage` und `ueberschuss_pb_*`. |
-| long-text | Längere Quellzeile in der Kachel („PDF-Seiten 284, 285, 286, 287, 288, 289“) bei 360 px | 🧪 backstop | Visueller Test: Zeile bricht um, Kachel läuft nicht über, Betrag bleibt unabgeschnitten (`e2e/kacheln.spec.ts`). |
-| overflow | „Zusammen rd. … [berechnet]“ bei 360 px | 🧪 backstop | Etikett darf in eine zweite Zeile umbrechen, der Betrag nicht; visueller Test bei 360 px. |
-| overflow | Eindeutige Region-Namen bei vielen Tabellen je Seite | 🧪 backstop | axe-Smoke-Test (`landmark-unique`) auf jeder Route bei 360 px. |
-| edge | Doppelansage Region plus Caption im Screenreader | ⚠ unresolved | Nicht automatisch prüfbar; Planer bzw. Recherche klärt es manuell (D-20). Bis dahin gilt das Roselli-Muster. |
+**Gemeinsame Dismiss-Gründe**
+- **R-LOAD (loading):** Alle Daten sind gebündeltes JSON aus `app/src/data/`. Zur Laufzeit wird nichts asynchron geladen, also gibt es keinen Ladezustand.
+- **R-THROW (empty/error/partial bei fehlenden Daten):** Fehlende oder widersprüchliche Daten brechen laut ab (D-09, Muster „… fehlt in haushalt.json“). Einen sichtbaren Leer- oder Fehlerzustand für Besucher gibt es absichtlich nicht.
+- **R-UNTOUCHED:** Der Zustand ist Bestand aus Phase 1 bis 7 und wird in Phase 8 nicht angefasst. Es gilt die jeweilige frühere UI-SPEC.
+
+| Element | Kategorie | Status | Auflösung / Begründung |
+|---------|-----------|--------|------------------------|
+| E1 Lesehilfe `/geldfluss` | overflow | dismissed | Fließtext bricht normal um, kein Container mit fester Höhe. |
+| E1 | long-text | ✅ resolved (explicit) | Fall C ist der längste Text (drei Sätze nach Satz 1). Er bricht um, Beträge bleiben über U+00A0 unteilbar. vitest prüft den Wortlaut der Fälle A bis D, „genau“ nur in D. |
+| E2 Minderaufwand-Hinweis `/ausgaben` | overflow | dismissed | Callout wächst mit dem Inhalt, kein Abschneiden. |
+| E2 | long-text | ✅ resolved (explicit) | Betrag immer positiv ohne Minuszeichen. Bei 0 kein Hinweis, bei > 0 Datenfehler (Copywriting „Minderaufwand-Hinweis“). vitest für 2024 (0) und konstruiert > 0. |
+| E3 Stellenplan-Kacheln | empty | dismissed | R-THROW plus Kachel-Bestand: Kachel ohne Wert zeigt „–“, das ist schon unter „partial“ abgedeckt. |
+| E3 | loading | dismissed | R-LOAD |
+| E3 | error | dismissed | R-THROW |
+| E3 | populated | ✅ resolved (explicit) | Alle drei Kacheln tragen „berechnet“. Die Quellzeile nennt nur die eigenen PDF-Seiten (vitest gegen `stellenSummen()`). |
+| E3 | partial | ✅ resolved (explicit) | Fehlender Vorjahres- oder Vergleichswert: kein Etikett, keine Seiten für dieses Jahr, Differenz entfällt samt Trenner, nie 0 erfinden. |
+| E3 | overflow | 🧪 resolved (backstop) | { statement: "Bei 360 px läuft keine Stellenplan-Kachel über; Betrag und Etikett „berechnet“ bleiben sichtbar und unabgeschnitten", verification: backstop } |
+| E3 | zero-one-many | ✅ resolved (explicit) | „PDF-Seite {n}“ (eine) gegenüber „PDF-Seiten {n}, {m}“ (mehrere) über `seitenText`, keine Seitenangabe ohne Wert. |
+| E3 | long-text | 🧪 resolved (backstop) | { statement: "Eine lange Quellzeile (6+ Seiten) bricht bei 360 px um, ohne die Kachel zu verbreitern", verification: backstop } |
+| E4 „Zusammen“-Zeile `/rat-entscheidet` | empty | ✅ resolved (explicit) | Gruppe ohne einen einzigen Wert: die Zeile „Zusammen“ entfällt, kein erfundenes 0. |
+| E4 | loading | dismissed | R-LOAD |
+| E4 | error | dismissed | R-THROW |
+| E4 | populated | ✅ resolved (explicit) | Gedruckte Gesamtzeile ohne Etikett, berechnete mit „berechnet“, gebildet über `EuroBetrag`. vitest für `zusammen()`. |
+| E4 | partial | ✅ resolved (explicit) | `gesamt` fehlt, Einzelwerte vorhanden: berechnete Summe mit Etikett (Gruppe `transfer` immer). |
+| E4 | overflow | 🧪 resolved (backstop) | { statement: "Bei 360 px darf „berechnet“ in eine zweite Zeile umbrechen, „rd. {Betrag}“ bricht nie", verification: backstop } |
+| E4 | zero-one-many | ✅ resolved (explicit) | Null Werte: Zeile entfällt. Ein oder mehr Werte: Summe mit Etikett nach der Regel oben. |
+| E4 | long-text | dismissed | Betrag ist über U+00A0 unteilbar, der Fall ist unter overflow abgedeckt. |
+| E5 `EbenenTabelle` | empty | dismissed | R-UNTOUCHED („Keine Einzelwerte“ aus `DatenTabelle`). |
+| E5 | loading | dismissed | R-LOAD |
+| E5 | error | ✅ resolved (explicit) | Fehlende oder nicht numerische Einwohnerzahl: `einwohnerZahl()` wirft mit der Meldung aus dem Copywriting Contract. Keine „–“-Spalte, kein Seitenhinweis, keine weggelassene Spalte. vitest. |
+| E5 | populated | ✅ resolved (explicit) | Spalte „pro Einwohner (berechnet)“ in jeder Zeile gefüllt. |
+| E5 | partial | dismissed | R-UNTOUCHED (einzelner Nullwert: „–“ plus „kein Wert“). |
+| E5 | overflow | ✅ resolved (explicit) | Läuft über den `DatenTabelle`-Rahmen, siehe E6. |
+| E5 | zero-one-many | dismissed | R-UNTOUCHED, die Zeilenzahl ist durch die Ebenen fest. |
+| E6 `DatenTabelle`-Rahmen | empty | dismissed | R-UNTOUCHED |
+| E6 | loading | dismissed | R-LOAD |
+| E6 | error | ✅ resolved (explicit) | Fehlendes `beschriftung` ist ein Typfehler (Pflicht-Prop), kein Laufzeitzustand. |
+| E6 | populated | ✅ resolved (explicit) | Genau ein Namensweg (Caption mit `useId()`), kein `aria-label` daneben. vitest. |
+| E6 | partial | dismissed | R-UNTOUCHED |
+| E6 | overflow | ✅ resolved (explicit) | Nur bei Überlauf zusammen: `tabindex="0"`, `role="region"`, `aria-labelledby`. Die Seite scrollt nie waagerecht (Playwright `mobil`, `/investitionen`). |
+| E6 | zero-one-many | 🧪 resolved (backstop) | { statement: "Mehrere überlaufende Tabellen auf einer Seite haben eindeutige Region-Namen (axe `landmark-unique` auf jeder Route bei 360 px und 1280 px)", verification: backstop } |
+| E7 Mobiles Menü | loading | dismissed | R-LOAD, Routen sind clientseitig ohne Nachladen. |
+| E7 | error | dismissed | Es gibt keinen Fehlerpfad. Ein Link auf die aktuelle Seite ist kein Fehler und unter overflow/long-text nicht relevant. Das Verhalten steht in der Tabelle „Mobiles Menü“. |
+| E7 | overflow | ✅ resolved (explicit) | Klick auf den Link der aktuellen Seite schließt den Drawer, `aria-expanded="false"`, Fokus auf `h1` (nicht Menüknopf, nicht `body`). Playwright `mobil` 360 × 640. |
+| E7 | long-text | dismissed | R-UNTOUCHED, Linktexte ändern sich nicht. |
+| E8 Erklärtexte mit Jahres-Platzhaltern | overflow | dismissed | Fließtext, sichtbarer Text 2026 Zeichen für Zeichen gleich. |
+| E8 | long-text | ✅ resolved (explicit) | Jahrneutrale Texte nutzen nur feste Schlüssel. vitest sichert, dass `ueberschuss_ruecklage` und `ueberschuss_pb_*` weiter sichtbar sind. pytest: `pruefe_text` lehnt eine getippte Jahreszahl ab. |
+| E9 Beispieldaten-Callout | overflow / long-text | ✅ resolved (explicit) | Nur das Icon wechselt zu `triangle-exclamation`, der Text ist unverändert. vitest prüft den Icon-Namen und die Datei unter `app/public/icons/solid/`. |
+| E6 (D-20) | edge: Doppelansage Region plus Caption | ⚠ unresolved — planner must treat as assumption | Nicht automatisch prüfbar. Bis zu einer manuellen Prüfung (VoiceOver/NVDA) gilt das Roselli-Muster, die Alternative mit nur einer Beschriftung ist erlaubt. |
 
 ---
 
@@ -340,12 +372,12 @@ Eigene Entscheidungen dieser Spec (**[Default]**), die 08-CONTEXT.md nicht festl
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
-- [ ] Dimension 7 Inventory Provenance: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
+- [x] Dimension 7 Inventory Provenance: PASS
 
-**Approval:** pending
+**Approval:** approved 2026-10-07
