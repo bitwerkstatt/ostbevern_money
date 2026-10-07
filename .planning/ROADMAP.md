@@ -264,7 +264,7 @@ Plans:
   4. Ein Playwright-Smoke-Test bestätigt, dass jede Route ohne Konsolenfehler rendert und die Diagramme Daten enthalten. Ein Textdurchgang bestätigt, dass alle Texte deutsch und durchgehend in der Du-Anrede sind.
   5. GitHub Actions baut die App und deployt sie auf GitHub Pages (eigener Account), und die App ist unter einer öffentlichen URL erreichbar.
 
-**Plans**: 12/13 plans executed
+**Plans**: 13/13 plans executed
 **UI hint**: yes
 
 Plans:
@@ -295,7 +295,7 @@ Plans:
 - [x] 07-12-PLAN.md — Paketprüfung und Lighthouse je Route, CI-identisches Abschluss-Gate, Repository und erster Push durch den Nutzer, öffentliche URL (Wave 7, Checkpoints)
 
 **Gap closure** *(07-VERIFICATION A11Y-03 Kachel-Überlauf ab 400 px plus 07-UI-REVIEW BLOCKER 1 / WARNING 2; Wave 1 des Gap-Laufs, nach Wave 7)*
-- [ ] 07-13-PLAN.md — Kennzahl-Kacheln ab 360 px bei jeder Breite: Breitentest `e2e/kacheln.spec.ts` im CI-Projekt (rot → grün), gemeinsames Raster `om-kachelraster` mit gemessener Mindestbreite, Betrag immer einzeilig in Größe l, Knopf „Quelle“ (Name unverändert), UI-SPEC-Nachtrag (Gap Closure)
+- [x] 07-13-PLAN.md — Kennzahl-Kacheln ab 360 px bei jeder Breite: Breitentest `e2e/kacheln.spec.ts` im CI-Projekt (rot → grün), gemeinsames Raster `om-kachelraster` mit gemessener Mindestbreite, Betrag immer einzeilig in Größe l, Knopf „Quelle“ (Name unverändert), UI-SPEC-Nachtrag (Gap Closure)
 
 ## Progress
 
@@ -310,4 +310,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Manuelle Daten und App-Daten | 6/6 | Complete    | 2026-10-04 |
 | 5. Leitfragen-Seiten | 16/16 | Complete    | 2026-10-05 |
 | 6. Kontext-Seiten | 17/17 | Complete    | 2026-10-06 |
-| 7. Feinschliff und Veröffentlichung | 12/12 | In Progress | - |
+| 7. Feinschliff und Veröffentlichung | 13/13 | In Progress | - |
