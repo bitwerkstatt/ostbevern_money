@@ -29,6 +29,7 @@ from ostbevern.texte import (
     loese_auf,
     pruefe_grundzahl_jahre,
     pruefe_text,
+    pruefe_titel,
     textwerte,
     vorschau,
 )
@@ -387,7 +388,6 @@ def test_grundzahl_jahre_andere_platzhalter_bleiben_unberuehrt() -> None:
     "text",
     [
         "{{meta.einwohner|zahl}} Menschen",
-        "im Jahr 2026",
         "§ 4",
         "S. 311",
         "S. 24/25",
@@ -412,6 +412,61 @@ def test_pruefe_text_gueltig(text: str) -> None:
 def test_pruefe_text_ungueltig(text: str) -> None:
     with pytest.raises(TexteFehler):
         pruefe_text(text)
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "im Jahr 2026",
+        "2022 kamen 5 ",
+        "von 2020 bis 2024",
+        "1900",
+        "2099",
+    ],
+)
+def test_pruefe_text_lehnt_getippte_jahreszahl_ab(text: str) -> None:
+    """D-01: jede getippte Zahl von 1900 bis 2099 ist ein Fehler, nicht nur Ziffernreste."""
+    with pytest.raises(TexteFehler, match="Jahreszahl"):
+        pruefe_text(text)
+
+
+def test_pruefe_text_akzeptiert_jahr_platzhalter() -> None:
+    pruefe_text("im Jahr {{jahr.haushaltsjahr|jahr}} und {{jahr.fest_2022|jahr}}")
+
+
+def test_pruefe_text_1990er_trifft_die_allgemeine_ziffernregel() -> None:
+    with pytest.raises(TexteFehler, match="Nackte Ziffer"):
+        pruefe_text("die 1990er")
+
+
+def test_pruefe_text_jahresmeldung_nennt_zahl_abschnitt_und_ausweg() -> None:
+    with pytest.raises(TexteFehler) as fehler:
+        pruefe_text("im Jahr 2026", abschnitt="gewerbesteuer")
+    meldung = str(fehler.value)
+    assert meldung.startswith("Handgetippte Jahreszahl")
+    assert "2026" in meldung
+    assert "gewerbesteuer" in meldung
+    assert "{{jahr.haushaltsjahr|jahr}}" in meldung
+
+
+def test_pruefe_text_jahresmeldung_ohne_abschnitt() -> None:
+    with pytest.raises(TexteFehler) as fehler:
+        pruefe_text("im Jahr 2026")
+    assert "Abschnitt" not in str(fehler.value)
+
+
+def test_pruefe_titel_lehnt_platzhalter_ab() -> None:
+    with pytest.raises(TexteFehler, match="Platzhalter"):
+        pruefe_titel("Haushalt {{jahr.haushaltsjahr|jahr}}", "x")
+
+
+def test_pruefe_titel_lehnt_getippte_jahreszahl_ab() -> None:
+    with pytest.raises(TexteFehler, match="Jahreszahl"):
+        pruefe_titel("Haushalt 2026", "x")
+
+
+def test_pruefe_titel_akzeptiert_normalen_titel() -> None:
+    pruefe_titel("Die Schlüsselzuweisung bricht ein", "x")
 
 
 def test_pruefe_text_fehlermeldung_nennt_ausschnitt() -> None:

@@ -196,7 +196,7 @@ def festes_jahr(schluessel: str) -> int | None:
     return int(treffer.group(1)) if treffer is not None else None
 
 
-def pruefe_text(text: str) -> None:
+def pruefe_text(text: str, *, abschnitt: str | None = None) -> None:
     """Prüft einen Absatz gegen die Ziffernregel und das HTML-Verbot (D-15).
 
     Bricht mit `TexteFehler` ab bei: einem unbekannten Formatkürzel in einem sonst
@@ -240,6 +240,10 @@ def pruefe_text(text: str) -> None:
             "Nackte Ziffer außerhalb Platzhalter/Jahreszahl/§/S.: "
             f"{rest[start:ende]!r} (voller Text: {text!r})"
         )
+
+
+def pruefe_titel(titel: str, abschnitt: str) -> None:
+    """Platzhalter-Skelett für die RED-Phase (Task 2): prüft noch nichts."""
 
 
 def _ist_zahl(wert: object) -> bool:
