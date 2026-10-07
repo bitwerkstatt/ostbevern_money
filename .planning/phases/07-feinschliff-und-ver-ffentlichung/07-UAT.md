@@ -1,35 +1,31 @@
 ---
-status: testing
+status: complete
 phase: 07-feinschliff-und-ver-ffentlichung
 source: [07-VERIFICATION.md]
 started: 2026-10-07T09:21:06Z
-updated: 2026-10-07T09:21:06Z
+updated: 2026-10-07T09:31:20.256Z
 ---
 
 ## Current Test
 
-number: 1
-name: Push von main und öffentliche URL prüfen
-expected: |
-  Nach dem Push von main ist der GitHub-Actions-Lauf vollständig grün (app, pipeline, deploy); das Log des app-Jobs zeigt vier Zeilen „Schrift der Beträge auf …: DejaVu Sans“ und kacheln.spec.ts besteht. https://bitwerkstatt.github.io/ostbevern_money/ zeigt den Kachel-Fix; keine 404 (Icons, Belegbild unter /ostbevern_money/quellen/), Reload von /#/ausgaben und /#/ueber funktioniert, Quelle-Leiste zeigt ihr Bild, Fußzeile zeigt die Kontakt-Adresse, PDF-Link öffnet die Gemeinde-Datei.
-awaiting: user response
+[testing complete]
 
 ## Tests
 
 ### 1. Push von main und öffentliche URL prüfen
 expected: Nach dem Push von main ist der GitHub-Actions-Lauf vollständig grün (app, pipeline, deploy); das Log des app-Jobs zeigt vier Zeilen „Schrift der Beträge auf …: DejaVu Sans“ und kacheln.spec.ts besteht. https://bitwerkstatt.github.io/ostbevern_money/ zeigt den Kachel-Fix; keine 404 (Icons, Belegbild unter /ostbevern_money/quellen/), Reload von /#/ausgaben und /#/ueber funktioniert, Quelle-Leiste zeigt ihr Bild, Fußzeile zeigt die Kontakt-Adresse, PDF-Link öffnet die Gemeinde-Datei.
-result: [pending]
+result: pass
 
 ### 2. Kacheln auf dem eigenen Gerät nach der breiteren Spur (/, /investitionen, /rat-entscheidet, /stellenplan bei 360, 400, 600, 768 und 1280 px)
 expected: Jeder Betrag und jeder Knopf „Quelle“ liegt innerhalb der grauen Kachel, bündig mit der Überschrift; kein waagerechtes Scrollen der Seite.
-result: [pending]
+result: pass
 
 ## Summary
 
 total: 2
-passed: 0
+passed: 2
 issues: 0
-pending: 2
+pending: 0
 skipped: 0
 blocked: 0
 
