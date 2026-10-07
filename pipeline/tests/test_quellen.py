@@ -29,6 +29,7 @@ from ostbevern.quellen import (
     GRUND_NICHT_GEFUNDEN,
     QUELLEN_JSON,
     QuellenErgebnis,
+    QuellenFehler,
     bbox_mit_rand,
     erzeuge_quellen,
     finde_planzeile,
@@ -566,6 +567,36 @@ def test_tabellenzeile_findet_label_und_haushaltsjahrbetrag() -> None:
     assert quellen.finde_tabellenzeile(
         zeilen, "Hundesteuer", [1, 2, 3], ziel_index=2, breite=595.28, hoehe=841.89
     ) == (None, GRUND_NICHT_GEFUNDEN)
+
+
+def test_tabellenzeile_mit_zu_kurzer_werteliste_wird_als_quellenfehler_gemeldet() -> None:
+    zeilen = [
+        _zeile(
+            _wort("Grundsteuer", 40, 90, 120, 128),
+            _wort("160", 300, 320, 120, 128),
+        )
+    ]
+    with pytest.raises(QuellenFehler, match="Jahresindex 2"):
+        quellen.finde_tabellenzeile(
+            zeilen, "Grundsteuer", [160, 130], ziel_index=2, breite=595.28, hoehe=841.89
+        )
+
+
+def test_nachwuchszeile_mit_leerer_gruppe_wird_als_quellenfehler_gemeldet() -> None:
+    zeilen = [_zeile(_wort("Anwärter", 40, 90, 120, 128), _wort("Beamte", 100, 140, 120, 128))]
+    with pytest.raises(QuellenFehler, match="leere Gruppenbezeichnung"):
+        quellen.finde_stellenzeile(
+            zeilen,
+            teil="nachwuchs",
+            gruppe="  ",
+            amtsbezeichnung=None,
+            verguetung="Beamte",
+            produktbereich=None,
+            stellen=None,
+            seite=10,
+            breite=595.28,
+            hoehe=841.89,
+        )
 
 
 def test_tabellenzeile_mit_umgebrochenem_label_und_nummerierung() -> None:

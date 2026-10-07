@@ -371,6 +371,11 @@ def finde_tabellenzeile(
             kandidaten.append((zeile, zahlen))
     if not kandidaten:
         return None, GRUND_NICHT_GEFUNDEN
+    if not 0 <= ziel_index < len(werte):
+        raise QuellenFehler(
+            f"Tabellenzeile {bezeichnung!r}: kein Wert für Jahresindex {ziel_index} "
+            f"({len(werte)} Werte)"
+        )
     ziel = werte[ziel_index]
     if ziel is not None:
         kandidaten = [(z, b) for z, b in kandidaten if any(_gleich(x, ziel) for x in b)]
@@ -650,7 +655,10 @@ def finde_stellenzeile(
         return _eindeutiger_block(kandidaten, breite, hoehe, fehlt)
 
     if teil == "nachwuchs":
-        erstes_wort = _norm(gruppe.split()[0])
+        woerter = gruppe.split()
+        if not woerter:
+            raise QuellenFehler(f"Nachwuchszeile auf PDF-Seite {seite}: leere Gruppenbezeichnung")
+        erstes_wort = _norm(woerter[0])
         art = _norm(verguetung or "")
         kandidaten = [
             [z]
@@ -1045,6 +1053,11 @@ def _sammle_vorbericht(
         gesamt = daten["gesamt_vorbericht"]
         if gesamt["quelle"] is not None:
             gesamt_df = df.filter(pl.col("ist_gesamt"))
+            if gesamt_df.height == 0:
+                raise QuellenFehler(
+                    f"Tabelle {tabelle}: gesamt_vorbericht.quelle gesetzt, aber keine "
+                    "ist_gesamt-Zeile"
+                )
             bezeichnung = gesamt_df["posten_name"][0]
             sammler.suche(
                 schluessel_vb_gesamt(tabelle),
