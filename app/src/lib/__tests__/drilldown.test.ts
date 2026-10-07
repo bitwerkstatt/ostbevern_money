@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { abstufung, farbeFuerPb, KL_DECAL, KL_FARBE, PUNKT_DECAL } from '@/charts/echartsTheme'
-import { euroKurz } from '@/charts/format'
+import { euroKurz, RD_PRAEFIX } from '@/charts/format'
 import { haushalt } from '@/data/daten'
 import {
   baueBrotkrumen,
@@ -334,7 +334,7 @@ describe('eintragTooltip (T-05-27)', () => {
       },
       'Ansatz',
     )
-    expect(html).toContain('rd.')
+    expect(html).toContain(RD_PRAEFIX)
     expect(html).not.toContain('Klicken')
   })
 })

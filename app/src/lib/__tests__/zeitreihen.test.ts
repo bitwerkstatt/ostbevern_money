@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { euro } from '@/charts/format'
+import { euro, RD_PRAEFIX } from '@/charts/format'
 import { haushalt, produkte } from '@/data/daten'
 import type { Produkt } from '@/data/typen'
 import { findeBeleg } from '@/lib/quelle'
@@ -229,7 +229,7 @@ describe('zeitreihenSerien', () => {
 
 describe('betragText', () => {
   it('setzt „rd.“ vor einen in T€ gerundeten Betrag', () => {
-    expect(betragText({ wert: 9_511_000, gerundet: true })).toBe(`rd. ${euro(9_511_000)}`)
+    expect(betragText({ wert: 9_511_000, gerundet: true })).toBe(`${RD_PRAEFIX}${euro(9_511_000)}`)
   })
 
   it('lässt einen eurogenauen Betrag ohne „rd.“', () => {

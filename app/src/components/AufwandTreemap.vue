@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import type { EChartsOption } from 'echarts'
 
-import { euroKurz } from '@/charts/format'
+import { kurzMitHinweis } from '@/charts/format'
 import BaseChart from '@/components/BaseChart.vue'
 import { useSchmalerBildschirm } from '@/lib/bildschirm'
 import {
@@ -50,7 +50,7 @@ const nachCode = computed(() => new Map(props.eintraege.map((e) => [e.code, e] a
 // nicht, werden aber vorsorglich davon befreit.
 function beschriftung(eintrag: EbenenEintrag): string {
   const name = eintrag.name.replace(/[{}]/g, '')
-  const betrag = eintrag.gerundet ? `rd. ${euroKurz(eintrag.wert)}` : euroKurz(eintrag.wert)
+  const betrag = kurzMitHinweis(eintrag.wert, eintrag.gerundet)
   return `{n|${name}}\n{b|${betrag}}`
 }
 

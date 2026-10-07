@@ -3,11 +3,12 @@ import { computed } from 'vue'
 import type { EChartsOption } from 'echarts'
 
 import { AUFWANDSART_FARBE, ERTRAG_FARBE, KL_FARBE, ZINSEN_FARBE } from '@/charts/echartsTheme'
-import { euro, euroKurz, jahr as formatiereJahr, KEIN_WERT } from '@/charts/format'
+import { euroKurz, jahr as formatiereJahr, KEIN_WERT } from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
 import { LEGENDE_TEXT, flaechenFarbe, jahresAchse, linienSerie } from '@/charts/wertartStil'
 import BaseChart from '@/components/BaseChart.vue'
 import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
+import EuroBetrag from '@/components/EuroBetrag.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import ErklaerText from '@/components/ErklaerText.vue'
@@ -150,7 +151,7 @@ const fussnote = computed(() => postenFussnote(props.posten, reihe.value))
       >
         <template #zelle="{ zeile, spalte, wert }">
           <template v-if="spalte.schluessel === 'betrag' && typeof wert === 'number'">
-            <span v-if="zeile['gerundet'] === 1">rd. </span>{{ euro(wert) }}
+            <EuroBetrag :wert="wert" :gerundet="zeile['gerundet'] === 1" />
           </template>
           <template v-else-if="wert === null">
             <span aria-hidden="true">{{ KEIN_WERT }}</span>

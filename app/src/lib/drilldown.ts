@@ -7,7 +7,7 @@
 import type { EChartsOption } from 'echarts'
 
 import { abstufung, farbeFuerPb, KL_DECAL, PUNKT_DECAL, type Decal } from '@/charts/echartsTheme'
-import { euro, euroKurz, prozent } from '@/charts/format'
+import { betragMitHinweis, euro, euroKurz, kurzMitHinweis, prozent } from '@/charts/format'
 import { tooltipZeilen } from '@/charts/tooltip'
 import { haushalt } from '@/data/daten'
 import type { Knoten } from '@/data/typen'
@@ -198,7 +198,7 @@ export function klickHinweis(ziel: KlickZiel): string | null {
 /** Tooltip-HTML eines Eintrags: Name, Betrag, Anteil, Wertart, Klickhinweis (alles maskiert). */
 export function eintragTooltip(eintrag: EbenenEintrag, wertartText: string): string {
   const zeilen = [eintrag.name]
-  const betrag = eintrag.gerundet ? `rd. ${euro(eintrag.wert)}` : euro(eintrag.wert)
+  const betrag = betragMitHinweis(eintrag.wert, eintrag.gerundet)
   zeilen.push(eintrag.ueberschuss ? `Überschuss: ${euro(Math.abs(eintrag.wert))}` : betrag)
   if (eintrag.anteil !== null) {
     zeilen.push(`Anteil: ${prozent(eintrag.anteil)}`)
@@ -356,9 +356,7 @@ export function zuschussBalkenOption(
         barWidth: 24,
         data: eintraege.map((eintrag) => {
           const decal = eintrag.wert < 0 ? PUNKT_DECAL : eintrag.decal
-          const betrag = eintrag.gerundet
-            ? `rd. ${euroKurz(Math.abs(eintrag.wert))}`
-            : euroKurz(Math.abs(eintrag.wert))
+          const betrag = kurzMitHinweis(Math.abs(eintrag.wert), eintrag.gerundet)
           return {
             value: eintrag.wert,
             code: eintrag.code,

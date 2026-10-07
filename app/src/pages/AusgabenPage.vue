@@ -3,7 +3,7 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import type { BalkenZeile } from '@/charts/balken'
-import { euro, euroKurz, jahr as formatiereJahr, KEIN_WERT, prozent, zahl } from '@/charts/format'
+import { euroKurz, jahr as formatiereJahr, KEIN_WERT, prozent, zahl } from '@/charts/format'
 import AufwandsartBalken from '@/components/AufwandsartBalken.vue'
 import AufwandTreemap from '@/components/AufwandTreemap.vue'
 import Brotkrumen from '@/components/Brotkrumen.vue'
@@ -12,6 +12,7 @@ import DatenTabelle from '@/components/DatenTabelle.vue'
 import type { DatenSpalte, DatenZeile } from '@/components/datenTabelle'
 import EbenenTabelle from '@/components/EbenenTabelle.vue'
 import ErklaerText from '@/components/ErklaerText.vue'
+import EuroBetrag from '@/components/EuroBetrag.vue'
 import GlossarBegriff from '@/components/GlossarBegriff.vue'
 import HinweisNichtImHaushalt from '@/components/HinweisNichtImHaushalt.vue'
 import JahrUmschalter from '@/components/JahrUmschalter.vue'
@@ -344,7 +345,7 @@ const gesamtSeite = computed(() => {
             <span :class="{ 'om-ausgaben-teil': zeile['teil'] === 1 }">{{ wert }}</span>
           </template>
           <template v-else-if="spalte.schluessel === 'wert' && typeof wert === 'number'">
-            <span v-if="zeile['gerundet'] === 1">rd. </span>{{ euro(wert) }}
+            <EuroBetrag :wert="wert" :gerundet="zeile['gerundet'] === 1" />
           </template>
           <template v-else-if="wert === null">
             <span aria-hidden="true">{{ KEIN_WERT }}</span>
