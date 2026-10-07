@@ -72,6 +72,9 @@ created: "2026-10-06"
 | 07-12-01 | 07-12 | 7 | A11Y-04 | T-07-28 | Paketprüfung vor Installation | Checkpoint (blocking-human) | — | — | ✅ green (human-approved) |
 | 07-12-02 | 07-12 | 7 | A11Y-04, A11Y-03 | T-07-28 | Lighthouse nur im Scratch | Lighthouse-Skript + CI-identisches Gate | `bash scripts/lighthouse-a11y.sh`; Pipeline- und App-Job lokal; `--project=ci --project=mobil` | ✅ | ✅ green |
 | 07-12-03 | 07-12 | 7 | DEPL-02 | T-07-29 | Push nur durch den Nutzer | Checkpoint (human-action) | — (Sandbox erreicht github.io nicht) | — | ✅ green (human-approved) |
+| 07-13-01 | 07-13 | 1 | A11Y-03, UI-02 | T-07-SC | Betrag nie umbrochen/abgeschnitten; zugänglicher Name unverändert | Playwright (Docker) + vitest | Scratch-Kette mit `quelle.test.ts` + `npx playwright test --project=ci e2e/kacheln.spec.ts` (rot vor dem Fix belegt) | ✅ | ✅ green |
+| 07-13-02 | 07-13 | 1 | A11Y-03 | — | keine Kachelroute ungeprüft (Klassifikationstest `KACHEL_ROUTEN`) | Playwright (Docker) + vitest | volle Scratch-Kette + `--project=ci --project=mobil` | ✅ | ✅ green |
+| 07-13-03 | 07-13 | 1 | A11Y-03, UI-02 | — | gesperrte Pfade unverändert seit `a02a28c` | statisch (git diff/grep) + CI-identisches Gate | `git diff --quiet a02a28c -- …`; UI-SPEC-grep; Scratch-Kette + `--project=ci --project=mobil --project=texte` | ✅ | ✅ green |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -96,6 +99,7 @@ created: "2026-10-06"
 | Öffentliche URL lädt (Icons, Belegbild, Direktaufruf `/#/ausgaben`, `/#/ueber`, Fußzeile, PDF-Link mit `#page=`) | DEPL-02 | Repo hat noch keinen Remote; `*.github.io` aus dem Sandbox nicht erreichbar | Nach erstem Deploy URL im Browser öffnen und Liste abhaken |
 | Texte deutsch und in Du-Anrede abgenommen | UI-06 | Heuristik hat Falschmeldungen; inhaltliche Abnahme | Text-Checkpoint mit Du-Test-Bericht |
 | Belegseiten ohne Personennamen; Nutzungsrechte der Seitenbilder | DATA-04 / Datenschutz | Rechts-/Inhaltsfrage | Stellenplan-Seiten S. 284–290 sichten |
+| Kacheln auf dem eigenen Gerät: Betrag und Knopf „Quelle“ bleiben in der Kachel, kein seitliches Scrollen (360, 400, 600, 768, 1280 px) | A11Y-03 | Schriften des Geräts weichen vom Docker-Image ab | Startseite und die drei weiteren Kachelrouten im eigenen Browser bei den Breiten prüfen (07-VERIFICATION human_verification 2) |
 
 ---
 
