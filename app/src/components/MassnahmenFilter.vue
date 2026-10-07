@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import BerechnetEtikett from '@/components/BerechnetEtikett.vue'
 import { useSchmalerBildschirm } from '@/lib/bildschirm'
 import {
   ARTEN,
@@ -100,7 +101,11 @@ function beiArt(ereignis: Event) {
         </wa-radio>
       </wa-radio-group>
     </div>
-    <p class="om-massnahmen-filter__ergebnis" aria-live="polite">{{ ergebnis }}</p>
+    <!-- Die Summe der gezeigten Vorhaben steht nirgends im PDF, sie ist abgeleitet (D-12). -->
+    <p class="om-massnahmen-filter__ergebnis">
+      <span aria-live="polite">{{ ergebnis }}</span>
+      <BerechnetEtikett />
+    </p>
   </div>
 </template>
 
