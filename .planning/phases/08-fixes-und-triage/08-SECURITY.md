@@ -80,3 +80,11 @@ created: "2026-10-07"
 - [x] All threats have a disposition (mitigate / accept / transfer)
 - [x] Accepted risks documented in Accepted Risks Log
 - [x] `threats_open: 0` confirmed
+
+## Security Audit 2026-10-08
+
+| Metric | Count |
+|---|---|
+| Threats found | 20 |
+| Closed | 20 |
+| Open | 0 |
