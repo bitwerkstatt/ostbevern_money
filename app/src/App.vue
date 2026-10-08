@@ -38,6 +38,8 @@ const schliesstDurchSeitenwechsel = ref(false)
 const menueSchalter = ref<HTMLButtonElement | null>(null)
 
 function oeffneDrawer() {
+  // Ein veralteter Merker aus einer früheren Sitzung darf den Fokus dieser Sitzung nicht lenken.
+  schliesstDurchSeitenwechsel.value = false
   drawerOffen.value = true
   drawerAktiv.value = true
 }
@@ -66,7 +68,22 @@ function fokussiereUeberschrift() {
 
 // Ein Tipp auf einen Link im Menü schließt den Drawer immer, auch beim Link der aktuellen Seite
 // (dann wechselt die Route nicht und der Routenwächter unten greift nicht, D-21, A11Y-02).
-function beiDrawerLinkKlick() {
+// Klicks mit Zusatztaste oder anderer Maustaste öffnen den Link in einem neuen Tab oder Fenster
+// und navigieren hier nicht: dann bleibt der Drawer, wie er ist, und der Fokus wird nicht zur
+// Überschrift gezogen. Schließt der Drawer bereits, gibt es nichts mehr zu tun.
+function beiDrawerLinkKlick(ereignis: MouseEvent) {
+  if (
+    ereignis.ctrlKey ||
+    ereignis.metaKey ||
+    ereignis.shiftKey ||
+    ereignis.altKey ||
+    ereignis.button !== 0
+  ) {
+    return
+  }
+  if (!drawerOffen.value) {
+    return
+  }
   schliesstDurchSeitenwechsel.value = true
   drawerOffen.value = false
 }
