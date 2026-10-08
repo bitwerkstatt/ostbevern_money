@@ -30,7 +30,7 @@
 - App-Prüfungen (type-check, lint, format:check, test, build, Playwright) laufen in einer Scratch-Kopie von `app/`, weil `app/node_modules` im gemounteten Repo macOS-Binaries enthält.
 - Ein Commit, der einen Review-Befund behebt, nennt dessen ID mit Phasenpräfix (z. B. `05/IN-06`). So kann die Triage am Ende von Phase 8 ihn als Beleg zitieren.
 
-- [ ] **Phase 8: Fixes und Triage** - Zahlen, Texte und Barrierefreiheit stimmen in Grenzfällen, Hygiene-Befunde sind erledigt oder begründet zurückgestellt, die Ledger 01, 05 und 06 stehen auf `open: 0`
+- [x] **Phase 8: Fixes und Triage** - Zahlen, Texte und Barrierefreiheit stimmen in Grenzfällen, Hygiene-Befunde sind erledigt oder begründet zurückgestellt, die Ledger 01, 05 und 06 stehen auf `open: 0` (completed 2026-10-08)
 - [ ] **Phase 9: Sicherheit und Audit** - `04-SECURITY.md` mit `threats_open: 0`, Milestone-Audit für v1.0, erneuerte Verifikationen der Phasen 1–7, bereinigte Blocker-Liste in STATE.md
 
 ## Phase Details
@@ -47,7 +47,7 @@
   4. `01-REVIEW-DISPOSITION.md`, `05-REVIEW-DISPOSITION.md` und `06-REVIEW-DISPOSITION.md` unter `.planning/milestones/v1.0-phases/` stehen auf `open: 0`, jede Zeile nennt Commit oder Begründung. Nebenbei behobene Befunde (z. B. 05/IN-09, Platzhalter-Kontaktdaten, erledigt mit D-17 in Phase 7) sind mit Beleg auf fixed gesetzt, 06/WR-01 (Rücklagen-Fußnote) ist mit der Begründung aus UAT 06 erfasst. Jeder reine Hygiene-Befund (Duplikate, toter Code, Hex-Fallbacks, Kopplung, Test-Nits, Doku-Drift) ist behoben, wenn das wenig kostet, sonst auf deferred mit Begründung in der Source-Spalte.
   5. Die Querschnittsbedingung hält: `alle.py --jahr 2026` ist byte-identisch oder begründet geändert, Prüfregeln 1–10 sind grün, die CI-Kette von Pipeline und App (Scratch-Kopie, inkl. axe-Smoke und 360-px-Prüfungen) ist grün.
 
-**Plans**: 12/12 plans executed in 5 waves
+**Plans**: 12/12 plans complete in 5 waves
 
 Plans:
 **Wave 1**
@@ -105,5 +105,5 @@ Phases execute in numeric order: 8 → 9
 | 5. Leitfragen-Seiten | v1.0 | 16/16 | Complete | 2026-10-05 |
 | 6. Kontext-Seiten | v1.0 | 17/17 | Complete | 2026-10-06 |
 | 7. Feinschliff und Veröffentlichung | v1.0 | 14/14 | Complete | 2026-10-07 |
-| 8. Fixes und Triage | v1.0.1 | 12/12 | In Progress | - |
+| 8. Fixes und Triage | v1.0.1 | 12/12 | Complete    | 2026-10-08 |
 | 9. Sicherheit und Audit | v1.0.1 | 0/TBD | Not started | - |

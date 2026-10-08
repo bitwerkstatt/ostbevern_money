@@ -2,44 +2,44 @@
 gsd_state_version: "1.0"
 milestone: v1.0.1
 milestone_name: Restpunkte
-current_phase: 08
-current_phase_name: Fixes und Triage
-status: executing
-stopped_at: Phase 8 UI-SPEC approved
-last_updated: "2026-10-08T17:51:38.368Z"
+current_phase: 9
+current_phase_name: Sicherheit und Audit
+status: planning
+stopped_at: Phase 08 complete, ready to plan Phase 9
+last_updated: "2026-10-08T18:36:23.453Z"
 last_activity: 2026-10-08
-last_activity_desc: Phase 08 execution resumed (wave continue)
-state_head: efd9cef28adba46e3efb57ed1e8b85b56ef9f91e
+last_activity_desc: Phase 08 complete, transitioned to Phase 9
+state_head: dd77df11e49944702ac7d05e01ff8b0bf69e5794
 progress:
   total_phases: 2
-  completed_phases: 7
+  completed_phases: 8
   total_plans: 12
   completed_plans: 12
-  percent: 100
+  percent: 89
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-10-07)
+See: .planning/PROJECT.md (updated 2026-10-08)
 
 **Core value:** Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch automatische Prüfungen belegt. Die Leitfragen „Woher?“ und „Wofür?“ sind für Laien verständlich beantwortet.
-**Current focus:** Phase 08 — Fixes und Triage
+**Current focus:** Phase 9 — Sicherheit und Audit
 
 ## Current Position
 
-Phase: 08 (Fixes und Triage) — EXECUTING
-Plan: 1 of 12
-Status: Executing Phase 08
-Last activity: 2026-10-08 — Phase 08 execution resumed (wave continue)
+Phase: 9 — Sicherheit und Audit
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-10-08 — Phase 08 complete, transitioned to Phase 9
 
-Progress: [██████████] 100%
+Progress: [█████████░] 89%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 68 (v1.0), 0 (v1.0.1)
+- Total plans completed: 80 (v1.0), 0 (v1.0.1)
 - Average duration: -
 - Total execution time: 0.0 hours
 
@@ -48,7 +48,7 @@ Progress: [██████████] 100%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1–7 (v1.0) | 68 | - | - |
-| 8 | - | - | - |
+| 08 | 12 | - | - |
 | 9 | - | - | - |
 
 **Recent Trend:**
@@ -66,6 +66,8 @@ Recent decisions affecting current work:
 
 - [Roadmap v1.0.1]: Auf Wunsch des Nutzers nur zwei Phasen. Phase 8 „Fixes und Triage“: erst Zahlen/Texte, dann Barrierefreiheit und Hygiene, zum Schluss die Ledger 01/05/06 auf `open: 0`. Fix-Commits nennen die Befund-ID mit Phasenpräfix (z. B. `05/IN-06`).
 - [Roadmap v1.0.1]: Phase 9 „Sicherheit und Audit“: erst Security-Prüfung von Phase 4 gegen den Code nach Phase 8, zuletzt Milestone-Audit und Re-Verifikation auf dem Endstand.
+- [Phase 8]: Alle 28 offenen Befunde entschieden (27 fixed, 1 skipped 06/WR-01, 0 deferred); Ledger 01/05/06 auf `open: 0`.
+- [Phase 8]: `DatenTabelle` ohne Slot-Modus, Tabellenname nur aus der Caption (A11Y-03, Screenreader-UAT bestanden).
 - [Roadmap v1.0.1]: Querschnittsbedingung für jede Phase: `alle.py --jahr 2026` byte-identisch (Ausnahme nur mit Begründung im Commit), Prüfregeln 1–10 grün, App-Prüfungen in einer Scratch-Kopie.
 
 ### Pending Todos
@@ -95,10 +97,10 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-07T16:47:46.483Z
-Stopped at: Phase 8 UI-SPEC approved
-Resume file: .planning/phases/08-fixes-und-triage/08-UI-SPEC.md
+Last session: 2026-10-08
+Stopped at: Phase 08 complete, ready to plan Phase 9
+Resume file: None
 
 ## Operator Next Steps
 
-- Phase 8 planen mit /gsd-plan-phase 8 (oder vorher /gsd-discuss-phase 8)
+- Phase 9 planen mit /gsd-plan-phase 9 (oder vorher /gsd-discuss-phase 9)

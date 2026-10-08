@@ -58,12 +58,12 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 - ✓ Barrierefreiheit (Lighthouse-a11y 100 auf allen 11 Routen), Tabellenalternative zu jedem Diagramm, responsiv ab 360 px (Kachel-Raster über alle Spaltensprünge geprüft) — v1.0 (Phase 7)
 - ✓ Deployment über GitHub Actions auf GitHub Pages: https://bitwerkstatt.github.io/ostbevern_money/ — v1.0 (Phase 7)
 - ✓ Pipeline ist für das ProFIS-Layout generisch konfigurierbar (Jahr, Spalten, Seitenbereiche in `jahrgaenge/{jahr}.toml`) — v1.0 (Phase 1); der Nachweis mit echtem Haushalt 2027 ist ERW-03 (v2)
+- ✓ Alle 28 offenen Review-Befunde aus v1.0 haben eine Disposition (27 fixed, 1 skipped, 0 deferred); Ledger 01, 05 und 06 auf `open: 0` — v1.0.1 (Phase 8)
+- ✓ Fachlich relevante Befunde (Zahlen, Texte, Barrierefreiheit) sind behoben, inkl. Screenreader-Prüfung der Tabellennamen bei 360 px (UAT 08) — v1.0.1 (Phase 8)
 
 
 ### Active
 
-- [ ] Alle offenen Review-Befunde aus v1.0 haben eine Disposition (fixed/skipped/deferred mit Begründung) — v1.0.1
-- [ ] Fachlich relevante Befunde (Zahlen, Texte, Barrierefreiheit) sind behoben — v1.0.1
 - [ ] Phase 4 ist sicherheitsgeprüft — v1.0.1
 - [ ] v1.0 ist auditiert, Verifikationen sind aktuell — v1.0.1
 
@@ -140,6 +140,9 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 | Phase-6-Dateien stehen unter einem Typografie-Wächter (`stiltokens.test.ts`), Bestand aus Phase 5 wird in Phase 7 bereinigt | UI-SPEC-Skala gilt für neuen Code ohne Ausnahme | ✓ Good — Quick 261006-f1w |
 | Kachelraster gegen die CI-Schrift kalibriert: `li`-Einzug von Web Awesome zurückgesetzt, Mindestspalte neu gegen DejaVu Sans Bold, e2e prüft alle Spaltensprünge und loggt die gerenderte Schrift | Lokale Kalibrierung lief mit anderer Fallback-Schrift als der GitHub-Runner (G-07-2) | ✓ Good — Phase 7 (07-14, UAT 2/2) |
 | Lighthouse nur als Einmal-Werkzeug im Scratch-Verzeichnis, nie in package.json/CI | Keine neue Abhängigkeit für einen einmaligen Nachweis | ✓ Good — Phase 7 (alle 11 Routen a11y 100) |
+| `DatenTabelle`: `beschriftung`/`spalten`/`zeilen` als Pflicht-Props, Slot-Modus entfernt; Tabellenname nur aus der Caption, Scrollrahmen per `aria-labelledby` | Bewusste Abweichung von den Münster-Props; verhindert doppelte Screenreader-Ansage (A11Y-03) | ✓ Good — Phase 8 (UAT 1/1) |
+| Feste Jahre in Texten über Schlüssel `jahr.fest_JJJJ`, aus dem Schlüsselnamen aufgelöst; relative Jahre stehen in `textwerte` | Kein Jahrgangswert im Code, Texte bleiben jahrneutral prüfbar | ✓ Good — Phase 8 |
+| Gerundete und berechnete Werte tragen ihr Etikett aus den Daten (`gerundet`-Flag), nicht aus festen Annahmen im Code | Kennzeichnung bleibt korrekt, wenn sich Daten ändern (TXT-04/05) | ✓ Good — Phase 8 |
 
 ## Evolution
 
@@ -159,4 +162,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-07 after starting milestone v1.0.1*
+*Last updated: 2026-10-08 after Phase 8*
