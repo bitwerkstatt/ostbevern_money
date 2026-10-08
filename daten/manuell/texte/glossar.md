@@ -94,7 +94,7 @@ Quelle: S. 28
 
 Die Schlüsselzuweisung ist Geld vom Land NRW für Gemeinden, deren eigene Steuerkraft im Vergleich gering ist.
 
-Sie wird nicht für einen bestimmten Zweck gezahlt, sondern hilft der Gemeinde, ihre Aufgaben insgesamt zu finanzieren. Für {{jahr.haushaltsjahr|jahr}} plant Ostbevern mit {{vorbericht.zuwendungen.schluesselzuweisung.2026|mio}}, im Vorjahr waren es {{vorbericht.zuwendungen.schluesselzuweisung.2025|mio}}.
+Sie wird nicht für einen bestimmten Zweck gezahlt, sondern hilft der Gemeinde, ihre Aufgaben insgesamt zu finanzieren. Für {{jahr.haushaltsjahr|jahr}} plant Ostbevern mit {{vorbericht.zuwendungen.schluesselzuweisung.2026|mio}}, im Vorjahr ({{jahr.vorjahr|jahr}}) waren es {{vorbericht.zuwendungen.schluesselzuweisung.2025|mio}}.
 
 ## hebesatz
 Titel: Hebesatz

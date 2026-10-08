@@ -578,6 +578,44 @@ def textwerte(
     return werte
 
 
+# Jahressuffix eines Wertschlüssels, z. B. `schulden.gesamt.2025` (nicht `jahr.*`-Schlüssel).
+_WERT_JAHRESSUFFIX_MUSTER = re.compile(r"\.((?:19|20)\d{2})$")
+
+
+def _pruefe_jahrbezug(text_schluessel: str, absatz: str, werte: Mapping[str, int | float]) -> None:
+    """Jahresbeschriftung und Wertschlüssel eines Absatzes dürfen nicht auseinanderlaufen.
+
+    Jahre stehen im Text als relative Platzhalter (`jahr.vorjahr`, D-02), die mit dem
+    Jahrgang wandern; Wertschlüssel tragen dagegen ein festes Jahressuffix
+    (`schulden.gesamt.2025`). Ohne Prüfung bliebe der Betrag beim nächsten Jahrgang auf
+    2025 stehen, während die Beschriftung auf 2026 wandert -- eine falsche Zahl-Jahr-
+    Aussage, die jede andere Prüfung passiert. Bricht mit `TexteFehler` ab, wenn ein Absatz
+    einen Wertschlüssel mit Jahressuffix J verwendet, aber keinen `jahr.*`-Platzhalter, der
+    im aktuellen Jahrgang zu J aufgelöst wird.
+    """
+    schluessel_im_absatz = [treffer.group(1) for treffer in PLATZHALTER_MUSTER.finditer(absatz)]
+    beschriftete_jahre: set[int] = set()
+    for schluessel in schluessel_im_absatz:
+        if not schluessel.startswith("jahr."):
+            continue
+        fest = festes_jahr(schluessel)
+        if fest is not None:
+            beschriftete_jahre.add(fest)
+        elif schluessel in werte:
+            beschriftete_jahre.add(int(werte[schluessel]))
+    for schluessel in schluessel_im_absatz:
+        if schluessel.startswith("jahr."):
+            continue
+        suffix = _WERT_JAHRESSUFFIX_MUSTER.search(schluessel)
+        if suffix is not None and int(suffix.group(1)) not in beschriftete_jahre:
+            raise TexteFehler(
+                f"Text {text_schluessel!r}: Platzhalter {schluessel!r} meint "
+                f"{suffix.group(1)}, aber der Absatz beschriftet dieses Jahr nicht mit "
+                "einem passenden jahr.*-Platzhalter (relative Jahre wandern mit dem "
+                f"Jahrgang, Betrag nicht): {absatz!r}"
+            )
+
+
 def loese_auf(
     texte: Sequence[Erklaertext], werte: Mapping[str, int | float]
 ) -> dict[str, tuple[int | float, str]]:
@@ -590,6 +628,7 @@ def loese_auf(
     verwendet: dict[str, tuple[int | float, str]] = {}
     for text in texte:
         for absatz in text.absaetze:
+            _pruefe_jahrbezug(text.schluessel, absatz, werte)
             for treffer in PLATZHALTER_MUSTER.finditer(absatz):
                 schluessel, format_kuerzel = treffer.groups()
                 if schluessel in verwendet:

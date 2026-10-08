@@ -1038,3 +1038,34 @@ def test_pruefe_text_jahr_platzhalter_braucht_formatkuerzel_jahr() -> None:
     pruefe_text("Haushalt {{jahr.haushaltsjahr|jahr}}.")
     with pytest.raises(TexteFehler, match=r"jahr\.haushaltsjahr"):
         pruefe_text("Haushalt {{jahr.haushaltsjahr|zahl}}.")
+
+
+# ---------------------------------------------------------------------------
+# Jahresbezug von Beschriftung und Wertschlüssel (WR-01)
+# ---------------------------------------------------------------------------
+
+
+def test_loese_auf_lehnt_wertschluessel_ohne_passende_jahresbeschriftung_ab() -> None:
+    """Ein 2027er Jahrgang darf `schulden.gesamt.2025` nicht unter „Ende 2026“ zeigen."""
+    texte = _text_mit("Ende {{jahr.vorjahr|jahr}} waren es {{schulden.gesamt.2025|mio}}.")
+    werte: dict[str, int | float] = {
+        "jahr.vorjahr": 2026,
+        "schulden.gesamt.2025": 1_000_000,
+    }
+    with pytest.raises(TexteFehler, match=r"schulden\.gesamt\.2025"):
+        loese_auf(texte, werte)
+
+
+def test_loese_auf_akzeptiert_wertschluessel_mit_passender_jahresbeschriftung() -> None:
+    texte = _text_mit("Ende {{jahr.vorjahr|jahr}} waren es {{schulden.gesamt.2025|mio}}.")
+    werte: dict[str, int | float] = {
+        "jahr.vorjahr": 2025,
+        "schulden.gesamt.2025": 1_000_000,
+    }
+    assert "schulden.gesamt.2025" in loese_auf(texte, werte)
+
+
+def test_loese_auf_akzeptiert_festes_jahr_als_beschriftung() -> None:
+    texte = _text_mit("{{jahr.fest_2022|jahr}} kamen {{grundzahlen.160101.1.2022|mio}}.")
+    werte: dict[str, int | float] = {"grundzahlen.160101.1.2022": 5_000_000}
+    assert "grundzahlen.160101.1.2022" in loese_auf(texte, werte)
