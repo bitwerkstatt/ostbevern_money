@@ -5,28 +5,28 @@ titles: json
 findings:
   - id: WR-01
     severity: warning
-    disposition: fixed
-    title: "Year label and value key are now decoupled; a new Jahrgang silently produces wrong statements"
+    disposition: open
+    title: "The new WR-03 render tests cannot fail, because SSR never produces an overflowing frame"
   - id: WR-02
     severity: warning
-    disposition: fixed
-    title: "Drawer link click sets the \"closes by navigation\" flag even when no navigation happens"
+    disposition: open
+    title: "Blank `beschriftung` silently trades the unnamed region for a keyboard-inaccessible scroll area"
+  - id: IN-01
+    severity: info
+    disposition: open
+    title: "Source-text regex tests are fragile against formatting"
+  - id: IN-02
+    severity: info
+    disposition: open
+    title: "`pruefeLinkMitZusatztaste` asserts the h1 focus before the code under test could have moved it"
+  - id: IN-03
+    severity: info
+    disposition: open
+    title: "`_pruefe_jahrbezug` checks a paragraph as a set, not pair by pair; `Titel` is not covered"
   - id: WR-03
     severity: warning
     disposition: fixed
     title: "`DatenTabelle` accepts an empty `beschriftung`, producing an unnamed scroll region with no guard left"
-  - id: IN-01
-    severity: info
-    disposition: open
-    title: "`kurzMitHinweis(..., false)` drops the rounding disclosure of `euroKurz`"
-  - id: IN-02
-    severity: info
-    disposition: open
-    title: "`flaechenFarbe()` docstring contradicts how the decals use it"
-  - id: IN-03
-    severity: info
-    disposition: open
-    title: "Redundant condition in `lies_glossar`"
   - id: IN-04
     severity: info
     disposition: open
@@ -43,25 +43,25 @@ findings:
     severity: info
     disposition: open
     title: "`rdregel` guard covers only \"rd.\", not the \"rund\" prefix; comment stripping can hide copies"
-open: 7
+open: 9
 total: 10
-recorded: 2026-10-08T05:13:48.256Z
+recorded: 2026-10-08T18:19:18.615Z
 ---
 
 # Phase 08: Code Review Disposition
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| WR-01 | warning | fixed | 08-REVIEW-FIX.md |
-| WR-02 | warning | fixed | 08-REVIEW-FIX.md |
-| WR-03 | warning | fixed | 08-REVIEW-FIX.md |
+| WR-01 | warning | open | - |
+| WR-02 | warning | open | - |
 | IN-01 | info | open | - |
 | IN-02 | info | open | - |
 | IN-03 | info | open | - |
-| IN-04 | info | open | - |
-| IN-05 | info | open | - |
-| IN-06 | info | open | - |
-| IN-07 | info | open | - |
+| WR-03 | warning | fixed | 08-REVIEW-FIX.md (not in the current review) |
+| IN-04 | info | open | - (not in the current review) |
+| IN-05 | info | open | - (not in the current review) |
+| IN-06 | info | open | - (not in the current review) |
+| IN-07 | info | open | - (not in the current review) |
 
 Dispositions: `open` (recorded, not yet triaged), `fixed`, `skipped`, `deferred`.
 Set `deferred` by hand and put the reason in the Source cell; both are preserved. A `|` in the reason is kept as prose and escaped on the next run.
