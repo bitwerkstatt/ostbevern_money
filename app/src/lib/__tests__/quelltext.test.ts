@@ -220,3 +220,32 @@ describe('Keine getippten Zahlen in den Templates (UI-05, T-05-40, T-05-41)', ()
     expect(getippteZahlen(templateTeil(text))).toEqual([])
   })
 })
+
+/**
+ * Quelltext-Prüfung von DatenTabelle.vue für WR-03 (A11Y-01): Der scrollbare Rahmen trägt
+ * Fokus-, Rollen- und Namenattribute nur gemeinsam und nur, wenn die Beschriftung nicht leer ist
+ * (D-14 Justification: Template-Konvention, nicht testbar ohne DOM). Die Bedingung für
+ * `rahmenAttribute` muss `hatBeschriftung.value` enthalten, und `hatBeschriftung` muss über
+ * `.trim() !== ''` definiert sein.
+ */
+describe('DatenTabelle beschriftung Guard (WR-03, A11Y-01, D-14)', () => {
+  const datenTabelleQuelle = import.meta.glob<string>('/src/components/DatenTabelle.vue', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  })['/src/components/DatenTabelle.vue']
+
+  it('rahmenAttribute wird mit hatBeschriftung.value aufgerufen', () => {
+    if (datenTabelleQuelle === undefined) {
+      throw new Error('DatenTabelle.vue nicht gefunden')
+    }
+    expect(datenTabelleQuelle).toMatch(/rahmenAttribute\([^)]*hatBeschriftung\.value[^)]*\)/)
+  })
+
+  it('hatBeschriftung ist mit .trim() !== "" definiert', () => {
+    if (datenTabelleQuelle === undefined) {
+      throw new Error('DatenTabelle.vue nicht gefunden')
+    }
+    expect(datenTabelleQuelle).toMatch(/hatBeschriftung.*computed.*\.trim\(\)\s*!==\s*''/)
+  })
+})

@@ -1,6 +1,6 @@
 import { createSSRApp, type Component } from 'vue'
 import { renderToString } from 'vue/server-renderer'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import BaseChart, { datenpunkte } from '@/components/BaseChart.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
@@ -160,6 +160,47 @@ describe('DatenTabelle Name und Rahmen (A11Y-01, A11Y-03, D-20)', () => {
     expect(html).not.toContain('role="region"')
     expect(html).not.toContain('tabindex')
     expect(html).not.toContain('aria-labelledby')
+  })
+
+  it('leere Beschriftung: kein tabindex, no role region, no aria-labelledby auf dem Rahmen (WR-03, A11Y-01)', async () => {
+    const html = await rendere(DatenTabelle, {
+      beschriftung: '',
+      spalten: SPALTEN,
+      zeilen,
+    })
+    // Die Tabelle wird noch gerendert, aber der Rahmen hat keine Fokussierbar-Attribute
+    expect(html).toContain('<table')
+    // Kein tabindex auf dem Rahmen
+    expect(html).not.toContain('tabindex')
+    // Kein role="region" (nur die Region wird vorbereitet, aber nicht ausgegeben)
+    expect(html).not.toContain('role="region"')
+    // Kein aria-labelledby
+    expect(html).not.toContain('aria-labelledby')
+  })
+
+  it('Whitespace-only Beschriftung: kein tabindex, no role region, no aria-labelledby (WR-03, A11Y-01)', async () => {
+    const html = await rendere(DatenTabelle, {
+      beschriftung: '   ',
+      spalten: SPALTEN,
+      zeilen,
+    })
+    expect(html).toContain('<table')
+    expect(html).not.toContain('tabindex')
+    expect(html).not.toContain('role="region"')
+    expect(html).not.toContain('aria-labelledby')
+  })
+
+  it('leere Beschriftung warnt in DEV (WR-03, A11Y-01)', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    await rendere(DatenTabelle, {
+      beschriftung: '',
+      spalten: SPALTEN,
+      zeilen,
+    })
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('DatenTabelle: `beschriftung` ist leer'),
+    )
+    warnSpy.mockRestore()
   })
 })
 

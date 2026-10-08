@@ -5,6 +5,7 @@ import {
   pruefeEscape,
   pruefeLinkDerAktuellenSeite,
   pruefeLinkEinerAnderenSeite,
+  pruefeLinkMitZusatztaste,
 } from './menueDrawer'
 import { routen } from './routen'
 import { befundeTabellenrahmen, oeffneAlleBereiche } from './tabellenrahmen'
@@ -322,6 +323,18 @@ test.describe('Mobiles Menü schließt bei jedem Linkklick (A11Y-02, D-21)', () 
 
   test('Escape schließt den Drawer, der Fokus kehrt zum Menüknopf zurück', async ({ page }) => {
     await pruefeEscape(page)
+  })
+
+  test('Ctrl-Klick auf einen Link: öffnet neuen Tab, Drawer bleibt offen, Fokus nicht auf h1 (WR-02)', async ({
+    page,
+  }) => {
+    await pruefeLinkMitZusatztaste(page, 'ControlOrMeta')
+  })
+
+  test('Shift-Klick auf einen Link: öffnet neues Fenster, Drawer bleibt offen, Fokus nicht auf h1 (WR-02)', async ({
+    page,
+  }) => {
+    await pruefeLinkMitZusatztaste(page, 'Shift')
   })
 })
 

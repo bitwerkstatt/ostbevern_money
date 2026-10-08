@@ -74,3 +74,33 @@ export async function pruefeEscape(page: Page): Promise<void> {
   await expect(schalter(page)).toHaveAttribute('aria-expanded', 'false')
   await expect(schalter(page)).toBeFocused()
 }
+
+/**
+ * Ctrl/Cmd-Klick auf einen Link öffnet ihn in einem neuen Tab und schließt den Drawer NICHT.
+ * Der Fokus bleibt beim Link (oder im Drawer), nicht auf der h1 (WR-02, A11Y-02).
+ */
+export async function pruefeLinkMitZusatztaste(
+  page: Page,
+  modifier: 'ControlOrMeta' | 'Shift',
+): Promise<void> {
+  await oeffneMenue(page)
+  const link = drawerLink(page, ANDERE?.text ?? '')
+
+  // Mit Zusatztaste klicken: öffnet einen neuen Tab, navigiert hier nicht
+  const newPagePromise = page.context().waitForEvent('page')
+  await link.click({ modifiers: [modifier] })
+  // Neue Seite akzeptieren und schließen, um kein Leck zu erzeugen
+  const newPage = await newPagePromise
+  await newPage.close()
+
+  // Der Drawer bleibt offen (ist nicht geschlossen)
+  await expect(page.getByRole('dialog', { name: 'Menü' })).toBeVisible()
+  // aria-expanded bleibt 'true'
+  await expect(schalter(page)).toHaveAttribute('aria-expanded', 'true')
+  // Der Fokus steht NICHT auf der h1
+  const aktiv = await page.evaluate(() => ({
+    tag: document.activeElement?.tagName ?? '',
+    istUeberschrift: document.activeElement === document.querySelector('h1'),
+  }))
+  expect(aktiv.istUeberschrift).toBe(false)
+}
