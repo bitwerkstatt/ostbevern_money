@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch, watchEffect } from 'vue'
 import { EURO_OPTIONEN, KEIN_WERT } from '@/charts/format'
 import QuelleKnopf from '@/components/QuelleKnopf.vue'
 import {
@@ -124,10 +124,24 @@ onBeforeUnmount(() => {
   beobachter?.disconnect()
 })
 
-// Nur eine gerenderte Tabelle trägt eine Caption, auf die der Rahmen verweisen kann.
+// Nur eine gerenderte Tabelle trägt eine Caption, auf die der Rahmen verweisen kann. Ist die
+// Beschriftung leer, bliebe der Rahmen eine Region ohne Namen (A11Y-01): dann bekommt er keine
+// Rolle und keinen Tabstopp, und in der Entwicklung warnt `watchEffect` unten.
+const hatBeschriftung = computed(() => props.beschriftung.trim() !== '')
 const rahmenAttributeGebunden = computed(() =>
-  rahmenAttribute(ueberlaeuft.value && !props.laedt && !istLeer.value, captionId),
+  rahmenAttribute(
+    ueberlaeuft.value && !props.laedt && !istLeer.value && hatBeschriftung.value,
+    captionId,
+  ),
 )
+
+if (import.meta.env.DEV) {
+  watchEffect(() => {
+    if (!hatBeschriftung.value) {
+      console.warn('DatenTabelle: `beschriftung` ist leer, der scrollbare Rahmen bliebe unbenannt.')
+    }
+  })
+}
 
 /**
  * Prüft zur Laufzeit, dass ein Zellwert tatsächlich eine Zahl ist, bevor er
