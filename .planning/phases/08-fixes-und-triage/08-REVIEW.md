@@ -1,220 +1,93 @@
 ---
 phase: 08-fixes-und-triage
-reviewed: 2026-10-07T00:00:00Z
+reviewed: 2026-10-08T00:00:00Z
 depth: standard
-files_reviewed: 98
+files_reviewed: 11
 files_reviewed_list:
-  - .claude/CLAUDE.md
-  - .github/workflows/ci.yml
   - app/e2e/interaktion.spec.ts
   - app/e2e/menueDrawer.ts
   - app/e2e/mobil.spec.ts
-  - app/e2e/quelle.spec.ts
-  - app/e2e/tabellenrahmen.ts
   - app/src/App.vue
-  - app/src/charts/__tests__/format.test.ts
-  - app/src/charts/echartsTheme.ts
-  - app/src/charts/format.ts
-  - app/src/charts/wertartStil.ts
-  - app/src/components/AufwandTreemap.vue
-  - app/src/components/ChartCard.vue
   - app/src/components/DatenTabelle.vue
-  - app/src/components/EbenenTabelle.vue
-  - app/src/components/EntwicklungsDiagramm.vue
-  - app/src/components/ErgebnisBalken.vue
-  - app/src/components/EuroBetrag.vue
-  - app/src/components/FinanzierungsDiagramm.vue
-  - app/src/components/KreisumlageCallout.vue
-  - app/src/components/MassnahmenFilter.vue
-  - app/src/components/MassnahmenListe.vue
-  - app/src/components/NichtBeeinflussbarBlock.vue
-  - app/src/components/PostenZeitreihe.vue
-  - app/src/components/ProduktAkkordeon.vue
-  - app/src/components/ProduktBalkenListe.vue
-  - app/src/components/RuecklagenBalken.vue
-  - app/src/components/SchuldenstandDiagramm.vue
-  - app/src/components/SteuerZeitreihe.vue
-  - app/src/components/VeFaelligkeiten.vue
-  - app/src/components/ZuschussListe.vue
-  - app/src/components/__tests__/chartcard.test.ts
-  - app/src/components/__tests__/eurobetrag.test.ts
   - app/src/components/__tests__/zustaende.test.ts
-  - app/src/components/datenTabelle.ts
   - app/src/data/texte.json
-  - app/src/lib/__tests__/aufwandsarten.test.ts
-  - app/src/lib/__tests__/berechnung.test.ts
-  - app/src/lib/__tests__/bindungsgrad.test.ts
-  - app/src/lib/__tests__/drilldown.test.ts
-  - app/src/lib/__tests__/duanrede.test.ts
-  - app/src/lib/__tests__/einwohner.test.ts
-  - app/src/lib/__tests__/entwicklung.test.ts
-  - app/src/lib/__tests__/geldfluss.test.ts
-  - app/src/lib/__tests__/glossar.test.ts
-  - app/src/lib/__tests__/hinweis.test.ts
-  - app/src/lib/__tests__/investitionen.test.ts
-  - app/src/lib/__tests__/jahr.test.ts
-  - app/src/lib/__tests__/kennzahlen.test.ts
-  - app/src/lib/__tests__/menue.test.ts
-  - app/src/lib/__tests__/menueVersatz.test.ts
-  - app/src/lib/__tests__/quelle-kacheln.test.ts
-  - app/src/lib/__tests__/quelle-kontext.test.ts
-  - app/src/lib/__tests__/quelle-leitfragen.test.ts
-  - app/src/lib/__tests__/quelle-ui-abdeckung.test.ts
-  - app/src/lib/__tests__/quelle.test.ts
   - app/src/lib/__tests__/quelltext.test.ts
-  - app/src/lib/__tests__/rdregel.test.ts
-  - app/src/lib/__tests__/ruecklagen.test.ts
-  - app/src/lib/__tests__/schulden.test.ts
-  - app/src/lib/__tests__/stellen.test.ts
-  - app/src/lib/__tests__/stiltokens.test.ts
-  - app/src/lib/__tests__/texte.test.ts
-  - app/src/lib/__tests__/zeitreihen.test.ts
-  - app/src/lib/__tests__/zuschuesse.test.ts
-  - app/src/lib/aufwandsarten.ts
-  - app/src/lib/berechnung.ts
-  - app/src/lib/bindungsgrad.ts
-  - app/src/lib/drilldown.ts
-  - app/src/lib/einwohner.ts
-  - app/src/lib/entwicklung.ts
-  - app/src/lib/geldfluss.ts
-  - app/src/lib/hilfsfunktionen.ts
-  - app/src/lib/investitionen.ts
-  - app/src/lib/jahr.ts
-  - app/src/lib/kennzahlen.ts
-  - app/src/lib/produkt.ts
-  - app/src/lib/ruecklagen.ts
-  - app/src/lib/schulden.ts
-  - app/src/lib/stellen.ts
-  - app/src/lib/texte.ts
-  - app/src/lib/zeitreihen.ts
-  - app/src/lib/zuschuesse.ts
-  - app/src/pages/AusgabenPage.vue
-  - app/src/pages/EinnahmenPage.vue
-  - app/src/pages/EntwicklungPage.vue
-  - app/src/pages/InvestitionenPage.vue
-  - app/src/pages/StartPage.vue
-  - app/src/pages/StellenplanPage.vue
-  - daten/manuell/texte/erklaerungen.md
-  - pipeline/alle.py
-  - pipeline/ostbevern/app_daten.py
-  - pipeline/ostbevern/konfiguration.py
+  - daten/manuell/texte/glossar.md
   - pipeline/ostbevern/texte.py
-  - pipeline/tests/test_formatiere.py
-  - pipeline/tests/test_konfiguration.py
   - pipeline/tests/test_texte.py
 findings:
   critical: 0
-  warning: 3
-  info: 7
-  total: 10
+  warning: 2
+  info: 3
+  total: 5
 status: issues_found
 ---
 
-# Phase 08: Code Review Report
+# Phase 08: Code Review Report (Re-Review der Review-Fixes)
 
-**Reviewed:** 2026-10-07
+**Reviewed:** 2026-10-08
 **Depth:** standard
-**Files Reviewed:** 98
+**Files Reviewed:** 11
 **Status:** issues_found
 
 ## Summary
 
-Reviewed the full non-planning diff of phase 08 (`93b0a61..HEAD`) with the focus on changed code: the single "rd."/"rund" rule in `charts/format.ts`, the Minderaufwand rule in `berechnung.ts`, the four-case Lesehilfe in `geldfluss.ts`, `DatenTabelle` frame attributes, the mobile drawer focus handling, the pipeline year-placeholder rules (`pruefe_text`, `pruefe_titel`, `loese_auf`, `festes_jahr`) and the new tests and e2e helpers. I traced the shared helpers (`haushaltsjahrIndex`, `wertartAn`, `einwohnerZahl`, `minderaufwandBetrag`, `zusammen`, `seiten*` in `stellen.ts`) through their callers.
+Incremental re-review of `3e563056..HEAD`: the fixes for WR-01 (`_pruefe_jahrbezug` in `texte.py`), WR-02 (modifier-click guard and flag reset in `App.vue`), WR-03 (`hatBeschriftung` guard in `DatenTabelle.vue`) and the Nyquist tests from commit 7b9f0a6.
 
-The refactoring is consistent. Both `rd.` and `rund` prefixes contain U+00A0 (verified byte-wise), no stale `RD_PRAEFIX` importer remains, and the four Lesehilfe cases are mutually exclusive: `defizit` needs `nachMinderaufwand < 0`, `ueberschuss` needs `> 0`, and Fall C can only occur at exactly 0. There are no security findings and no data-loss or crash defects in the normal data path. The remaining concerns are one latent correctness hole introduced by the new year placeholders, one focus edge case in the drawer, and a few robustness and maintainability points.
+The production fixes themselves are sound:
+
+- `_pruefe_jahrbezug` is wired into `loese_auf`. The real `erklaerungen.md` and `glossar.md` pass it (`pytest tests/test_texte.py`: 107 passed). The `glossar.md` edit that adds `({{jahr.vorjahr|jahr}})` is mirrored byte-consistently in `texte.json`.
+- The `App.vue` guard covers ctrl, meta, shift, alt and non-primary buttons. `drawerOffen` is checked before the flag is set. `oeffneDrawer` resets the flag. Keyboard activation (Enter) still reports `button === 0`, so it is unaffected.
+- The `DatenTabelle` guard removes role, tabindex and aria-labelledby together when the caption is blank.
+
+There are no security findings and no crash or data-loss defects. The remaining problems are in the test coverage of the WR-03 fix and in a side effect of that fix.
 
 ## Warnings
 
-### WR-01: Year label and value key are now decoupled; a new Jahrgang silently produces wrong statements
+### WR-01: The new WR-03 render tests cannot fail, because SSR never produces an overflowing frame
 
-**File:** `daten/manuell/texte/erklaerungen.md:7, 13, 19, 49, 55` (mirrored in `app/src/data/texte.json`, Absätze der Schlüssel `schluesselzuweisung`, `gewerbesteuer`, `kreisumlage`, Schulden, Verpflichtungsermächtigungen)
-**Issue:** Phase 08 replaced typed years by relative placeholders (`{{jahr.vorjahr|jahr}}`, `{{jahr.vorvorjahr|jahr}}`, `{{jahr.haushaltsjahr_plus_1|jahr}}`). The amounts next to them still use keys with a hard-coded year suffix, for example `{{schulden.gesamt.2025|mio}}`, `{{vorbericht.steuerarten.gewerbesteuer.2024|mio}}`, `{{ve.faellig.2027|mio}}`. Before this change label and value were both literals and agreed by construction. Now the label moves with `haushaltsjahr` while the value is pinned. For a 2027 Jahrgang the text would read "Ende 2026 waren das zusammen {{schulden.gesamt.2025}}" and pass every check (`pruefe_text`, `loese_auf`, `pruefe_grundzahl_jahre` only validates `grundzahlen.*`). That is a wrong number-to-year claim published to citizens, which the project's core value ("jede Zahl korrekt") rules out. It stays hidden until the next Jahrgang is built.
-**Fix:** Either make the value keys relative as well (`schulden.gesamt.vorjahr`, `ve.faellig.haushaltsjahr_plus_1`, resolved in `textwerte`), or add a pipeline check in `loese_auf`/`pruefe_text` that fails when a paragraph pairs a relative `jahr.*` placeholder with a value key whose `.YYYY` suffix does not equal the resolved year of the same Jahrgang (for example `jahr.vorjahr` together with `*.{haushaltsjahr-1}`). A cheap interim guard is a pipeline test that asserts, for the current Jahrgang, the year suffix of each paired key equals the resolved relative year.
-
-### WR-02: Drawer link click sets the "closes by navigation" flag even when no navigation happens
-
-**File:** `app/src/App.vue:27-30` (used at `:191` and `:195`)
-**Issue:** `beiDrawerLinkKlick` runs on every `click` of the `RouterLink`, including Ctrl/Cmd/Shift-click and any click where `RouterLink` does not navigate (new tab/window). In those cases the drawer is closed, `schliesstDurchSeitenwechsel` is set, and `beiAfterHide` then moves focus to the `h1` of the current page (`fokussiereUeberschrift` scrolls to it without `preventScroll`). The user opened a link in a new tab and is thrown to the top of the page. The flag is also only ever reset in `beiAfterHide`; if the drawer is already closing (second click during the close animation) or `wa-after-hide` is not delivered, the stale `true` makes the next Escape/overlay close skip returning focus to the menu button (a keyboard focus regression, A11Y-02).
-**Fix:**
+**File:** `app/src/components/__tests__/zustaende.test.ts:165-189`
+**Issue:** Tests "leere Beschriftung" and "Whitespace-only Beschriftung" assert `not.toContain('tabindex' | 'role="region"' | 'aria-labelledby')`. They render via `renderToString`. There `ueberlaeuft` is only set in `onMounted` (`pruefeUeberlauf`), which does not run in SSR, so it is always `false` and `rahmenAttribute(false, …)` returns `{}`. The assertions therefore hold with or without the `hatBeschriftung` guard. Reverting the fix leaves both tests green. The existing test at line 154 ("ohne Überlauf weder role region noch tabindex") already covers exactly this path. The comments claim the tests protect the A11Y-01 guard, which they do not. The only effective protection is the DEV-warning test and the two source-text regex tests in `quelltext.test.ts`.
+**Fix:** Test the guard where it can actually be observed. Either mount the component in jsdom/happy-dom with `scrollWidth`/`clientWidth` stubbed so `ueberlaeuft` becomes true, or extract the condition into a pure function in `datenTabelle.ts`, for example `rahmenSichtbar({ ueberlaeuft, laedt, leer, beschriftung })`, and unit-test it. Then drop or mark the two vacuous render tests:
 ```ts
-function beiDrawerLinkKlick(ereignis: MouseEvent) {
-  if (ereignis.ctrlKey || ereignis.metaKey || ereignis.shiftKey || ereignis.altKey || ereignis.button !== 0) {
-    return
-  }
-  if (!drawerOffen.value) {
-    return
-  }
-  schliesstDurchSeitenwechsel.value = true
-  drawerOffen.value = false
-}
+expect(rahmenAttribute(rahmenSollNamenTragen(true, false, false, '  '), 'c')).toEqual({})
 ```
-and reset the flag in `oeffneDrawer()` so it cannot leak into the next session of the drawer.
 
-### WR-03: `DatenTabelle` accepts an empty `beschriftung`, producing an unnamed scroll region with no guard left
+### WR-02: Blank `beschriftung` silently trades the unnamed region for a keyboard-inaccessible scroll area
 
-**File:** `app/src/components/DatenTabelle.vue:20`, `app/src/components/datenTabelle.ts:881-889`
-**Issue:** D-16/D-20 made `beschriftung` a required prop and the only source of the region name (`aria-labelledby` pointing to the caption). The type only enforces presence, not content. `beschriftung=""` (or a computed that yields an empty string) renders `role="region"` with `aria-labelledby` pointing to an empty caption: a landmark without a name, exactly the A11Y-01 defect this phase fixes. The old dev-mode `console.warn` guard for missing props was deleted without replacement, and the e2e check only runs on the routes and data present today.
-**Fix:** Add a dev guard next to `rahmenAttribute` use, or make `rahmenAttribute` omit the attributes when the name is blank:
-```ts
-const rahmenAttributeGebunden = computed(() =>
-  rahmenAttribute(
-    ueberlaeuft.value && !props.laedt && !istLeer.value && props.beschriftung.trim() !== '',
-    captionId,
-  ),
-)
-if (import.meta.env.DEV) {
-  watchEffect(() => {
-    if (props.beschriftung.trim() === '') console.warn('DatenTabelle: `beschriftung` ist leer.')
-  })
-}
-```
+**File:** `app/src/components/DatenTabelle.vue:127-144`
+**Issue:** If `hatBeschriftung` is false and the table overflows, the frame loses `tabindex="0"`. A horizontally scrolling region that cannot take focus cannot be scrolled by keyboard users (WCAG 2.1.1, axe `scrollable-region-focusable`). The guard removes the A11Y-01 defect (unnamed region) and introduces the A11Y-03 defect (unreachable content). In a production build the `console.warn` is compiled out (`import.meta.env.DEV`), so the regression is invisible there. The caption element is also still rendered with empty text.
+**Fix:** Keep the table reachable and make the empty case fail loudly instead of degrading silently. Options:
+- Throw in DEV and in tests, as `alsZahl` already does for bad cell types, instead of only warning.
+- Fall back to a non-empty generic name, for example `props.beschriftung.trim() || 'Tabelle'`, for both the caption and the frame.
 
 ## Info
 
-### IN-01: `kurzMitHinweis(..., false)` drops the rounding disclosure of `euroKurz`
+### IN-01: Source-text regex tests are fragile against formatting
 
-**File:** `app/src/components/NichtBeeinflussbarBlock.vue:52` (also `app/src/charts/format.ts:111-114`)
-**Issue:** `euroKurz` rounds to three significant digits, which is why `rundKurz` exists for prose ("immer mit 'rund' davor, weil euroKurz auf drei signifikante Stellen rundet"). `kurzMitHinweis` adds "rd." only when the source value is T€-rounded. An exact euro value (`gerundet === false`) shown through `euroKurz` therefore appears as "12,3 Mio. €" with no hint that it was shortened. `NichtBeeinflussbarBlock` previously always printed "rd." and now depends on `p.gerundet`; the SUMMARY states the output is identical for 2026, but the behaviour differs for any future exact Posten. Pre-existing for the chart labels (treemap, Drilldown bars).
-**Fix:** Decide the policy once in `format.ts`: either document that "rd." only means "T€-genau" and short forms are intentionally unmarked, or let `kurzMitHinweis` always prefix when the shortened text loses digits.
+**File:** `app/src/lib/__tests__/quelltext.test.ts:238-250`
+**Issue:** `/hatBeschriftung.*computed.*\.trim\(\)\s*!==\s*''/` relies on `.` not crossing newlines. It breaks as soon as Prettier wraps the `computed(() => …)` line. The first regex, `rahmenAttribute\([^)]*hatBeschriftung\.value[^)]*\)`, breaks as soon as a call with parentheses is added before `hatBeschriftung.value` in the argument list. The `D-14 Justification` comment says "nicht testbar ohne DOM", but WR-01 shows the logic can be extracted and tested without a DOM. Test titles and comments in `zustaende.test.ts` also mix English into German ("no role region", "no aria-labelledby").
+**Fix:** Replace both regex tests with the pure-function unit test from WR-01. Keep the German wording in the titles.
 
-### IN-02: `flaechenFarbe()` docstring contradicts how the decals use it
+### IN-02: `pruefeLinkMitZusatztaste` asserts the h1 focus before the code under test could have moved it
 
-**File:** `app/src/charts/echartsTheme.ts:15-17, 225, 234, 281`
-**Issue:** The docstring says the colour is a function "weil der Token erst zur Aufrufzeit gelesen werden darf". `KL_DECAL`, `PUNKT_DECAL` and `BERECHNET_DECAL` still call it at module load, so the token is read once at import time. If Web Awesome's stylesheet has not been applied then, the `#ffffff` fallback is baked in permanently (pre-existing behaviour, now documented incorrectly).
-**Fix:** Correct the comment, or build the decals lazily (functions or getters evaluated per chart option).
+**File:** `app/e2e/menueDrawer.ts:98-106`
+**Issue:** The bug being guarded against moves focus via `setTimeout(fokussiereUeberschrift)` after `wa-after-hide`. The `activeElement` check runs once, directly after the new page is closed, with no polling. It would pass before a delayed focus move. The regression is caught only indirectly, by the `aria-expanded === 'true'` assertion. Also, `tag` is read but never asserted.
+**Fix:** Poll for a negative result over the close animation, or drop the redundant check and the unused `tag` field:
+```ts
+await page.waitForTimeout(0) // not wanted; prefer:
+await expect.poll(() => page.evaluate(() => document.activeElement === document.querySelector('h1')), { timeout: 1000 }).toBe(false)
+```
+Since `expect.poll(...).toBe(false)` passes on the first try, the stronger form is to assert the dialog is still open after the drawer animation time (`toBeVisible` with `{ timeout }` after a short settle) and then check focus.
 
-### IN-03: Redundant condition in `lies_glossar`
+### IN-03: `_pruefe_jahrbezug` checks a paragraph as a set, not pair by pair; `Titel` is not covered
 
-**File:** `pipeline/ostbevern/texte.py:187`
-**Issue:** `PLATZHALTER_MUSTER.search(text.absaetze[0]) or "{{" in text.absaetze[0]`: every match of the pattern contains `{{`, so the first operand is dead. The same redundant pair repeats a few lines below for the Quelle check.
-**Fix:** Use `"{{" in text.absaetze[0]` only, or extract a helper `enthaelt_platzhalter(absatz)` for both places.
-
-### IN-04: Unusual rest-tuple signature for `einwohnerZahl`
-
-**File:** `app/src/lib/einwohner.ts:12`
-**Issue:** `einwohnerZahl(...pruefwert: [wert?: unknown])` distinguishes "no argument" from an explicit `undefined` only to make the throw testable. It is an API shaped by a test and easy to misread at call sites (`einwohnerZahl(undefined)` throws, `einwohnerZahl()` does not).
-**Fix:** Split into a pure `pruefeEinwohnerZahl(wert: unknown): number` (tested directly) and `einwohnerZahl()` that calls it with `haushalt.meta.einwohner.wert`.
-
-### IN-05: `quellenZeile` renders a dangling separator for an empty page list
-
-**File:** `app/src/lib/hilfsfunktionen.ts:19-23`
-**Issue:** With `pdfSeiten = []` the result is `"Ist 2026 · PDF-Seiten "` (plural word, trailing space, no number). The function moved here unchanged, but phase 08 now has Kacheln without pages (`seitenVorjahr` etc. may be empty), and `StellenplanPage` handles that case separately in `kachelZeile`, so other callers remain exposed.
-**Fix:** Return `${wertart} ${formatiereJahr(jahr)}` when `pdfSeiten.length === 0`.
-
-### IN-06: Fixed 500 ms sleep in the table-frame e2e helper
-
-**File:** `app/e2e/tabellenrahmen.ts:30`
-**Issue:** `page.waitForTimeout(500)` after opening all `wa-details` is a time-based wait; it is slow on every route (about 11 routes times 2 tests) and can still be too short on a loaded CI runner. The callers already wrap the check in `expect.poll`, which makes the sleep redundant for correctness.
-**Fix:** Drop the sleep and rely on `expect.poll(() => befundeTabellenrahmen(page))`, or poll on a stable layout signal (`scrollWidth` of the frames unchanged over two frames).
-
-### IN-07: `rdregel` guard covers only "rd.", not the "rund" prefix; comment stripping can hide copies
-
-**File:** `app/src/lib/__tests__/rdregel.test.ts:44, 31-37`
-**Issue:** D-22 centralises both `RD_PRAEFIX` and `RUND_PRAEFIX` in `format.ts`, but `RD_KOPIE` only detects hand-built "rd." prefixes; a new `` `rund ${euro(x)}` `` copy passes. In addition `ohneKommentare` strips everything after whitespace plus `//` including inside template literals, so a copy on such a line is invisible (the limitation is documented in the test, but not mitigated). The regex also embeds a literal U+00A0 that is invisible in the source and easy to lose in an editor.
-**Fix:** Add a second pattern for `rund` followed by space, U+00A0 or `&nbsp;` and then `${`/`{{`/`euro`, and write the U+00A0 alternatives with escapes (` `) in the regex source.
+**File:** `pipeline/ostbevern/texte.py:581-617`, `pipeline/tests/test_texte.py:1042-1071`
+**Issue:** The check passes whenever any `jahr.*` placeholder in the paragraph resolves to J. A paragraph with swapped labels, such as "Für {{jahr.vorjahr}} plant … {{x.2026}}, im Vorjahr ({{jahr.haushaltsjahr}}) … {{x.2025}}", is accepted, because both years appear somewhere. That is acceptable as a cheap guard, but the docstring ("dürfen nicht auseinanderlaufen") promises more than it enforces. The tests omit two cases: a paragraph that uses a year-suffixed key with no `jahr.*` placeholder at all (the strictest branch, currently raising), and a paragraph with two keys of different years where only one is labelled.
+**Fix:** State the set-based semantics in the docstring. Add the two missing tests. If pairwise enforcement is wanted later, compare the placeholder order within a sentence.
 
 ---
 
-_Reviewed: 2026-10-07_
+_Reviewed: 2026-10-08_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
