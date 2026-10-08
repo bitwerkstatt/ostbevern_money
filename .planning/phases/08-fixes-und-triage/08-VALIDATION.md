@@ -51,6 +51,8 @@ created: "2026-10-07"
 | 08-06 T1 | 08-06 | 3 | A11Y-01 | T-08-10 | tab stop only with role and name | unit + type-check | `npm --prefix "$S/app" run test -- src/components/__tests__/zustaende.test.ts`; `npm --prefix "$S/app" run type-check` | ✅ extend | ✅ green |
 | 08-06 T1 | 08-06 | 3 | A11Y-01/03 | T-08-10 | one name per table, unique regions, axe at 360 px | e2e mobil + ci mirror | `scripts/e2e-wie-ci.sh "$S/app" --project=mobil`; `scripts/e2e-wie-ci.sh "$S/app" e2e/interaktion.spec.ts` | ✅ extend | ✅ green |
 | 08-06 T2 | 08-06 | 3 | A11Y-02 | T-08-11 | focus on h1 after drawer link | e2e mobil + ci mirror | `scripts/e2e-wie-ci.sh "$S/app" --project=mobil`; `scripts/e2e-wie-ci.sh "$S/app"` | ✅ extend | ✅ green |
+| WR-03 (98803c4) | 08-06 (review fix) | post | A11Y-01 | T-08-10 | empty/whitespace caption never yields an unnamed focusable region; dev warning | unit (SSR) + source guard (D-14) | `npm --prefix "$S/app" run test -- src/components/__tests__/zustaende.test.ts src/lib/__tests__/quelltext.test.ts` | ✅ extend (7b9f0a6) | ✅ green |
+| WR-02 (13eb786) | 08-06 (review fix) | post | A11Y-02 | T-08-11 | Ctrl/Meta- and Shift-click on a drawer link leave drawer open and focus off the h1 | e2e mobil + ci mirror | `scripts/e2e-wie-ci.sh "$S/app" --project=mobil e2e/mobil.spec.ts`; `scripts/e2e-wie-ci.sh "$S/app" e2e/interaktion.spec.ts` | ✅ extend (7b9f0a6) | ✅ green |
 | 08-09 T1 | 08-09 | 3 | TRI-04 (01/IN-03) | T-08-16 | warning icon file exists, orphan JSON deleted | unit (SSR) | `npm --prefix "$S/app" run test -- src/components/__tests__/chartcard.test.ts` | ✅ created (08-09) | ✅ green |
 | 08-12 T1–T3 | 08-12 | 5 | TRI-01..03 | T-08-19 | every row cites commit or reason | scripted check | ledger checks in 08-12 (`^open: 0$`, no `disposition: open`, no open table row, awk Source-cell check) | n/a | ✅ green |
 | 08-07..08-11, 08-12 T3 | 08-07..08-12 | 3–5 | TRI-04 | T-08-13..18 | data byte-identical | cross | `uv run --directory pipeline python alle.py --jahr 2026 && git diff --stat --exit-code -- daten app/src/data` plus `git status --porcelain --untracked-files=all -- daten app/src/data app/public/quellen` empty (only intended diffs: texte.json in 08-01, deletion of beispieldaten.json in 08-09) | n/a | ✅ green |
@@ -77,6 +79,7 @@ created: "2026-10-07"
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
 | Screenreader does not announce a table name twice | A11Y-03 | Chromium a11y tree alone cannot prove screen-reader announcement behaviour (RESEARCH assumption A1) | VoiceOver/NVDA: navigate to a `DatenTabelle` on `/ausgaben` at 360 px, check the name is read once (human-check in 08-06 T1 and 08-12 T3) |
+| Middle-click / Alt-click on a drawer link and the stale-flag reset in `oeffneDrawer` (WR-02) | A11Y-02 | Not automated: Ctrl/Meta and Shift cases cover the same early-return branch; middle-click popups are unreliable in headless Chromium | At 360 px open the menu, middle-click a link: drawer stays open, focus stays in the drawer |
 
 ---
 
@@ -89,7 +92,7 @@ created: "2026-10-07"
 - [x] Feedback latency < 30s
 - [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** validated 2026-10-07 (validate-phase 08 at execute-phase verify:post; full CI chain green at e844e5b/HEAD: vitest 2153, pytest 678, Playwright ci 87, mobil 39, alle.py byte-identical)
+**Approval:** validated 2026-10-07 (validate-phase 08 at execute-phase verify:post; full CI chain green at e844e5b/HEAD: vitest 2153, pytest 678, Playwright ci 87, mobil 39, alle.py byte-identical); re-validated 2026-10-08 after review fixes WR-01..WR-03 at 7b9f0a6: vitest 2158, pytest test_texte 107, Playwright ci 89, mobil 41, type-check/lint/format/build green)
 
 ## Validation Audit 2026-10-07
 
@@ -97,4 +100,12 @@ created: "2026-10-07"
 |---|---|
 | Gaps found | 0 |
 | Resolved | 0 |
+| Escalated | 0 |
+
+## Validation Audit 2026-10-08
+
+| Metric | Count |
+|---|---|
+| Gaps found | 2 |
+| Resolved | 2 |
 | Escalated | 0 |
