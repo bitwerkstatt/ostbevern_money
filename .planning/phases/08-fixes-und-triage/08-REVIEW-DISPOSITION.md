@@ -5,15 +5,15 @@ titles: json
 findings:
   - id: WR-01
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "Year label and value key are now decoupled; a new Jahrgang silently produces wrong statements"
   - id: WR-02
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "Drawer link click sets the \"closes by navigation\" flag even when no navigation happens"
   - id: WR-03
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "`DatenTabelle` accepts an empty `beschriftung`, producing an unnamed scroll region with no guard left"
   - id: IN-01
     severity: info
@@ -43,18 +43,18 @@ findings:
     severity: info
     disposition: open
     title: "`rdregel` guard covers only \"rd.\", not the \"rund\" prefix; comment stripping can hide copies"
-open: 10
+open: 7
 total: 10
-recorded: 2026-10-07T19:51:57.236Z
+recorded: 2026-10-08T05:13:48.256Z
 ---
 
 # Phase 08: Code Review Disposition
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| WR-01 | warning | open | - |
-| WR-02 | warning | open | - |
-| WR-03 | warning | open | - |
+| WR-01 | warning | fixed | 08-REVIEW-FIX.md |
+| WR-02 | warning | fixed | 08-REVIEW-FIX.md |
+| WR-03 | warning | fixed | 08-REVIEW-FIX.md |
 | IN-01 | info | open | - |
 | IN-02 | info | open | - |
 | IN-03 | info | open | - |
