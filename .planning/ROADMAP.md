@@ -89,7 +89,7 @@ Plans:
   4. „Blockers/Concerns“ in STATE.md stimmt mit der Wirklichkeit überein. Die veralteten Einträge zu `02-REVIEW.md` und `04-REVIEW-DISPOSITION.md` sind entfernt (beide Ledger stehen schon auf `open: 0`), ebenso die in diesem Meilenstein erledigten Punkte (Security Phase 4, Milestone-Audit, stale-Verifikationen). Nur zutreffende Hinweise bleiben, z. B. die Scratch-Kopie für App-Prüfungen.
   5. Ein Abschlusslauf bestätigt die Querschnittsbedingung auf dem Endstand: `alle.py --jahr 2026` ist byte-identisch, Prüfregeln 1–10 sind grün, die CI-Kette von Pipeline und App ist grün.
 
-**Plans**: 14/15 plans executed in 8 waves
+**Plans**: 15/15 plans executed in 8 waves
 
 Plans:
 **Wave 1**
@@ -121,7 +121,7 @@ Plans:
 - [x] 09-14-PLAN.md — Lücken der Kernaussage mit Test beheben (AUD-01; D-10, D-12)
 
 **Wave 8** *(blocked on Wave 7 completion)*
-- [ ] 09-15-PLAN.md — Nachlauf der Digests, Abschlusslauf, Anforderungen, MILESTONES-Nachtrag, kein Meilensteinabschluss (SEC-01, AUD-01..03; D-12, D-15..D-19)
+- [x] 09-15-PLAN.md — Nachlauf der Digests, Abschlusslauf, Anforderungen, MILESTONES-Nachtrag, kein Meilensteinabschluss (SEC-01, AUD-01..03; D-12, D-15..D-19)
 
 **Cross-cutting constraints:**
 - alle.py nur im Basislauf, in Fix-Plänen und im Abschlusslauf; Verifier arbeiten read-only gegen 09-BASISLAUF.md
@@ -142,4 +142,4 @@ Phases execute in numeric order: 8 → 9
 | 6. Kontext-Seiten | v1.0 | 17/17 | Complete | 2026-10-06 |
 | 7. Feinschliff und Veröffentlichung | v1.0 | 14/14 | Complete | 2026-10-07 |
 | 8. Fixes und Triage | v1.0.1 | 12/12 | Complete    | 2026-10-08 |
-| 9. Sicherheit und Audit | v1.0.1 | 14/15 | In Progress | - |
+| 9. Sicherheit und Audit | v1.0.1 | 15/15 | In Progress | - |
