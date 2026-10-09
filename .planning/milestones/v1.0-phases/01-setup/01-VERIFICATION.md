@@ -235,18 +235,41 @@ Alle Vollläufe stammen aus `09-BASISLAUF.md` (Kopf `1d0df35da1842daec515b40dd62
 
 Zitierte Playwright-Titel zu dieser Phase: `e2e/smoke.spec.ts:138:5 › Smoke / › rendert ohne Konsolenmeldung, Fremdanfrage oder Platzhalter, mit Daten`, `e2e/quelle.spec.ts:238:3 › … alle Anfragen gehen an den Preview-Server (keine Drittanbieter)`, `e2e/mobil.spec.ts:151:5 › 360 × 640: Überlauf und Zielgröße je Route (A11Y-03) › Route /`.
 
-### Requirements Coverage
+### Regressionsprüfung der Plan-Wahrheiten
 
-Vorläufige Tabelle, Task 2 vervollständigt sie mit dem Heute-Beleg je Zeile.
+Geprüft wurden die `must_haves` der Pläne 01-01 bis 01-05, soweit ihre Artefakte seit dem Vorgängerbericht geändert wurden (`git log --since=2026-10-02T09:35:14Z`). Ergebnis: keine Regression. Wo der heutige Code den Wortlaut des Plans verlässt, ist die Absicht der Wahrheit erhalten und die Änderung begründet.
+
+| Plan | Wahrheit (gekürzt) | Heutiger Stand | Urteil |
+|---|---|---|---|
+| 01-02 | Jahrgangswert nur in `konfiguration.py`; unvollständige oder fehlerhafte Datei → `KonfigurationsFehler`; `pdf_pfad` außerhalb der Projektwurzel abgelehnt | `STANDARD_JAHR` nur in `konfiguration.py:20`; `test_konfiguration.py` grün (73 Tests mit Rauchtest), jetzt zusätzlich `test_negative_anzahl_wird_abgelehnt` (4c105ff, 35b3d51) | keine Regression, Verschärfung |
+| 01-02 | `alle.py` nutzt ohne `--jahr` `STANDARD_JAHR` | `test_ohne_jahr_nutzt_standardjahr` grün; `pdf_relativ` einmal berechnet (c18a032) | keine Regression |
+| 01-03 | Startseite zeigt „Der Haushalt 2026 der Gemeinde Ostbevern“, Jahr aus `app/src/data/jahrgang.json` | Titel `Der Haushalt ${jahrText} der Gemeinde Ostbevern`, Jahr aus `haushalt.json` (Pipeline-Ausgabe); `jahrgang.json` seit 370497f gelöscht. Absicht (Jahr aus Daten, nicht getippt) erhalten | keine Regression, Quelle gewechselt |
+| 01-03 | Unbekannte Hash-Route leitet auf Start; Navigation und `PageIntro` laufen bei 360 px nicht über | `/:pathMatch(.*)*` → `start` (`router/index.ts:116`); `PageIntro` mit `hyphens: auto`, `overflow-wrap`; Playwright `mobil`: „360 × 640: Überlauf und Zielgröße je Route (A11Y-03) › Route /“ bis `/produkt/010601` (11 Routen) grün im Basislauf | keine Regression |
+| 01-04 | Basismodule mit Münster-Namen; „und keine anderen Phase-5/7-Komponenten (D-03)“ | alle sieben Namen bestehen; der Zusatz galt nur für den Stand von Phase 1 und ist durch die Phasen 5 bis 7 planmäßig überholt (heute 47 Vue-Komponenten in app/src/components) | keine Regression |
+| 01-04 | Demo-Diagramm mit Fixture und Beispieldaten-Hinweis | Fixture gelöscht (96a23de, D-15); Flag `beispieldaten` und Text „Beispieldaten — noch keine echten Haushaltszahlen.“ bleiben (`ChartCard.vue:38-41`, `chartcard.test.ts` grün); kein Aufrufer setzt das Flag | keine Regression, bewusst entfernt |
+| 01-04 | Leerzustand „Noch keine Daten“ bei leerem Datensatz | Text seit Phase 5 „Keine Einzelwerte“ mit Erklärtext (UI-SPEC Copywriting); Zustand selbst durch `zustaende.test.ts` („leer: …“) belegt | keine Regression, Text geändert |
+| 01-04 | `DatenTabelle`: semantische Tabelle, Zahlen rechtsbündig mit `tabular-nums`, scrollender Rahmen, klebende Labelspalte, Umbruch statt Abschneiden | `.om-zahl` in `basis.css:10-14`, `overflow-x: auto` (`DatenTabelle.vue:279`), `.om-tabelle__label` mit `position: sticky`, `max-width`, `hyphens: auto` (`:343-348`); Props jetzt Pflicht, Slot-Modus entfernt (D-16, D-19) | keine Regression, Props bewusst geändert (Advisory 2) |
+| 01-04 | `ChartCard`: Slot-Container `min-width: 0`, Titel mit `hyphens: auto` | `ChartCard.vue:83` und `:69` | keine Regression |
+| 01-04 | `format.ts` liefert die Sollstrings; Farben aus `echartsTheme.ts`, Gold zuerst, negativ/positiv über danger/success | Wahrheit 10; `KATEGORIE_FARBEN[0]` = `--wa-color-brand-60`, `POL_FARBEN` aus `success-50`/`danger-50` | keine Regression |
+| 01-05 | `ci.yml`: Push und PR, zwei parallele Jobs, `contents: read`, SHA-Pins | siehe Wahrheit 6 und Deferred Items | keine Regression, Wortlaut durch Phase 7 überholt |
+| 01-05 | Befehle und sechs Konventionen in `.claude/CLAUDE.md`; keine Root-`CLAUDE.md` | beides vorhanden (Wahrheit 5); die GSD-Blöcke wurden durch die Phasen 2 bis 8 planmäßig gefüllt | keine Regression |
+| 01-05 | `LICENSE` MIT, README nennt Münster Money mit Link | `LICENSE` unverändert, `README.md:71` | keine Regression |
+| 01-01 | Mensch bestätigt die Paketliste vor jeder Installation | Prozesswahrheit der Phase 1; `01-UAT.md` Tests 2 und 6 „pass“; die Lockfiles (`pipeline/uv.lock`, `app/package-lock.json`) sind getrackt | nicht code-prüfbar, unverändert |
+
+Phase-8-Befunde zu Phase 1 (`01-REVIEW-DISPOSITION.md`): WR-01 bis WR-05 und IN-01 bis IN-05 stehen auf `fixed`, `open: 0`. Die Beleg-Commits sind im Repository vorhanden: `1c14077`, `c18a032`, `96a23de`, `4c105ff`, `35b3d51`, `fe416ab`. WR-01 (`base: './'`), WR-02 (`prefers-reduced-motion`) und WR-05 (Pflicht-Props) stehen heute im Code (Required Artifacts).
+
+### Requirements Coverage
 
 | Requirement | Source Plan | Description | Status | Evidence |
 |---|---|---|---|---|
-| SETUP-01 | 01-02, 01-05 | Repo-Struktur nach Spez. 7, Quell-PDF unter `raw_data/` | ✓ SATISFIED | Wahrheit 1 |
-| SETUP-02 | 01-01, 01-02 | Pipeline als uv-Projekt, `uv run pytest` läuft | ✓ SATISFIED | Wahrheit 2 |
-| SETUP-03 | 01-01, 01-03, 01-04 | App-Grundgerüst mit Münster-Basiskomponenten, `npm run build` läuft | ✓ SATISFIED | Wahrheit 3 |
-| SETUP-04 | 01-05 | Projekt-CLAUDE.md dokumentiert Befehle und Konventionen | ✓ SATISFIED | Wahrheit 5 |
-| SETUP-05 | 01-02 | Jahrgangsspezifisches steht in einer Konfigurationsdatei | ✓ SATISFIED | Wahrheit 4 |
-| QUAL-01 | 01-03, 01-04, 01-05 | `vue-tsc` und ESLint laufen fehlerfrei in der CI | ✓ SATISFIED | Wahrheiten 3, 6, 7 |
+| SETUP-01 | 01-02, 01-05 | Repo-Struktur nach Spez. 7 existiert (`pipeline/`, `daten/{zwischen,aufbereitet,manuell,pruefberichte}`, `app/`), das Quell-PDF liegt unter `raw_data/` | ✓ SATISFIED | `git ls-files` zeigt Dateien in allen vier `daten/`-Unterordnern, `raw_data/haushalt-2026.pdf` ist getrackt, `discussion/` ohne PDF-Kopie; `test_pdf_existiert_mit_erwarteter_seitenzahl` grün (eigener Lauf, Basislauf); README „Aufbau“ nennt dieselbe Struktur |
+| SETUP-02 | 01-01, 01-02 | Pipeline ist ein uv-Projekt (Python ≥ 3.12, pdfplumber, polars, typer, pytest), `uv run pytest` läuft | ✓ SATISFIED | `pyproject.toml` und `.python-version` 3.12; Basislauf: `uv sync --locked` Exit 0, `681 passed`, 0 Skips; eigener Lauf `73 passed` und `15 passed` |
+| SETUP-03 | 01-01, 01-03, 01-04 | App-Grundgerüst (Vue 3, TS, Vite, Web Awesome, vue-echarts, Hash-Router) mit übernommenen Münster-Basiskomponenten, `npm run build` läuft | ✓ SATISFIED | Basislauf: Build Exit 0 (1069 Module), Vitest 2162 Tests; alle sieben Basismodule vorhanden; eigener Lauf der Komponententests: 61 grün |
+| SETUP-04 | 01-05 | Projekt-CLAUDE.md dokumentiert Befehle und Konventionen (deutsche Bezeichner ohne Umlaute, Beträge als int-Euro, nur PDF-Seiten 1-basiert) | ✓ SATISFIED | `.claude/CLAUDE.md` heute gelesen: sechs Konventionen und alle Befehle, dazu Konventionen der späteren Phasen; zwei Abweichungen zum Code stehen unter Advisory |
+| SETUP-05 | 01-02 | Jahrgangsspezifisches (Haushaltsjahr, Spaltenköpfe, Seitenbereiche, PDF-Pfad) steht in einer Konfigurationsdatei, nicht im Code | ✓ SATISFIED | `2026.toml` mit `haushaltsjahr`, `pdf_pfad`, `[spalten]`, `[seitenbereiche]`; `lade_jahrgang` liest die Datei; `grep -rlw 2026` auf Pipeline-Code ohne Tests: nur `STANDARD_JAHR` und ein Docstring; Basislauf: `alle.py` lädt „Jahrgang 2026 … 15 Seitenbereiche, Sollwerte geladen.“ |
+| QUAL-01 | 01-03, 01-04, 01-05 | `vue-tsc` und ESLint laufen fehlerfrei in der CI | ✓ SATISFIED | Basislauf: `type-check` und `lint` Exit 0 auf dem Code von `head`; `ci.yml` ruft `npm run type-check` und `npm run lint` auf; GitHub-Lauf 37616724781: Schritte „Typprüfung (vue-tsc)“ und „ESLint“ `success` (Stand vor Phase 8) |
+
+Keine verwaisten Anforderungen: `v1.0-REQUIREMENTS.md` ordnet SETUP-01 bis SETUP-05 und QUAL-01 der Phase 1 zu (Zeilen 190 bis 194 und 271, alle „Complete“); die Pläne 01-01 bis 01-05 deklarieren in `requirements` genau diese sechs IDs (01-01: SETUP-02, SETUP-03; 01-02: SETUP-01, SETUP-02, SETUP-05; 01-03: SETUP-03, QUAL-01; 01-04: SETUP-03, QUAL-01; 01-05: QUAL-01, SETUP-04, SETUP-01).
 
 ### Anti-Patterns Found
 
