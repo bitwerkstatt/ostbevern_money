@@ -51,6 +51,7 @@ covered_files:
   - app/src/components/UeberschussListe.vue
   - app/src/components/ZuschussListe.vue
   - app/src/data/texte.json
+  - app/src/lib/__tests__/hilfsfunktionen.test.ts
   - app/src/lib/__tests__/stiltokens.test.ts
   - app/src/lib/bindungsgrad.ts
   - app/src/lib/entwicklung.ts
@@ -67,7 +68,7 @@ covered_files:
   - app/src/pages/RatEntscheidetPage.vue
   - app/src/pages/StellenplanPage.vue
   - app/src/router/index.ts
-covered_digest: "v3:sha256:699a366c094f11ba08898f26242375ac99754bf337ee4076503b71ab8da74b36"
+covered_digest: "v3:sha256:89a7b89f6a2ea2cddb7d22ecdb2038cf1dd17b5338d09338baf97c4e5a1733c1"
 behavior_unverified: 0
 overrides_applied: 0
 re_verification:
@@ -200,6 +201,18 @@ Keine Gaps. Das Phasenziel ist auf dem heutigen Code erreicht. Die Änderungen a
 ### Live-Evidenz
 
 Die vollen Läufe stammen aus `09-BASISLAUF.md` (head `1d0df35da1842daec515b40dd62f8d918e240105`): 681 pytest-Tests ohne Skip, `alle.py` byte-identisch, 2162 Vitest-Tests in 49 Dateien, Playwright `ci` 89, `mobil` 41, `texte` 1 bestanden. Dieser Plan hat weder `alle.py` noch die volle pytest-Suite noch Playwright gestartet. Beweis, dass sich seit dem Basislauf kein Codepfad geändert hat: `git diff --quiet 1d0df35da1842daec515b40dd62f8d918e240105 HEAD -- pipeline app daten scripts .github` endet mit Exit 0.
+
+## Nachtrag 09-15 (D-12)
+
+Stand 2026-10-09. Nach dem Basislauf (head `1d0df35da1842daec515b40dd62f8d918e240105`) hat Plan 09-14 in `ce5880e` (Lücke G-09-02, „PDF-Seite“ im Singular nur bei genau einer Seite; Test `74fed1c`) die Datei `app/src/lib/hilfsfunktionen.ts` um die Funktion `seitenText` ergänzt. Diese Datei deckt der Bericht ab; `verification.status` meldete deshalb wieder `stale`. Die Aussage „seit dem Basislauf hat sich kein Codepfad geändert“ im Abschnitt „Live-Evidenz“ oben beschrieb den Stand vor 09-14 und bleibt als solcher stehen.
+
+| Commit | Geänderte abgedeckte Datei | Betroffene Wahrheit | Test |
+|--------|----------------------------|---------------------|------|
+| `ce5880e` | `app/src/lib/hilfsfunktionen.ts` (neue Funktion `seitenText`, 11 Zeilen; `quellenZeile`, `klickIndex`, `jahreListe` und alle anderen Funktionen unverändert) | Wahrheiten zu den Hilfsfunktionen der Kontext-Seiten (`quellenZeile`, `klickIndex`, `jahreListe` in `hilfsfunktionen.ts`, Aufrufer in den Seiten 06): bleiben wahr; `ZuschussListe.vue` und `StellenplanPage.vue` behalten ihre eigenen lokalen `seitenText`-Helfer, `StellenNachTeil.vue` ist unverändert. Mittelbar: `ErklaerText.vue` (Phase 5) nutzt `seitenText` und steht auf `/entwicklung`, `/investitionen` und `/rat-entscheidet` (z. B. RAT-04 `bindungsgrad_selbstauskunft`); dort lautet die Quellenzeile jetzt bei mehreren Seiten „PDF-Seiten“. Das ist eine reine Wortlaut-Korrektur, keine Zahl ändert sich, und keine Wahrheit dieses Berichts hängt am Singular | `hilfsfunktionen.test.ts` „G-09-02“ und `erklaertext.test.ts` „G-09-02“ (21 Texte), dazu die bestehenden Phase-6-Tests |
+
+Nachprüfung in einer Scratch-Kopie von `app/` mit Linux-`node_modules` (`npm ci`) auf dem Stand `7e2b775`: die zehn Testdateien `hilfsfunktionen`, `zuschuesse`, `entwicklung`, `investitionen`, `schulden`, `stellen`, `ruecklagen`, `bindungsgrad`, `menue` und `stiltokens` zusammen 410 Tests grün; die volle App-Suite 2207 Tests grün. Keine Wahrheit gebrochen, kein Gap, keine Regression; Status bleibt `passed`, `re_verification.gaps_closed` bleibt leer, weil 09-14 keine Lücke dieser Phase geschlossen hat.
+
+`covered_files` und `covered_digest` stammen unverändert aus `verification.fingerprint`, mit den bisherigen Implementierungsdateien plus `app/src/lib/__tests__/hilfsfunktionen.test.ts`.
 
 ---
 
