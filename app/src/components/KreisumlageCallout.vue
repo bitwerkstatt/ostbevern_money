@@ -6,6 +6,7 @@ import { euroKurz, jahr as formatJahr } from '@/charts/format'
 import ErklaerText from '@/components/ErklaerText.vue'
 import EuroBetrag from '@/components/EuroBetrag.vue'
 import { haushalt } from '@/data/daten'
+import { seitenText } from '@/lib/hilfsfunktionen'
 import { baueKreisumlage, istGroessterEinzelposten } from '@/lib/kreisumlage'
 import { textFuerJahr } from '@/lib/texte'
 
@@ -43,7 +44,7 @@ const aufteilungSeiten = computed(() => {
       seiten.add(u.pdfSeite)
     }
   }
-  return [...seiten].join(', ')
+  return seitenText([...seiten])
 })
 </script>
 
@@ -84,7 +85,7 @@ const aufteilungSeiten = computed(() => {
             >,
           </template>
         </template>
-        <template v-if="aufteilungSeiten">PDF-Seite {{ aufteilungSeiten }} (Aufteilung)</template>
+        <template v-if="aufteilungSeiten">{{ aufteilungSeiten }} (Aufteilung)</template>
       </p>
       <wa-details v-if="hatErklaerung" summary="So funktioniert die Kreisumlage">
         <ErklaerText schluessel="kreisumlage" :jahr="jahrZahl" :ueberschrift="false" />
