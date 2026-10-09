@@ -194,20 +194,37 @@ Step 7c: übersprungen, die Phase deklariert keine Probe-Skripte (`scripts/*/tes
 
 | Requirement | Source Plan | Description | Status | Evidence |
 |-------------|-------------|-------------|--------|----------|
-| MANU-01 | 04-01 | `steuerarten.csv` | ✓ SATISFIED | vorläufig, Task 2 |
-| MANU-02 | 04-01 | `zuwendungen.csv` | ✓ SATISFIED | vorläufig, Task 2 |
-| MANU-03 | 04-01 | `transferaufwendungen.csv` | ✓ SATISFIED | vorläufig, Task 2 |
-| MANU-04 | 04-01 | `kita_zuschuesse.csv` | ✓ SATISFIED | vorläufig, Task 2 |
-| MANU-05 | 04-02 | `weitere_vorberichtstabellen.csv` | ✓ SATISFIED | vorläufig, Task 2 |
-| MANU-06 | 04-02 | `meta.json` | ✓ SATISFIED | vorläufig, Task 2 |
-| MANU-07 | 04-01, 04-02 | `quelle`-Spalte und README | ✓ SATISFIED | vorläufig, Task 2 |
-| MANU-08 | 04-05, 04-06 | Erklärtexte mit Seitenverweis, korrekt gerendert | ✓ SATISFIED | vorläufig, Task 2 |
-| PRUEF-05 | 04-01, 04-02 | Regel 5 grün | ✓ SATISFIED | vorläufig, Task 2 |
-| EXTR-10 | 04-03 | Stellenplan extrahiert | ✓ SATISFIED | vorläufig, Task 2 |
-| DATA-01 | 04-01, 04-03, 04-04, 04-05, 04-06 | App-JSON-Dateien | ✓ SATISFIED | vorläufig, Task 2 |
-| DATA-02 | 04-04 | Weitergabe an Kreis und Land | ✓ SATISFIED | vorläufig, Task 2 |
-| DATA-03 | 04-04 | Zuschussbedarf berechnet | ✓ SATISFIED | vorläufig, Task 2 |
-| PRUEF-10 | 04-01, 04-03, 04-05, 04-06 | `alle.py` und CI-Diff | ✓ SATISFIED | vorläufig, Task 2 |
+| MANU-01 | 04-01 | `steuerarten.csv` (8 Steuerarten, 2024–2029, T€) aus Vorbericht S. 27 | ✓ SATISFIED | Datei hat 54 Zeilen (9 je Jahr, davon 1 Gesamtzeile), `quelle` überall 27; eigene Summe der acht Steuerarten 2026 = 18.443 T€, gleich dem Sollwert `gesamt` in `2026_sollwerte.toml:301`; Basislauf `Regel 4: grün (259 Werte)` (B.4 über `_pruefe_regel4_b4`, `pruefung.py:870`) und `Regel 5: grün (150 Werte)`; Test `test_regel4_b4_erkennt_tippfehler_in_steuerarten` in der eigenen Auswahl grün |
+| MANU-02 | 04-01 | `zuwendungen.csv` (Schlüsselzuweisung, laufende Zwecke, Sonderposten) aus S. 28 | ✓ SATISFIED | 24 Zeilen, `quelle` überall 28; Regel 5 Stufe (a) und (b) grün; Zuwendungsdifferenz 2026 (-4.200 € gegen GEP Z. 02) dokumentiert in `befunde.md:162` und als Posten „Sonstige“ in `app_daten.py` weitergegeben (Spez. 3.8) |
+| MANU-03 | 04-01 | `transferaufwendungen.csv` inkl. Kreisumlage netto mit Fußnote aus S. 45–46 | ✓ SATISFIED | 66 Zeilen, `quelle` 45 und 46; eigene Summe der zehn Posten 2026 = 13.764 T€ = `anhang_b5_transferaufwendungen.gesamt` (`2026_sollwerte.toml:318`); Kreisumlage netto 10.147 T€ und Rückstellungsauflösung 1.325.478 € in `meta.json`, Fußnote im README; Regel 5 Weitergabe-Prüfung (Summe Kreisumlage, Gewerbesteuerumlage, Krankenhausinvestitionsumlage gegen TP Z. 15) grün |
+| MANU-04 | 04-01 | `kita_zuschuesse.csv` (7 Einrichtungen, Summe 559 T€) aus S. 46 | ✓ SATISFIED | 8 Zeilen (7 Einrichtungen plus Gesamtzeile), `quelle` 46; eigene Summe 2026 = 559 T€, Sollwert `zuschuesse_kindertageseinrichtungen = 559` (`2026_sollwerte.toml:309`); Regel 5 `transfer_kita` exakt grün |
+| MANU-05 | 04-02 | `weitere_vorberichtstabellen.csv` (Leistungsentgelte, Kostenerstattungen, Personal, Sachaufwand, Sonstige Aufwendungen) aus S. 29–50 | ✓ SATISFIED | 504 Zeilen, `quelle` 29, 30, 32, 33, 34, 36, 37, 48 und weitere, kein leeres Feld; Regel 5 Stufe (a) und (b) je Tabelle grün, bekannte Rundungsdifferenzen als Zeilen der Schlüsseltabelle in `befunde.md` (ab Zeile 160) mit Seite und Begründung; seit Phase 5 zusätzlich Tabelle 2.1.7 (Sonstige ordentliche Erträge) |
+| MANU-06 | 04-02 | `meta.json` mit Einwohnerzahl 11.741, Hebesätzen, Fläche, Satzungsdatum, Kreisumlage, Hebesätzen der Umlagen | ✓ SATISFIED | `lies_meta_json` (`manuell.py:114`) prüft die Allowlist (`_META_TOP_SCHLUESSEL` `manuell.py:28`, `_META_SATZUNG_SCHLUESSEL` `manuell.py:44`); Werte siehe Wahrheit 2; Regel 9 (12 Eckwerte, darunter die aus `meta.json` hergeleiteten) exakt grün, Test `test_meta_json_bricht_ab` und `test_meta_json_gueltig` in der eigenen Auswahl grün |
+| MANU-07 | 04-01, 04-02 | jede manuelle Datei hat eine Spalte `quelle` mit PDF-Seite; ein README begründet die Werte | ✓ SATISFIED | Alle zehn CSV-Dateien: `quelle` im Kopf und in keiner Zeile leer (eigene Zählung `quelle_null` = 0 je Datei, Seiten 27, 28, 45/46, 46, 29–48, 310, 311, 309, 52, 47); `meta.json` trägt `quelle` je Wert; `daten/manuell/README.md` beschreibt Spalten, Quellen und die Sonderfälle |
+| MANU-08 | 04-05, 04-06 | geprüfte Erklärtexte mit Seitenverweis, korrekt gerendert | ✓ SATISFIED | Wahrheiten 2, 9 und 10: 21 Abschnitte mit je einer Quelle-Zeile, strenge Ziffern- und Jahresregel (`texte.py:208`), `jahr`-Kürzel (`format.ts:92`, `texte.py:31`), 130 Pytest- und 51 Vitest-Tests grün, `test_port_wie_format_ts` ohne Skip; Phase-8-Verschärfungen 27e0be7, 7d4be31, e8e25d5 erhalten das Verhalten |
+| PRUEF-05 | 04-01, 04-02 | manuelle Tabellen stimmen mit den Planzeilen überein (±1 T€, bekannte Differenzen dokumentiert) | ✓ SATISFIED | Basislauf `Regel 5: grün (150 Werte)`, `konsistenz.md`: 0 Abweichungen, 0 Lücken, 29 dokumentierte Befunde, `Veraltete Befunde: 0`; Toleranz `TOLERANZ_EURO = 1` und `TOLERANZ_JE_REGEL` unverändert (`pruefung.py:85-97`, `04-SECURITY.md` T-04-08); Die Befunde-Tests (`test_veralteter_befund_*` in `test_pruefung.py`) liefen in der eigenen Auswahl grün; `test_regel5_stufe_a_erkennt_tippfehler` (`test_manuell.py`) lief in der vollen Suite des Basislaufs (681 passed, 0 Skips) |
+| EXTR-10 | 04-03 | Stellenplan (Teil A, Teil B, Übersicht nach PB) in `stellenplan.csv` | ✓ SATISFIED | Wahrheit 4: 162 Zeilen, Beamte 2026 = 8; Basislauf `Schritt 05: 162 Zeilen geschrieben`, Regel 9 und 10 grün; Tests `test_stellenplan_csv_eingecheckt_aktuell`, `test_lies_stellen_hundertstel` in der eigenen Auswahl grün |
+| DATA-01 | 04-01, 04-03, 04-04, 04-05, 04-06 | Build-Skript erzeugt `haushalt.json`, `produkte.json` (ohne Personennamen), `investitionen.json`, `stellenplan.json` | ✓ SATISFIED | Wahrheit 5 und 6: Schritt 07 im Basislauf mit allen fünf Dateien (zusätzlich `texte.json`), byte-identisch nach erneutem Lauf; Allowlist `APP_PRODUKT_SCHLUESSEL` (`app_daten.py:417`, Abbruch `:486`); `test_app_json_deterministisch` und `test_haushalt_json_eingecheckt_aktuell` grün |
+| DATA-02 | 04-04 | „Weitergabe an Kreis und Land“ als eigene Kategorie aus PB 16, Rest „Allgemeine Finanzwirtschaft“ | ✓ SATISFIED | `haushalt.json` `knoten`: ein Knoten „Weitergabe an Kreis und Land“, drei Knoten „Allgemeine Finanzwirtschaft“; `KL_NAME` `app_daten.py:91`, Reduktion der Kette um TP Z. 15 (`app_daten.py:298-310`); Tests `test_kl_knoten_gleich_tp_15`, `test_kl_knoten_reduziert_kette`, `test_kl_knoten_kinder_gerundet` grün |
+| DATA-03 | 04-04 | Zuschussbedarf je Knoten und Jahr berechnet und als berechneter Wert gekennzeichnet | ✓ SATISFIED | `ergebnisplan_app[…]["berechnet"]` mit `aufwand`, `ertraege`, `zuschussbedarf`, `ueberschuss` (`app_daten.py:332-336`); 265 Zeilen mit dem Schlüssel `berechnet` in `haushalt.json`; Test `test_zuschussbedarf_summe_top_knoten` grün |
+| PRUEF-10 | 04-01, 04-03, 04-05, 04-06 | `alle.py` läuft alle Schritte; CI prüft, dass kein Diff entsteht | ✓ SATISFIED | Wahrheit 6: `alle.py` Reihenfolge, `ci.yml:46-62`; Basislauf: Exit 0 in 29 s, danach `git diff --stat --exit-code` und `git status --porcelain` leer; zusätzlich Schritt 08 und die `app/public/quellen`-Prüfung seit Phase 7 |
+
+Es gibt keine verwaisten Anforderungen: Die 14 IDs der Roadmap (Phase 4, Zeile `**Requirements**`) stimmen mit der Vereinigung der `requirements` aus den sechs Plänen überein (04-01: MANU-01 bis MANU-04, MANU-07, PRUEF-05, DATA-01, PRUEF-10; 04-02: MANU-05 bis MANU-07, PRUEF-05, DATA-01; 04-03: EXTR-10, DATA-01, PRUEF-10; 04-04: DATA-01 bis DATA-03; 04-05: MANU-08, PRUEF-10, DATA-01; 04-06: MANU-08, DATA-01, PRUEF-10), und `.planning/milestones/v1.0-REQUIREMENTS.md` führt alle 14 als `Complete` (Zeilen 204 bis 225).
+
+### Regressionsprüfung der Plan-must_haves
+
+Geprüft wurden die `must_haves` der sechs Pläne, soweit ihre Artefakte seit 2026-10-04T08:51:42Z geändert wurden (`git log --since=… -- <Artefakt>`). Der Stellenplan (`stellenplan.py`, `05_stellenplan.py`, `stellenplan.csv`, `stellenplan.json`) ist seitdem unverändert. Änderungen an den übrigen Artefakten stammen aus den Phasen 5 bis 8 (Liste im Abschnitt „Warum diese Re-Verifikation“) und sind in der Tabelle als Ergänzungen oder Verschärfungen belegt.
+
+| Plan | Geänderte Artefakte seit dem alten Bericht | must_have noch erfüllt? | Beleg |
+|------|--------------------------------------------|-------------------------|-------|
+| 04-01 | `ci.yml`, `pruefung.py`, `app_daten.py`, `typen.ts`, `haushalt.json` | ja | Regel 4 B.4 und Regel 5 grün, CI-Schritt „Pipeline reproduzierbar (D-24)“ weiterhin `ci.yml:46-62`, `verify.artifacts` 9 von 9 |
+| 04-02 | `pruefung.py`, `meta.json` (HSK-Schwellen und Konzessionsabgaben ergänzt) | ja | Allowlist in `lies_meta_json` unverändert streng, Regel 9 grün, `verify.artifacts` 7 von 7 |
+| 04-03 | keine | ja | `verify.artifacts` 4 von 4, Beamte 2026 = 8 (eigene Summe) |
+| 04-04 | `app_daten.py`, `haushalt.json`, `typen.ts` | ja | KL-Knoten, `berechnet`-Werte und Namenswächter grün, `verify.artifacts` 5 von 5 |
+| 04-05 | `texte.py`, `erklaerungen.md`, `texte.json`, `format.ts` | ja | Truths 9 und 10; einziger Ausreißer ist das veraltete Key-Link-Muster (Advisory 1), die Verdrahtung selbst besteht |
+| 04-06 | `format.ts`, `texte.py`, `erklaerungen.md`, `texte.json`, `test_formatiere.py` | ja | CR-01 bleibt behoben: 0 `jahr.*`-Platzhalter mit `zahl`, `test_cr01_gruppiertes_haushaltsjahr_wird_erkannt` und `test_port_wie_format_ts` laufen in den 130 grünen Tests, `verify.artifacts` 5 von 5 |
+
+Ergebnis: `re_verification.regressions` ist leer, `gaps_closed` ist leer (der alte Bericht stand bereits auf `passed`, seine Lücke CR-01 war dort schon geschlossen).
 
 ### Anti-Patterns Found
 
