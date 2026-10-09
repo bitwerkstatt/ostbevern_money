@@ -69,7 +69,10 @@ coincidental_reliance_items:
 human_verification:
   - test: "Screenreader-Ansage des Tabellennamens bei 360 px auf /ausgaben (VoiceOver oder NVDA): in eine Datentabelle navigieren, deren Rahmen scrollt"
     expected: "Der Name der Tabelle wird beim Betreten von Region und Tabelle nicht störend doppelt vorgelesen (A11Y-03). Wird er es, soll nur eines der beiden Elemente (Region oder Caption) den Namen tragen."
-    why_human: "DOM und ARIA-Baum sind per Playwright belegt (genau ein aria-labelledby, kein aria-label, eindeutige Regionnamen). Ob ein Screenreader Region und Tabelle trotzdem nacheinander ansagt, ist RESEARCH-Annahme A1 und lässt sich ohne echten Screenreader nicht prüfen. Offen in 08-UAT.md (Test 1, result pending)."
+    why_human: "DOM und ARIA-Baum sind per Playwright belegt (genau ein aria-labelledby, kein aria-label, eindeutige Regionnamen). Ob ein Screenreader Region und Tabelle trotzdem nacheinander ansagt, ist RESEARCH-Annahme A1 und lässt sich ohne echten Screenreader nicht prüfen. Vom Nutzer in `08-UAT.md` Test 1 bestanden (result: pass, 2026-10-08, Commit dd77df1)."
+    beleg: "UAT 08 Test 1 (pass, Nutzer, 2026-10-08)"
+    verifier_geprueft: "nein"
+    hinweis: "Der Verifier hat DOM und ARIA-Baum geprüft (Playwright, genau ein Name je Rahmen); das Vorleseverhalten mit einem echten Screenreader hat der Nutzer bestätigt"
 ---
 
 # Phase 8: Fixes und Triage Verification Report
@@ -150,7 +153,7 @@ Alle 13 IDs aus den PLAN-Frontmatter (08-01 bis 08-12) stehen in `REQUIREMENTS.m
 | TXT-06 | 08-03 | ✓ SATISFIED | `einwohnerZahl()` wirft laut |
 | A11Y-01 | 08-06 | ✓ SATISFIED | Rolle und Name bei Überlauf, Pflicht-`beschriftung`, Guard |
 | A11Y-02 | 08-06 | ✓ SATISFIED | Drawer schließt bei jedem Link, e2e grün |
-| A11Y-03 | 08-06 | ? NEEDS HUMAN | Ein Name im DOM belegt, Screenreader-Ansage offen |
+| A11Y-03 | 08-06 | ✓ SATISFIED | Ein Name im DOM belegt (Playwright, mobil.spec.ts „Rahmen mit Rolle und genau einem Namen“); Screenreader-Ansage vom Nutzer bestanden (08-UAT.md Test 1, pass, 2026-10-08), nicht vom Verifier geprüft |
 | TRI-01 | 08-12 | ✓ SATISFIED | Ledger 01 `open: 0` |
 | TRI-02 | 08-12 | ✓ SATISFIED | Ledger 05 `open: 0` |
 | TRI-03 | 08-12 | ✓ SATISFIED | Ledger 06 `open: 0`, 06/WR-01 `skipped` mit UAT-Begründung |
