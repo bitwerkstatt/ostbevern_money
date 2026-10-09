@@ -33,13 +33,13 @@ Querschnittsbedingung für alle Anforderungen: `alle.py --jahr 2026` erzeugt `da
 
 ### Sicherheit
 
-- [ ] **SEC-01**: Für Phase 4 liegt `04-SECURITY.md` mit `threats_open: 0` vor, nach dem Muster der anderen Phasen
+- [x] **SEC-01**: Für Phase 4 liegt `04-SECURITY.md` mit `threats_open: 0` vor, nach dem Muster der anderen Phasen
 
 ### Audit
 
-- [ ] **AUD-01**: Das Milestone-Audit für v1.0 ist durchgeführt. Seine Lücken sind entweder in diesem Meilenstein geschlossen oder begründet zurückgestellt
-- [ ] **AUD-02**: Die Verifikationen der Phasen 1–7 sind gegen den aktuellen Stand erneuert, keine steht mehr auf „stale“
-- [ ] **AUD-03**: Die Liste „Blockers/Concerns“ in STATE.md stimmt mit der Wirklichkeit überein. Die veralteten Einträge zu Phase 2 und 4 sind entfernt
+- [x] **AUD-01**: Das Milestone-Audit für v1.0 ist durchgeführt. Seine Lücken sind entweder in diesem Meilenstein geschlossen oder begründet zurückgestellt
+- [x] **AUD-02**: Die Verifikationen der Phasen 1–7 sind gegen den aktuellen Stand erneuert, keine steht mehr auf „stale“
+- [x] **AUD-03**: Die Liste „Blockers/Concerns“ in STATE.md stimmt mit der Wirklichkeit überein. Die veralteten Einträge zu Phase 2 und 4 sind entfernt
 
 ## Future Requirements
 
@@ -77,10 +77,10 @@ Bleiben im Backlog (siehe `milestones/v1.0-REQUIREMENTS.md`, Abschnitt v2):
 | TRI-02 | Phase 8 | Complete |
 | TRI-03 | Phase 8 | Complete |
 | TRI-04 | Phase 8 | Complete |
-| SEC-01 | Phase 9 | Pending |
-| AUD-01 | Phase 9 | Pending |
-| AUD-02 | Phase 9 | Pending |
-| AUD-03 | Phase 9 | Pending |
+| SEC-01 | Phase 9 | Complete |
+| AUD-01 | Phase 9 | Complete |
+| AUD-02 | Phase 9 | Complete |
+| AUD-03 | Phase 9 | Complete |
 
 **Coverage:**
 - v1.0.1 requirements: 17 total
@@ -89,4 +89,4 @@ Bleiben im Backlog (siehe `milestones/v1.0-REQUIREMENTS.md`, Abschnitt v2):
 
 ---
 *Requirements defined: 2026-10-07*
-*Last updated: 2026-10-07 after roadmap revision (zwei Phasen, 8–9)*
+*Last updated: 2026-10-09 nach Phase 9 abgeschlossen (SEC-01, AUD-01, AUD-02, AUD-03 erfüllt)*

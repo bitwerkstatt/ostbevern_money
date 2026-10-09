@@ -42,6 +42,7 @@ covered_files:
   - app/src/components/__tests__/zustaende.test.ts
   - app/src/components/datenTabelle.ts
   - app/src/data/texte.json
+  - app/src/lib/__tests__/geldfluss.test.ts
   - app/src/lib/__tests__/quelltext.test.ts
   - app/src/lib/berechnung.ts
   - app/src/lib/einwohner.ts
@@ -50,7 +51,7 @@ covered_files:
   - daten/manuell/texte/erklaerungen.md
   - daten/manuell/texte/glossar.md
   - pipeline/ostbevern/texte.py
-covered_digest: "v3:sha256:146a1f4a99333200c53c4578ea5feffbce316740e810ea596dabaca7ee319bbc"
+covered_digest: "v3:sha256:eda89fecc881b201b8c8414b1af70f57707120b97609a020956d158c488dcb11"
 behavior_unverified: 0
 overrides_applied: 0
 re_verification:
@@ -204,6 +205,18 @@ Anlass: Plan 09-02 hat `DatenTabelle.vue`, `datenTabelle.ts`, `zustaende.test.ts
 - Ledger: `08-REVIEW-DISPOSITION.md` `open: 0`, `total: 10`.
 
 `covered_files` und `covered_digest` stammen unverändert aus `verification.fingerprint`. Die Screenreader-Ansage (A11Y-03) bleibt offen in `08-UAT.md` und ist keine Folge dieser Änderung.
+
+## Nachtrag 09-15 (D-12)
+
+Stand 2026-10-09. Nach dem Basislauf (head `1d0df35da1842daec515b40dd62f8d918e240105`) hat Plan 09-14 in `448e43d` (Lücke G-09-03, Test `b3b2658`) `app/src/lib/geldfluss.ts` geändert, eine vom Bericht abgedeckte Datei; `verification.status` meldete deshalb wieder `stale`. Änderung: `berechnet: gruppe.posten.length > 1` statt `berechnet: false` an den Steuergruppen in `baueGeldfluss`, dazu ein Kommentar und die Doku des Feldes. Die Gruppensumme „Grundsteuer (A+B)“ trägt jetzt das Etikett „berechnet“; Beträge, Bilanz und `lesehilfeSatz` sind unverändert.
+
+| Commit | Geänderte abgedeckte Datei | Betroffene Wahrheit | Test |
+|--------|----------------------------|---------------------|------|
+| `448e43d` | `app/src/lib/geldfluss.ts` | SC 2 („abgeleitete und fehlende Werte sind erkennbar“) wird stärker: eine von der App gebildete Summe ist jetzt als „berechnet“ erkennbar. SC 1 (`lesehilfeSatz` mit vier Fällen) ist unberührt, die Funktion steht nicht im Diff. SC 3 bis 5 sind nicht betroffen | `geldfluss.test.ts` „G-09-03“ (sechs Jahre), vorher rot in `b3b2658`; `lesehilfeSatz`-Tests in `geldfluss.test.ts:437` und `:487` weiter grün |
+
+Nachprüfung in einer Scratch-Kopie von `app/` mit Linux-`node_modules` (`npm ci`) auf dem Stand `7e2b775`: `geldfluss`, `berechnung`, `rdregel`, `quelltext`, `zustaende` und `einwohner` zusammen 419 Tests grün; die volle App-Suite 2207 Tests grün (zuvor 2162). Keine Wahrheit gebrochen, kein Gap, keine Regression; der Score bleibt 5/5 und der Status `passed`. Die Screenreader-Ansage (A11Y-03) bleibt offen in `08-UAT.md` und ist keine Folge dieser Änderung. Der volle Lauf der CI-Kette auf dem Endstand (SC 5) steht im Abschnitt „Abschlusslauf“ von `.planning/v1.0-MILESTONE-AUDIT.md`.
+
+`covered_files` und `covered_digest` stammen unverändert aus `verification.fingerprint`, mit den bisherigen Implementierungsdateien plus `app/src/lib/__tests__/geldfluss.test.ts`.
 
 ---
 
