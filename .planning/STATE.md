@@ -78,9 +78,6 @@ None.
 
 Aus v1.0 übernommen (offen):
 - `app/node_modules` im gemounteten Repo enthält macOS-Binaries; im Linux-Sandbox App-Checks in einer Scratch-Kopie ausführen.
-- Code-Review-Restbefunde: 02-REVIEW.md (3 Warnungen), 04-REVIEW-DISPOSITION.md (WR-01…WR-05, IN-02), alle ohne Auswirkung auf die Daten. Vermutlich veraltet (beide Ledger stehen auf `open: 0`), Bereinigung in Phase 9 (AUD-03).
-- `/gsd-secure-phase 04` steht aus. Wird in Phase 9 (SEC-01) erledigt.
-- Kein Milestone-Audit für v1.0, Phasen-Verifikationen „stale“ (vom Nutzer akzeptiert). Wird in Phase 9 (AUD-01, AUD-02) erledigt.
 
 ### Quick Tasks Completed
 
