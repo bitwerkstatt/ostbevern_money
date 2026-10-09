@@ -31,7 +31,7 @@
 - Ein Commit, der einen Review-Befund behebt, nennt dessen ID mit Phasenpräfix (z. B. `05/IN-06`). So kann die Triage am Ende von Phase 8 ihn als Beleg zitieren.
 
 - [x] **Phase 8: Fixes und Triage** - Zahlen, Texte und Barrierefreiheit stimmen in Grenzfällen, Hygiene-Befunde sind erledigt oder begründet zurückgestellt, die Ledger 01, 05 und 06 stehen auf `open: 0` (completed 2026-10-08)
-- [ ] **Phase 9: Sicherheit und Audit** - `04-SECURITY.md` mit `threats_open: 0`, Milestone-Audit für v1.0, erneuerte Verifikationen der Phasen 1–7, bereinigte Blocker-Liste in STATE.md
+- [x] **Phase 9: Sicherheit und Audit** - `04-SECURITY.md` mit `threats_open: 0`, Milestone-Audit für v1.0, erneuerte Verifikationen der Phasen 1–7, bereinigte Blocker-Liste in STATE.md (completed 2026-10-09)
 
 ## Phase Details
 
@@ -89,7 +89,7 @@ Plans:
   4. „Blockers/Concerns“ in STATE.md stimmt mit der Wirklichkeit überein. Die veralteten Einträge zu `02-REVIEW.md` und `04-REVIEW-DISPOSITION.md` sind entfernt (beide Ledger stehen schon auf `open: 0`), ebenso die in diesem Meilenstein erledigten Punkte (Security Phase 4, Milestone-Audit, stale-Verifikationen). Nur zutreffende Hinweise bleiben, z. B. die Scratch-Kopie für App-Prüfungen.
   5. Ein Abschlusslauf bestätigt die Querschnittsbedingung auf dem Endstand: `alle.py --jahr 2026` ist byte-identisch, Prüfregeln 1–10 sind grün, die CI-Kette von Pipeline und App ist grün.
 
-**Plans**: 16/16 plans executed in 9 waves (09-16 gap closure)
+**Plans**: 16/16 plans complete in 9 waves (09-16 gap closure)
 
 Plans:
 **Wave 1**
@@ -145,4 +145,4 @@ Phases execute in numeric order: 8 → 9
 | 6. Kontext-Seiten | v1.0 | 17/17 | Complete | 2026-10-06 |
 | 7. Feinschliff und Veröffentlichung | v1.0 | 14/14 | Complete | 2026-10-07 |
 | 8. Fixes und Triage | v1.0.1 | 12/12 | Complete    | 2026-10-08 |
-| 9. Sicherheit und Audit | v1.0.1 | 16/16 | In Progress | - |
+| 9. Sicherheit und Audit | v1.0.1 | 16/16 | Complete    | 2026-10-09 |
