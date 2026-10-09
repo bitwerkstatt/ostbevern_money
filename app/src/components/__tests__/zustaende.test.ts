@@ -5,7 +5,12 @@ import { describe, expect, it, vi } from 'vitest'
 import BaseChart, { datenpunkte } from '@/components/BaseChart.vue'
 import DatenTabelle from '@/components/DatenTabelle.vue'
 import { KEIN_WERT } from '@/charts/format'
-import { rahmenAttribute, type DatenSpalte, type DatenZeile } from '@/components/datenTabelle'
+import {
+  rahmenAttribute,
+  tabellenRahmen,
+  type DatenSpalte,
+  type DatenZeile,
+} from '@/components/datenTabelle'
 
 // Zustände von BaseChart und DatenTabelle (E6, QUAL-02): laden, Fehler, leer, teilweise leer.
 // Gerendert wird serverseitig mit `vue/server-renderer` (Teil des vue-Pakets, kein neues
@@ -162,33 +167,20 @@ describe('DatenTabelle Name und Rahmen (A11Y-01, A11Y-03, D-20)', () => {
     expect(html).not.toContain('aria-labelledby')
   })
 
-  it('leere Beschriftung: kein tabindex, no role region, no aria-labelledby auf dem Rahmen (WR-03, A11Y-01)', async () => {
-    const html = await rendere(DatenTabelle, {
-      beschriftung: '',
-      spalten: SPALTEN,
-      zeilen,
-    })
-    // Die Tabelle wird noch gerendert, aber der Rahmen hat keine Fokussierbar-Attribute
-    expect(html).toContain('<table')
-    // Kein tabindex auf dem Rahmen
-    expect(html).not.toContain('tabindex')
-    // Kein role="region" (nur die Region wird vorbereitet, aber nicht ausgegeben)
-    expect(html).not.toContain('role="region"')
-    // Kein aria-labelledby
-    expect(html).not.toContain('aria-labelledby')
-  })
-
-  it('Whitespace-only Beschriftung: kein tabindex, no role region, no aria-labelledby (WR-03, A11Y-01)', async () => {
-    const html = await rendere(DatenTabelle, {
-      beschriftung: '   ',
-      spalten: SPALTEN,
-      zeilen,
-    })
-    expect(html).toContain('<table')
-    expect(html).not.toContain('tabindex')
-    expect(html).not.toContain('role="region"')
-    expect(html).not.toContain('aria-labelledby')
-  })
+  it.each([
+    ['leere', ''],
+    ['aus Leerzeichen bestehende', '   '],
+  ])(
+    '%s Beschriftung: die Caption trägt den Ersatznamen „Tabelle“ (08/WR-01, 08/WR-02, A11Y-01)',
+    async (_art, beschriftung) => {
+      const html = await rendere(DatenTabelle, {
+        beschriftung,
+        spalten: SPALTEN,
+        zeilen,
+      })
+      expect(html).toMatch(/<caption[^>]*>\s*Tabelle\s*<\/caption>/)
+    },
+  )
 
   it('leere Beschriftung warnt in DEV (WR-03, A11Y-01)', async () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
@@ -215,5 +207,41 @@ describe('rahmenAttribute (A11Y-01, 05/WR-02)', () => {
       role: 'region',
       'aria-labelledby': 'caption-1',
     })
+  })
+})
+
+describe('tabellenRahmen (08/WR-01, 08/WR-02, A11Y-01)', () => {
+  const MIT_UEBERLAUF = { ueberlaeuft: true, laedt: false, leer: false }
+  const VOLLER_SATZ = { tabindex: 0, role: 'region', 'aria-labelledby': 'c' }
+
+  it('leere Beschriftung mit Überlauf: Rahmen bleibt erreichbar, Name ist „Tabelle“', () => {
+    expect(tabellenRahmen({ ...MIT_UEBERLAUF, beschriftung: '' }, 'c')).toEqual({
+      name: 'Tabelle',
+      attribute: VOLLER_SATZ,
+    })
+  })
+
+  it('aus Leerzeichen bestehende Beschriftung mit Überlauf: wie die leere', () => {
+    expect(tabellenRahmen({ ...MIT_UEBERLAUF, beschriftung: '   ' }, 'c')).toEqual({
+      name: 'Tabelle',
+      attribute: VOLLER_SATZ,
+    })
+  })
+
+  it('normale Beschriftung mit Überlauf: der Name ist die gekürzte Beschriftung', () => {
+    expect(tabellenRahmen({ ...MIT_UEBERLAUF, beschriftung: ' Einnahmen 2026 ' }, 'c')).toEqual({
+      name: 'Einnahmen 2026',
+      attribute: VOLLER_SATZ,
+    })
+  })
+
+  it.each([
+    ['ohne Überlauf', { ueberlaeuft: false, laedt: false, leer: false }],
+    ['beim Laden', { ueberlaeuft: true, laedt: true, leer: false }],
+    ['im Leerzustand', { ueberlaeuft: true, laedt: false, leer: true }],
+  ])('%s: keine Attribute, für jede Beschriftung', (_fall, lage) => {
+    for (const beschriftung of ['', '   ', 'Einnahmen 2026']) {
+      expect(tabellenRahmen({ ...lage, beschriftung }, 'c').attribute).toEqual({})
+    }
   })
 })
