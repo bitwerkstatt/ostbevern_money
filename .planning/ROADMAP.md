@@ -89,7 +89,43 @@ Plans:
   4. „Blockers/Concerns“ in STATE.md stimmt mit der Wirklichkeit überein. Die veralteten Einträge zu `02-REVIEW.md` und `04-REVIEW-DISPOSITION.md` sind entfernt (beide Ledger stehen schon auf `open: 0`), ebenso die in diesem Meilenstein erledigten Punkte (Security Phase 4, Milestone-Audit, stale-Verifikationen). Nur zutreffende Hinweise bleiben, z. B. die Scratch-Kopie für App-Prüfungen.
   5. Ein Abschlusslauf bestätigt die Querschnittsbedingung auf dem Endstand: `alle.py --jahr 2026` ist byte-identisch, Prüfregeln 1–10 sind grün, die CI-Kette von Pipeline und App ist grün.
 
-**Plans**: TBD
+**Plans**: 15 plans in 8 waves
+
+Plans:
+**Wave 1**
+- [ ] 09-01-PLAN.md — 04-SECURITY.md: 21 Bedrohungen mit Code- und Testbeleg, Namens-Tests ohne Skip, offene Bedrohung mit Test beheben (SEC-01; D-01..D-05)
+- [ ] 09-02-PLAN.md — 08/WR-01 und 08/WR-02 mit Test (tabellenRahmen), Ledger 08 auf open: 0, 08-VERIFICATION erneuert (D-20, D-15)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 09-03-PLAN.md — Basislauf der vollen CI-Kette als gemeinsame Evidenz 09-BASISLAUF.md (AUD-02; D-23)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 09-04-PLAN.md — Re-Verifikation Phase 1 (AUD-02; D-13)
+- [ ] 09-05-PLAN.md — Re-Verifikation Phase 2 (AUD-02; D-13)
+- [ ] 09-06-PLAN.md — Re-Verifikation Phase 3 (AUD-02; D-13)
+- [ ] 09-07-PLAN.md — Re-Verifikation Phase 4 (AUD-02; D-13)
+- [ ] 09-08-PLAN.md — Re-Verifikation Phase 5, Human-Items mit Beleg (AUD-02; D-13, D-21)
+- [ ] 09-09-PLAN.md — Re-Verifikation Phase 6 (AUD-02; D-13)
+- [ ] 09-10-PLAN.md — Re-Verifikation Phase 7, Nutzerbestätigung, CR-01 zurückgestellt (AUD-02; D-13, D-14, D-22)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+- [ ] 09-11-PLAN.md — STATE.md Blockers/Concerns bereinigt, Vermerk Deploy-/Gerätecheck (AUD-03; D-16, D-18)
+
+**Wave 5** *(blocked on Wave 4 completion)*
+- [ ] 09-12-PLAN.md — Milestone-Audit Teil 1: Kopf, Phasen, 102 Anforderungen aus drei Quellen, Nyquist (AUD-01; D-06..D-09, D-11)
+
+**Wave 6** *(blocked on Wave 5 completion)*
+- [ ] 09-13-PLAN.md — Milestone-Audit Teil 2: Integration, Flüsse F1–F7, Lückenliste nach D-10 (AUD-01; D-10, D-22)
+
+**Wave 7** *(blocked on Wave 6 completion)*
+- [ ] 09-14-PLAN.md — Lücken der Kernaussage mit Test beheben (AUD-01; D-10, D-12)
+
+**Wave 8** *(blocked on Wave 7 completion)*
+- [ ] 09-15-PLAN.md — Nachlauf der Digests, Abschlusslauf, Anforderungen, MILESTONES-Nachtrag, kein Meilensteinabschluss (SEC-01, AUD-01..03; D-12, D-15..D-19)
+
+**Cross-cutting constraints:**
+- alle.py nur im Basislauf, in Fix-Plänen und im Abschlusslauf; Verifier arbeiten read-only gegen 09-BASISLAUF.md
+- Digests der Verifikationen erst nach der letzten Codeänderung endgültig (Nachlauf in 09-15)
 
 ## Progress
 
@@ -106,4 +142,4 @@ Phases execute in numeric order: 8 → 9
 | 6. Kontext-Seiten | v1.0 | 17/17 | Complete | 2026-10-06 |
 | 7. Feinschliff und Veröffentlichung | v1.0 | 14/14 | Complete | 2026-10-07 |
 | 8. Fixes und Triage | v1.0.1 | 12/12 | Complete    | 2026-10-08 |
-| 9. Sicherheit und Audit | v1.0.1 | 0/TBD | Not started | - |
+| 9. Sicherheit und Audit | v1.0.1 | 0/15 | Not started | - |

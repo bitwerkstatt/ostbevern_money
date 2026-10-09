@@ -1,0 +1,1 @@
+No external API integration: phase 9 is a security, re-verification and audit phase on a static app without backend; the only API mention is the GitHub Actions API that the sandbox cannot reach, which D-14 replaces by the user's own confirmation, and no plan calls or adds any external API.
