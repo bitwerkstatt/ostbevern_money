@@ -116,20 +116,45 @@ Step 7c: SKIPPED (keine Probe-Skripte in Phase 2 deklariert).
 
 ### Requirements Coverage
 
-Vorläufig; Task 2 von Plan 09-05 ergänzt Pläne, Beschreibungen und die Regressionsprüfung.
+Beschreibungen nach `.planning/milestones/v1.0-REQUIREMENTS.md` (Zeilen 29-33, 53-56, 61); die Plan-Zuordnung steht im `requirements`-Feld der fünf Phase-2-Pläne (`02-01`: EXTR-01, EXTR-04, PRUEF-04, PRUEF-09; `02-02`: EXTR-02, EXTR-03; `02-03`: EXTR-05, PRUEF-01, PRUEF-04, PRUEF-09; `02-04`: EXTR-04, EXTR-05, PRUEF-01; `02-05`: PRUEF-02, PRUEF-03, PRUEF-04, PRUEF-09).
 
 | Requirement | Source Plan | Description | Status | Evidence |
 |-------------|-------------|-------------|--------|----------|
-| EXTR-01 | 02-01 | Zahlenparser | ✓ SATISFIED | Wahrheit 2 |
-| EXTR-02 | 02-02 | `seiten.csv` | ✓ SATISFIED | Wahrheit 1 |
-| EXTR-03 | 02-02 | `hierarchie.csv` | ✓ SATISFIED | Wahrheit 1 |
-| EXTR-04 | 02-01, 02-04 | Ergebnispläne | ✓ SATISFIED | Wahrheit 3 |
-| EXTR-05 | 02-03, 02-04 | Finanzpläne inkl. VE | ✓ SATISFIED | Wahrheit 3 |
-| PRUEF-01 | 02-03, 02-04 | Regel 1 | ✓ SATISFIED | Wahrheit 3 |
-| PRUEF-02 | 02-05 | Regel 2 | ✓ SATISFIED | Wahrheit 3 |
-| PRUEF-03 | 02-05 | Regel 3 | ✓ SATISFIED | Wahrheit 3 |
-| PRUEF-04 | 02-01, 02-03, 02-05 | Regel 4 | ✓ SATISFIED | Wahrheit 4 |
-| PRUEF-09 | 02-01, 02-03, 02-05 | Bericht und 1-€-Gate | ✓ SATISFIED | Wahrheit 5 |
+| EXTR-01 | 02-01 | Zahlenparser: deutsches Format, Minus, „–“ als „kein Wert“, angeklebte Beträge, `C` als Eurozeichen, mit Unit-Tests | ✓ SATISFIED | `zahlen.py:17-24` und `:39-52`, `:102-115` unverändert seit Phase 2; `test_zahlen.py:20-100` grün im eigenen Lauf (60 passed zusammen mit `test_hierarchie.py`); `plaene.py:31` und `investitionen.py:47` nutzen ausschließlich diesen Parser. |
+| EXTR-02 | 02-02 | `seiten.csv` mit Seite/Typ/PB/PG/Produkt, Fortsetzungsseiten erben, Startseiten aller 63 Produkte gegen Anhang A | ✓ SATISFIED | `seiten.csv` heute 400 Zeilen, 0 `unbekannt`; `seiten.py:201-270` unverändert; `test_hierarchie.py:149 test_produktseiten_in_seiten_csv_stimmen_mit_anhang_a` und `test_seiten.py:116 test_fortsetzungsseite_erbt_typ` grün (eigener Lauf); Basislauf `Schritt 01: 400 Seiten klassifiziert, 0 unbekannt`. |
+| EXTR-03 | 02-02 | `hierarchie.csv`: 15 PB, alle PG (synthetische mit `synthetisch=true`), 63 Produkte mit Namen | ✓ SATISFIED | Eigene Zählung heute: 15 PB, 49 PG (8 gedruckt, 41 synthetisch), 63 P; `test_hierarchie.py:47`, `:68`, `:79`, `:118`, `:133` grün; Basislauf `15 PB, 49 PG (41 synthetisch), 63 Produkte`. |
+| EXTR-04 | 02-01, 02-04 | Gesamtergebnisplan und alle Teilergebnispläne (PB, Produkt) im Langformat mit `zeile`, `zeile_kanonisch`, `ist_summe`, `pdf_seite` | ✓ SATISFIED | `ergebnisplan.csv` 10 188 Zeilen (GESAMT 198 = 33 Zeilen × 6 Jahre, PB 1236, PG 3762, P 4992), alle mit `pdf_seite` und `zeile_kanonisch`; Datei byte-identisch zum Stand von 2026-10-02 (`git diff 189c481 HEAD --stat` leer); `test_plaene.py:92`, `:107`, `:289`, `:388` grün; Basislauf `Schritt 02: 14899 Planzeilen geschrieben.` und byte-identische Regeneration. |
+| EXTR-05 | 02-03, 02-04 | Gesamtfinanzplan und alle Teilfinanzpläne inklusive VE-Spalte | ✓ SATISFIED | `finanzplan.csv` 4 711 Zeilen (GESAMT 287 = 41 Zeilen × 7 Spalten), davon 673 mit `wertart=ve`; byte-identisch zum Stand von 2026-10-02; `test_plaene.py:198`, `:217`, `:363`, `:412` grün; Gesamtfinanzplan-VE Z. 30 = 11.600.000 (`finanzplan.csv`, Seite 63). |
+| PRUEF-01 | 02-03, 02-04 | Zeilenformeln jedes Ergebnis- und Finanzplans stimmen (Regel 1) | ✓ SATISFIED | Basislauf `Regel 1: grün (6593 Werte)`, gleich wie 2026-10-02; `pruefung.py:502-539`; `test_pruefung.py:518`, `:681 test_regel1_formelkette_fuer_fehlende_zwischenzeilen`, `:695`, `:727`, `:734` grün. |
+| PRUEF-02 | 02-05 | Summe der Produkt-Teilpläne = PG = PB-Teilplan, je Zeile und Jahr (Regel 2) | ✓ SATISFIED | Basislauf `Regel 2: grün (7994 Werte)`, gleich wie 2026-10-02; `pruefung.py:553-638`; `test_pruefung.py:555`, `:563` grün. |
+| PRUEF-03 | 02-05 | Summe der 15 PB = Gesamtergebnisplan, Z. 01–17, 19, 20, ohne TP 27/28 (Regel 3) | ✓ SATISFIED | Basislauf `Regel 3: grün (114 Werte)`, gleich wie 2026-10-02; `pruefung.py:111`, `:641-679`; `test_pruefung.py:616`, `:625`, `:651` grün. |
+| PRUEF-04 | 02-01, 02-03, 02-05 | Sollwerte aus Anhang B (Gesamtergebnisplan, Gesamtfinanzplan/Satzung § 1, PB-Summen, Eckwerte) werden getroffen (Regel 4) | ✓ SATISFIED | Basislauf `Regel 4: grün (259 Werte)` (194 aus Phase 2 plus 65 aus B.4/B.5 seit Phase 4); `pruefung.py:682-1019`; `2026_sollwerte.toml` unverändert in den Phase-2-Tabellen; `test_pruefung.py:334`, `:345`, `:392`, `:457` grün. Die Eckwerte (B.6) prüft seit Phase 4 Regel 9 (`Regel 9: grün (12 Werte)`), außerhalb des Phase-2-Umfangs. |
+| PRUEF-09 | 02-01, 02-03, 02-05 | Alle Prüfungen laufen in pytest und erzeugen `konsistenz.md`; Abweichungen über 1 € sind Fehler, außer sie stehen in `befunde.md` | ✓ SATISFIED | Basislauf `681 passed`, 0 Skips; `konsistenz.md` „Gesamtstatus: grün“ und nach dem Testlauf (`test_konsistenzbericht_wird_geschrieben`, eigener Lauf) byte-identisch (`git status` leer); `pruefung.py:85-97`, `:256-277`, `:446-481`; `test_pruefung.py:1121`, `:1829`, `:744`, `:783`, `:833`, `:859-921` (kaputte Schlüsseltabelle, veralteter Befund) grün. |
+
+Keine verwaisten Anforderungen: Die Traceability-Tabelle in `.planning/milestones/v1.0-REQUIREMENTS.md` (Zeilen 195-221) ordnet Phase 2 genau diese zehn IDs zu (`grep "| Phase 2 |"` liefert 10 Zeilen, alle „Complete“), und alle zehn stehen im `requirements`-Feld mindestens eines Phase-2-Plans.
+
+### Regressionsprüfung der Plan-Must-haves
+
+Geprüft wurden die `must_haves.truths` der Pläne 02-01 bis 02-05, deren Artefakte seit 2026-10-02 geändert wurden (`pruefung.py`, `konfiguration.py`, `alle.py`, `pdf.py`, `schema.py`, `2026_sollwerte.toml`, `befunde.md`, `konsistenz.md`). Ergebnis: keine Regression.
+
+| Plan | Must-have (Kurzform) | Heute | Befund |
+|------|----------------------|-------|--------|
+| 02-01 | `ergebnisplan.csv` GESAMT = 198 Zeilen, Vorzeichen und Operator getrennt, nur gedruckte Zeilen | 198 GESAMT-Zeilen in `ergebnisplan.csv`; `test_plaene.py:92`, `:117` grün | gehalten |
+| 02-01 | Unleserliche Planzeile bricht mit `PlaeneFehler` ab | `test_plaene.py:143`, `:168` grün | gehalten |
+| 02-01 | Eine Abweichung von 2 € macht Regel 4 rot, 1 € bleibt grün | `test_pruefung.py:1121`, `:1829` grün | gehalten |
+| 02-01 | `lade_sollwerte` lehnt fehlende Tabelle oder unvollständigen B.3-Eintrag ab | `test_konfiguration.py:229`, `:254`, `:265` grün (Teil der 99 passed) | gehalten |
+| 02-01 | CSV UTF-8 ohne BOM, Komma, LF | erste Bytes `ebe…`, 0 Zeilen mit CR in den vier Plan-/Seiten-/Hierarchie-CSVs | gehalten |
+| 02-03 | `finanzplan.csv` GESAMT = 41 × 7 = 287 Zeilen, VE über x-Position getrennt | 287 GESAMT-Zeilen, 673 `ve`-Zeilen; `test_plaene.py:217`, `:258` grün | gehalten |
+| 02-03 | Regel 4 mit 147 Werten (B.1, B.2, Satzung) | heute 259 insgesamt; die 147 sind unverändert enthalten (126 + 9 + 12, eigene Zählung) | überholt durch Phase 4 (B.3 seit 02-05, B.4/B.5 seit 04-01), kein Verlust |
+| 02-03 | `befunde.md`: Schlüsseltabelle, kaputte Tabelle bricht ab; Befund deckt höchstens 1 € ab; veralteter Befund macht rot | `test_pruefung.py:744`, `:783`, `:814`, `:833`, `:859-926` grün; `Veraltete Befunde: 0` | gehalten (Toleranz je Regel seit Phase 4: Regel 9/10 exakt, sonst unverändert 1 €) |
+| 02-04 | Teilpläne aller 15 PB, 8 gedruckten PG, 63 Produkte; synthetische PG als Kopie des einzigen Produkts | `ergebnisplan.csv`/`finanzplan.csv` byte-identisch; `test_plaene.py:388 test_alle_knoten_haben_teilplaene`, `test_hierarchie.py:188 test_synthetische_pg_ist_kopie_ihres_einzigen_produkts` grün | gehalten |
+| 02-04 | Regel 1 grün für jeden Plan, fehlende Zwischenzeilen über Formelkette | Basislauf `Regel 1: grün`; `test_pruefung.py:681`, `:727` grün | gehalten |
+| 02-05 | Regel 2 zweistufig, Regel 3 mit 114 Werten ohne TP 27/28, Regel 4 inkl. B.3 | `Regel 2: grün (7994)`, `Regel 3: grün (114)`; `test_pruefung.py:616` prüft `geprueft == 114` | gehalten |
+| 02-05 | `alle.py` Schritt 01 → 02 → 06, Exit 1 bei rotem Bericht, `git status daten/` leer | Reihenfolge 01 < 02 < 06 bleibt (weitere Schritte 03, 04, 05, 07, 08 sind angehängt bzw. eingeschoben); Exit 1 bei rotem Bericht (`alle.py`, „Konsistenzbericht rot oder veraltete Befunde“); Basislauf byte-identisch | gehalten |
+| 02-05 | `konsistenz.md` listet Regel 1–4 in Reihenfolge mit Abschnitt „Seiten mit typ=unbekannt“ | listet heute Regel 1–10 in Reihenfolge, „Seiten mit typ=unbekannt: Keine.“ | gehalten (erweitert) |
+| 02-02 | „48 PG, davon 40 synthetisch“ | heute 49 PG, davon 41 synthetisch | überholt durch `261001-oim` (D-14, PG 1502) vor dem alten Bericht, kein Verlust; derselbe Wert stand schon im Bericht vom 2026-10-02 |
+
+Review-Ledger `02-REVIEW-DISPOSITION.md` (alle fünf Zeilen `fixed` oder `skipped`, `open: 0`): die behobenen Zeilen halten im heutigen Code. WR-01: `_synthetische_pg_datensaetze(teil_df, hierarchie)` (`plaene.py:481-483`) hat keinen Parameter `plantyp` mehr. WR-02: `befunde.md` beschreibt Regel 1 als „Formelkette minus gedruckte Summe“ (Zeilen 108-109). WR-03: Längenwächter `pruefung.py:689-693`, Test `test_pruefung.py:2329 test_regel4_b1_laengenabweichung_bricht_mit_beiden_laengen_ab` grün. IN-02: `test_pruefung.py:2356`, `:2366` grün (`lies_befunde` maskierte Pipe).
 
 ### Anti-Patterns Found
 
