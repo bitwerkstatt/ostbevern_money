@@ -65,7 +65,10 @@ export interface GeldflussKnoten {
   decal?: Decal
   /** `true`, wenn der Betrag nur auf T€ genau ist (Vorbericht-Tabelle × 1000): Anzeige „rd.“. */
   gerundet: boolean
-  /** `true` für einen Rest (Differenz aus genauem und gerundetem Wert): Anzeige „berechnet“. */
+  /**
+   * `true` für einen Rest (Differenz aus genauem und gerundetem Wert) und für eine von der App
+   * gebildete Summe mehrerer gedruckter Posten: Anzeige „berechnet“.
+   */
   berechnet: boolean
 }
 
@@ -160,7 +163,9 @@ export function baueGeldfluss(jahrIndex: number): Geldfluss {
     name: gruppe.name,
     wert: gruppe.posten.reduce((s, p) => s + postenWert('steuerarten', p, jahrIndex), 0),
     gerundet: gruppe.posten.some((p) => postenGerundet('steuerarten', p)),
-    berechnet: false,
+    // Eine Gruppe aus mehreren gedruckten Posten ist eine von der App gebildete Summe und
+    // trägt das Etikett „berechnet“ (G-09-03); ein einzelner Posten steht so im Vorbericht.
+    berechnet: gruppe.posten.length > 1,
   }))
   const gruppenSumme = steuerKnoten.reduce((s, k) => s + k.wert, 0)
   // Rest aus genauer Plan-Zeile minus gerundeten Gruppen: weder genau noch gedruckt.

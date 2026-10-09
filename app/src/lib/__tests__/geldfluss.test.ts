@@ -172,13 +172,16 @@ describe('Vorbericht-Beträge im Geldfluss (WR-01: „rd.“ und „berechnet“
   const fluss = baueGeldfluss(index)
   const nachId = (id: string) => fluss.knoten.find((k) => k.id === id)
 
-  it('markiert die Vorbericht-Knoten als gerundet und die Reste zusätzlich als berechnet', () => {
-    for (const id of ['gewerbesteuer', 'einkommensteuer', 'grundsteuer', 'schluesselzuweisung']) {
+  // G-09-03: „Grundsteuer (A+B)“ ist eine von der App gebildete Summe aus zwei gedruckten
+  // Posten und trägt wie die Reste das Etikett „berechnet“; früher stand sie bei den
+  // unveränderten Vorbericht-Posten, obwohl kein Vorbericht-Wert diese Summe druckt.
+  it('markiert die Vorbericht-Knoten als gerundet und Reste und Summen zusätzlich als berechnet', () => {
+    for (const id of ['gewerbesteuer', 'einkommensteuer', 'schluesselzuweisung']) {
       const knoten = nachId(`ertrag:${id}`)
       expect(knoten?.gerundet, id).toBe(true)
       expect(knoten?.berechnet, id).toBe(false)
     }
-    for (const id of ['uebrige_steuern', 'sonstige_zuwendungen']) {
+    for (const id of ['grundsteuer', 'uebrige_steuern', 'sonstige_zuwendungen']) {
       const knoten = nachId(`ertrag:${id}`)
       expect(knoten?.gerundet, id).toBe(true)
       expect(knoten?.berechnet, id).toBe(true)
