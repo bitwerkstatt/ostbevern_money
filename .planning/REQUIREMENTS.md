@@ -54,7 +54,7 @@ Bleiben im Backlog (siehe `milestones/v1.0-REQUIREMENTS.md`, Abschnitt v2):
 
 | Feature | Reason |
 |---------|--------|
-| Deploy-/Gerätecheck aus Phase 7 (Human-Items 07-VERIFICATION) | Macht der Nutzer selbst; Sandbox-Firewall blockiert github.io und Actions-API |
+| Deploy-/Gerätecheck aus Phase 7 (Human-Items 07-VERIFICATION) | Macht der Nutzer selbst; Sandbox-Firewall blockiert github.io und Actions-API; vom Nutzer erledigt, 2026-10-08 |
 | Neue Funktionen jeder Art | Reiner Nacharbeits-Meilenstein |
 | Kämmerei informieren | Organisatorische Entscheidung, keine Code-Arbeit |
 | CR-01 Phase 7 (Unterschriften auf s009.webp) | Bereits als deferred entschieden (Nutzerentscheidung 2026-10-07) |
