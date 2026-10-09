@@ -1,6 +1,6 @@
 ---
 phase: 08-fixes-und-triage
-verified: 2026-10-08T20:40:00Z
+verified: 2026-10-09T06:03:00Z
 status: passed
 score: 5/5 must-haves verified
 covered_files:
@@ -39,8 +39,10 @@ covered_files:
   - app/src/components/DatenTabelle.vue
   - app/src/components/EbenenTabelle.vue
   - app/src/components/ZuschussListe.vue
+  - app/src/components/__tests__/zustaende.test.ts
   - app/src/components/datenTabelle.ts
   - app/src/data/texte.json
+  - app/src/lib/__tests__/quelltext.test.ts
   - app/src/lib/berechnung.ts
   - app/src/lib/einwohner.ts
   - app/src/lib/geldfluss.ts
@@ -48,13 +50,15 @@ covered_files:
   - daten/manuell/texte/erklaerungen.md
   - daten/manuell/texte/glossar.md
   - pipeline/ostbevern/texte.py
-covered_digest: "v3:sha256:6142c95c03c6c45aa984b8c9472cd8d1d7081ad2d65cfa02395f4c2c866c2b9b"
+covered_digest: "v3:sha256:146a1f4a99333200c53c4578ea5feffbce316740e810ea596dabaca7ee319bbc"
 behavior_unverified: 0
 overrides_applied: 0
 re_verification:
-  previous_status: human_needed
-  previous_score: 5/5
-  gaps_closed: []
+  previous_status: passed
+  previous_score: 5/5 must-haves verified
+  gaps_closed:
+    - "08/WR-01: Rendertests für leere Beschriftung konnten nicht fehlschlagen; die Regel steht jetzt als reine Funktion tabellenRahmen mit Unit-Tests, die vor dem Fix rot waren (Fix 78744d4, Test 8b4ae20)"
+    - "08/WR-02: Rahmen einer überlaufenden Tabelle verlor bei leerer Beschriftung den Tabstopp; jetzt hat er für jede Beschriftung Fokus, Rolle und Namen, leer heißt die Caption „Tabelle“ (Fix 78744d4)"
   gaps_remaining: []
   regressions: []
 coincidental_reliance_items:
@@ -70,9 +74,9 @@ human_verification:
 # Phase 8: Fixes und Triage Verification Report
 
 **Phase Goal:** Alles, was die App in Worten über Zahlen sagt, stimmt auch in Grenzfällen, und Datentabellen und das mobile Menü funktionieren für Screenreader und Touch ohne Lücken. Jeder der 28 offenen Review-Befunde aus den Phasen 1, 5 und 6 ist behoben, übersprungen oder begründet zurückgestellt, und das ist im jeweiligen Ledger belegt. Reihenfolge: zuerst Fixes an Zahlen und Texten, dann Barrierefreiheit und Hygiene, zum Schluss die Ledger auf `open: 0`.
-**Verified:** 2026-10-08T20:40:00Z
-**Status:** human_needed
-**Re-verification:** Ja. Die Verifikation vom 2026-10-07 war nach den Review-Fixes WR-01..WR-03 (e8e25d5, 13eb786, 98803c4) und den Nyquist-Tests (7b9f0a6) veraltet. Alle Truths sind gegen HEAD (90f8315) neu geprüft.
+**Verified:** 2026-10-09T06:03:00Z
+**Status:** passed (die Screenreader-Ansage für A11Y-03 bleibt ein offener menschlicher Check in `08-UAT.md`, Test 1)
+**Re-verification:** Ja. Die Verifikation vom 2026-10-08 war nach dem D-20-Fix aus Plan 09-02 veraltet (Änderung an `DatenTabelle.vue`, `datenTabelle.ts` und den Tests). Frühere Re-Verifikation: Stand nach den Review-Fixes WR-01..WR-03 (e8e25d5, 13eb786, 98803c4) und den Nyquist-Tests (7b9f0a6), geprüft gegen HEAD 90f8315. Diese Fassung ergänzt den Abschnitt „Re-Verifikation 09-02 (D-15)“ unten.
 
 ## Goal Achievement
 
@@ -84,7 +88,7 @@ Der Code erreicht das Phasenziel, auch nach den Review-Fixes. Es gibt keine fehl
 | --- | ----- | ------ | -------- |
 | 1 | Sätze über Zahlen stimmen in Grenzfällen: Lesehilfe sagt „genau“ nur bei echtem Ausgleich, Minderaufwand-Hinweis nie negativ, `rd.`-Regel an genau einer Stelle | ✓ VERIFIED | `lesehilfeSatz` (`app/src/lib/geldfluss.ts`) unterscheidet vier Fälle (A Defizit, B Überschuss, C nur Minderaufwand, D nichts). „genau“ steht nur in Fall D. Fall C sagt, dass erst der Minderaufwand beide Seiten ausgleicht. `minderaufwandBetrag` (`lib/berechnung.ts`) liefert `null` bei 0 oder fehlendem Wert, den positiven Betrag bei negativem Z. 27 und wirft bei Z. 27 > 0. `RD_PRAEFIX` und `RUND_PRAEFIX` stehen im App-Code nur in `charts/format.ts`. Ein Grep nach `'rd. '`-Literalen und Templates außerhalb von Tests findet keine Altkopie. vitest in Scratch-Kopie auf HEAD: 2158 Tests grün. |
 | 2 | Jahreszahlen, abgeleitete und fehlende Werte sind erkennbar | ✓ VERIFIED (coincidental-reliance) | Eigener Aufruf von `pruefe_text` auf HEAD: „Im Jahr 2026“, „Seit 1900“ und „Bis 2099“ lehnt er mit der Meldung „Handgetippte Jahreszahl … nur als Platzhalter, zum Beispiel {{jahr.haushaltsjahr\|jahr}}“ ab. `{{jahr.haushaltsjahr\|jahr}}` besteht, `{{jahr.haushaltsjahr\|zahl}}` scheitert am Kürzel. 2100 fällt in die Regel „nackte Ziffer“. Der WR-01-Fix `_pruefe_jahrbezug` (`texte.py:585`) ist in `loese_auf` verdrahtet (`:631`). `ZuschussListe` zeigt die Zusammen-Zeile über `zusammen().berechnet` mit Etikett. `StellenplanPage` setzt `berechnet` auf allen drei Kacheln und nennt über `seitenText` nur deren Seiten. `EbenenTabelle.vue` ruft im Modus `zuschussbedarf` `einwohnerZahl()` auf, die bei fehlendem oder ungültigem Wert wirft. Wirkung gilt nur für Jahrgang 2026, siehe `coincidental_reliance_items`. |
-| 3 | `DatenTabelle`-Rahmen hat Rolle und Namen, kein doppelter Name; Menü schließt beim Link der aktuellen Seite | ✓ VERIFIED | `rahmenAttribute` liefert bei Überlauf `tabindex`, `role=region` und `aria-labelledby` auf die Caption, nie `aria-label`. `beschriftung` ist Pflicht-Prop. Alle 29 `<DatenTabelle>`-Aufrufe übergeben sie (Grep), keiner leer. `App.vue` `beiDrawerLinkKlick` schließt bei jedem Primärklick im offenen Drawer, ignoriert Strg/Meta/Shift/Alt und Nicht-Primärtasten (WR-02-Fix), `oeffneDrawer` setzt den Merker zurück. `beiAfterHide` setzt den Fokus auf die h1. Playwright (Orchestrator auf HEAD über `scripts/e2e-wie-ci.sh`): mobil 41, ci 89 grün, darunter „Link der aktuellen Seite“, Zusatztasten-Fall und alle Tabellenrahmen-Tests mit axe. Die Screenreader-Ansage bleibt menschlicher Check. |
+| 3 | `DatenTabelle`-Rahmen hat Rolle und Namen, kein doppelter Name; Menü schließt beim Link der aktuellen Seite | ✓ VERIFIED | `tabellenRahmen` (seit 09-02, ruft `rahmenAttribute`) liefert bei Überlauf `tabindex`, `role=region` und `aria-labelledby` auf die Caption, nie `aria-label`, und zwar für jede `beschriftung`: leer oder nur Leerzeichen heißt die Caption „Tabelle“. `beschriftung` ist Pflicht-Prop. Alle 29 `<DatenTabelle>`-Aufrufe übergeben sie (Grep), keiner leer. `App.vue` `beiDrawerLinkKlick` schließt bei jedem Primärklick im offenen Drawer, ignoriert Strg/Meta/Shift/Alt und Nicht-Primärtasten (WR-02-Fix), `oeffneDrawer` setzt den Merker zurück. `beiAfterHide` setzt den Fokus auf die h1. Playwright (Orchestrator auf HEAD über `scripts/e2e-wie-ci.sh`): mobil 41, ci 89 grün, darunter „Link der aktuellen Seite“, Zusatztasten-Fall und alle Tabellenrahmen-Tests mit axe. Die Screenreader-Ansage bleibt menschlicher Check. |
 | 4 | Ledger 01, 05, 06 stehen auf `open: 0`, jede Zeile nennt Commit oder Begründung | ✓ VERIFIED | Eigene Prüfung: `open: 0` in allen drei Dateien (total 10, 18, 15). Keine Zeile mehr mit `disposition: open` und keine Tabellenzeile `open`. Alle Zeilen `fixed`, bis auf 06/WR-01 `skipped` mit Verweis auf UAT 06 Test 1 und PROJECT.md. Jeder zitierte 7-stellige Hash wird von `git cat-file -e` als Commit erkannt, keiner fehlt. Die 28 Befunde (5 + 13 + 10) sind abgedeckt. Die Zusatzzeilen in 05 und 06 sind bereits im Fix-Stand behobene Altbefunde. |
 | 5 | Querschnittsbedingung: `alle.py --jahr 2026` byte-identisch, Regeln 1–10 grün, CI-Kette grün | ✓ VERIFIED | Eigener Lauf auf HEAD nach WR-01: `uv run --directory pipeline python alle.py --jahr 2026` Exit 0, Regeln 1–10 „grün“ in Schritt 06, danach `git diff --stat --exit-code -- daten app/src/data` leer und `git status --porcelain --untracked-files=all -- daten app/src/data app/public/quellen` leer. pytest gesamt: 681 passed. ruff check und ruff format --check grün. vitest 2158 grün (eigener Lauf, Scratch). type-check, lint, format, build und Playwright: Messung des Orchestrators auf HEAD (grün). |
 
@@ -99,7 +103,7 @@ Der Code erreicht das Phasenziel, auch nach den Review-Fixes. Es gibt keine fehl
 | `app/src/lib/geldfluss.ts` | `lesehilfeSatz` mit vier Fällen | ✓ VERIFIED | Fälle A bis D |
 | `app/src/lib/einwohner.ts` | `einwohnerZahl` wirft laut | ✓ VERIFIED | genutzt in `EbenenTabelle.vue` |
 | `app/src/lib/zuschuesse.ts` | `zusammen()` mit `berechnet` | ✓ VERIFIED | genutzt in `ZuschussListe.vue` |
-| `app/src/components/DatenTabelle.vue`, `datenTabelle.ts` | Rolle und ein Name, Guard für leere Beschriftung | ✓ VERIFIED | `hatBeschriftung` in `rahmenAttributeGebunden`, DEV-Warnung |
+| `app/src/components/DatenTabelle.vue`, `datenTabelle.ts` | Rolle und ein Name, Ersatzname für leere Beschriftung | ✓ VERIFIED | `tabellenRahmen` und `ERSATZ_BESCHRIFTUNG` in `datenTabelle.ts`, `rahmenLage` in `DatenTabelle.vue`, DEV-Warnung bleibt (09-02) |
 | `app/src/App.vue` | Drawer schließt bei jedem Link | ✓ VERIFIED | `beiDrawerLinkKlick` mit Zusatztasten-Guard |
 | `pipeline/ostbevern/texte.py` | Jahreszahlen-Regel, Jahresbezug-Prüfung | ✓ VERIFIED | `_JAHRESZAHL_MUSTER`, `_pruefe_jahrbezug` verdrahtet |
 | `app/e2e/menueDrawer.ts`, `tabellenrahmen.ts`, `mobil.spec.ts` | Browser-Prüfung A11Y-01/02/03 | ✓ VERIFIED | vorhanden, Orchestrator-Lauf grün |
@@ -111,7 +115,7 @@ Der Code erreicht das Phasenziel, auch nach den Review-Fixes. Es gibt keine fehl
 | ---- | -- | --- | ------ |
 | `EuroBetrag.vue` und die übrigen Verbraucher | `charts/format.ts` | `betragMitHinweis`, `kurzMitHinweis`, `rundMitHinweis` | WIRED |
 | `geldfluss.ts`, `aufwandsarten.ts` | `berechnung.minderaufwandBetrag` | Aufruf | WIRED |
-| `DatenTabelle.vue` | `datenTabelle.rahmenAttribute` | `v-bind` am Rahmen, mit `hatBeschriftung` | WIRED |
+| `DatenTabelle.vue` | `datenTabelle.tabellenRahmen` | `v-bind` am Rahmen und Caption-Text aus `rahmenLage` | WIRED |
 | `App.vue` Drawer-Links | `beiDrawerLinkKlick` | `@click` | WIRED |
 | `ZuschussListe.vue` | `zusammen().berechnet` | `EuroBetrag :berechnet` | WIRED |
 | `StellenplanPage.vue` | `stellenSummen().seiten*` | `kachelZeile`, `seitenText` | WIRED |
@@ -158,11 +162,11 @@ Hinweis zur Nachführung: In `REQUIREMENTS.md` stehen alle 13 Einträge noch als
 | File | Line | Pattern | Severity | Impact |
 | ---- | ---- | ------- | -------- | ------ |
 | (geänderte Dateien) | - | `TBD`, `FIXME`, `XXX` | none | keine Treffer |
-| `app/src/components/DatenTabelle.vue` | 127-144 | Bei leerer `beschriftung` verliert ein überlaufender Rahmen `tabindex`: ein Scrollbereich ohne Tastaturfokus (08-REVIEW WR-02) | ⚠️ Warning | Heute nicht erreichbar, alle 29 Aufrufe übergeben Text. Latent, die DEV-Warnung ist im Produktions-Build entfernt. Keine Verletzung der Success Criteria |
-| `app/src/components/__tests__/zustaende.test.ts` | 165-189 | Zwei SSR-Rendertests für leere Beschriftung können nicht fehlschlagen, da `ueberlaeuft` im SSR immer `false` ist (08-REVIEW WR-01) | ⚠️ Warning | Der Guard selbst ist durch den DEV-Warnungstest und zwei Quelltext-Regex-Tests geschützt, die Rendertests sind wirkungslos |
+| `app/src/components/DatenTabelle.vue` | 127-144 | (behoben in 09-02, 78744d4) Bei leerer `beschriftung` verlor ein überlaufender Rahmen `tabindex` (08-REVIEW WR-02) | ✓ geschlossen | Der Rahmen ist jetzt für jede Beschriftung erreichbar und benannt |
+| `app/src/components/__tests__/zustaende.test.ts` | 165-189 | (behoben in 09-02, 8b4ae20 und 78744d4) Zwei SSR-Rendertests konnten nicht fehlschlagen (08-REVIEW WR-01) | ✓ geschlossen | Ersetzt durch Unit-Tests von `tabellenRahmen` und einen SSR-Test der Ersatz-Caption; vor dem Fix rot |
 | `app/src/lib/__tests__/quelltext.test.ts`, `app/e2e/menueDrawer.ts`, `pipeline/ostbevern/texte.py` | siehe Review | IN-01 bis IN-03 aus 08-REVIEW | ℹ️ Info | Test-Nits und Docstring-Präzision, kein Zielverhalten betroffen |
 
-`08-REVIEW-DISPOSITION.md` führt 9 Zeilen als `open` (WR-01, WR-02, IN-01..IN-07). Das ist das Ledger der Code-Review dieser Phase, nicht eines der drei Ledger aus SC 4. Die offenen Zeilen sind erfasst und verletzen keinen der fünf Success Criteria. Sie sind Kandidaten für die Triage oder Phase 9.
+`08-REVIEW-DISPOSITION.md` stand bei der früheren Fassung mit 9 Zeilen auf `open`. Seit Plan 09-02 (D-20) steht es auf `open: 0`: WR-01, WR-02 und IN-01 sind `fixed` mit Commit-Hash, IN-02 bis IN-07 `deferred` mit Begründung.
 
 ### Human Verification Required
 
@@ -177,13 +181,31 @@ Hinweis zur Nachführung: In `REQUIREMENTS.md` stehen alle 13 Einträge noch als
 - **Steuergruppen auf Leitfragen-Seiten** („Grundsteuer (A+B)“ auf `/geldfluss`, `/einnahmen`) sind von der App gebildete Summen ohne „berechnet“-Etikett. TXT-05 und SC 2 beschränken sich auf die Kontextseiten, ein Test sichert den Zustand bewusst. Entscheidung des Nutzers, ob die Regel dort auch gelten soll.
 - **Feste Jahre in Text-Schlüsseln:** `_pruefe_jahrbezug` fängt auseinanderlaufende Beschriftung und Wertschlüssel jetzt ab (mengenweise je Absatz). Vor dem Bau des nächsten Jahrgangs gegenprüfen.
 - **Vier ältere Befunde aus Ledger 05** außerhalb der 28 stehen laut 08-12 SUMMARY noch im Code. Sie gehören nicht zum Umfang dieser Phase.
-- **08-REVIEW WR-02** (leere `beschriftung` ohne Tastaturfokus): Empfehlung des Reviews, im Zweifel in DEV und Test laut zu werfen oder auf einen Ersatznamen zurückzufallen.
+- **08-REVIEW WR-02** (leere `beschriftung` ohne Tastaturfokus): in Plan 09-02 behoben, der Rahmen fällt auf den Ersatznamen „Tabelle“ zurück (siehe unten).
 
 ### Gaps Summary
 
 Keine Lücken. Alle fünf Success Criteria sind am Code auf HEAD belegt, auch durch eigene Läufe von pytest (681), ruff, vitest (2158), `pruefe_text`-Aufrufen und der Pipeline-Reproduzierbarkeit nach WR-01. Playwright (mobil 41, ci 89) und die übrigen App-Prüfungen (type-check, lint, format, build) stützen sich auf die Messung des Orchestrators auf HEAD. Der Status ist `human_needed`, weil die Screenreader-Ansage für A11Y-03 nur ein Mensch mit einem echten Screenreader prüfen kann.
 
+## Re-Verifikation 09-02 (D-15)
+
+Anlass: Plan 09-02 hat `DatenTabelle.vue`, `datenTabelle.ts`, `zustaende.test.ts` und `quelltext.test.ts` geändert (D-20), die Fassung vom 2026-10-08 war damit veraltet.
+
+**Änderung:** Neue reine Funktion `tabellenRahmen` mit `ERSATZ_BESCHRIFTUNG` in `datenTabelle.ts`; `DatenTabelle.vue` nutzt sie für Caption-Text und Rahmenattribute. Test-Commit 8b4ae20 (rot), Fix-Commit 78744d4. `git diff --stat 90f8315..HEAD` über alle bisher abgedeckten Dateien (`app`, `daten`, `pipeline` und die drei Ledger 01/05/06) zeigt genau vier geänderte Dateien: `DatenTabelle.vue`, `datenTabelle.ts`, `__tests__/zustaende.test.ts`, `__tests__/quelltext.test.ts`. Kein Eingriff in `daten/`, `app/src/data/` oder `pipeline/`.
+
+**Wirkung auf die Success Criteria:** SC 1, 2, 4 und 5 sind unberührt (kein Zahlen-, Text- oder Pipelinecode geändert, Ledger 01/05/06 unverändert). SC 3 gilt stärker als vorher: Der überlaufende Rahmen hat Rolle und Namen auch ohne `beschriftung`. Daher bleibt der Score bei 5/5.
+
+**Belege (Scratch-Kopie von `app/`, Linux-`node_modules` über `npm ci`):**
+
+- vitest gesamt: 2162 Tests grün (zuvor 2158; Saldo aus 8 neuen und 4 entfernten Tests). RED belegt: 8 Tests rot vor dem Fix (`TypeError: tabellenRahmen is not a function` und leere Caption), `check tdd-red-evidence` meldet `RED_EVIDENCE_OK` auf dem JUnit-Bericht.
+- `vue-tsc --build`, `eslint .`, `prettier --check src/ e2e/`: ohne Befund.
+- `vite build` (`build-only`): erfolgreich.
+- Playwright über `scripts/e2e-wie-ci.sh`: Projekt `mobil` 41 grün (darunter alle „Rahmen mit Rolle und genau einem Namen“-Tests und axe auf allen Routen), `interaktion.spec.ts` plus `smoke.spec.ts` im Projekt `ci` 62 grün.
+- Ledger: `08-REVIEW-DISPOSITION.md` `open: 0`, `total: 10`.
+
+`covered_files` und `covered_digest` stammen unverändert aus `verification.fingerprint`. Die Screenreader-Ansage (A11Y-03) bleibt offen in `08-UAT.md` und ist keine Folge dieser Änderung.
+
 ---
 
-_Verified: 2026-10-08T20:40:00Z_
+_Verified: 2026-10-09T06:03:00Z_
 _Verifier: Claude (gsd-verifier)_

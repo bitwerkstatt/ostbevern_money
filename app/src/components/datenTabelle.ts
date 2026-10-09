@@ -47,3 +47,38 @@ export function rahmenAttribute(
   }
   return { tabindex: 0, role: 'region', 'aria-labelledby': captionId }
 }
+
+/** Name der Tabelle, wenn der Aufrufer keine Beschriftung liefert (leer oder nur Leerzeichen). */
+export const ERSATZ_BESCHRIFTUNG = 'Tabelle'
+
+/** Was über den Rahmen einer `DatenTabelle` bekannt sein muss, um ihn auszustatten. */
+export interface RahmenLage {
+  /** Der Inhalt ist breiter als der Rahmen. */
+  ueberlaeuft: boolean
+  laedt: boolean
+  /** Es gibt keine Zeilen (Leerzustand statt Tabelle). */
+  leer: boolean
+  beschriftung: string
+}
+
+export interface TabellenRahmen {
+  /** Text der Caption und damit Name der Region. */
+  name: string
+  /** Attribute des scrollbaren Rahmens (siehe `rahmenAttribute`). */
+  attribute: Record<string, string | number>
+}
+
+/**
+ * Caption-Text und Rahmenattribute einer `DatenTabelle` (08/WR-01, 08/WR-02, A11Y-01, D-20):
+ * Der Rahmen einer überlaufenden, gerenderten Tabelle bekommt immer Fokus, Rolle und Namen. Eine
+ * leere oder aus Leerzeichen bestehende `beschriftung` fällt auf „Tabelle“ zurück, damit die
+ * Tastaturbedienung (WCAG 2.1.1) nie davon abhängt, was ein Aufrufer übergibt. Ohne Überlauf, beim
+ * Laden und im Leerzustand bleiben die Attribute leer.
+ */
+export function tabellenRahmen(lage: RahmenLage, captionId: string): TabellenRahmen {
+  const gekuerzt = lage.beschriftung.trim()
+  return {
+    name: gekuerzt === '' ? ERSATZ_BESCHRIFTUNG : gekuerzt,
+    attribute: rahmenAttribute(lage.ueberlaeuft && !lage.laedt && !lage.leer, captionId),
+  }
+}
