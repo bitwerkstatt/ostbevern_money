@@ -49,6 +49,12 @@ Querschnittsbedingung (gilt unverändert): `uv run --directory pipeline python a
 - **D-18:** In `.planning/REQUIREMENTS.md` bleibt die Zeile „Deploy-/Gerätecheck aus Phase 7“ unter Out of Scope stehen und bekommt den Vermerk „vom Nutzer erledigt, 2026-10-08“.
 - **D-19:** **Der Meilenstein v1.0.1 wird in Phase 9 nicht abgeschlossen.** Die Phase endet mit Audit und Abschlusslauf. `/gsd-complete-milestone` ruft der Nutzer danach selbst auf.
 
+### Nachträge nach der Recherche (2026-10-09)
+- **D-20:** **`08-REVIEW-DISPOSITION.md` (open: 9 von 10) wird in Phase 9 triagiert.** WR-01 (Test kann nie rot werden) und WR-02 (leere `beschriftung`) werden mit Test behoben, der Commit nennt die ID (`08/WR-01`, `08/WR-02`). Die Info-Befunde werden mit Begründung `deferred`, danach steht das Ledger auf `open: 0`. Das ist eine Codeänderung, also wird `08-VERIFICATION.md` nach D-15 erneuert.
+- **D-21:** **`05-VERIFICATION.md` wird wie Phase 7 nach D-14 behandelt.** Die Human-Items bleiben stehen. Was durch UAT oder den Nutzer belegt ist, wird so gekennzeichnet, nichts wird als vom Verifier geprüft ausgegeben. Frontmatter und Text sagen danach dasselbe (`behavior_unverified` passend zum Text).
+- **D-22:** **Phase-7-Befund CR-01 (Unterschriften auf `s009.webp`) wird nicht neu geöffnet.** Im Audit steht er als `tech_debt` mit Verweis auf die Nutzerentscheidung vom 2026-10-07.
+- **D-23:** **Der Basislauf wird als `09-BASISLAUF.md` im Phasenordner abgelegt.** Er ist die gemeinsame Evidenz für die parallelen Verifier, die selbst `alle.py` nicht ausführen.
+
 ### Claude's Discretion
 - Wie die Pläne zugeschnitten und in Wellen geordnet werden, innerhalb der Reihenfolge aus D-12. Die sieben Re-Verifikationen dürfen parallel laufen.
 - Ob die Security-Prüfung über `/gsd-secure-phase`-Logik (gsd-security-auditor) oder als eigener Plan mit denselben Prüfschritten läuft. Bedingung: Das Ergebnis hat das Format der vorhandenen SECURITY-Dateien.
