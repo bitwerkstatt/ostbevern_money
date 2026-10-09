@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import { seitenText } from '@/lib/hilfsfunktionen'
 import { findeText, rendereAbsatz, textFuerJahr } from '@/lib/texte'
 
 const props = withDefaults(
@@ -19,14 +20,14 @@ const text = computed(() =>
     : textFuerJahr(props.schluessel, props.jahr),
 )
 const absaetze = computed(() => text.value?.absaetze.map((absatz) => rendereAbsatz(absatz)) ?? [])
-const seiten = computed(() => text.value?.quelle_seiten.join(', ') ?? '')
+const quelle = computed(() => seitenText(text.value?.quelle_seiten ?? []))
 </script>
 
 <template>
   <div v-if="text" class="om-erklaertext">
     <h3 v-if="ueberschrift">{{ text.titel }}</h3>
     <p v-for="(absatz, index) in absaetze" :key="index">{{ absatz }}</p>
-    <p class="om-erklaertext__quelle">Quelle: PDF-Seite {{ seiten }}</p>
+    <p v-if="quelle !== ''" class="om-erklaertext__quelle">Quelle: {{ quelle }}</p>
   </div>
 </template>
 

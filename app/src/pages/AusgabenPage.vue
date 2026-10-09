@@ -35,6 +35,7 @@ import {
   klickZiel,
   ueberschussTextSchluessel,
 } from '@/lib/drilldown'
+import { seitenText } from '@/lib/hilfsfunktionen'
 import { useJahr, wertartName } from '@/lib/jahr'
 import { findeKlKnoten } from '@/lib/kreisumlage'
 import { rendereAbsatz, textFuerJahr } from '@/lib/texte'
@@ -128,7 +129,7 @@ const ueberschussZeilen = computed(() =>
         code: eintrag.code,
         name: eintrag.name,
         text: rendereAbsatz(absatz),
-        seiten: text.quelle_seiten.join(', '),
+        seiten: seitenText(text.quelle_seiten),
       },
     ]
   }),
@@ -310,9 +311,7 @@ const gesamtSeite = computed(() => {
     <strong>Warum manche Bereiche im Plus liegen</strong>
     <p v-for="zeile in ueberschussZeilen" :key="zeile.code">
       {{ zeile.name }}: {{ zeile.text }}
-      <span v-if="zeile.seiten !== ''" class="om-ausgaben-quelle"
-        >(PDF-Seite {{ zeile.seiten }})</span
-      >
+      <span v-if="zeile.seiten !== ''" class="om-ausgaben-quelle">({{ zeile.seiten }})</span>
     </p>
   </wa-callout>
   <ChartCard :titel="artenTitel" :pdf="gesamtSeite" class="om-ausgaben-arten">

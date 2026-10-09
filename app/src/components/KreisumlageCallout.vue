@@ -6,7 +6,8 @@ import { euroKurz, jahr as formatJahr } from '@/charts/format'
 import ErklaerText from '@/components/ErklaerText.vue'
 import EuroBetrag from '@/components/EuroBetrag.vue'
 import { haushalt } from '@/data/daten'
-import { baueKreisumlage } from '@/lib/kreisumlage'
+import { seitenText } from '@/lib/hilfsfunktionen'
+import { baueKreisumlage, istGroessterEinzelposten } from '@/lib/kreisumlage'
 import { textFuerJahr } from '@/lib/texte'
 
 const props = withDefaults(
@@ -20,6 +21,12 @@ const props = withDefaults(
 )
 
 const kreisumlage = computed(() => baueKreisumlage(props.jahrIndex))
+// Der Superlativ steht nur da, wo die Daten des Jahres ihn tragen (G-09-01).
+const einleitung = computed(() =>
+  istGroessterEinzelposten(props.jahrIndex)
+    ? 'Der größte Einzelposten ist die Weitergabe an Kreis und Land:'
+    : 'Weitergabe an Kreis und Land:',
+)
 const jahrZahl = computed(() => {
   const jahr = haushalt.jahre[props.jahrIndex]
   if (jahr === undefined) {
@@ -37,7 +44,7 @@ const aufteilungSeiten = computed(() => {
       seiten.add(u.pdfSeite)
     }
   }
-  return [...seiten].join(', ')
+  return seitenText([...seiten])
 })
 </script>
 
@@ -47,7 +54,7 @@ const aufteilungSeiten = computed(() => {
 
     <template v-if="kurz">
       <p>
-        Der größte Einzelposten ist die Weitergabe an Kreis und Land:
+        {{ einleitung }}
         <span class="om-zahl">{{ euroKurz(kreisumlage.gesamt) }}</span
         >. Diesen Betrag reicht Ostbevern weiter, die Gemeinde kann ihn nicht selbst steuern.
       </p>
@@ -78,7 +85,7 @@ const aufteilungSeiten = computed(() => {
             >,
           </template>
         </template>
-        <template v-if="aufteilungSeiten">PDF-Seite {{ aufteilungSeiten }} (Aufteilung)</template>
+        <template v-if="aufteilungSeiten">{{ aufteilungSeiten }} (Aufteilung)</template>
       </p>
       <wa-details v-if="hatErklaerung" summary="So funktioniert die Kreisumlage">
         <ErklaerText schluessel="kreisumlage" :jahr="jahrZahl" :ueberschrift="false" />

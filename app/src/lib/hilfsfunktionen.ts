@@ -22,6 +22,17 @@ export function quellenZeile(wertart: string, jahr: number, pdfSeiten: readonly 
   return `${wertart} ${formatiereJahr(jahr)} · ${wort} ${seiten}`
 }
 
+/**
+ * Quellenangabe aus den PDF-Seiten: „PDF-Seite 12“ bei genau einer, „PDF-Seiten 12, 13“ bei
+ * mehreren Seiten (G-09-02). Ohne Seite entsteht kein Text, damit keine leere Angabe erscheint.
+ */
+export function seitenText(seiten: readonly number[]): string {
+  if (seiten.length === 0) {
+    return ''
+  }
+  return `${seiten.length === 1 ? 'PDF-Seite' : 'PDF-Seiten'} ${seiten.join(', ')}`
+}
+
 /** Jahreszahlen als Aufzählung: „2027“, „2027 und 2028“, „2027, 2028 und 2029“. */
 export function jahreListe(jahre: readonly number[]): string {
   const texte = jahre.map(formatiereJahr)
