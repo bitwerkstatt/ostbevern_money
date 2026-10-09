@@ -1,8 +1,8 @@
 ---
 phase: 07-feinschliff-und-ver-ffentlichung
 verified: 2026-10-09T06:36:00Z
-status: human_needed
-score: "4/5 must-haves verified"
+status: passed
+score: "4/5 must-haves vom Verifier geprüft (Kriterien 1 bis 4), 1/5 vom Nutzer bestätigt (Kriterium 5 samt Gerätecheck, 2026-10-08), keines davon als vom Verifier geprüft gezählt"
 covered_files:
   - ".github/workflows/ci.yml"
   - ".planning/milestones/v1.0-phases/07-feinschliff-und-ver-ffentlichung/07-01-PLAN.md"
@@ -44,6 +44,7 @@ covered_files:
   - "app/playwright.config.ts"
   - "app/src/App.vue"
   - "app/src/components/DatenTabelle.vue"
+  - "app/src/components/EbenenTabelle.vue"
   - "app/src/components/QuelleKnopf.vue"
   - "app/src/components/QuelleSeite.vue"
   - "app/src/components/QuelleSeitenleiste.vue"
@@ -52,7 +53,10 @@ covered_files:
   - "app/src/config.ts"
   - "app/src/data/quellen.json"
   - "app/src/lib/__tests__/duanrede.test.ts"
+  - "app/src/lib/__tests__/quelle-ui-abdeckung.test.ts"
+  - "app/src/lib/produkt.ts"
   - "app/src/lib/quelle.ts"
+  - "app/src/pages/UeberPage.vue"
   - "app/src/router/index.ts"
   - "app/src/styles/basis.css"
   - "pipeline/08_quellenbelege.py"
@@ -60,7 +64,7 @@ covered_files:
   - "pipeline/ostbevern/quellen.py"
   - "scripts/e2e-wie-ci.sh"
   - "scripts/lighthouse-a11y.sh"
-covered_digest: "v3:sha256:e88353076bcdd4f68ed74bd4fe91277bef149e6049386e3739d5f5a875d0291f"
+covered_digest: "v3:sha256:22d8272340df5b7214d06a647dccfc145e2941248fd52f1154c1c3ed3ab99fe7"
 behavior_unverified: 0
 overrides_applied: 0
 re_verification:
@@ -71,7 +75,10 @@ re_verification:
   gaps_remaining: []
   regressions: []
 gaps: []
-deferred: []
+deferred:
+  - truth: "CR-01 des Code-Reviews von Phase 7: Namen und Unterschriften zweier Personen stehen ungeschwärzt im ausgelieferten Belegbild app/public/quellen/s009.webp"
+    addressed_in: "Nutzerentscheidung vom 2026-10-07 (kein Folgeplan)"
+    evidence: "07-REVIEW-DISPOSITION.md, Zeile CR-01: disposition deferred, „bleibt so — öffentliche Satzung, Amtsträger unterzeichnen in amtlicher Funktion; Bild s009.webp unverändert“. Das Bild ist seit 82713f0 (2026-10-06) unverändert. Kein Befund dieses Berichts, keine Regression (D-22)."
 advisory:
   - finding: "Kriterium 3 (Lighthouse-Barrierefreiheit ≥ 95) beruht auf der Lighthouse-Messung vom 2026-10-07 (100 auf 11 Routen, Plan 07-12) und heute nur auf axe (WCAG 2.0/2.1 A und AA, null Verstöße auf allen elf Routen, auch mit geöffneten Bereichen)."
     category: other
@@ -82,16 +89,18 @@ human_verification:
   - test: "Stand main pushen, im Reiter Actions den Lauf abwarten: Jobs app, pipeline und deploy müssen grün sein. Im Log des Jobs app zeigt der Schritt „Smoke-Test (Playwright + axe)“ vier Zeilen „Schrift der Beträge auf …: DejaVu Sans“, und kacheln.spec.ts besteht. Danach https://bitwerkstatt.github.io/ostbevern_money/ öffnen: keine 404 (Icons, Belegbild unter /ostbevern_money/quellen/), Reload von /#/ausgaben und /#/ueber, Quelle-Leiste zeigt ihr Bild, Fußzeile zeigt die Kontakt-Adresse, PDF-Link öffnet die Gemeinde-Datei, Kacheln sitzen in der grauen Fläche"
     expected: "Grüner Lauf samt Deploy, öffentliche Seite zeigt den Kachel-Fix"
     why_human: "Push ist Sache des Nutzers (D-10), die Sandbox-Firewall blockiert github.io und die Actions-API. Der letzte bekannte GitHub-Lauf (37589932223) war rot; ob der Runner ubuntu-24.04 tatsächlich dieselbe Schrift wie die lokale Nachstellung rendert, belegt erst ein grüner Lauf. Backstop-Must-have von 07-14."
+    beleg: "vom Nutzer bestätigt (2026-10-08), nicht vom Verifier geprüft"
   - test: "Startseite, /investitionen, /rat-entscheidet und /stellenplan auf dem eigenen Gerät bei 360, 400, 600, 768 und 1280 px ansehen (die Spur ist mit 07-14 breiter geworden)"
     expected: "Jeder Betrag und jeder Knopf „Quelle“ liegt innerhalb der grauen Kachel, bündig mit der Überschrift; kein waagerechtes Scrollen der Seite"
     why_human: "Geräteschriften weichen von DejaVu Sans ab; die UAT-Bestätigung (Test 1: pass) galt dem Stand vor 07-14. Backstop-Must-have von 07-14, nie vom Verifier als erfüllt zu markieren."
+    beleg: "vom Nutzer bestätigt (2026-10-08), nicht vom Verifier geprüft"
 ---
 
 # Phase 7: Feinschliff und Veröffentlichung Verification Report
 
 **Phase Goal:** Die App ist belegbar, barrierefrei, mobil nutzbar und unter einer öffentlichen URL erreichbar.
 **Verified:** 2026-10-09T06:36:00Z
-**Status:** human_needed
+**Status:** passed (Kriterien 1 bis 4 vom Verifier geprüft; Kriterium 5 und Gerätecheck vom Nutzer bestätigt, siehe „Nutzerbestätigung (D-14)“)
 **Re-verification:** Ja, Phase 9 (AUD-02), gegen den Endstand nach Phase 8 und dem D-20-Fix aus Plan 09-02
 
 ## Warum diese Re-Verifikation (Phase 9, AUD-02)
@@ -116,9 +125,30 @@ Seit dem Kopf des Basislaufs (`1d0df35`) hat sich kein Codepfad geändert: `git 
 | 2 | Tabellenalternative je Diagramm, Fokus beim Routenwechsel, Kontraste, `prefers-reduced-motion`, alle Seiten ab 360 px nutzbar | ✓ VERIFIED | **Tabellenalternative:** Basislauf `inventar.spec.ts:39` „jedes Diagramm hat Tabelle und Beschreibung“ auf elf Routen (`/`, `/einnahmen`, `/ausgaben`, `/geldfluss`, `/entwicklung`, `/investitionen`, `/rat-entscheidet`, `/stellenplan`, `/glossar`, `/ueber`, `/produkt/010601`), Ausnahmeliste weiter genau ein Eintrag (`inventar.spec.ts` Z. 18-20). **Fokus:** `router/index.ts` Z. 128-148 (Titel, Fokus auf `h1` oder Hash-Ziel, Ansage), Basislauf `interaktion.spec.ts:278` „Fokus und Titel bei jedem Routenwechsel“ für zehn Routen; Menü-Drawer schließt bei jedem Linkklick (`App.vue` Z. 58-130; `interaktion.spec.ts:314-334`, `mobil.spec.ts:223-243`, D-21). **Kontraste:** `smoke.spec.ts:185` und `:191` (axe WCAG 2.0/2.1 A und AA, auch mit geöffneten `wa-details`) auf allen elf Routen grün. **Reduzierte Bewegung:** `basis.css` Z. 71-88 (Übergangs-Tokens und Drawer-Dauern 0), `BaseChart.vue` Z. 60 (`ohneAnimation`), Basislauf `quelle.spec.ts:218`, `interaktion.spec.ts:393`, `:407`, `:419`. **ab 360 px:** `mobil.spec.ts:151` „Überlauf und Zielgröße je Route“ auf elf Routen, `:181` und `:194` „Tabellenrahmen bei 360 px“ (Rahmen mit Rolle und genau einem Namen, axe mit geöffneten Bereichen) auf elf Routen, `:251`, `:281`, `:311` (Leiste, Drawer, Querformatseite); `kacheln.spec.ts:465` auf den vier Kachelrouten, alle Breiten inklusive Spaltensprünge. **Phase-8-Änderungen daran neu geprüft:** `DatenTabelle.vue` Z. 132-142 und `datenTabelle.ts` Z. 78-84 (`tabellenRahmen`: überlaufender, gerenderter Rahmen hat immer Tabstopp, Rolle und Namen, Ersatzname „Tabelle“); eigener Lauf `vitest run src/components/__tests__/zustaende.test.ts`: 24 bestanden, darunter „leere Beschriftung mit Überlauf: Rahmen bleibt erreichbar, Name ist ‚Tabelle‘“. Basislauf: `ci` 89, `mobil` 41 bestanden, vitest 2162 bestanden. |
 | 3 | Lighthouse-Barrierefreiheit ≥ 95 auf allen Routen | ✓ VERIFIED (indirekt, Lighthouse nicht neu gemessen) | Letzte Messung 100 auf elf Routen laut `07-12-SUMMARY.md` (2026-10-07), vor Phase 8. Auf dem Endstand nicht wiederholt (Docker und Paketprüfung nötig, in diesem Plan nicht ausführbar). Heutige Evidenz: axe-core, die Grundlage der Lighthouse-Bewertung, meldet im Basislauf null Verstöße gegen WCAG 2.0/2.1 A und AA auf allen elf Routen, auch mit geöffneten Bereichen (`smoke.spec.ts:185`, `:191`) und bei 360 px (`mobil.spec.ts:194`, axe mit geöffneten Bereichen auf allen elf Routen). Das Skript `scripts/lighthouse-a11y.sh` ist weiter vorhanden; der Review-Fix CR-02 (Z. 36-48: frisches Unterverzeichnis, Löschschutz) ändert die Messung nicht. Vermerkt unter `advisory`. |
 | 4 | Playwright-Smoke-Test: jede Route ohne Konsolenfehler, Diagramme mit Daten; Textdurchgang Deutsch/Du-Anrede | ✓ VERIFIED | `smoke.spec.ts:138` „rendert ohne Konsolenmeldung, Fremdanfrage oder Platzhalter, mit Daten“ auf elf Routen grün (Basislauf, `ci`); Routenliste aus `routen.ts`, nichts getippt. Textdurchgang: `duanrede.test.ts` scannt `texte.json`, alle Vue-Templates und Skriptzeichenketten, geschlossene Ausnahmeliste; Teil des grünen vitest-Laufs (2162 Tests, 49 Dateien); Projekt `texte` (`textliste.spec.ts:118`) bestanden. Phase 8 hat Texte geändert (7d4be31, e8e25d5: Jahreszahlen als Platzhalter); `duanrede.test.ts` und `texte.test.ts` laufen auf diesem Stand grün. |
-| 5 | GitHub Actions baut und deployt auf GitHub Pages; App unter öffentlicher URL erreichbar | ? UNCERTAIN (Mensch) | Quelltext geprüft: `ci.yml` Z. 64-121 (Job `app`: `runs-on: ubuntu-24.04`, Schrift der Kalibrierung, `npm run test:e2e`, Upload nur bei Push auf `main`), Z. 123-139 (Job `deploy`: `needs: [pipeline, app]`, nur `main`, `pages: write`, `id-token: write`, `actions/deploy-pages`), `vite.config.ts` `base: './'` mit Hash-Router, README Z. 39-55 (Einrichtung). Ob der Lauf auf GitHub grün ist, der Deploy erfolgte und die URL erreichbar ist, kann der Verifier nicht prüfen (Firewall, kein Zugriff auf github.io und die Actions-API). Siehe Human-Item 1 und „Nutzerbestätigung (D-14)“. |
+| 5 | GitHub Actions baut und deployt auf GitHub Pages; App unter öffentlicher URL erreichbar | ✓ VOM NUTZER BESTÄTIGT (2026-10-08, D-14), nicht vom Verifier geprüft | Quelltext vom Verifier geprüft: `ci.yml` Z. 64-121 (Job `app`: `runs-on: ubuntu-24.04`, Schrift der Kalibrierung, `npm run test:e2e`, Upload nur bei Push auf `main`), Z. 123-139 (Job `deploy`: `needs: [pipeline, app]`, nur `main`, `pages: write`, `id-token: write`, `actions/deploy-pages`), `vite.config.ts` `base: './'` mit Hash-Router, README Z. 39-55 (Einrichtung). Ob der Lauf auf GitHub grün ist, der Deploy erfolgte und die URL erreichbar ist, kann der Verifier nicht prüfen (Firewall, kein Zugriff auf github.io und die Actions-API). Der Nutzer hat am 2026-10-08 erklärt, den grünen Lauf samt Deploy und die öffentliche URL selbst geprüft zu haben; zusätzlich steht „pass“ in `07-UAT.md` Test 1 (2026-10-07). Der Verifier zählt das Kriterium nicht als selbst geprüft. Siehe Human-Item 1 und „Nutzerbestätigung (D-14)“. |
 
-**Score:** 4/5 Truths vom Verifier geprüft (0 present, behavior-unverified); Kriterium 5 offen für die Bestätigung des Nutzers.
+**Score:** 4/5 Truths vom Verifier geprüft (Kriterien 1 bis 4; 0 present, behavior-unverified), 1/5 vom Nutzer bestätigt (Kriterium 5, D-14). Der Gerätecheck (Human-Item 2) ergänzt Kriterium 2 und ist ebenfalls nur vom Nutzer bestätigt; Kriterium 2 steht auf VERIFIED allein wegen der automatischen Prüfungen. Kein vom Nutzer bestätigtes Item ist als vom Verifier geprüft gezählt.
+
+### Deferred Items
+
+| # | Item | Addressed In | Evidence |
+|---|------|-------------|----------|
+| 1 | CR-01 des Code-Reviews von Phase 7: Namen und Unterschriften zweier Personen auf `app/public/quellen/s009.webp` | Nutzerentscheidung vom 2026-10-07 (kein Folgeplan) | `07-REVIEW-DISPOSITION.md`, Zeile CR-01: `deferred`, „bleibt so — öffentliche Satzung, Amtsträger unterzeichnen in amtlicher Funktion; Bild s009.webp unverändert“. `git log` zeigt für `s009.webp` nur 82713f0 (2026-10-06), das Bild ist unverändert. Nicht erneut geöffnet, weder Lücke noch Regression (D-22). |
+
+### Advisory (New Scope, Unevidenced)
+
+| # | Finding | Category | Why Advisory |
+|---|---------|----------|--------------|
+| 1 | Lighthouse-Barrierefreiheit (Kriterium 3) auf dem Endstand nicht neu gemessen, nur axe grün | other | Docker und Paketprüfung nötig (Plan 07-12); indirekt belegt, kein deterministischer Lighthouse-Lauf |
+
+### Regressionsprüfung der Plan-Must-haves
+
+Geprüft wurden die `must_haves`-Artefakte der 14 Pläne, die sich seit dem alten Berichtsstand 137b05d geändert haben (Schnitt aus den Pfaden der Pläne und `git diff --name-only 137b05d HEAD`): `ci.yml`, `README.md`, `basis.css`, `UeberPage.vue` (liest `config.ts`), `EbenenTabelle.vue`, `produkt.ts`, `zustaende.test.ts`, `duanrede.test.ts`, `stiltokens.test.ts`, `quelle*.test.ts`, `kacheln`-, `mobil`-, `interaktion`-, `quelle`- und `smoke`-Spec, `e2e-wie-ci.sh`, `lighthouse-a11y.sh` sowie `08_quellenbelege.py`, `belegbilder.py`, `quellen.py` und `test_belegbilder.py`. Ergebnis:
+
+- `EbenenTabelle.vue` und `produkt.ts` haben nur die Einwohnerzahl über `einwohnerZahl()` und die rd.-Regel über `betragMitHinweis` zentralisiert (08-02, 08-03); die Quelle-Spalte und die Belegschlüssel sind unverändert. `quelle-ui-abdeckung.test.ts` (eigener Lauf, 7 bestanden) und `quelle-kacheln`, `quelle-kontext`, `quelle-leitfragen` (Basislauf-vitest) bestätigen, dass jede Kachel und jede Quelle-Spalte weiter auf den Beleg verweisen.
+- `quelle.spec.ts` prüft den Seitenbeleg ohne Markierung jetzt an der Zeile „Weitergabe an Kreis und Land“ auf `/ausgaben` statt an einer Stellenplan-Kachel, weil diese Kacheln seit 08-03 „berechnet“ sind (c3b1406). Das ist eine Anpassung des Tests an die Phase-8-Fachlogik, keine Abschwächung: die Aussage „Zeile nicht automatisch markiert, keine Markierung“ wird weiter geprüft (`quelle.spec.ts:335`, Basislauf bestanden).
+- `UeberPage.vue`: Der Abschnitt „Dank“ heißt „Dank und Informationen“ und ist um den Hinweis auf KI, Nachprüfbarkeit über die Quelle und Rundung ergänzt. Impressumsfelder, Kontakt und Original-PDF-Link kommen weiter aus `config.ts`; `duanrede.test.ts` ist grün.
+- Die übrigen geänderten Artefakte sind Review-Fixes von Phase 7 (siehe oben), Kommentarpflege und die Tests zu D-20. Eine Regression gegenüber einer Phase-7-Wahrheit ergab sich nicht (`re_verification.regressions: []`).
 
 ### Plan-07-14-Truths und Prohibitions (gegen den heutigen Code geprüft)
 
@@ -173,6 +203,7 @@ Die Wertzeile der Seitenleiste kommt aus der Anfrage des Knopfes (formatierter W
 | Kein Codepfad seit dem Basislauf geändert | `git diff --quiet 1d0df35da1842daec515b40dd62f8d918e240105 HEAD -- pipeline app daten scripts .github` | Exit 0 | ✓ PASS |
 | Tabellenrahmen nach D-20 | `npx vitest run src/components/__tests__/zustaende.test.ts` (eigene Scratch-Kopie von `app/`, `npm ci`) | 1 Datei, 24 bestanden | ✓ PASS |
 | Belege und Belegbilder (Pipeline) | `uv run --directory pipeline pytest -p no:cacheprovider -q tests/test_quellen.py tests/test_belegbilder.py` | 74 bestanden | ✓ PASS |
+| Belegabdeckung der Kacheln und Quelle-Spalten nach Phase 8 | `npx vitest run src/lib/__tests__/quelle-ui-abdeckung.test.ts` (eigene Scratch-Kopie) | 1 Datei, 7 bestanden | ✓ PASS |
 | Voller Pipeline-Lauf, pytest, vitest, Build, Playwright `ci`/`mobil`/`texte` | nicht erneut gelaufen, zitiert aus `09-BASISLAUF.md` | 681 pytest, `alle.py` byte-identisch, 2162 vitest, `ci` 89, `mobil` 41, `texte` 1 | ✓ PASS (Basislauf) |
 
 ### Probe Execution
@@ -190,11 +221,11 @@ Alle zehn Phasen-IDs stehen in den PLAN-Frontmattern (14 Pläne), `v1.0-REQUIREM
 | UI-06 | 07-05, 07-10 | Alle Texte deutsch, durchgehend Du-Anrede | ✓ SATISFIED | `duanrede.test.ts` im vitest-Lauf (2162 bestanden), Projekt `texte` bestanden (Basislauf) |
 | A11Y-01 | 07-09 | Tabellenalternative zu jedem Diagramm | ✓ SATISFIED | `inventar.spec.ts:39` auf elf Routen, Rahmen-Tests `mobil.spec.ts:181`; `zustaende.test.ts` 24 bestanden (eigener Lauf) |
 | A11Y-02 | 07-01, 07-09, 07-11 | Fokussteuerung, Kontraste, `prefers-reduced-motion` | ✓ SATISFIED | `router/index.ts` Z. 128-148; `interaktion.spec.ts:278`, `:393-:419`; axe `smoke.spec.ts:185` (Basislauf) |
-| A11Y-03 | 07-09, 07-12, 07-13, 07-14 | Alle Seiten ab 360 px nutzbar | ✓ SATISFIED (Quellstand und Tests) | `mobil.spec.ts:151`, `:181`; `kacheln.spec.ts:465` (Basislauf). Gerätecheck: Human-Item 2 |
+| A11Y-03 | 07-09, 07-12, 07-13, 07-14 | Alle Seiten ab 360 px nutzbar | ✓ SATISFIED (Quellstand und Tests) | `mobil.spec.ts:151`, `:181`; `kacheln.spec.ts:465` (Basislauf). Gerätecheck (Human-Item 2): vom Nutzer bestätigt (2026-10-08), nicht vom Verifier geprüft |
 | A11Y-04 | 07-04, 07-12 | Lighthouse-Barrierefreiheit ≥ 95 auf allen Routen | ✓ SATISFIED (indirekt) | Wahrheit 3: Messung 100 vom 2026-10-07, heute axe grün auf elf Routen; Lighthouse nicht neu gemessen (`advisory`) |
 | QUAL-02 | 07-04, 07-11, 07-14 | Playwright-Smoke-Test: jede Route ohne Konsolenfehler, Diagramme mit Daten | ✓ SATISFIED | `smoke.spec.ts:138` auf elf Routen, `ci` 89 bestanden (Basislauf) |
-| DEPL-01 | 07-11, 07-14 | GitHub Actions baut und deployt auf GitHub Pages | ? NEEDS HUMAN | Workflow im Quelltext korrekt (`ci.yml` Z. 64-139); grüner Lauf samt Deploy kann nur der Nutzer bestätigen (Human-Item 1) |
-| DEPL-02 | 07-05, 07-12, 07-14 | App unter öffentlicher URL erreichbar | ? NEEDS HUMAN | `base: './'`, Hash-Router, README Z. 39-55; Erreichbarkeit nur durch den Nutzer prüfbar (Human-Item 1) |
+| DEPL-01 | 07-11, 07-14 | GitHub Actions baut und deployt auf GitHub Pages | ✓ SATISFIED (Quelltext vom Verifier; Lauf vom Nutzer bestätigt, 2026-10-08) | Workflow im Quelltext korrekt (`ci.yml` Z. 64-139, vom Verifier geprüft); grüner Lauf samt Deploy: vom Nutzer bestätigt, nicht vom Verifier geprüft (Human-Item 1, D-14) |
+| DEPL-02 | 07-05, 07-12, 07-14 | App unter öffentlicher URL erreichbar | ✓ SATISFIED (Quelltext vom Verifier; Erreichbarkeit vom Nutzer bestätigt, 2026-10-08) | `base: './'`, Hash-Router, README Z. 39-55 (vom Verifier geprüft); öffentliche URL erreichbar: vom Nutzer bestätigt, nicht vom Verifier geprüft (Human-Item 1, D-14) |
 
 ### Anti-Patterns Found
 
@@ -211,11 +242,17 @@ Behoben seit dem alten Bericht: CR-02 (`lighthouse-a11y.sh` löscht nur noch ein
    **Test:** `main` pushen; im Reiter Actions müssen `app`, `pipeline` und `deploy` grün sein. Im Log des Jobs `app` stehen vier Zeilen „Schrift der Beträge auf …: DejaVu Sans“. Dann die öffentliche URL prüfen: keine 404, Reload von `/#/ausgaben` und `/#/ueber`, Quelle-Leiste mit Bild, Kontakt-Adresse in der Fußzeile, PDF-Link, Kacheln in der grauen Fläche.
    **Expected:** Grüner Lauf samt Deploy; die Seite zeigt den Fix.
    **Why human:** Push gehört dem Nutzer (D-10), Firewall blockiert github.io; ob der Runner dieselbe Schrift wie die Nachstellung rendert, belegt erst ein grüner Lauf.
+   **Beleg:** vom Nutzer bestätigt (2026-10-08), nicht vom Verifier geprüft
 
 2. **Gerätecheck der Kacheln**
    **Test:** Startseite, `/investitionen`, `/rat-entscheidet`, `/stellenplan` bei 360, 400, 600, 768 und 1280 px auf dem eigenen Gerät.
    **Expected:** Beträge und Knopf „Quelle“ innerhalb der Kachel, bündig mit der Überschrift, kein waagerechtes Scrollen.
    **Why human:** Geräteschriften weichen von DejaVu Sans ab; die frühere UAT-Bestätigung galt dem Stand vor 07-14.
+   **Beleg:** vom Nutzer bestätigt (2026-10-08), nicht vom Verifier geprüft
+
+### Nutzerbestätigung (D-14)
+
+Der Nutzer hat am 2026-10-08 erklärt, dass er beide Prüfungen selbst erledigt hat: den grünen GitHub-Actions-Lauf samt Deploy auf GitHub Pages mit der öffentlichen URL (Human-Item 1, ROADMAP-Kriterium 5) und den Gerätecheck der Kacheln bei 360 bis 1280 px (Human-Item 2). Beide Items bleiben in diesem Bericht stehen, jedes trägt den `beleg` „vom Nutzer bestätigt (2026-10-08), nicht vom Verifier geprüft“. Der Verifier hat sie nicht geprüft und kann es auch nicht: Die Sandbox erreicht weder github.io noch die Actions-API, und ein Gerätecheck braucht ein echtes Gerät. Sie zählen deshalb nicht zu den vier vom Verifier geprüften Kriterien (siehe Score). Mit der Bestätigung ist der frühere Widerspruch aufgelöst (Frontmatter `passed`, Text `human_needed`): Frontmatter und Text sagen jetzt beide `passed`. ROADMAP Phase 9, Kriterium 3, bleibt gewahrt: Die Items stehen als Aufgabe des Nutzers im Bericht und gelten nicht als vom Verifier bestanden. Ergänzend steht in `07-UAT.md` für beide Tests „pass“ (2026-10-07, vor den Review-Fixes und Phase 8); das ersetzt die Bestätigung vom 2026-10-08 für den Endstand nicht.
 
 ### Live-Evidenz
 
@@ -223,7 +260,7 @@ Alle vollständigen Läufe stammen aus `09-BASISLAUF.md` (Kopf `1d0df35da1842dae
 
 ### Gaps Summary
 
-Keine offenen Lücken im Quellstand. Die Wahrheiten 1 bis 4 gelten auf dem Endstand nach Phase 8 und dem D-20-Fix; die Phase-8-Änderungen an `DatenTabelle`, Drawer und Kennzahllogik haben keine Phase-7-Wahrheit gebrochen (`regressions: []`); die zeitweise Lücke im Tabellenrahmen (98803c4) ist durch 78744d4 geschlossen. Offen bleiben Kriterium 5 (Deploy, öffentliche URL) und der Gerätecheck, die nur der Nutzer bestätigen kann; Kriterium 3 ist indirekt belegt (Lighthouse nicht neu gemessen).
+Keine offenen Lücken im Quellstand. Die Wahrheiten 1 bis 4 gelten auf dem Endstand nach Phase 8 und dem D-20-Fix; die Phase-8-Änderungen an `DatenTabelle`, Drawer und Kennzahllogik haben keine Phase-7-Wahrheit gebrochen (`regressions: []`); die zeitweise Lücke im Tabellenrahmen (98803c4) ist durch 78744d4 geschlossen. Kriterium 5 (Deploy, öffentliche URL) und der Gerätecheck konnte nur der Nutzer prüfen; er hat beides am 2026-10-08 bestätigt (D-14), der Verifier hat es nicht geprüft. Der Status ist deshalb `passed` und sagt im Frontmatter wie im Text dasselbe. Kriterium 3 ist indirekt belegt (Lighthouse nicht neu gemessen, `advisory`). CR-01 (Unterschriften auf `s009.webp`) bleibt als `deferred` mit Verweis auf die Nutzerentscheidung vom 2026-10-07 stehen und ist weder Lücke noch Regression (D-22).
 
 ---
 
