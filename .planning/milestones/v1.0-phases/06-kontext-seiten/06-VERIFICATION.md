@@ -156,25 +156,31 @@ Step 7c (Probes): keine `probe-*.sh` in dieser Phase deklariert; übersprungen.
 
 ### Requirements Coverage
 
-Vorläufig; Task 2 des Plans 09-09 ergänzt Pläne, Beschreibung und heutige Evidenz.
+Alle 15 Phasen-IDs kommen in den PLAN-Frontmattern vor, sind in `.planning/milestones/v1.0-REQUIREMENTS.md` (Z. 102–137) definiert und der Phase 6 zugeordnet (Traceability: 15 Zeilen „Phase 6“, alle `Complete`). Keine verwaisten Anforderungen: die 15 Zeilen der Traceability decken sich mit den 15 IDs der PLANs.
 
 | Requirement | Source Plan | Description | Status | Evidence |
 | ----------- | ----------- | ----------- | ------ | -------- |
-| ENTW-01 | 06-02 | Erträge, Aufwendungen, Jahresergebnis 2024–2029 | SATISFIED | Wahrheit 1 |
-| ENTW-02 | 06-05 | fünf Posten-Zeitreihen | SATISFIED | Wahrheit 1 |
-| ENTW-03 | 06-01 | Rücklagen und Polster | SATISFIED | Wahrheit 1 |
-| INV-01 | 06-02 | Maßnahmen mit Filter | SATISFIED | Wahrheit 2 |
-| INV-02 | 06-09 | Verpflichtungsermächtigungen | SATISFIED | Wahrheit 2 |
-| INV-03 | 06-09 | Finanzierung | SATISFIED | Wahrheit 2 |
-| INV-04 | 06-04 | Schuldenstand | SATISFIED | Wahrheit 2 |
-| RAT-01 | 06-02 | Bindungsgrad | SATISFIED | Wahrheit 3 |
-| RAT-02 | 06-07 | nicht beeinflussbar | SATISFIED | Wahrheit 3 |
-| RAT-03 | 06-01 | Einzelzuschüsse | SATISFIED | Wahrheit 3 |
-| RAT-04 | 06-04 | Selbstauskunft | SATISFIED | Wahrheit 3 |
-| STEL-01 | 06-02 | Stellen im Vergleich | SATISFIED | Wahrheit 4 |
-| STEL-02 | 06-04 | Verteilung | SATISFIED | Wahrheit 4 |
-| STEL-03 | 06-11 | Personalaufwand | SATISFIED | Wahrheit 4 |
-| UI-04 | 06-03 | Hinweis BBO/TEO | SATISFIED | Wahrheit 5 |
+| ENTW-01 | 06-02, 06-05, 06-12, 06-14, 06-17 | Erträge, Aufwendungen und Jahresergebnis 2024–2029, Ist, Ansatz und Planung unterscheidbar | SATISFIED | `EntwicklungPage.vue` Z. 93–117, `EntwicklungsDiagramm.vue` Z. 64/119 (Wertart je Jahr); Defizit 2029 −3.557.700 in `entwicklung.test.ts` Z. 120 (heute grün); `smoke.spec.ts:138 Smoke /entwicklung` (09-BASISLAUF.md) |
+| ENTW-02 | 06-05, 06-12 | Zeitreihen für Kreisumlage, Gewerbesteuer, Schlüsselzuweisung, Personal, Zinsen | SATISFIED | `entwicklung.ts` Z. 185–215 (`ENTWICKLUNG_POSTEN`, fünf Einträge), `EntwicklungPage.vue` Z. 119–131; `entwicklung.test.ts` grün; `inventar.spec.ts:39 Inventar /entwicklung` |
+| ENTW-03 | 06-01, 06-04, 06-08, 06-12, 06-13, 06-17 | Ausgleichsrücklage und allgemeine Rücklage, wie lange das Polster reicht | SATISFIED | `EntwicklungPage.vue` Z. 133–165, `ruecklagen.ts` Z. 139–146 (Fußnote mit allen Termen); Rückgang 1,77 / 4,23 / 4,73 / 10,04 % in `ruecklagen.test.ts` Z. 169–176 und Regressionsschutz Z. 242–245, heute grün; UAT Test 1 pass |
+| INV-01 | 06-02, 06-06, 06-12, 06-14, 06-15, 06-17 | Maßnahmen 2026–2029 als Liste und Balken, filterbar nach Aufgabenbereich und Art | SATISFIED | `InvestitionenPage.vue` Z. 95–111, `MassnahmenFilter.vue` Z. 70–108, `investitionen.ts` Z. 27–32 und Z. 204–207 („1 Maßnahme“ im Singular); `interaktion.spec.ts:453 Maßnahmenfilter auf /investitionen …` (09-BASISLAUF.md) |
+| INV-02 | 06-09, 06-12 | Verpflichtungsermächtigungen (11,6 Mio. €) mit Fälligkeiten | SATISFIED | `InvestitionenPage.vue` Z. 112–125 (`VeFaelligkeiten`), `finanzierung.test.ts` Z. 502 (`veGesamt()` = 11.600.000), heute grün |
+| INV-03 | 06-09, 06-12 | Finanzierung (Investitionseinzahlungen, Kredite) und Zeitreihe Kreditaufnahme/Tilgung | SATISFIED | `InvestitionenPage.vue` Z. 126–139 (zwei `FinanzierungsDiagramm`-Karten), `finanzierung.ts` Z. 229–278 (`kreditaufnahme`, `tilgung`); `finanzierung.test.ts` grün; `smoke.spec.ts:185 axe … /investitionen` |
+| INV-04 | 06-04, 06-09, 06-12, 06-16, 06-17 | Schuldenstand gesamt und je Einwohner | SATISFIED | `schulden.ts` Z. 192–225 (`schuldenKacheln()`), `schulden.test.ts` Z. 317–328 (7.710.000 €, 656 €, ohne „berechnet“), heute grün; `kacheln.spec.ts:465 … /investitionen` |
+| RAT-01 | 06-02, 06-04, 06-10, 06-12, 06-14, 06-15, 06-17 | Zuschussbedarf 2026 nach Bindungsgrad als gestapelter Balken mit den Produkten je Kategorie | SATISFIED | `RatEntscheidetPage.vue` Z. 42–76, `bindungsgrad.test.ts` Z. 242–243 (29 / 15 / 15 Produkte), heute grün; `smoke.spec.ts:138 Smoke /rat-entscheidet` |
+| RAT-02 | 06-07, 06-10, 06-12 | Block „Was der Rat nicht beeinflussen kann“ (Kreisumlage, Gewerbesteuerumlage, gesetzliche Sozialleistungen) | SATISFIED | `NichtBeeinflussbarBlock.vue` Z. 11/34/69 (Titel „Was der Rat nicht beeinflussen kann“, Kacheln aus `nichtBeeinflussbar()`), `zuschuesse.ts` Z. 5–6, 44–48 (Kreis/Land über `kreisumlage.ts`, Sozialleistungen); `zuschuesse.test.ts` grün |
+| RAT-03 | 06-01, 06-07, 06-12 | Einzelzuschüsse aus dem Vorbericht (Kita-Träger einzeln, Kinder- und Jugendwerk, OGS, Vereine, VHS, Sport, Musikschule) | SATISFIED | `ZuschussListe.vue` Z. 108–113, 190–197 (Zusammen-Zeile „berechnet“ nur bei eigener Summe, 08-05 `af0a3eb`), `zuschuesse.ts` Z. 41, 107; `zuschuesse.test.ts` Z. 87–126 grün |
+| RAT-04 | 06-04, 06-10, 06-12 | Hinweis, dass der Bindungsgrad eine Selbstauskunft der Verwaltung ist | SATISFIED | `RatEntscheidetPage.vue` Z. 53–57 (`ErklaerText bindungsgrad_selbstauskunft`), `texte.json` Z. 201 |
+| STEL-01 | 06-02, 06-11, 06-12, 06-14, 06-16, 06-17 | Stellen 2026 im Vergleich zu 2025 und zu den besetzten Stellen am 30.06.2025 | SATISFIED | `StellenplanPage.vue` Z. 90–140 (drei Kacheln mit „berechnet“ und Herleitung, 08-03 `1d4e359`), `stellen.test.ts` Z. 223–227 (6291 / 6213 / 5663 Hundertstel = 62,91 / 62,13 / 56,63 VZÄ), heute grün; `kacheln.spec.ts:465 … /stellenplan` |
+| STEL-02 | 06-04, 06-11, 06-12, 06-16, 06-17 | Verteilung nach Aufgabenbereich und nach Entgelt- bzw. Besoldungsgruppe | SATISFIED | `StellenplanPage.vue` Z. 206–237 (`StellenNachBereich`, `StellenNachGruppe` je Teil), `stellen.ts` Z. 248–349; `quelle.spec.ts:294 … eine Stellenplan-Zeile öffnet eine Querformatseite …` |
+| STEL-03 | 06-11, 06-12 | Personalaufwand je Aufgabenbereich (TP Z. 11) | SATISFIED | `StellenNachBereich.vue` Z. 162–175 (zweites Diagramm und Tabellenspalte), `stellen.ts` Z. 229/273 (`personalaufwand` aus dem Teilergebnisplan), `stellen.test.ts` Z. 475–476 (Σ 5.204.054 €), heute grün |
+| UI-04 | 06-03, 06-04, 06-07, 06-12 | Hinweis „Was nicht im Haushalt steht“ erklärt BBO (Hallenbad) und TEO AöR (Abwasser) | SATISFIED | `HinweisNichtImHaushalt.vue` Z. 19–27, 50; eingebunden in `EinnahmenPage.vue` Z. 423, `AusgabenPage.vue` Z. 379, `RatEntscheidetPage.vue` Z. 80; `texte.json` Z. 104–112, 540 |
+
+Zeilen der Spalte „Evidence“ mit „heute grün“ beziehen sich auf den eigenen Lauf dieses Plans (12 Testdateien, 600 Tests, Scratch-Kopie); Zeilen mit Playwright-Titeln auf 09-BASISLAUF.md.
+
+### Regressionsprüfung der Plan-must_haves
+
+Geprüft wurden die must_haves-Artefakte und -Links aller 17 PLANs (`verify.artifacts`, `verify.key-links`, dazu Handprüfung der vier Links, die das Werkzeug nicht auswerten kann; siehe „Required Artifacts“ und „Key Link Verification“). Artefakte, die seit dem Vorbericht geändert wurden (`ruecklagen.ts`, `schulden.ts`, `stellen.ts`, `investitionen.ts`, `bindungsgrad.ts`, `menueVersatz.ts`, `format.ts`, die vier Seiten, `MassnahmenFilter.vue`, `ZuschussListe.vue`, `NichtBeeinflussbarBlock.vue`, `UeberschussListe.vue`), erfüllen weiterhin ihre `contains`-Muster und Verdrahtungen. Ergebnis: `re_verification.regressions` ist `[]`. Die zwei Abweichungen des Werkzeugs sind Pfadnotation in den PLANs (archivierter Pfad in 06-17, Funktionsnamen statt Dateipfaden in 06-13/06-15/06-16), keine Codebefunde.
 
 ### Anti-Patterns Found
 
