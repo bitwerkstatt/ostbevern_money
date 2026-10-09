@@ -2,19 +2,19 @@
 gsd_state_version: "1.0"
 milestone: v1.0.1
 milestone_name: Restpunkte
-current_phase: 09
-status: completed
-stopped_at: Phase 09 complete — all phases complete
-last_updated: "2026-10-09T09:00:26.097Z"
+status: Awaiting next milestone
+stopped_at: Milestone v1.0.1 archived (override_closeout)
+last_updated: "2026-10-09T09:19:18.817Z"
 last_activity: 2026-10-09
-last_activity_desc: Phase 09 complete
-state_head: b19453d23b382ad7ad5ebc74e19294aab90cab97
+last_activity_desc: Milestone v1.0.1 completed and archived
+state_head: b329e4a71827f2006764eec18e9c5c8e77f9e127
 progress:
   total_phases: 2
   completed_phases: 9
   total_plans: 28
   completed_plans: 28
   percent: 100
+current_phase: 09
 ---
 
 # Project State
@@ -24,16 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-09)
 
 **Core value:** Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch automatische Prüfungen belegt. Die Leitfragen „Woher?“ und „Wofür?“ sind für Laien verständlich beantwortet.
-**Current focus:** Milestone v1.0.1 abschließen (alle Phasen fertig)
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 09
-Plan: Not started
-Status: All phases complete
-Last activity: 2026-10-09 — Phase 09 complete
-
-Progress: [██████████] 100%
+Phase: Milestone v1.0.1 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-10-09 — Milestone v1.0.1 completed and archived
 
 ## Performance Metrics
 
@@ -91,14 +89,15 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 | Category | Item | Status | Deferred At | Milestone |
 |----------|------|--------|-------------|-----------|
-| *(none)* | | | | |
+| verification_gaps | 05/05-VERIFICATION.md (archiviert v1.0) | human_needed | 2026-10-09 | v1.0.1 |
+| tech_debt | 09-REVIEW-DISPOSITION.md: WR-01..03, IN-01..03 ohne Disposition (siehe v1.0.1-MILESTONE-AUDIT) | open | 2026-10-09 | v1.0.1 |
 
 ## Session Continuity
 
 Last session: 2026-10-09
-Stopped at: Phase 09 complete — all phases complete
+Stopped at: Milestone v1.0.1 archived (override_closeout)
 Resume file: None
 
 ## Operator Next Steps
 
-- Milestone v1.0.1 abschließen mit /gsd-complete-milestone (vorher optional /gsd-audit-milestone)
+- Start the next milestone with /gsd-new-milestone

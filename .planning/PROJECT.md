@@ -8,23 +8,22 @@ Die vollständige fachliche Spezifikation steht in `discussion/SPEZIFIKATION.md`
 
 ## Current State
 
-**Shipped:** v1.0 MVP am 2026-10-07. Öffentlich unter https://bitwerkstatt.github.io/ostbevern_money/ (11 Routen, Deploy über GitHub Actions nach grüner CI).
+**Shipped:** v1.0.1 Restpunkte am 2026-10-09 (davor v1.0 MVP am 2026-10-07). Öffentlich unter https://bitwerkstatt.github.io/ostbevern_money/ (11 Routen, Deploy über GitHub Actions nach grüner CI).
 
-- Pipeline: ~25.500 LOC Python, Schritte 01–08 in `alle.py`, Prüfregeln 1–10 grün, Ausgabe byte-reproduzierbar
-- App: ~29.900 LOC TypeScript/Vue, vitest und Playwright (axe-Smoke, 360 px, Kachel-Breitentest), Lighthouse-a11y 100
-- Archiv: `.planning/milestones/v1.0-ROADMAP.md`, `v1.0-REQUIREMENTS.md`, `v1.0-phases/`
+- Pipeline: Schritte 01–08 in `alle.py`, Prüfregeln 1–10 grün, 681 pytest-Tests ohne Skip, Ausgabe byte-reproduzierbar
+- App: Vue/TypeScript, 2162 vitest-Tests, Playwright (ci 89, mobil 41), Lighthouse-a11y 100
+- v1.0.1: 28 Review-Befunde aus v1.0 mit Disposition, `04-SECURITY.md` mit `threats_open: 0`, Milestone-Audit v1.0/v1.0.1 (`tech_debt`), Verifikationen 01–08 erneuert
+- Archiv: `.planning/milestones/v1.0-*`, `v1.0.1-ROADMAP.md`, `v1.0.1-REQUIREMENTS.md`, `v1.0.1-MILESTONE-AUDIT.md`, `v1.0.1-phases/`
 
-## Current Milestone: v1.0.1 Restpunkte
+**Bekannte technische Schuld (aus v1.0.1-Audit):**
+- Ledger `09-REVIEW-DISPOSITION.md` hat 6 offene Befunde ohne Disposition (WR-01..03, IN-01..03)
+- 09/WR-02 ist sichtbar: `seitenText` sortiert nicht, Bürger sehen z. B. „PDF-Seiten 51, 8“
+- 09/WR-01: `istGroessterEinzelposten` wirft bei fehlendem Kreisumlagewert (Risiko ab Jahrgang 2027)
+- Phase 5: fünf Browserpunkte in `05-VERIFICATION.md` stehen auf `human_needed` (beim Abschluss acknowledged)
 
-**Goal:** Die offenen Qualitätspunkte aus v1.0 abschließen, ohne neue Funktionen: jeder Review-Befund hat eine Disposition, Phase 4 ist sicherheitsgeprüft, v1.0 ist auditiert und gegen den aktuellen Stand verifiziert.
+## Next Milestone Goals
 
-**Target features:**
-- Triage der 28 offenen Review-Befunde aus Phase 1, 5 und 6 (Ledger in `milestones/v1.0-phases/*/…-REVIEW-DISPOSITION.md`), inkl. Bestätigung bereits behobener Befunde
-- Befunde mit Wirkung auf Zahlen, Texte oder Barrierefreiheit beheben; reine Code-Hygiene beheben, wenn günstig, sonst begründet `deferred`
-- Security-Prüfung für Phase 4 nachholen (`04-SECURITY.md`)
-- Milestone-Audit für v1.0 nachholen und veraltete Verifikationen erneuern
-
-Nicht enthalten: Deploy-/Gerätecheck aus Phase 7 (macht der Nutzer selbst), Spiele und Haushalt 2027 (bleiben v2-Backlog).
+Noch nicht festgelegt. Naheliegend: die sechs offenen Befunde aus Phase 9 (zuerst WR-02) erledigen, danach v2-Themen (Haushalt 2027 / ERW-03, Spiele).
 
 ## Core Value
 
@@ -66,7 +65,7 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 
 ### Active
 
-(keine — alle Anforderungen von v1.0.1 sind erfüllt; offen ist nur der Milestone-Abschluss)
+(keine — wird mit `/gsd-new-milestone` neu definiert)
 
 ### Out of Scope
 
@@ -164,4 +163,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-09 after Phase 9*
+*Last updated: 2026-10-09 after v1.0.1 milestone*

@@ -47,6 +47,41 @@
 
 ---
 
+## Milestone: v1.0.1 — Restpunkte
+
+**Shipped:** 2026-10-09
+**Phases:** 2 | **Plans:** 28 (69 tasks) | **Sessions:** nicht erfasst
+
+### What Was Built
+- Alle 28 offenen Review-Befunde aus v1.0 haben eine Disposition, die Ledger 01, 05 und 06 stehen auf `open: 0`.
+- Texte über Zahlen stimmen auch in Grenzfällen: Jahreszahlen nur als Platzhalter, die rd.-Regel steht nur noch in `format.ts`, die Lesehilfe unterscheidet vier Bilanzfälle und abgeleitete Summen tragen „berechnet“.
+- Barrierefreiheit: DatenTabelle-Regionen haben genau einen Namen, das Drawer-Menü schließt bei 360 px bei jedem Link.
+- Die Security-Prüfung von Phase 4 ist nachgeholt (21 Threats closed), die Verifikationen 01–08 sind erneuert, und das Milestone-Audit ist auf `tech_debt` abgeschlossen.
+
+### What Worked
+- Ledger mit Commit-Hash je Befund. Die Triage war dadurch belegbar statt behauptet.
+- Querschnittsbedingung „alle.py byte-identisch“ für jeden Plan. Reine Refactorings blieben nachweislich ohne Wirkung auf die Zahlen.
+- Die drei Lücken der Kernaussage, die das Audit gefunden hat, wurden fail-first behoben, jeweils mit einem vorher roten Test.
+
+### What Was Inefficient
+- Phase 9 hatte 16 Pläne für eine reine Audit- und Verifikationsphase. Die Berichte wurden nach jedem Fix erneut stale und brauchten Nachträge.
+- Der Code-Review von Phase 9 hat 6 neue Befunde erzeugt, die beim Abschluss ohne Disposition bleiben. Das widerspricht dem eigenen Meilensteinziel.
+
+### Patterns Established
+- Fingerprint-v3/`covered_digest` in VERIFICATION.md, damit „stale“ maschinell erkennbar ist
+- Gepinnter CI-Gesamtlauf (`09-BASISLAUF.md`) als gemeinsame Evidenz für alle Re-Verifikationen
+
+### Key Lessons
+1. Den Code-Review der letzten Phase eines Meilensteins mit einplanen. Sonst bleibt am Ende ein neues offenes Ledger übrig.
+2. Re-Verifikationen erst nach dem letzten Code-Fix schreiben, um Stale-Nachträge zu vermeiden.
+
+### Cost Observations
+- Model mix: nicht erfasst (Profil „adaptive“)
+- Sessions: nicht erfasst
+- Notable: 217 Commits in 3 Tagen, ohne neue Funktionen.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -54,12 +89,14 @@
 | Milestone | Sessions | Phases | Key Change |
 |-----------|----------|--------|------------|
 | v1.0 | – | 7 | Erstes Projekt mit GSD. Strikte Sollwert-Prüfung, Wächter-Tests für Konventionen. |
+| v1.0.1 | – | 2 | Reiner Qualitätsmeilenstein: Review-Ledger, Security nachgeholt, Audit vor dem Abschluss. |
 
 ### Cumulative Quality
 
 | Milestone | Tests | Coverage | Zero-Dep Additions |
 |-----------|-------|----------|-------------------|
 | v1.0 | 545 pytest + 1576 vitest (Stand 06-17) + Playwright | – | Lighthouse nur als Einmal-Werkzeug |
+| v1.0.1 | 681 pytest + 2162 vitest + Playwright (ci 89, mobil 41) | – | – |
 
 ### Top Lessons (Verified Across Milestones)
 

@@ -247,6 +247,10 @@ human_verification:
     beleg: "Code: app/src/config.ts:13 (KONTAKT_EMAIL) und :22-23 (ORIGINAL_PDF_URL), Fußzeile App.vue:230-250; automatisiert: lib/__tests__/config.test.ts:52 und e2e/smoke.spec.ts:152 (kein „.invalid“ im Dokument, 09-BASISLAUF.md)"
     verifier_geprueft: "ja"
     hinweis: "Die Entscheidung ist durch die Werte im Code getroffen (1ab6b4b, b29be89); das Item bleibt als erledigt stehen und wird nicht gelöscht"
+audit_acknowledged:
+  milestone: v1.0.1
+  at: 2026-10-09
+  status: human_needed
 ---
 
 # Phase 5: Leitfragen-Seiten Verification Report
