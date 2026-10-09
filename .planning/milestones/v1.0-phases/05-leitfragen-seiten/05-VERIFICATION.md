@@ -67,6 +67,7 @@ covered_files:
   - app/src/components/SteuerZeitreihe.vue
   - app/src/components/WertartEtikett.vue
   - app/src/components/ZuschussBalken.vue
+  - app/src/components/__tests__/erklaertext.test.ts
   - app/src/components/datenTabelle.ts
   - app/src/config.ts
   - app/src/data/haushalt.json
@@ -80,6 +81,7 @@ covered_files:
   - app/src/lib/__tests__/ertragsarten.test.ts
   - app/src/lib/__tests__/geldfluss.test.ts
   - app/src/lib/__tests__/glossar.test.ts
+  - app/src/lib/__tests__/hilfsfunktionen.test.ts
   - app/src/lib/__tests__/jahr.test.ts
   - app/src/lib/__tests__/kennzahlen.test.ts
   - app/src/lib/__tests__/kreisumlage.test.ts
@@ -99,6 +101,7 @@ covered_files:
   - app/src/lib/ertragsarten.ts
   - app/src/lib/geldfluss.ts
   - app/src/lib/glossar.ts
+  - app/src/lib/hilfsfunktionen.ts
   - app/src/lib/jahr.ts
   - app/src/lib/kennzahlen.ts
   - app/src/lib/kreisumlage.ts
@@ -121,7 +124,7 @@ covered_files:
   - pipeline/tests/test_app_daten.py
   - pipeline/tests/test_pruefung.py
   - pipeline/tests/test_texte.py
-covered_digest: "v3:sha256:9325a128dc0cfeffb6de189fe96557d6720217903d173bce995d02dc81e51da0"
+covered_digest: "v3:sha256:36be5acaecb2713254dbbf30c8118a4537d3a9801cadbf74d0039c9d74f70b59"
 behavior_unverified: 5
 overrides_applied: 0
 re_verification:
@@ -134,19 +137,13 @@ re_verification:
     - "Review-Warnungen WR-04 bis WR-06 (stille Lücken in Pipeline-Prüfungen) - test_texte.py:249, :602, :610 und test_pruefung.py:2260 sichern sie; 149 Tests aus test_texte.py und test_app_daten.py liefen hier grün"
     - "Review-Warnung WR-07 (DatenTabelle: jede Tabelle ein Tab-Stopp, doppelter Name) - fe416ab (08-06), 98803c4 und 78744d4 (09-02, D-20): Rahmen mit Rolle, Fokus und genau einem Namen aus components/datenTabelle.ts"
     - "Offener Punkt UI-03 / IN-09 (Fußzeile mit Platzhalterkontakt `.invalid`) - app/src/config.ts:13 und :22-23 tragen echte Werte (1ab6b4b, b29be89), config.test.ts und smoke.spec.ts:152 sperren `.invalid`"
+    - "Latenter Befund IN-03 (ErklaerText.vue: „PDF-Seite“ im Singular auch bei mehreren Seiten, Lückenliste G-09-02) - Fix ce5880e (09-14), Test 74fed1c: hilfsfunktionen.test.ts und erklaertext.test.ts (Nachtrag 09-15, D-12)"
+    - "Latenter Befund IN-02 (KreisumlageCallout.vue: fest verdrahteter Superlativ „größter Einzelposten“, Lückenliste G-09-01) - Fix f8aef3f (09-14), Test 3f944a7: kreisumlage.test.ts (Nachtrag 09-15, D-12)"
   gaps_remaining: []
   regressions: []
 gaps: []
 deferred: []
-advisory:
-  - finding: "ErklaerText.vue:29 schreibt „PDF-Seite“ im Singular auch bei mehreren Seiten (quelle_seiten.join); latenter Befund IN-03 der ersten Review-Runde, in 05-REVIEW-DISPOSITION.md als offene Nutzerentscheidung geführt"
-    category: other
-    reason: "Wortlaut, keine falsche Zahl; kein Test und kein Ziel hängt daran"
-    evidence_status: "none provided"
-  - finding: "KreisumlageCallout.vue:50 fest verdrahteter Superlativ „Der größte Einzelposten ist die Weitergabe an Kreis und Land“; latenter Befund IN-02 der ersten Review-Runde"
-    category: other
-    reason: "Stimmt in allen sechs Jahren der Daten (kreisumlage.test.ts:49-50 prüft 11.001.181 € als größten obersten Knoten); wird erst bei anderen Daten falsch"
-    evidence_status: "none provided"
+advisory: []
 behavior_unverified_items:
   - truth: "Nach einem Seitenwechsel meldet die Live-Region „Seite … geladen“ (ansagen), bei einem Aufruf mit Fragment liegt der Fokus auf dem Zielelement, und ein reiner Query-Wechsel (Jahr, Modus) lässt den Fokus am Steuerelement (D-13, router/index.ts afterEach). Titel und Fokus auf der h1 bei jedem Menü-Routenwechsel sind inzwischen automatisiert belegt und nicht mehr Teil dieses Punkts"
     test: "Im Browser zwischen Start, Einnahmen, Ausgaben, Geldfluss und Glossar wechseln und die Live-Region prüfen (Screenreader oder Inspektor); /#/glossar#hebesatz direkt aufrufen; auf /#/einnahmen oder /#/ausgaben das Jahr oder den Modus umschalten und document.activeElement prüfen"
@@ -455,6 +452,22 @@ Offene Punkte, die den Status `human_needed` bestimmen: H2, B1, B2, B3, B4. Ein 
 ## Gaps Summary
 
 Keine Gaps. Das Phasenziel ist am heutigen Code und an den heutigen Daten erreicht: Beide Leitfragen haben eigene Seiten, jede Zahl läuft über `haushalt.json`, `texte.json` oder `produkte.json`, und Tests binden die Kernzahlen an die Sollwerte aus dem PDF (`kennzahlen.test.ts:116-134`, `geldfluss.test.ts:356-373`, `einnahmen.test.ts:404-428`). Gegenüber dem Bericht vom 2026-10-05 gibt es keine Regression; die dort geführten Warnungen WR-01 bis WR-07 und das Platzhalter-Item der Fußzeile sind im Code erledigt. Der Status ist `human_needed`, weil fünf Punkte ohne Beleg bleiben (H2, B1 bis B4): kein Test und keine Nutzerbestätigung deckt den Balkenklick-Scroll nach 05-16, die Live-Region-Ansage, den Sankey-Klick, das Drilldown-Zusammenspiel und die Umschaltung unter 700 px ab. Alle übrigen Human-Items sind mit UAT 05 (Stand 2026-10-05) oder mit Code und Tests belegt und als solche gekennzeichnet; nichts davon gilt als vom Verifier im Browser gesehen.
+
+## Nachtrag 09-15 (D-12)
+
+Stand 2026-10-09. Nach dem Basislauf (head `1d0df35da1842daec515b40dd62f8d918e240105`) hat Plan 09-14 drei Lücken der Kernaussage behoben. Die Fixes ändern Dateien, die dieser Bericht abdeckt; `verification.status` meldete deshalb wieder `stale`. Die Aussage „seit dem Basislauf hat sich kein Codepfad geändert“ im Abschnitt „Live-Evidenz“ oben gilt damit nicht mehr; sie beschrieb den Stand vor 09-14 und bleibt als solcher stehen. Die frühere Wertung und alle Befunde oben sind unverändert. Neu sind die Frontmatter-Schlüssel `re_verification.gaps_closed` (zwei Einträge), `advisory` (jetzt leer) sowie `covered_files` und `covered_digest`.
+
+Die beiden vorher unter `advisory` geführten latenten Befunde (Singular „PDF-Seite“, fester Superlativ; Zeile „Latente Befunde der ersten Review-Runde“ im Gap-Abgleich) sind damit geschlossen. Zeilennummern wie `KreisumlageCallout.vue:50` und `ErklaerText.vue:29` in den Abschnitten oben nennen den Stand vor dem Fix.
+
+| Commit | Lücke | Geänderte abgedeckte Dateien | Betroffene Wahrheit | Test |
+|--------|-------|------------------------------|---------------------|------|
+| `f8aef3f` | G-09-01 | `app/src/lib/kreisumlage.ts`, `app/src/components/KreisumlageCallout.vue` | Wahrheit 1 (Startseite, Kreisumlage-Hinweis; START-02): der Superlativ „größter Einzelposten“ steht nur, wenn die Daten ihn tragen; in allen sechs Jahren bleibt er wahr und sichtbar | `kreisumlage.test.ts` „G-09-01“ (sechs Jahre, drei Kipp-Fälle), vorher rot in `3f944a7` |
+| `ce5880e` | G-09-02 | `app/src/components/ErklaerText.vue`, `app/src/components/KreisumlageCallout.vue`, `app/src/pages/AusgabenPage.vue` (zusätzlich `app/src/lib/hilfsfunktionen.ts`, bisher nicht abgedeckt) | Wahrheit 5 (`ErklaerText` nennt „Quelle: PDF-Seite …“) und Wahrheit 3 (Überschusstexte auf `/ausgaben`): „PDF-Seite“ im Singular nur bei genau einer Seite, sonst „PDF-Seiten“ | `hilfsfunktionen.test.ts` „G-09-02“, `erklaertext.test.ts` „G-09-02“ (21 Texte), vorher rot in `74fed1c` |
+| `448e43d` | G-09-03 | `app/src/lib/geldfluss.ts`, `app/src/lib/__tests__/geldfluss.test.ts` | Wahrheit 4 (`/geldfluss`) und DATA-03: die Gruppensumme „Grundsteuer (A+B)“ trägt das Etikett „berechnet“, einzelne Posten nicht; Beträge und Bilanz unverändert | `geldfluss.test.ts` „G-09-03“ (sechs Jahre), vorher rot in `b3b2658` |
+
+Nachprüfung der betroffenen Wahrheiten mit den Tests der Commits, in einer Scratch-Kopie von `app/` mit Linux-`node_modules` (`npm ci`) auf dem Stand `7e2b775`: `kreisumlage.test.ts`, `geldfluss.test.ts`, `hilfsfunktionen.test.ts` und `erklaertext.test.ts` zusammen 143 Tests grün. Die volle App-Suite lief dort mit 2207 Tests grün (zuvor 2162 im Basislauf). Die Zahl der behavior-abhängigen Teilwahrheiten bleibt bei fünf (B1 bis B5); die Fixes berühren keine davon. Der Status bleibt `human_needed`, weil H2 und B1 bis B4 weiter ohne Beleg sind (Lückenliste G-09-06 bis G-09-10, deferred).
+
+`covered_files` und `covered_digest` stammen unverändert aus `verification.fingerprint`, mit den bisherigen Implementierungsdateien plus `app/src/lib/hilfsfunktionen.ts`, `app/src/lib/__tests__/hilfsfunktionen.test.ts` und `app/src/components/__tests__/erklaertext.test.ts`.
 
 ---
 
