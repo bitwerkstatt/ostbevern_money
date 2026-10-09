@@ -15,6 +15,7 @@ import {
   baueGeldfluss,
   baueGeldflussBalken,
   geldflussOption,
+  geldflussZeilen,
   lesehilfeSatz,
   welcheLesetexte,
   zielCodeAusKlick,
@@ -183,6 +184,19 @@ describe('Vorbericht-Beträge im Geldfluss (WR-01: „rd.“ und „berechnet“
       expect(knoten?.berechnet, id).toBe(true)
     }
   })
+
+  it.each(ALLE_JAHRE)(
+    'G-09-03: Jahr %i: Gruppensummen aus mehreren Vorbericht-Posten sind berechnet, einzelne Posten nicht',
+    (_jahr, jahrIndex) => {
+      const woher = geldflussZeilen(baueGeldfluss(jahrIndex), 'links')
+      const berechnet = (id: string) => woher.find((z) => z.id === `ertrag:${id}`)?.berechnet
+      // „Grundsteuer (A+B)“ ist die von der App gebildete Summe aus zwei gedruckten Posten.
+      expect(berechnet('grundsteuer'), 'grundsteuer').toBe(true)
+      // Gewerbesteuer und Einkommensteuer sind je ein gedruckter Posten.
+      expect(berechnet('gewerbesteuer'), 'gewerbesteuer').toBe(false)
+      expect(berechnet('einkommensteuer'), 'einkommensteuer').toBe(false)
+    },
+  )
 
   it('lässt Ergebnisplan-Knoten ohne Hinweis', () => {
     for (const knoten of fluss.knoten) {
