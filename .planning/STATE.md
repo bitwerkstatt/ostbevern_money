@@ -21,10 +21,10 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-10-08)
+See: .planning/PROJECT.md (updated 2026-10-09)
 
 **Core value:** Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch automatische Prüfungen belegt. Die Leitfragen „Woher?“ und „Wofür?“ sind für Laien verständlich beantwortet.
-**Current focus:** Phase 09 — Sicherheit und Audit
+**Current focus:** Milestone v1.0.1 abschließen (alle Phasen fertig)
 
 ## Current Position
 
@@ -67,6 +67,8 @@ Recent decisions affecting current work:
 - [Roadmap v1.0.1]: Phase 9 „Sicherheit und Audit“: erst Security-Prüfung von Phase 4 gegen den Code nach Phase 8, zuletzt Milestone-Audit und Re-Verifikation auf dem Endstand.
 - [Phase 8]: Alle 28 offenen Befunde entschieden (27 fixed, 1 skipped 06/WR-01, 0 deferred); Ledger 01/05/06 auf `open: 0`.
 - [Phase 8]: `DatenTabelle` ohne Slot-Modus, Tabellenname nur aus der Caption (A11Y-03, Screenreader-UAT bestanden).
+- [Phase 9]: `04-SECURITY.md` mit `threats_open: 0` (SEC-01); Audit v1.0/v1.0.1 98/102 erfüllt, 4 teilweise aus Phase 5; Verifikationen 01–08 auf Endstand, keine „stale“.
+- [Phase 9]: A11Y-03 im Audit als Nutzerbeleg (08-UAT) geführt, nicht als Verifier-Prüfung (Gap-Closure 09-16).
 - [Roadmap v1.0.1]: Querschnittsbedingung für jede Phase: `alle.py --jahr 2026` byte-identisch (Ausnahme nur mit Begründung im Commit), Prüfregeln 1–10 grün, App-Prüfungen in einer Scratch-Kopie.
 
 ### Pending Todos
@@ -93,10 +95,10 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-08T18:47:37.888Z
+Last session: 2026-10-09
 Stopped at: Phase 09 complete — all phases complete
-Resume file: .planning/phases/09-sicherheit-und-audit/09-CONTEXT.md
+Resume file: None
 
 ## Operator Next Steps
 
-- Phase 9 planen mit /gsd-plan-phase 9 (oder vorher /gsd-discuss-phase 9)
+- Milestone v1.0.1 abschließen mit /gsd-complete-milestone (vorher optional /gsd-audit-milestone)

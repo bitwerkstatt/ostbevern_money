@@ -60,12 +60,13 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 - ✓ Pipeline ist für das ProFIS-Layout generisch konfigurierbar (Jahr, Spalten, Seitenbereiche in `jahrgaenge/{jahr}.toml`) — v1.0 (Phase 1); der Nachweis mit echtem Haushalt 2027 ist ERW-03 (v2)
 - ✓ Alle 28 offenen Review-Befunde aus v1.0 haben eine Disposition (27 fixed, 1 skipped, 0 deferred); Ledger 01, 05 und 06 auf `open: 0` — v1.0.1 (Phase 8)
 - ✓ Fachlich relevante Befunde (Zahlen, Texte, Barrierefreiheit) sind behoben, inkl. Screenreader-Prüfung der Tabellennamen bei 360 px (UAT 08) — v1.0.1 (Phase 8)
+- ✓ Phase 4 ist sicherheitsgeprüft (`04-SECURITY.md`, `threats_open: 0`) — v1.0.1 (Phase 9, SEC-01)
+- ✓ v1.0 ist auditiert (Anforderungen 98/102 erfüllt, 4 teilweise aus Phase 5), Verifikationen 01–08 beschreiben den Endstand, keine steht auf „stale“ — v1.0.1 (Phase 9, AUD-01/02/03)
 
 
 ### Active
 
-- [ ] Phase 4 ist sicherheitsgeprüft — v1.0.1
-- [ ] v1.0 ist auditiert, Verifikationen sind aktuell — v1.0.1
+(keine — alle Anforderungen von v1.0.1 sind erfüllt; offen ist nur der Milestone-Abschluss)
 
 ### Out of Scope
 
@@ -143,6 +144,7 @@ Jede Zahl in der App ist korrekt aus dem Haushalts-PDF abgeleitet und durch auto
 | `DatenTabelle`: `beschriftung`/`spalten`/`zeilen` als Pflicht-Props, Slot-Modus entfernt; Tabellenname nur aus der Caption, Scrollrahmen per `aria-labelledby` | Bewusste Abweichung von den Münster-Props; verhindert doppelte Screenreader-Ansage (A11Y-03) | ✓ Good — Phase 8 (UAT 1/1) |
 | Feste Jahre in Texten über Schlüssel `jahr.fest_JJJJ`, aus dem Schlüsselnamen aufgelöst; relative Jahre stehen in `textwerte` | Kein Jahrgangswert im Code, Texte bleiben jahrneutral prüfbar | ✓ Good — Phase 8 |
 | Gerundete und berechnete Werte tragen ihr Etikett aus den Daten (`gerundet`-Flag), nicht aus festen Annahmen im Code | Kennzeichnung bleibt korrekt, wenn sich Daten ändern (TXT-04/05) | ✓ Good — Phase 8 |
+| Nutzerbelege (UAT) werden im Audit und in Verifikationen als Nutzerbeleg gekennzeichnet, nicht als Verifier-Prüfung | Trennung „vom Nutzer bestätigt“ vs. „vom Verifier geprüft“ bleibt nachvollziehbar (A11Y-03, 09-16) | ✓ Good — Phase 9 |
 
 ## Evolution
 
@@ -162,4 +164,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-08 after Phase 8*
+*Last updated: 2026-10-09 after Phase 9*
