@@ -89,7 +89,7 @@ Plans:
   4. „Blockers/Concerns“ in STATE.md stimmt mit der Wirklichkeit überein. Die veralteten Einträge zu `02-REVIEW.md` und `04-REVIEW-DISPOSITION.md` sind entfernt (beide Ledger stehen schon auf `open: 0`), ebenso die in diesem Meilenstein erledigten Punkte (Security Phase 4, Milestone-Audit, stale-Verifikationen). Nur zutreffende Hinweise bleiben, z. B. die Scratch-Kopie für App-Prüfungen.
   5. Ein Abschlusslauf bestätigt die Querschnittsbedingung auf dem Endstand: `alle.py --jahr 2026` ist byte-identisch, Prüfregeln 1–10 sind grün, die CI-Kette von Pipeline und App ist grün.
 
-**Plans**: 3/15 plans executed in 8 waves
+**Plans**: 10/15 plans executed in 8 waves
 
 Plans:
 **Wave 1**
@@ -100,13 +100,13 @@ Plans:
 - [x] 09-03-PLAN.md — Basislauf der vollen CI-Kette als gemeinsame Evidenz 09-BASISLAUF.md (AUD-02; D-23)
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 09-04-PLAN.md — Re-Verifikation Phase 1 (AUD-02; D-13)
-- [ ] 09-05-PLAN.md — Re-Verifikation Phase 2 (AUD-02; D-13)
-- [ ] 09-06-PLAN.md — Re-Verifikation Phase 3 (AUD-02; D-13)
-- [ ] 09-07-PLAN.md — Re-Verifikation Phase 4 (AUD-02; D-13)
-- [ ] 09-08-PLAN.md — Re-Verifikation Phase 5, Human-Items mit Beleg (AUD-02; D-13, D-21)
-- [ ] 09-09-PLAN.md — Re-Verifikation Phase 6 (AUD-02; D-13)
-- [ ] 09-10-PLAN.md — Re-Verifikation Phase 7, Nutzerbestätigung, CR-01 zurückgestellt (AUD-02; D-13, D-14, D-22)
+- [x] 09-04-PLAN.md — Re-Verifikation Phase 1 (AUD-02; D-13)
+- [x] 09-05-PLAN.md — Re-Verifikation Phase 2 (AUD-02; D-13)
+- [x] 09-06-PLAN.md — Re-Verifikation Phase 3 (AUD-02; D-13)
+- [x] 09-07-PLAN.md — Re-Verifikation Phase 4 (AUD-02; D-13)
+- [x] 09-08-PLAN.md — Re-Verifikation Phase 5, Human-Items mit Beleg (AUD-02; D-13, D-21)
+- [x] 09-09-PLAN.md — Re-Verifikation Phase 6 (AUD-02; D-13)
+- [x] 09-10-PLAN.md — Re-Verifikation Phase 7, Nutzerbestätigung, CR-01 zurückgestellt (AUD-02; D-13, D-14, D-22)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 - [ ] 09-11-PLAN.md — STATE.md Blockers/Concerns bereinigt, Vermerk Deploy-/Gerätecheck (AUD-03; D-16, D-18)
@@ -142,4 +142,4 @@ Phases execute in numeric order: 8 → 9
 | 6. Kontext-Seiten | v1.0 | 17/17 | Complete | 2026-10-06 |
 | 7. Feinschliff und Veröffentlichung | v1.0 | 14/14 | Complete | 2026-10-07 |
 | 8. Fixes und Triage | v1.0.1 | 12/12 | Complete    | 2026-10-08 |
-| 9. Sicherheit und Audit | v1.0.1 | 3/15 | In Progress | - |
+| 9. Sicherheit und Audit | v1.0.1 | 10/15 | In Progress | - |
