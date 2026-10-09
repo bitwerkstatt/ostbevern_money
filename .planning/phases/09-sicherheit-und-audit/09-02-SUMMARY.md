@@ -204,7 +204,7 @@ None - no external service configuration required.
 ## Next Phase Readiness
 
 - DatenTabelle is in its final form, so the Basislauf (09-03) and the re-verifications of phases 5 to 7 see the same code and their digests do not go stale because of it.
-- The screenreader announcement check (A11Y-03) stays open in `08-UAT.md`; it is not affected by this plan.
+- The screenreader announcement check (A11Y-03) had already passed in `08-UAT.md` Test 1 (user, 2026-10-08, dd77df1); this plan does not affect it (corrected in 09-16).
 
 ## Self-Check: PASSED
 

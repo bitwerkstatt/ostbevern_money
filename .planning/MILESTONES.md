@@ -23,6 +23,6 @@
 - Drei Debug-Sessions (`glossar-sprung-scrollt-zu-weit`, `kachel-kreisumlage-480px`, `produkt-glossarbegriff-ueberlappung`) hat der Nutzer beim Abschluss als gelöst markiert.
 - Anforderungen: 85/85 v1-Anforderungen abgehakt.
 
-**Nachtrag 2026-10-09 (v1.0.1, Phase 9):** Audit und Re-Verifikation in v1.0.1 / Phase 9 nachgeholt. Der Bericht `.planning/v1.0-MILESTONE-AUDIT.md` prüft v1.0 und v1.0.1 gemeinsam (Status `tech_debt`, keine offene Lücke der Kernaussage, 97 von 102 Anforderungen ohne Vorbehalt, die übrigen fünf mit begründet zurückgestellten Browser- und Screenreader-Belegen). Die sieben Verifikationen der Phasen 1–7 sind erneuert und stehen nicht mehr auf „stale“. `04-SECURITY.md` liegt mit `threats_open: 0` vor. Der Closeout-Text darüber bleibt als historischer Stand unverändert.
+**Nachtrag 2026-10-09 (v1.0.1, Phase 9):** Audit und Re-Verifikation in v1.0.1 / Phase 9 nachgeholt. Der Bericht `.planning/v1.0-MILESTONE-AUDIT.md` prüft v1.0 und v1.0.1 gemeinsam (Status `tech_debt`, keine offene Lücke der Kernaussage, 98 von 102 Anforderungen ohne Vorbehalt, die übrigen vier mit begründet zurückgestellten Browser-Belegen). Die sieben Verifikationen der Phasen 1–7 sind erneuert und stehen nicht mehr auf „stale“. `04-SECURITY.md` liegt mit `threats_open: 0` vor. Der Closeout-Text darüber bleibt als historischer Stand unverändert.
 
 ---

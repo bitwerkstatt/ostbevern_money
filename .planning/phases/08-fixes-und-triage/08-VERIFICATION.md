@@ -31,6 +31,7 @@ covered_files:
   - .planning/phases/08-fixes-und-triage/08-11-SUMMARY.md
   - .planning/phases/08-fixes-und-triage/08-12-PLAN.md
   - .planning/phases/08-fixes-und-triage/08-12-SUMMARY.md
+  - .planning/phases/08-fixes-und-triage/08-UAT.md
   - app/e2e/menueDrawer.ts
   - app/e2e/mobil.spec.ts
   - app/e2e/tabellenrahmen.ts
@@ -45,13 +46,14 @@ covered_files:
   - app/src/lib/__tests__/geldfluss.test.ts
   - app/src/lib/__tests__/quelltext.test.ts
   - app/src/lib/berechnung.ts
+  - app/src/lib/einnahmen.ts
   - app/src/lib/einwohner.ts
   - app/src/lib/geldfluss.ts
   - app/src/lib/zuschuesse.ts
   - daten/manuell/texte/erklaerungen.md
   - daten/manuell/texte/glossar.md
   - pipeline/ostbevern/texte.py
-covered_digest: "v3:sha256:eda89fecc881b201b8c8414b1af70f57707120b97609a020956d158c488dcb11"
+covered_digest: "v3:sha256:8eb85259f12d71c3652b304df20b0161db7a82eb9ddec8d2c85671c6a719d731"
 behavior_unverified: 0
 overrides_applied: 0
 re_verification:
@@ -69,19 +71,22 @@ coincidental_reliance_items:
 human_verification:
   - test: "Screenreader-Ansage des Tabellennamens bei 360 px auf /ausgaben (VoiceOver oder NVDA): in eine Datentabelle navigieren, deren Rahmen scrollt"
     expected: "Der Name der Tabelle wird beim Betreten von Region und Tabelle nicht störend doppelt vorgelesen (A11Y-03). Wird er es, soll nur eines der beiden Elemente (Region oder Caption) den Namen tragen."
-    why_human: "DOM und ARIA-Baum sind per Playwright belegt (genau ein aria-labelledby, kein aria-label, eindeutige Regionnamen). Ob ein Screenreader Region und Tabelle trotzdem nacheinander ansagt, ist RESEARCH-Annahme A1 und lässt sich ohne echten Screenreader nicht prüfen. Offen in 08-UAT.md (Test 1, result pending)."
+    why_human: "DOM und ARIA-Baum sind per Playwright belegt (genau ein aria-labelledby, kein aria-label, eindeutige Regionnamen). Ob ein Screenreader Region und Tabelle trotzdem nacheinander ansagt, ist RESEARCH-Annahme A1 und lässt sich ohne echten Screenreader nicht prüfen. Vom Nutzer in `08-UAT.md` Test 1 bestanden (result: pass, 2026-10-08, Commit dd77df1)."
+    beleg: "UAT 08 Test 1 (pass, Nutzer, 2026-10-08)"
+    verifier_geprueft: "nein"
+    hinweis: "Der Verifier hat DOM und ARIA-Baum geprüft (Playwright, genau ein Name je Rahmen); das Vorleseverhalten mit einem echten Screenreader hat der Nutzer bestätigt"
 ---
 
 # Phase 8: Fixes und Triage Verification Report
 
 **Phase Goal:** Alles, was die App in Worten über Zahlen sagt, stimmt auch in Grenzfällen, und Datentabellen und das mobile Menü funktionieren für Screenreader und Touch ohne Lücken. Jeder der 28 offenen Review-Befunde aus den Phasen 1, 5 und 6 ist behoben, übersprungen oder begründet zurückgestellt, und das ist im jeweiligen Ledger belegt. Reihenfolge: zuerst Fixes an Zahlen und Texten, dann Barrierefreiheit und Hygiene, zum Schluss die Ledger auf `open: 0`.
 **Verified:** 2026-10-09T06:03:00Z
-**Status:** passed (die Screenreader-Ansage für A11Y-03 bleibt ein offener menschlicher Check in `08-UAT.md`, Test 1)
+**Status:** passed (Screenreader-Ansage für A11Y-03 vom Nutzer bestanden, `08-UAT.md` Test 1, 2026-10-08; nicht vom Verifier geprüft)
 **Re-verification:** Ja. Die Verifikation vom 2026-10-08 war nach dem D-20-Fix aus Plan 09-02 veraltet (Änderung an `DatenTabelle.vue`, `datenTabelle.ts` und den Tests). Frühere Re-Verifikation: Stand nach den Review-Fixes WR-01..WR-03 (e8e25d5, 13eb786, 98803c4) und den Nyquist-Tests (7b9f0a6), geprüft gegen HEAD 90f8315. Diese Fassung ergänzt den Abschnitt „Re-Verifikation 09-02 (D-15)“ unten.
 
 ## Goal Achievement
 
-Der Code erreicht das Phasenziel, auch nach den Review-Fixes. Es gibt keine fehlgeschlagene Wahrheit, keinen Stub und keinen Blocker. Offen bleibt ein menschlicher Check: die Screenreader-Ansage für A11Y-03.
+Der Code erreicht das Phasenziel, auch nach den Review-Fixes. Es gibt keine fehlgeschlagene Wahrheit, keinen Stub und keinen Blocker. Die Screenreader-Ansage für A11Y-03 hat der Nutzer am 2026-10-08 in `08-UAT.md` Test 1 bestanden; der Verifier hat sie nicht selbst geprüft.
 
 ### Observable Truths (ROADMAP Success Criteria)
 
@@ -89,7 +94,7 @@ Der Code erreicht das Phasenziel, auch nach den Review-Fixes. Es gibt keine fehl
 | --- | ----- | ------ | -------- |
 | 1 | Sätze über Zahlen stimmen in Grenzfällen: Lesehilfe sagt „genau“ nur bei echtem Ausgleich, Minderaufwand-Hinweis nie negativ, `rd.`-Regel an genau einer Stelle | ✓ VERIFIED | `lesehilfeSatz` (`app/src/lib/geldfluss.ts`) unterscheidet vier Fälle (A Defizit, B Überschuss, C nur Minderaufwand, D nichts). „genau“ steht nur in Fall D. Fall C sagt, dass erst der Minderaufwand beide Seiten ausgleicht. `minderaufwandBetrag` (`lib/berechnung.ts`) liefert `null` bei 0 oder fehlendem Wert, den positiven Betrag bei negativem Z. 27 und wirft bei Z. 27 > 0. `RD_PRAEFIX` und `RUND_PRAEFIX` stehen im App-Code nur in `charts/format.ts`. Ein Grep nach `'rd. '`-Literalen und Templates außerhalb von Tests findet keine Altkopie. vitest in Scratch-Kopie auf HEAD: 2158 Tests grün. |
 | 2 | Jahreszahlen, abgeleitete und fehlende Werte sind erkennbar | ✓ VERIFIED (coincidental-reliance) | Eigener Aufruf von `pruefe_text` auf HEAD: „Im Jahr 2026“, „Seit 1900“ und „Bis 2099“ lehnt er mit der Meldung „Handgetippte Jahreszahl … nur als Platzhalter, zum Beispiel {{jahr.haushaltsjahr\|jahr}}“ ab. `{{jahr.haushaltsjahr\|jahr}}` besteht, `{{jahr.haushaltsjahr\|zahl}}` scheitert am Kürzel. 2100 fällt in die Regel „nackte Ziffer“. Der WR-01-Fix `_pruefe_jahrbezug` (`texte.py:585`) ist in `loese_auf` verdrahtet (`:631`). `ZuschussListe` zeigt die Zusammen-Zeile über `zusammen().berechnet` mit Etikett. `StellenplanPage` setzt `berechnet` auf allen drei Kacheln und nennt über `seitenText` nur deren Seiten. `EbenenTabelle.vue` ruft im Modus `zuschussbedarf` `einwohnerZahl()` auf, die bei fehlendem oder ungültigem Wert wirft. Wirkung gilt nur für Jahrgang 2026, siehe `coincidental_reliance_items`. |
-| 3 | `DatenTabelle`-Rahmen hat Rolle und Namen, kein doppelter Name; Menü schließt beim Link der aktuellen Seite | ✓ VERIFIED | `tabellenRahmen` (seit 09-02, ruft `rahmenAttribute`) liefert bei Überlauf `tabindex`, `role=region` und `aria-labelledby` auf die Caption, nie `aria-label`, und zwar für jede `beschriftung`: leer oder nur Leerzeichen heißt die Caption „Tabelle“. `beschriftung` ist Pflicht-Prop. Alle 29 `<DatenTabelle>`-Aufrufe übergeben sie (Grep), keiner leer. `App.vue` `beiDrawerLinkKlick` schließt bei jedem Primärklick im offenen Drawer, ignoriert Strg/Meta/Shift/Alt und Nicht-Primärtasten (WR-02-Fix), `oeffneDrawer` setzt den Merker zurück. `beiAfterHide` setzt den Fokus auf die h1. Playwright (Orchestrator auf HEAD über `scripts/e2e-wie-ci.sh`): mobil 41, ci 89 grün, darunter „Link der aktuellen Seite“, Zusatztasten-Fall und alle Tabellenrahmen-Tests mit axe. Die Screenreader-Ansage bleibt menschlicher Check. |
+| 3 | `DatenTabelle`-Rahmen hat Rolle und Namen, kein doppelter Name; Menü schließt beim Link der aktuellen Seite | ✓ VERIFIED | `tabellenRahmen` (seit 09-02, ruft `rahmenAttribute`) liefert bei Überlauf `tabindex`, `role=region` und `aria-labelledby` auf die Caption, nie `aria-label`, und zwar für jede `beschriftung`: leer oder nur Leerzeichen heißt die Caption „Tabelle“. `beschriftung` ist Pflicht-Prop. Alle 29 `<DatenTabelle>`-Aufrufe übergeben sie (Grep), keiner leer. `App.vue` `beiDrawerLinkKlick` schließt bei jedem Primärklick im offenen Drawer, ignoriert Strg/Meta/Shift/Alt und Nicht-Primärtasten (WR-02-Fix), `oeffneDrawer` setzt den Merker zurück. `beiAfterHide` setzt den Fokus auf die h1. Playwright (Orchestrator auf HEAD über `scripts/e2e-wie-ci.sh`): mobil 41, ci 89 grün, darunter „Link der aktuellen Seite“, Zusatztasten-Fall und alle Tabellenrahmen-Tests mit axe. Die Screenreader-Ansage hat der Nutzer bestanden (`08-UAT.md` Test 1, 2026-10-08). |
 | 4 | Ledger 01, 05, 06 stehen auf `open: 0`, jede Zeile nennt Commit oder Begründung | ✓ VERIFIED | Eigene Prüfung: `open: 0` in allen drei Dateien (total 10, 18, 15). Keine Zeile mehr mit `disposition: open` und keine Tabellenzeile `open`. Alle Zeilen `fixed`, bis auf 06/WR-01 `skipped` mit Verweis auf UAT 06 Test 1 und PROJECT.md. Jeder zitierte 7-stellige Hash wird von `git cat-file -e` als Commit erkannt, keiner fehlt. Die 28 Befunde (5 + 13 + 10) sind abgedeckt. Die Zusatzzeilen in 05 und 06 sind bereits im Fix-Stand behobene Altbefunde. |
 | 5 | Querschnittsbedingung: `alle.py --jahr 2026` byte-identisch, Regeln 1–10 grün, CI-Kette grün | ✓ VERIFIED | Eigener Lauf auf HEAD nach WR-01: `uv run --directory pipeline python alle.py --jahr 2026` Exit 0, Regeln 1–10 „grün“ in Schritt 06, danach `git diff --stat --exit-code -- daten app/src/data` leer und `git status --porcelain --untracked-files=all -- daten app/src/data app/public/quellen` leer. pytest gesamt: 681 passed. ruff check und ruff format --check grün. vitest 2158 grün (eigener Lauf, Scratch). type-check, lint, format, build und Playwright: Messung des Orchestrators auf HEAD (grün). |
 
@@ -150,13 +155,13 @@ Alle 13 IDs aus den PLAN-Frontmatter (08-01 bis 08-12) stehen in `REQUIREMENTS.m
 | TXT-06 | 08-03 | ✓ SATISFIED | `einwohnerZahl()` wirft laut |
 | A11Y-01 | 08-06 | ✓ SATISFIED | Rolle und Name bei Überlauf, Pflicht-`beschriftung`, Guard |
 | A11Y-02 | 08-06 | ✓ SATISFIED | Drawer schließt bei jedem Link, e2e grün |
-| A11Y-03 | 08-06 | ? NEEDS HUMAN | Ein Name im DOM belegt, Screenreader-Ansage offen |
+| A11Y-03 | 08-06 | ✓ SATISFIED | Ein Name im DOM belegt (Playwright, mobil.spec.ts „Rahmen mit Rolle und genau einem Namen“); Screenreader-Ansage vom Nutzer bestanden (08-UAT.md Test 1, pass, 2026-10-08), nicht vom Verifier geprüft |
 | TRI-01 | 08-12 | ✓ SATISFIED | Ledger 01 `open: 0` |
 | TRI-02 | 08-12 | ✓ SATISFIED | Ledger 05 `open: 0` |
 | TRI-03 | 08-12 | ✓ SATISFIED | Ledger 06 `open: 0`, 06/WR-01 `skipped` mit UAT-Begründung |
 | TRI-04 | 08-06 bis 08-12 | ✓ SATISFIED | Hygiene-Befunde behoben, Commits im Ledger |
 
-Hinweis zur Nachführung: In `REQUIREMENTS.md` stehen alle 13 Einträge noch als `[ ]` und „Pending“, und `ROADMAP.md` führt Phase 8 als „In Progress“. Das ist Sache des Orchestrators beim Phasenabschluss, kein Codebefund.
+Hinweis zur Nachführung (erledigt): `REQUIREMENTS.md` führt alle 13 Anforderungen als `[x]` und Complete, `ROADMAP.md` führt Phase 8 als abgeschlossen (2026-10-08).
 
 ### Anti-Patterns Found
 
@@ -175,18 +180,19 @@ Hinweis zur Nachführung: In `REQUIREMENTS.md` stehen alle 13 Einträge noch als
 
 **Test:** In VoiceOver oder NVDA bei 360 px Breite `/ausgaben` öffnen und mit dem Screenreader in eine Datentabelle navigieren, deren Rahmen horizontal scrollt.
 **Expected:** Der Tabellenname wird nicht störend doppelt vorgelesen (Region plus Caption). Wird er doppelt vorgelesen, soll nur eines der beiden Elemente den Namen tragen (Fallback der UI-SPEC).
-**Why human:** Playwright belegt genau einen Namen im ARIA-Baum. Das Vorleseverhalten realer Screenreader ist RESEARCH-Annahme A1 und nicht automatisiert prüfbar. Der Eintrag steht unverändert in `08-UAT.md` (Test 1, `result: [pending]`).
+**Why human:** Playwright belegt genau einen Namen im ARIA-Baum. Das Vorleseverhalten realer Screenreader ist RESEARCH-Annahme A1 und nicht automatisiert prüfbar. Der Nutzer hat den Check in `08-UAT.md` Test 1 bestanden (result: pass, 2026-10-08).
+**Beleg:** UAT 08 Test 1 (pass, Nutzer, 2026-10-08, Commit dd77df1), nicht vom Verifier geprüft
 
 ### Offene Punkte, keine Gaps
 
-- **Steuergruppen auf Leitfragen-Seiten** („Grundsteuer (A+B)“ auf `/geldfluss`, `/einnahmen`) sind von der App gebildete Summen ohne „berechnet“-Etikett. TXT-05 und SC 2 beschränken sich auf die Kontextseiten, ein Test sichert den Zustand bewusst. Entscheidung des Nutzers, ob die Regel dort auch gelten soll.
+- **Steuergruppen auf Leitfragen-Seiten:** erledigt durch G-09-03 (Test `b3b2658`, Fix `448e43d`, Plan 09-14). Die Gruppensumme „Grundsteuer (A+B)“ entsteht nur in `baueGeldfluss` (`app/src/lib/geldfluss.ts`, `STEUER_GRUPPEN`) und trägt auf `/geldfluss` jetzt das Etikett „berechnet“; `/einnahmen` zeigt Grundsteuer A und B als einzelne Posten (`app/src/lib/einnahmen.ts`) und bildet keine Gruppensumme.
 - **Feste Jahre in Text-Schlüsseln:** `_pruefe_jahrbezug` fängt auseinanderlaufende Beschriftung und Wertschlüssel jetzt ab (mengenweise je Absatz). Vor dem Bau des nächsten Jahrgangs gegenprüfen.
-- **Vier ältere Befunde aus Ledger 05** außerhalb der 28 stehen laut 08-12 SUMMARY noch im Code. Sie gehören nicht zum Umfang dieser Phase.
+- **Vier ältere Befunde aus Ledger 05** (Fußtext, 08-12-SUMMARY Offener Punkt 1) hat das Milestone-Audit triagiert: Superlativ G-09-01 und „PDF-Seite“ G-09-02 in 09-14 behoben (`f8aef3f`, `ce5880e`), „-0 €“ G-09-04 und `useJahr`-Watcher G-09-05 begründet zurückgestellt (`.planning/v1.0-MILESTONE-AUDIT.md`, Lückenliste).
 - **08-REVIEW WR-02** (leere `beschriftung` ohne Tastaturfokus): in Plan 09-02 behoben, der Rahmen fällt auf den Ersatznamen „Tabelle“ zurück (siehe unten).
 
 ### Gaps Summary
 
-Keine Lücken. Alle fünf Success Criteria sind am Code auf HEAD belegt, auch durch eigene Läufe von pytest (681), ruff, vitest (2158), `pruefe_text`-Aufrufen und der Pipeline-Reproduzierbarkeit nach WR-01. Playwright (mobil 41, ci 89) und die übrigen App-Prüfungen (type-check, lint, format, build) stützen sich auf die Messung des Orchestrators auf HEAD. Der Status ist `human_needed`, weil die Screenreader-Ansage für A11Y-03 nur ein Mensch mit einem echten Screenreader prüfen kann.
+Keine Lücken. Alle fünf Success Criteria sind am Code auf HEAD belegt, auch durch eigene Läufe von pytest (681), ruff, vitest (2158), `pruefe_text`-Aufrufen und der Pipeline-Reproduzierbarkeit nach WR-01. Playwright (mobil 41, ci 89) und die übrigen App-Prüfungen (type-check, lint, format, build) stützen sich auf die Messung des Orchestrators auf HEAD. Der Status ist `passed`. Die Screenreader-Ansage für A11Y-03 hat der Nutzer in `08-UAT.md` Test 1 bestanden (2026-10-08); sie zählt als Nutzerbeleg, nicht als Verifier-Prüfung.
 
 ## Re-Verifikation 09-02 (D-15)
 
@@ -204,7 +210,7 @@ Anlass: Plan 09-02 hat `DatenTabelle.vue`, `datenTabelle.ts`, `zustaende.test.ts
 - Playwright über `scripts/e2e-wie-ci.sh`: Projekt `mobil` 41 grün (darunter alle „Rahmen mit Rolle und genau einem Namen“-Tests und axe auf allen Routen), `interaktion.spec.ts` plus `smoke.spec.ts` im Projekt `ci` 62 grün.
 - Ledger: `08-REVIEW-DISPOSITION.md` `open: 0`, `total: 10`.
 
-`covered_files` und `covered_digest` stammen unverändert aus `verification.fingerprint`. Die Screenreader-Ansage (A11Y-03) bleibt offen in `08-UAT.md` und ist keine Folge dieser Änderung.
+`covered_files` und `covered_digest` stammen unverändert aus `verification.fingerprint`. Die Screenreader-Ansage (A11Y-03) war zu diesem Zeitpunkt in `08-UAT.md` Test 1 bereits bestanden (2026-10-08) und ist von dieser Änderung nicht betroffen (Korrektur 09-16).
 
 ## Nachtrag 09-15 (D-12)
 
@@ -214,9 +220,32 @@ Stand 2026-10-09. Nach dem Basislauf (head `1d0df35da1842daec515b40dd62f8d918e24
 |--------|----------------------------|---------------------|------|
 | `448e43d` | `app/src/lib/geldfluss.ts` | SC 2 („abgeleitete und fehlende Werte sind erkennbar“) wird stärker: eine von der App gebildete Summe ist jetzt als „berechnet“ erkennbar. SC 1 (`lesehilfeSatz` mit vier Fällen) ist unberührt, die Funktion steht nicht im Diff. SC 3 bis 5 sind nicht betroffen | `geldfluss.test.ts` „G-09-03“ (sechs Jahre), vorher rot in `b3b2658`; `lesehilfeSatz`-Tests in `geldfluss.test.ts:437` und `:487` weiter grün |
 
-Nachprüfung in einer Scratch-Kopie von `app/` mit Linux-`node_modules` (`npm ci`) auf dem Stand `7e2b775`: `geldfluss`, `berechnung`, `rdregel`, `quelltext`, `zustaende` und `einwohner` zusammen 419 Tests grün; die volle App-Suite 2207 Tests grün (zuvor 2162). Keine Wahrheit gebrochen, kein Gap, keine Regression; der Score bleibt 5/5 und der Status `passed`. Die Screenreader-Ansage (A11Y-03) bleibt offen in `08-UAT.md` und ist keine Folge dieser Änderung. Der volle Lauf der CI-Kette auf dem Endstand (SC 5) steht im Abschnitt „Abschlusslauf“ von `.planning/v1.0-MILESTONE-AUDIT.md`.
+Nachprüfung in einer Scratch-Kopie von `app/` mit Linux-`node_modules` (`npm ci`) auf dem Stand `7e2b775`: `geldfluss`, `berechnung`, `rdregel`, `quelltext`, `zustaende` und `einwohner` zusammen 419 Tests grün; die volle App-Suite 2207 Tests grün (zuvor 2162). Keine Wahrheit gebrochen, kein Gap, keine Regression; der Score bleibt 5/5 und der Status `passed`. Die Screenreader-Ansage (A11Y-03) war zu diesem Zeitpunkt in `08-UAT.md` Test 1 bereits bestanden (2026-10-08) und ist von dieser Änderung nicht betroffen (Korrektur 09-16). Der volle Lauf der CI-Kette auf dem Endstand (SC 5) steht im Abschnitt „Abschlusslauf“ von `.planning/v1.0-MILESTONE-AUDIT.md`.
 
 `covered_files` und `covered_digest` stammen unverändert aus `verification.fingerprint`, mit den bisherigen Implementierungsdateien plus `app/src/lib/__tests__/geldfluss.test.ts`.
+
+## Nachtrag 09-16 (Korrektur A11Y-03 und offene Punkte)
+
+Stand 2026-10-09. Anlass: `09-VERIFICATION.md` Wahrheit 6 (`gaps_found`, 2026-10-09). Dieser Bericht hat die Screenreader-Ansage für A11Y-03 als ausstehend geführt, obwohl der Nutzer sie schon bestanden hatte.
+
+**Beleg:** `.planning/phases/08-fixes-und-triage/08-UAT.md` (`status: complete`, Test 1 `result: pass`, `updated: 2026-10-08T18:36:09Z`), Commit `dd77df1` vom 2026-10-08 20:36 +0200, also vor dem Start der Phase 9. Der Beleg ist ein Nutzerergebnis: Der Verifier hat die Ansage mit einem echten Screenreader nicht selbst geprüft (`verifier_geprueft: "nein"`, Muster aus `05-VERIFICATION.md` und `07-VERIFICATION.md`).
+
+Korrigierte Stellen:
+
+| Stelle | Korrektur |
+|--------|-----------|
+| Frontmatter, Eintrag `human_verification` | `why_human` nennt das bestandene UAT, neue Schlüssel `beleg`, `verifier_geprueft`, `hinweis` |
+| Kopfzeile `**Status:**` | Nutzerbeleg mit Verweis auf `08-UAT.md` Test 1 |
+| Goal Achievement | Nutzer hat bestanden, Verifier hat nicht selbst geprüft |
+| Wahrheit 3 | letzter Satz nennt das bestandene UAT |
+| Requirements Coverage | Zeile A11Y-03 `✓ SATISFIED` mit Nutzerbeleg |
+| Hinweis zur Nachführung | `REQUIREMENTS.md` und `ROADMAP.md` stehen auf dem Endstand |
+| Human Verification Required | Beleg-Zeile statt offenem Check |
+| Offene Punkte | Steuergruppen durch G-09-03 erledigt; die vier älteren Befunde aus Ledger 05 verweisen auf die Triage im Audit |
+| Gaps Summary | Statussatz nennt den Nutzerbeleg |
+| Re-Verifikation 09-02 und Nachtrag 09-15 | je ein Satz zum Screenreader-Check |
+
+Es ist kein Code geändert, der Score bleibt 5/5, der Status bleibt `passed`. Das ist keine neue Re-Verifikation, sondern die Korrektur des Berichts, den D-15 und D-20 schon erneuert hatten. `covered_files` ist um `.planning/phases/08-fixes-und-triage/08-UAT.md` und `app/src/lib/einnahmen.ts` ergänzt (Beleg und Prüfung der Steuergruppen), `covered_digest` stammt aus `verification.fingerprint`.
 
 ---
 

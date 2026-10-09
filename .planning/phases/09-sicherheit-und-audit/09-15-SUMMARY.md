@@ -190,7 +190,11 @@ None - keine neue Angriffsfläche; es wurden nur Berichte und Verwaltungsdokumen
 
 ## Next Phase Readiness
 
-Der nächste Schritt für den Nutzer (D-19): die zurückgestellten Punkte im Abschnitt „Tech Debt“ von `.planning/v1.0-MILESTONE-AUDIT.md` ansehen (insbesondere G-09-11, den Screenreader-Check zu A11Y-03 in `08-UAT.md`, und G-09-22, die nicht eingecheckten Planungsdateien im Hauptverzeichnis) und danach selbst `/gsd-complete-milestone` ausführen. Dieser Plan hat den Meilenstein v1.0.1 nicht abgeschlossen, keine Phase archiviert und die Meilensteinzeilen von `ROADMAP.md` nicht angefasst. Die Verifikation und das Code-Review der Phase 9 laufen im Execute-Workflow nach diesem Plan; der Abschlusslauf hat den Code geprüft, der danach nicht mehr geändert wird (`git diff --quiet 109cfac HEAD -- pipeline app daten scripts .github` endet mit Exit 0).
+Der nächste Schritt für den Nutzer (D-19): die zurückgestellten Punkte im Abschnitt „Tech Debt“ von `.planning/v1.0-MILESTONE-AUDIT.md` ansehen (insbesondere G-09-22, die nicht eingecheckten Planungsdateien im Hauptverzeichnis) und danach selbst `/gsd-complete-milestone` ausführen. Dieser Plan hat den Meilenstein v1.0.1 nicht abgeschlossen, keine Phase archiviert und die Meilensteinzeilen von `ROADMAP.md` nicht angefasst. Die Verifikation und das Code-Review der Phase 9 laufen im Execute-Workflow nach diesem Plan; der Abschlusslauf hat den Code geprüft, der danach nicht mehr geändert wird (`git diff --quiet 109cfac HEAD -- pipeline app daten scripts .github` endet mit Exit 0).
+
+## Korrektur 09-16
+
+Die Entscheidung zum Anforderungs-Score (97/102) und die fünf `partial`-Zeilen stützten sich auf einen veralteten Satz in `08-VERIFICATION.md`: `08-UAT.md` Test 1 war seit dem 2026-10-08 bestanden (`dd77df1`, vom Nutzer, nicht vom Verifier geprüft). Plan 09-16 hat A11Y-03 (v1.0.1) auf `satisfied`, G-09-11 auf `closed` und den Score auf 98/102 gesetzt; es bleiben vier `partial`-Zeilen aus Phase 5. Die `key-decisions` im Frontmatter bleiben als historischer Stand von 09-15 stehen.
 
 ## Self-Check: PASSED
 
