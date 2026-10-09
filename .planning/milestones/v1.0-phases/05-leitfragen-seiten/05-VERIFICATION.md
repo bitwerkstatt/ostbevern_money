@@ -1,6 +1,6 @@
 ---
 phase: 05-leitfragen-seiten
-verified: 2026-10-09T06:36:00Z
+verified: 2026-10-09T06:41:00Z
 status: human_needed
 score: "11/11 Wahrheiten in Code und Daten belegt (5 ROADMAP-Erfolgskriterien, 6 Must-haves aus 05-16); 5 verhaltensabhängige Teilwahrheiten ohne Test"
 covered_files:
@@ -37,8 +37,10 @@ covered_files:
   - .planning/milestones/v1.0-phases/05-leitfragen-seiten/05-16-PLAN.md
   - .planning/milestones/v1.0-phases/05-leitfragen-seiten/05-16-SUMMARY.md
   - app/e2e/interaktion.spec.ts
+  - app/e2e/inventar.spec.ts
   - app/e2e/kacheln.spec.ts
   - app/e2e/mobil.spec.ts
+  - app/e2e/smoke.spec.ts
   - app/src/App.vue
   - app/src/charts/echartsTheme.ts
   - app/src/charts/wertartStil.ts
@@ -73,13 +75,18 @@ covered_files:
   - app/src/lib/__tests__/ansicht.test.ts
   - app/src/lib/__tests__/aufwandsarten.test.ts
   - app/src/lib/__tests__/config.test.ts
+  - app/src/lib/__tests__/drilldown.test.ts
   - app/src/lib/__tests__/einnahmen.test.ts
+  - app/src/lib/__tests__/ertragsarten.test.ts
   - app/src/lib/__tests__/geldfluss.test.ts
   - app/src/lib/__tests__/glossar.test.ts
+  - app/src/lib/__tests__/jahr.test.ts
   - app/src/lib/__tests__/kennzahlen.test.ts
+  - app/src/lib/__tests__/kreisumlage.test.ts
   - app/src/lib/__tests__/quelltext.test.ts
   - app/src/lib/__tests__/sprungziel.test.ts
   - app/src/lib/__tests__/stiltokens.test.ts
+  - app/src/lib/__tests__/texte.test.ts
   - app/src/lib/__tests__/zeitreihen.test.ts
   - app/src/lib/ansage.ts
   - app/src/lib/ansicht.ts
@@ -112,8 +119,9 @@ covered_files:
   - pipeline/ostbevern/app_daten.py
   - pipeline/ostbevern/texte.py
   - pipeline/tests/test_app_daten.py
+  - pipeline/tests/test_pruefung.py
   - pipeline/tests/test_texte.py
-covered_digest: "v3:sha256:765ae9aed62a38d3dae680c07a7b250c5e0d778eee31af94ac4662f53464a096"
+covered_digest: "v3:sha256:9325a128dc0cfeffb6de189fe96557d6720217903d173bce995d02dc81e51da0"
 behavior_unverified: 5
 overrides_applied: 0
 re_verification:
@@ -140,66 +148,114 @@ advisory:
     reason: "Stimmt in allen sechs Jahren der Daten (kreisumlage.test.ts:49-50 prüft 11.001.181 € als größten obersten Knoten); wird erst bei anderen Daten falsch"
     evidence_status: "none provided"
 behavior_unverified_items:
-  - truth: "Nach jedem Seitenwechsel springt der Fokus auf die h1, der Titel wird gesetzt und die Ansage erfolgt (D-13, router/index.ts afterEach)"
-    test: "Im Browser zwischen Start, Einnahmen, Ausgaben, Geldfluss und Glossar wechseln (Menü und Tastatur), danach document.title, document.activeElement und die Live-Region prüfen; zusätzlich /#/glossar#hebesatz direkt aufrufen"
-    expected: "Fokus liegt auf der h1 der neuen Seite (bei Fragment auf dem Zielelement), Titel lautet „{Seite} – Ostbevern Money“, die Live-Region meldet „Seite … geladen“; ein reiner Query-Wechsel (Jahr, Modus) lässt den Fokus am Steuerelement"
-    why_human: "Es gibt keinen Test für router.afterEach oder die Komponenten; Präsenz und Verdrahtung sind belegt, Fokus und Ansage sind Laufzeitverhalten"
+  - truth: "Nach einem Seitenwechsel meldet die Live-Region „Seite … geladen“ (ansagen), bei einem Aufruf mit Fragment liegt der Fokus auf dem Zielelement, und ein reiner Query-Wechsel (Jahr, Modus) lässt den Fokus am Steuerelement (D-13, router/index.ts afterEach). Titel und Fokus auf der h1 bei jedem Menü-Routenwechsel sind inzwischen automatisiert belegt und nicht mehr Teil dieses Punkts"
+    test: "Im Browser zwischen Start, Einnahmen, Ausgaben, Geldfluss und Glossar wechseln und die Live-Region prüfen (Screenreader oder Inspektor); /#/glossar#hebesatz direkt aufrufen; auf /#/einnahmen oder /#/ausgaben das Jahr oder den Modus umschalten und document.activeElement prüfen"
+    expected: "Die Live-Region meldet „Seite … geladen“; bei Fragment liegt der Fokus auf dem Zielelement; ein reiner Query-Wechsel lässt den Fokus am Steuerelement"
+    why_human: "Kein Test führt ansagen() oder den Fragment- und Query-Zweig von router.afterEach aus; ansage.ts braucht ein DOM und requestAnimationFrame"
+    beleg: "offen"
+    verifier_geprueft: "nein"
+    hinweis: "Teilbeleg automatisiert: e2e/interaktion.spec.ts:278:5 › Fokus und Titel bei jedem Routenwechsel (A11Y-02) › Route / bis /ueber (10 Routen, 09-BASISLAUF.md) belegt Titel und Fokus auf der h1. Für Live-Region und Query-Wechsel gibt es weder Test noch UAT-Eintrag; der Fragment-Fokus gehört zu UAT 05 Test 6 (Link scrollt zum Begriff und setzt den Fokus), nicht aber die Live-Region"
   - truth: "Klick auf einen Aufgabenbereich im Sankey öffnet /ausgaben?pb=… mit gleichem Jahr (FLUSS-03); Hover hebt Pfade hervor (emphasis focus adjacency)"
     test: "Auf /#/geldfluss bei 1280 px einen Aufgabenbereichsknoten anklicken und mit der Maus über Knoten und Flüsse fahren; mit gewähltem Jahr 2025 wiederholen"
     expected: "Navigation zu Ausgaben mit pb und jahr in der URL; Ertragsknoten navigieren nicht; Hover dimmt nicht benachbarte Pfade"
-    why_human: "zielCodeAusKlick ist getestet, der echte Canvas-Klick und der Router-Aufruf in SankeyDiagramm.vue laufen nur im Browser"
+    why_human: "zielCodeAusKlick ist getestet, der echte Canvas-Klick und der Router-Aufruf in SankeyDiagramm.vue:26-29 laufen nur im Browser; kein Playwright-Test berührt den Sankey"
+    beleg: "offen"
+    verifier_geprueft: "nein"
+    hinweis: "Teilbeleg automatisiert: geldfluss.test.ts:257-283 (zielCodeAusKlick), geldfluss.ts:497 (emphasis). UAT 05 Test 5 (pass) prüfte Bilanz, Beschriftungen und Lesehilfe, nicht Klick und Hover"
   - truth: "Ausgaben-Drilldown (Treemap-Klick, Brotkrumen, Zurück-Taste) und Umschalter Aufwand/Zuschussbedarf ändern den URL-Zustand und die Ebene"
     test: "Auf /#/ausgaben Kachel anklicken (Aufgabenbereich, Produktgruppe, Produkt), Brotkrumen und Browser-Zurück nutzen, Umschalter betätigen, ungültige URL-Werte (?pb=xyz) eintragen"
     expected: "Ebene wechselt, Brotkrumen und Fokus folgen, Zurück führt eine Ebene hoch, ungültige Werte werden auf die oberste Ebene bereinigt"
-    why_human: "Die Zustandslogik (ansicht, drilldown) ist per Unit-Test belegt; das Zusammenspiel von wa-radio-group-Ereignis, ECharts-Klick, Router und Fokus ist nicht getestet"
-  - truth: "Auf schmalen Bildschirmen (< 700 px) erscheint statt des Sankeys der gestapelte Balken (FLUSS-04); Kopfmenü wird zum Drawer"
-    test: "Fenster auf 360 px verkleinern und /#/geldfluss sowie das Menü öffnen; über 700 px zurück"
-    expected: "GeldflussBalken statt SankeyDiagramm, kein horizontales Scrollen, Drawer öffnet, schließt bei Navigation und gibt den Fokus an die Menütaste zurück"
-    why_human: "useSchmalerBildschirm und die Drawer-Ereignisse hängen an matchMedia und Web-Awesome-Elementen, die vitest ohne DOM nicht ausführt"
+    why_human: "Die Zustandslogik (ansicht, drilldown) ist per Unit-Test belegt; das Zusammenspiel von wa-radio-group-Ereignis, ECharts-Klick, Router und Fokus ist nicht getestet, es gibt keinen Playwright-Test für /ausgaben außer Quelle-Knopf und Smoke"
+    beleg: "offen"
+    verifier_geprueft: "nein"
+    hinweis: "Teilbeleg automatisiert: ansicht.test.ts:25-120 (URL-Zustand, Bereinigung), drilldown.test.ts:183-290 (Öffnen, Brotkrumen). UAT 05 Test 3 (pass) betraf die Optik von Treemap und Zuschuss-Balken, UAT 05 Test 4 (pass) den Zurück-Link der Produktseite; Treemap-Klick, Brotkrumen und Umschalter nannte keiner der beiden"
+  - truth: "Auf schmalen Bildschirmen (< 700 px) erscheint auf /geldfluss statt des Sankeys der gestapelte Balken (FLUSS-04). Der Drawer-Teil des alten Punkts (Kopfmenü wird zum Drawer, schließt bei Navigation, Fokus kehrt zur Menütaste zurück) ist inzwischen automatisiert belegt und nicht mehr Teil dieses Punkts"
+    test: "Fenster auf 360 px verkleinern und /#/geldfluss öffnen; über 700 px zurück"
+    expected: "GeldflussBalken statt SankeyDiagramm unter 700 px, SankeyDiagramm darüber, kein horizontales Scrollen"
+    why_human: "useSchmalerBildschirm hängt an matchMedia; kein Test prüft, welche der beiden Darstellungen auf /geldfluss erscheint (GeldflussPage.vue:65-67)"
+    beleg: "offen"
+    verifier_geprueft: "nein"
+    hinweis: "Teilbeleg automatisiert: geldfluss.test.ts:375-418 (Balkendaten), e2e/mobil.spec.ts:151:5 › Route /geldfluss (kein Überlauf bei 360 px, beweist die Umschaltung aber nicht), Drawer: e2e/interaktion.spec.ts:248:3, :314:3, :320:3, :324:3 und e2e/mobil.spec.ts:223:3 bis :243:3 (09-BASISLAUF.md). UAT 05 Test 5 (pass) betraf 700 bis 1280 px"
   - truth: "Nach einem Klick auf einen GlossarBegriff oder eine Sprungmarke landet der Zielbegriff unter der festen wa-page-Kopfzeile und ist vollständig sichtbar (G-05-6, GLOS-03, D-16)"
     test: "Auf /#/produkt/030101 den Link „Bindungsgrad“ anklicken; auf /#/glossar die erste, eine mittlere und die letzte Sprungmarke anklicken; je bei 1280 px und 360 px (Drawer-Kopfzeile), einmal mit prefers-reduced-motion"
     expected: "Der Begriff samt 2-px-Fokusring liegt vollständig unter der Kopfzeile sichtbar; der Sprung ist ein Sofortsprung"
-    why_human: "sprungPosition ist per Unit-Test auf { el, top } geprüft und vue-router zieht top ab (Quelltext gelesen), aber der berechnete scroll-margin-top (calc mit var(--scroll-margin-top), vererbt von wa-page) und die tatsächliche Landeposition entstehen nur im Browser"
+    why_human: "sprungPosition ist per Unit-Test auf { el, top } geprüft und vue-router zieht top ab (Quelltext gelesen, devtools-CN5uWJaH.js:310-318), aber der berechnete scroll-margin-top (calc mit var(--scroll-margin-top), vererbt von wa-page) und die tatsächliche Landeposition entstehen nur im Browser"
+    beleg: "UAT 05 Test 6 (pass)"
+    verifier_geprueft: "nein"
+    hinweis: "Nutzer-Retest nach 05-16 am 2026-10-05 (05-UAT.md, retest_of G-05-6). Der Verifier prüfte nur den Mechanismus (sprungziel.ts:52-70, GlossarListe.vue:58, Mutationsprobe zu stiltokens.test.ts); danach änderten Phase 7 und 8 App.vue, GlossarListe.vue und die Menügruppe"
 human_verification:
   - test: "Glossar-Sprung unter der Kopfzeile (Plan 05-16, G-05-6): /#/produkt/030101 „Bindungsgrad“ anklicken; auf /#/glossar drei Sprungmarken (erste, mittlere, letzte) anklicken; bei 1280 px und bei 360 px (Drawer-Kopfzeile); einmal mit prefers-reduced-motion"
     expected: "Der Begriff und sein Fokusring liegen vollständig sichtbar direkt unter der festen Kopfzeile; der Sprung bleibt ein Sofortsprung"
     why_human: "Landeposition hängt am berechneten scroll-margin-top und an der Kopfzeilenhöhe von wa-page, nur im Browser sichtbar"
+    beleg: "UAT 05 Test 6 (pass)"
+    verifier_geprueft: "nein"
+    hinweis: "Retest nach 05-16 durch den Nutzer am 2026-10-05; der Verifier prüfte nur den Mechanismus (M1 bis M4). Der Test nennt weder 360 px noch Reduced Motion ausdrücklich"
   - test: "Einnahmen-Balken-Scroll (Plan 05-16): auf /#/einnahmen den Balken „Steuern“ anklicken, bei 1280 px und 360 px"
     expected: "Die Zeile der geöffneten Aufschlüsselung liegt vollständig unter der festen Kopfzeile; mit prefers-reduced-motion ohne Animation"
     why_human: "scrollIntoView mit scroll-margin-top, Sichtbarkeit unter der Kopfzeile ist ein Layouturteil"
+    beleg: "offen"
+    verifier_geprueft: "nein"
+    hinweis: "UAT 05 Test 2 (pass) bestätigte den Balkenklick am 2026-10-05 vor der Änderung aus 05-16 (scroll-margin-top, Commit d9f5008); das Retest-Feld der UAT-Datei gilt nur für Test 4 und 6. Im Code belegt: EinnahmenPage.vue:454-455 und :204 (Reduced Motion)"
   - test: "Produktseite Etikett–Wert-Abstand (Plan 05-16, G-05-4): /#/produkt/030101 und /#/produkt/160101 bei 360 px und 1280 px"
     expected: "Der gepunktete Unterstrich von „Bindungsgrad“ berührt das wa-tag darunter nicht (4 px Abstand); Gremium und Fachbereich zeigen denselben Abstand"
     why_human: "Überlappung von Unterstreichung und Tag-Rand ist ein Rendering-Urteil; automatisch ist nur die CSS-Deklaration belegt"
+    beleg: "UAT 05 Test 4 (pass)"
+    verifier_geprueft: "nein"
+    hinweis: "Retest nach 05-16 durch den Nutzer am 2026-10-05 (retest_of G-05-4). Der Verifier prüfte nur die Deklaration (ProduktPage.vue:245-248, M6)"
   - test: "Kennzahlenband, Einstiege, Kreisumlage-Hinweis und Fußzeile auf der Startseite bei 360 px und 1280 px ansehen (Plan 05-08)"
     expected: "Sieben Kacheln ohne horizontales Scrollen und ohne umbrechende Zahlen; „-2,35 Mio. €“ steht neben „Defizit“; „berechnet“-Etikett zeigt Tooltip bei Fokus; beide Einstiege und der Kreisumlage-Link navigieren"
     why_human: "Layout, Umbruch und Tooltip-Fokus sind ohne Browser nicht prüfbar (Sandbox hat keinen Browser)"
+    beleg: "UAT 05 Test 1 (pass)"
+    verifier_geprueft: "nein"
+    hinweis: "Nutzerbeleg vom 2026-10-05; seitdem änderten Phase 7 und 8 das Kachelraster. Automatisiert nur Teile: e2e/kacheln.spec.ts:465:5 › Kennzahl-Kacheln über alle Breiten (A11Y-03, 07-13) › Kacheln und Seitenbreite: / (keine Zahl umbricht, keine Seitenbreite überschritten), kennzahlen.test.ts:116-134 („-2,35 Mio. €“, „Defizit nach Minderaufwand“). Tooltip bei Fokus und die Navigation der Einstiege sind nicht automatisiert"
   - test: "Einnahmen-Seite im Browser durchgehen (Plan 05-09): Aufklapper, Klick auf Ertragsbalken, Zeitreihe je Steuerart, Jahr-Umschalter 2024 bis 2029, investive Einnahmen"
     expected: "Ist und Plan in der Zeitreihe unterscheidbar (Linienart/Legende), Balkenklick öffnet und scrollt zur Aufschlüsselung, Tabellenalternativen erreichbar, Tooltips ohne Fehler"
     why_human: "ECharts-Darstellung, Hover und Tastaturbedienung brauchen einen Browser"
+    beleg: "UAT 05 Test 2 (pass)"
+    verifier_geprueft: "nein"
+    hinweis: "Nutzerbeleg vom 2026-10-05. Automatisiert nur Teile: Linienarten und Legende (zeitreihen.test.ts:165-205, wertartStil.ts:28), Tabellenalternativen (e2e/inventar.spec.ts:39:3 › Inventar /einnahmen), Seite ohne Konsolenfehler (e2e/smoke.spec.ts:138:5 › Smoke /einnahmen)"
   - test: "Ausgaben-Treemap und Zuschuss-Balken optisch prüfen (Plan 05-10, 05-14)"
     expected: "„Weitergabe an Kreis und Land“ ist farblich und per Streifenmuster abgesetzt und lesbar (siehe WR-03: Streifen sind möglicherweise vollständig deckend), Überschuss-Punkte, Beschriftungen passen, Tooltips korrekt"
     why_human: "Visuelle Prüfung; WR-03 sagt voraus, dass die Deckkraft der Dekals im Browser nicht greift"
+    beleg: "UAT 05 Test 3 (pass)"
+    verifier_geprueft: "nein"
+    hinweis: "Nutzerbeleg vom 2026-10-05. WR-03 ist seitdem im Code behoben (echartsTheme.ts:204-216), die Optik danach nicht erneut vom Nutzer gesehen; automatisiert nur die Daten (drilldown.test.ts:165-173, KL_DECAL)"
   - test: "Produktseite /#/produkt/030101, /#/produkt/160101 und ein Produkt ohne Investitionen öffnen (Plan 05-11)"
     expected: "Abschnittsreihenfolge laut UI-SPEC, Tabelle scrollt bei 360 px mit fester erster Spalte, Zurück-Link führt zur selben Ebene und demselben Jahr"
     why_human: "Layout und Scrollverhalten"
+    beleg: "UAT 05 Test 4 (pass)"
+    verifier_geprueft: "nein"
+    hinweis: "Nutzerbeleg vom 2026-10-05 (Retest nach 05-16). Automatisiert nur Teile: e2e/mobil.spec.ts:151:5 › Route /produkt/010601 (kein Überlauf bei 360 px), Abschnittsreihenfolge im Quelltext ProduktPage.vue:70-183"
   - test: "Geldfluss-Seite je Jahr 2024 bis 2029 ansehen (Plan 05-12)"
     expected: "Sankey bilanziert (Defizit und Minderaufwand links, Überschuss rechts in 2024), Knotenbeschriftungen überlappen bei 700 bis 1280 px nicht, Lesehilfe passt zum Jahr"
     why_human: "Beschriftungsüberlappung und Optik der 16 rechten Knoten"
+    beleg: "UAT 05 Test 5 (pass)"
+    verifier_geprueft: "nein"
+    hinweis: "Nutzerbeleg vom 2026-10-05. Automatisiert nur Teile: Bilanz je Jahr und Lesehilfe (geldfluss.test.ts:41, :356-373, :470-587); Überlappung der Beschriftungen ist nicht automatisiert"
   - test: "Glossar öffnen, Sprungmarken und GlossarBegriff-Links aus Seiten testen (Plan 05-13, 05-15)"
     expected: "Link scrollt zum Begriff und setzt den Fokus, Tooltip zeigt den ersten Satz bei Hover und Fokus, Produktakkordeon klappt auf und „Produkt öffnen“ führt zur Produktseite"
     why_human: "Scroll- und Fokusverhalten, Tooltips"
+    beleg: "UAT 05 Test 6 (pass)"
+    verifier_geprueft: "nein"
+    hinweis: "Nutzerbeleg (Retest nach 05-16 am 2026-10-05). Automatisiert nur Daten und Verdrahtung: glossar.test.ts:110-126 (erster Satz), quelltext.test.ts:94-105"
   - test: "Tastatur- und Skip-Link-Prüfung (Plan 05-07)"
     expected: "Skip-Link „Zum Inhalt springen“ erscheint als erstes fokussierbares Element und springt zum Hauptinhalt; Fokusring überall sichtbar"
     why_human: "Tastaturbedienung"
+    beleg: "UAT 05 Test 7 (pass)"
+    verifier_geprueft: "nein"
+    hinweis: "Nutzerbeleg vom 2026-10-05; seitdem kam die Menügruppe „Mehr wissen“ dazu. Automatisiert nur Teile: Tastatur der Menügruppe (e2e/interaktion.spec.ts:60:3 bis :179:3, 09-BASISLAUF.md). Für den Skip-Link (App.vue:128-150) gibt es keinen Test"
   - test: "Fußzeile: Kontakt und Link zum Original-PDF festlegen oder bewusst als Platzhalter belassen (UI-03, ROADMAP SC 1)"
-    expected: "Entscheidung des Entwicklers: Die Fußzeile verweist heute auf `kontakt-noch-nicht-festgelegt@example.invalid` und `https://haushaltsplan-noch-nicht-festgelegt.invalid/` (app/src/config.ts). Nutzerentscheidung D-17 verschiebt die echten Werte nach Phase 7; kein Test oder CI-Schritt erzwingt das (IN-09)"
-    why_human: "Die Werte kann nur der Projektinhaber liefern; ob UI-03 für Phase 5 damit als erfüllt gilt, ist eine Entscheidung"
+    expected: "Entscheidung des Entwicklers. Stand heute: Die Fußzeile verweist auf die echte Kontaktadresse und die offizielle PDF-Datei der Gemeinde (app/src/config.ts); kein Test oder CI-Schritt lässt je wieder einen Platzhalter durch"
+    why_human: "Die Werte kann nur der Projektinhaber liefern; ob UI-03 damit erfüllt gilt, war eine Entscheidung"
+    beleg: "Code: app/src/config.ts:13 (KONTAKT_EMAIL) und :22-23 (ORIGINAL_PDF_URL), Fußzeile App.vue:230-250; automatisiert: lib/__tests__/config.test.ts:52 und e2e/smoke.spec.ts:152 (kein „.invalid“ im Dokument, 09-BASISLAUF.md)"
+    verifier_geprueft: "ja"
+    hinweis: "Die Entscheidung ist durch die Werte im Code getroffen (1ab6b4b, b29be89); das Item bleibt als erledigt stehen und wird nicht gelöscht"
 ---
 
 # Phase 5: Leitfragen-Seiten Verification Report
 
 **Phase Goal:** Bürgerinnen und Bürger finden in der App laienverständliche Antworten auf „Wo kommt das Geld her?“ und „Wofür wird es ausgegeben?“. Jede gezeigte Zahl stammt aus den generierten Daten.
-**Verified:** 2026-10-09T06:36:00Z
+**Verified:** 2026-10-09T06:41:00Z
 **Status:** human_needed
 **Re-verification:** Ja, gegen den Endstand nach Phase 8 und dem D-20-Fix aus Plan 09-02 (Phase 9, AUD-02); vorheriger Bericht vom 2026-10-05T20:10:00Z
 
@@ -248,12 +304,20 @@ Eigene lesende Prüfungen in diesem Plan:
 | M2 | `sprungPosition` liefert genau `{ el, top }`; Offset 0 bei unlesbar oder negativ; unbekannter Hash bleibt oben; gespeicherte Position und reiner Query-Wechsel unverändert | ✓ VERIFIED | `sprungziel.ts:22-25` (`versatzAusScrollMargin` nur endliche Werte > 0), `:52-70` Zweigfolge Ziel, gespeichert, gleicher Pfad `false`, sonst `{ top: 0 }`. `sprungziel.test.ts` (in den 94 grünen Tests der Scratch-Kopie): `{ el, top }`-Fall (`:55-60`), `{ top: 0 }` bei unbekanntem Hash (`:67-68`), gespeicherte Position (`:71`), reiner Query-Wechsel `false` (`:76`) |
 | M3 | Der Sprung bleibt ein Sofortsprung, kein `behavior`-Schlüssel | ✓ VERIFIED | Rückgabewerte in `sprungziel.ts:61-69` enthalten kein `behavior`; `sprungziel.test.ts:62-64` prüft `not.toHaveProperty('behavior')` |
 | M4 | Jedes `var(--wa-*)` in `app/src` ist definiert, ein Test schlägt bei undefiniertem Token fehl; `--wa-space-md` ist behoben | ✓ VERIFIED | `grep wa-space-md app/src` trifft nur die absichtlichen Beispiele in `stiltokens.test.ts:72-94`. `stiltokens.test.ts:247-270` („benutzt kein var(--wa-*), das weder Web Awesome noch die App definiert“). Die Mutationsprobe oben macht den Test rot, mit der Korrektur ist er grün |
-| M5 | Einnahmen-Balkenklick scrollt unter die Kopfzeile nach derselben Regel; Reduced-Motion-Schalter unverändert | ✓ VERIFIED im Code; Browser offen | `EinnahmenPage.vue:454-455` `scroll-margin-top: calc(var(--scroll-margin-top, 0px) + var(--wa-space-m))`; `oeffneAufschluesselung` (`:194-205`) ruft `scrollIntoView({ behavior: reduzierteBewegung.value ? 'auto' : 'smooth', block: 'start' })` |
-| M6 | Blick-Block: dt/dd durch `--wa-space-2xs` getrennt, Unterstrich berührt das Tag nicht | ✓ VERIFIED im Code; Browser offen | `ProduktPage.vue:245-248` `.om-produkt__blick dd { margin: 0; margin-block-start: var(--wa-space-2xs); }`, gilt für alle Zeilen; `GlossarBegriff.vue:37` behält `text-underline-offset: 4px`, `ProduktPage.vue:239-243` die kondensierte `line-height` der dt |
+| M5 | Einnahmen-Balkenklick scrollt unter die Kopfzeile nach derselben Regel; Reduced-Motion-Schalter unverändert | ✓ VERIFIED im Code; Browser offen (Human-Item H2, Beleg „offen“) | `EinnahmenPage.vue:454-455` `scroll-margin-top: calc(var(--scroll-margin-top, 0px) + var(--wa-space-m))`; `oeffneAufschluesselung` (`:194-205`) ruft `scrollIntoView({ behavior: reduzierteBewegung.value ? 'auto' : 'smooth', block: 'start' })` |
+| M6 | Blick-Block: dt/dd durch `--wa-space-2xs` getrennt, Unterstrich berührt das Tag nicht | ✓ VERIFIED im Code; Browser: UAT 05 Test 4 (pass), Retest nach 05-16 (H3) | `ProduktPage.vue:245-248` `.om-produkt__blick dd { margin: 0; margin-block-start: var(--wa-space-2xs); }`, gilt für alle Zeilen; `GlossarBegriff.vue:37` behält `text-underline-offset: 4px`, `ProduktPage.vue:239-243` die kondensierte `line-height` der dt |
 
 **Score:** 11/11 Wahrheiten in Code und Daten belegt; 5 verhaltensabhängige Teilwahrheiten (B1 bis B5) sind vorhanden und verdrahtet, aber durch keinen Test ausgeführt (`behavior_unverified: 5`).
 
-Verhaltensabhängige Teilwahrheiten gegenüber dem alten Bericht neu gezählt (Task 2 weist jeder ihren Beleg zu): B1 Ansage und Fokus bei Fragment oder Query-Wechsel, B2 Sankey-Klick und -Hover, B3 Drilldown-Zusammenspiel, B4 Umschaltung Sankey zu Balken unter 700 px, B5 Landeposition des Glossar-Sprungs. Der Drawer-Teil des alten Punkts „mobile Umschaltung“ ist inzwischen automatisiert belegt (`interaktion.spec.ts:314-334`, `mobil.spec.ts:223-243`, siehe Behavioral Spot-Checks); Titel und Fokus auf der h1 bei jedem Routenwechsel ebenfalls (`interaktion.spec.ts:278`).
+Verhaltensabhängige Teilwahrheiten gegenüber dem alten Bericht neu gezählt: Es bleiben fünf, weil ich jede am heutigen Stand auf das eingegrenzt habe, was noch kein Test ausführt (Belege in `behavior_unverified_items` und im Abschnitt „Human-Items und ihre Belege (D-21)“):
+
+| Nr. | Teilwahrheit | Beleg | Begründung |
+|-----|--------------|-------|------------|
+| B1 | Live-Region-Ansage „Seite … geladen“, Fragment-Fokus, Fokus bleibt bei reinem Query-Wechsel am Steuerelement | offen | `ansagen()` (`lib/ansage.ts`) und die Fragment- und Query-Zweige von `router.afterEach` führt kein Test aus; Titel und Fokus auf der h1 sind seit Phase 7 automatisiert belegt (`interaktion.spec.ts:278`) und deshalb nicht mehr Teil des Punkts |
+| B2 | Sankey-Klick zur Ausgabenseite und Hover-Hervorhebung | offen | `zielCodeAusKlick` ist getestet (`geldfluss.test.ts:257-283`), der Canvas-Klick und `router.push` (`SankeyDiagramm.vue:26-29`) nicht; UAT 05 Test 5 nannte Klick und Hover nicht |
+| B3 | Drilldown (Treemap-Klick, Brotkrumen, Zurück) und Umschalter Aufwand/Zuschussbedarf im Zusammenspiel | offen | Zustandslogik getestet (`ansicht.test.ts`, `drilldown.test.ts`), Zusammenspiel von `wa-radio-group`, ECharts-Klick, Router und Fokus nicht; UAT 05 Test 3 und 4 nannten es nicht |
+| B4 | Unter 700 px erscheint der Balken statt des Sankeys | offen | `GeldflussPage.vue:65-67` und `bildschirm.ts` sind nicht durch einen Test geprüft; der Drawer-Teil des alten Punkts ist dagegen automatisiert belegt (`interaktion.spec.ts:314-334`, `mobil.spec.ts:223-243`) |
+| B5 | Landeposition des Glossar-Sprungs unter der Kopfzeile | UAT 05 Test 6 (pass) | Mechanismus im Code und per Unit-Test belegt (M1 bis M4); die Landeposition selbst hat nur der Nutzer im Retest vom 2026-10-05 gesehen, der Verifier nicht |
 
 ### Gap-Abgleich gegen den alten Bericht
 
@@ -323,33 +387,33 @@ Step 7c (Probes): Es gibt keine `probe-*.sh` und die Pläne deklarieren keine. �
 
 ## Requirements Coverage
 
-Vorläufig; Task 2 ergänzt Pläne, Beschreibung und heutige Evidenz je ID.
+Alle 23 IDs der Phase stehen in mindestens einem PLAN-Frontmatter (die `requirements:`-Zeilen von 05-01 bis 05-16) und in der Traceability-Tabelle von `v1.0-REQUIREMENTS.md` als „Phase 5“ (23 Zeilen, alle `Complete`, alle Checkboxen `[x]`). Keine verwaisten IDs. UI-02 (Phase 7), UI-04 (Phase 6) und UI-06 (Phase 7) sind korrekt nicht Phase 5 zugeordnet. Jede Evidenz stammt vom heutigen Code oder aus `09-BASISLAUF.md`; die UAT-Datei vom 2026-10-05 ist nur dort genannt, wo sie ausdrücklich als solche gekennzeichnet ist.
 
 | Requirement | Pläne | Beschreibung | Status | Evidenz |
 |-------------|-------|--------------|--------|---------|
-| START-01 | 05-08 | vorläufig | ✓ SATISFIED | siehe Truth 1 |
-| START-02 | 05-06, 05-08 | vorläufig | ✓ SATISFIED | siehe Truth 1 |
-| EINN-01 | 05-06, 05-09 | vorläufig | ✓ SATISFIED | siehe Truth 2 |
-| EINN-02 | 05-09 | vorläufig | ✓ SATISFIED | siehe Truth 2 |
-| EINN-03 | 05-09 | vorläufig | ✓ SATISFIED | siehe Truth 2 |
-| EINN-04 | 05-02, 05-09 | vorläufig | ✓ SATISFIED | siehe Truth 2 |
-| EINN-05 | 05-03, 05-09 | vorläufig | ✓ SATISFIED | siehe Truth 2 |
-| EINN-06 | 05-02, 05-09 | vorläufig | ✓ SATISFIED | siehe Truth 2 |
-| AUSG-01 | 05-05, 05-10 | vorläufig | ✓ SATISFIED | siehe Truth 3 |
-| AUSG-02 | 05-05, 05-06, 05-10, 05-14 | vorläufig | ✓ SATISFIED | siehe Truth 3 |
-| AUSG-03 | 05-10 | vorläufig | ✓ SATISFIED | siehe Truth 3 |
-| AUSG-04 | 05-14 | vorläufig | ✓ SATISFIED | siehe Truth 3 |
-| AUSG-05 | 05-04, 05-11, 05-16 | vorläufig | ✓ SATISFIED | siehe Truth 3 |
-| FLUSS-01 | 05-05, 05-12 | vorläufig | ✓ SATISFIED | siehe Truth 4 |
-| FLUSS-02 | 05-12 | vorläufig | ✓ SATISFIED | siehe Truth 4 |
-| FLUSS-03 | 05-12 | vorläufig | ✓ SATISFIED | siehe Truth 4 |
-| FLUSS-04 | 05-05, 05-12 | vorläufig | ✓ SATISFIED | siehe Truth 4 |
-| GLOS-01 | 05-03, 05-13 | vorläufig | ✓ SATISFIED | siehe Truth 5 |
-| GLOS-02 | 05-13 | vorläufig | ✓ SATISFIED | siehe Truth 5 |
-| GLOS-03 | 05-13, 05-15, 05-16 | vorläufig | ✓ SATISFIED | siehe Truth 5 und M1 |
-| UI-01 | 05-04 | vorläufig | ✓ SATISFIED | siehe Truth 2 bis 4 |
-| UI-03 | 05-07 | vorläufig | ✓ SATISFIED | siehe Truth 1 |
-| UI-05 | 05-01, 05-03, 05-06, 05-15 | vorläufig | ✓ SATISFIED | siehe Truth 5 |
+| START-01 | 05-08 | Kennzahlenband 2026: Erträge, Aufwendungen, Defizit nach Minderaufwand, Investitionen, neue Kredite, Pro-Kopf-Werte | ✓ SATISFIED | `StartPage.vue:22-28`, `:66-78`; `kennzahlen.ts:65`; `kennzahlen.test.ts:116-134` (27,5 / 30,5 / -2,35 / 12,3 / 5,2 Mio. €, 2594 €, 1571 €); Playwright `e2e/smoke.spec.ts:138:5 › Smoke /` und `e2e/kacheln.spec.ts:465:5 › … › Kacheln und Seitenbreite: /` (09-BASISLAUF.md) |
+| START-02 | 05-06, 05-08 | Zwei Einstiege zu den Leitfragen und Hinweis auf die Kreisumlage als größten Posten | ✓ SATISFIED | `StartPage.vue:81-107` (zwei `EinstiegsKachel`, `KreisumlageCallout kurz`); `KreisumlageCallout.vue:50`; `kreisumlage.test.ts:49-50` (11.001.181 € ist der größte oberste Knoten); Satz `StartPage.vue:99` widerspruchsfrei |
+| EINN-01 | 05-06, 05-09 | Ertragsarten mit Betrag und Prozentanteil | ✓ SATISFIED | `EinnahmenPage.vue:273-289` (`ErtragsBalken` plus Tabelle); `ertragsarten.test.ts:27` (Anteile summieren sich); Erträge 2026 27.502.063 € in `haushalt.json` |
+| EINN-02 | 05-09 | Steuern aufklappbar, Hebesätze, Hinweis auf selbst festgelegte Steuern | ✓ SATISFIED | `EinnahmenPage.vue:296-350` (Hebesatz-Absatz, `steuern_selbst_festgelegt`); `einnahmen.test.ts:115-137`, `:229-243`, `:404-410` (Gewerbesteuer 7.800.000 €, Hebesatz 418) |
+| EINN-03 | 05-09 | Zuwendungen aufklappbar, Sonderposten mit „kein Geldfluss“ | ✓ SATISFIED | `EinnahmenPage.vue:320-326`, `:352-364`; `einnahmen.test.ts:139-161`, `:411-417` (Schlüsselzuweisung 890.000 €) |
+| EINN-04 | 05-02, 05-09 | Sonstige ordentliche Erträge mit Konzessionsabgaben | ✓ SATISFIED | `einnahmen.test.ts:163-179`, `:191-227` (Strom, Gas, Wasser ergeben den Posten Konzessionsabgaben; Summe der Hauptposten gegen den Gesamtergebnisplan); Regel 5 grün (09-BASISLAUF.md) |
+| EINN-05 | 05-03, 05-09 | Zeitreihe je Steuerart 2022–2029, Ist und Plan unterscheidbar, Erklärtexte | ✓ SATISFIED | `SteuerZeitreihe.vue:134` und `charts/wertartStil.ts:28` (Legende durchgezogen/gestrichelt/gepunktet); `zeitreihen.test.ts:165-205`, `:290-302` (2022 und 2023 Grundzahlen, 2024 vorläufiger Ist-Wert, 2026 Ansatz, 2029 Planung) |
+| EINN-06 | 05-02, 05-09 | Investive Einnahmen getrennt und klar abgegrenzt | ✓ SATISFIED | `EinnahmenPage.vue:381-420` (eigener Abschnitt, Callout, eigene Farbe); `einnahmen.test.ts:244-326` (Pauschalen plus „Sonstige (berechnet)“ ergeben Zeile 18 des Gesamtfinanzplans), `:419-428` |
+| AUSG-01 | 05-05, 05-10 | Treemap der ordentlichen Aufwendungen mit Drilldown Aufgabenbereich → Produktgruppe → Produkt | ⚠️ NEEDS HUMAN | Daten und Zustand belegt: `drilldown.test.ts:58-132`, `:183-290`, `ansicht.test.ts:25-120`, `AusgabenPage.vue:253-259`. Das Zusammenspiel aus Treemap-Klick, Brotkrumen und Router ist B3 (offen) |
+| AUSG-02 | 05-05, 05-06, 05-10, 05-14 | „Weitergabe an Kreis und Land“ abgesetzt mit Callout, Minderaufwand als erklärter Hinweis | ✓ SATISFIED | `drilldown.ts:163` und `drilldown.test.ts:165-173` (`KL_DECAL`); `AusgabenPage.vue:281` (Callout), `:288-307` (Minderaufwand-Hinweis); `aufwandsarten.test.ts:223-300` (Hinweis je Jahr); `echartsTheme.ts:204-216` (Dekal-Deckkraft). Die Optik hat nur der Nutzer gesehen (Human-Item, UAT 05 Test 3) |
+| AUSG-03 | 05-10 | Umschalter Aufwand/Zuschussbedarf, Überschüsse erklärt | ⚠️ NEEDS HUMAN | `AusgabenPage.vue:230-244` (`wa-radio-group`), `:308-317` (Überschuss-Callout); `drilldown.test.ts:99-131`, `:367-384` (Überschusstexte je Jahr); `ansicht.test.ts:30-37` (Modus aus der URL). Das Umschalten im Browser gehört zu B3 (offen) |
+| AUSG-04 | 05-14 | Aufwandsart-Sicht, Transferaufwendungen aufklappbar, Abschreibungen „kein Geldfluss“ | ✓ SATISFIED | `AusgabenPage.vue:319-376` (`AufwandsartBalken`, „Transferaufwendungen im Einzelnen“, Tag „kein Geldfluss“); `aufwandsarten.test.ts:43-121` (sieben Zeilen, Summe 30.455.569 €), `:124-220` (Kreisumlage größter Posten, sieben Kita-Einrichtungen) |
+| AUSG-05 | 05-04, 05-11, 05-16 | Produktdetail mit Beschreibung, Leistungen, Bindungsgrad, Gremium, Teilergebnisplan 2024–2029, Erläuterungen, Grundzahlen, Investitionen, Quellenlink | ✓ SATISFIED | `ProduktPage.vue:70-183` (alle Abschnitte, `BerechnetEtikett` `:125`, `:160`, `QuelleKnopf` `:176-183`); `produkt.ts:178` (Spalten 2024–2029); `ansicht.test.ts:142-155` (`findeProdukt`); Etikett–Wert-Abstand `ProduktPage.vue:245-248` (M6); die Optik hat nur der Nutzer gesehen (UAT 05 Test 4) |
+| FLUSS-01 | 05-05, 05-12 | Sankey 2026 aus dem Ergebnisplan | ✓ SATISFIED | `geldfluss.ts:497`; `geldfluss.test.ts:285-340` (Option, Maße, Knoten- und Kantenzahl, Tooltip); `GeldflussPage.vue:67` |
+| FLUSS-02 | 05-12 | Bilanz über „Defizit (Entnahme aus Rücklagen)“ und Minderaufwand | ✓ SATISFIED | `geldfluss.test.ts:41` (Bilanz in jedem Jahr), `:356-373` (2026: 2.353.506 € plus 600.000 € ergibt 30.455.569 €; 2024: Überschuss 191.990 € rechts); Lesehilfe `:470-587` |
+| FLUSS-03 | 05-12 | Hover hebt Pfade hervor, Klick auf Aufgabenbereich führt zur Ausgabenseite | ⚠️ NEEDS HUMAN | `geldfluss.ts:497` (`emphasis`), `:418` (`zielCodeAusKlick`), `geldfluss.test.ts:257-283`, `SankeyDiagramm.vue:26-29`. Canvas-Klick und Hover sind B2 (offen) |
+| FLUSS-04 | 05-05, 05-12 | Schmal: Tabelle oder gestapelte Balken statt Sankey | ⚠️ NEEDS HUMAN | `GeldflussPage.vue:20`, `:65-67`, `bildschirm.ts` (`SCHMAL_BIS = 699`); `geldfluss.test.ts:375-418` (Balkendaten); `e2e/mobil.spec.ts:151:5 › Route /geldfluss` (kein Überlauf bei 360 px). Dass unter 700 px der Balken erscheint, prüft kein Test (B4, offen) |
+| GLOS-01 | 05-03, 05-13 | Mindestens 22 Begriffe aus Spez. 6.14 | ✓ SATISFIED | `texte.json.glossar` mit 27 Einträgen, alle 22 Begriffe der Spezifikation vorhanden; `glossar.test.ts:38-41`, `:69-93` (Absätze, Seitenverweise, auflösbare Platzhalter) |
+| GLOS-02 | 05-13 | Alle 63 Produkte mit Beschreibung als Akkordeon | ✓ SATISFIED | `produkte.json`: 63 Produkte, alle mit Beschreibung; `glossar.test.ts:132-176` (jedes Produkt genau einmal, Gruppen nach Produktbereich); `GlossarPage.vue` mit `ProduktAkkordeon` |
+| GLOS-03 | 05-13, 05-15, 05-16 | `GlossarBegriff`-Links auf allen Seiten führen zum Begriff | ✓ SATISFIED | `GlossarBegriff.vue:20-27`; `quelltext.test.ts:94-105`; Verwendungen auf Start (3), Einnahmen (3), Ausgaben (6), Produkt (2), Geldfluss (2); Sprung unter die Kopfzeile M1 bis M4 (`sprungziel.ts:52-70`, `GlossarListe.vue:58`). Die Landeposition hat nur der Nutzer gesehen (UAT 05 Test 6, B5) |
+| UI-01 | 05-04 | Jahr-Umschalter 2024 bis 2029 auf Einnahmen, Ausgaben, Geldfluss, Standard 2026 | ✓ SATISFIED | `EinnahmenPage.vue:270`, `AusgabenPage.vue:229`, `GeldflussPage.vue:59`; `jahr.test.ts:16-36` (Standard Haushaltsjahr, ungültige Werte fallen darauf zurück); `haushalt.jahre` 2024 bis 2029, `haushaltsjahr` 2026 |
+| UI-03 | 05-07 | Fußzeile mit Datenstand, PDF-Link, „inoffizielles Projekt“, Kontakt | ✓ SATISFIED | `App.vue:230-250`; `config.ts:13`, `:22-23` (echte Werte); `config.test.ts:52`; `e2e/smoke.spec.ts:152` (kein „.invalid“ im Dokument, jede Route, 09-BASISLAUF.md) |
+| UI-05 | 05-01, 05-03, 05-06, 05-15 | Zahlen in Texten aus den Daten, Erklärtexte verweisen auf eine PDF-Seite | ✓ SATISFIED | `lib/texte.ts:14`, `:35` (Platzhalter-Renderer); `texte.test.ts:45-64` (kein Platzhalterrest, jede Seite genannt); `quelltext.test.ts:136`, `:212` (keine getippten Zahlen in den Templates); `ErklaerText.vue:29`; `test_texte.py` (149 Tests mit `test_app_daten.py` hier grün); Wortlautbefund „PDF-Seite“ im Singular unter `advisory` |
 
 ## Anti-Patterns
 
@@ -357,13 +421,42 @@ Keine Blocker. Keine Debt-Marker (TBD, FIXME, XXX, TODO, HACK, PLACEHOLDER) in `
 
 ## Human Verification Required
 
-Siehe das Frontmatter (`human_verification`, elf Punkte, und `behavior_unverified_items`, fünf Punkte). Task 2 weist jedem Punkt seinen Beleg zu.
+Die elf Human-Items des alten Berichts stehen unverändert im Frontmatter (`human_verification`), jedes mit einem Schlüssel `beleg:`, dazu die fünf verhaltensabhängigen Teilwahrheiten (`behavior_unverified_items`). Zusammengefasst:
+
+- Mit Verifier-Beleg im Code und in automatisierten Tests: 1 Punkt (Fußzeile, UI-03).
+- Nur mit Nutzerbeleg aus `05-UAT.md` (Stand 2026-10-05, acht Tests bestanden): 9 Punkte, davon zwei Retests nach 05-16 (Test 4 und 6).
+- Offen: 1 Human-Item (Einnahmen-Balken-Scroll nach 05-16) und die Teilwahrheiten B1 bis B4. Diese fünf Punkte bestimmen den Status `human_needed`.
+
+### Human-Items und ihre Belege (D-21)
+
+Nach Entscheidung D-21 (Nutzer, 2026-10-09, im Stil von D-14) bleibt jeder Punkt stehen. Ein Eintrag gilt als vom Verifier geprüft nur, wenn Code oder ein automatisierter Test ihn belegt. Bestätigungen aus `05-UAT.md` und vom Nutzer sind als solche gekennzeichnet und zählen nicht als Verifier-Prüfung. Die UAT-Bestätigungen beschreiben den Stand vom 2026-10-05; seitdem haben die Phasen 6, 7 und 8 Teile von `App.vue`, Kachelraster, Tabellen und Texte geändert (Abschnitt „Warum diese Re-Verifikation“). Wo nach der UAT eine Änderung die geprüfte Stelle berührte, steht das in der Spalte „Hinweis“.
+
+| Punkt | Beleg | Vom Verifier geprüft | Hinweis |
+|-------|-------|----------------------|---------|
+| H1 Glossar-Sprung unter der Kopfzeile (05-16, G-05-6) | UAT 05 Test 6 (pass) | nein | Nutzer-Retest nach 05-16 am 2026-10-05; der Verifier prüfte nur den Mechanismus (M1 bis M4) |
+| H2 Einnahmen-Balken-Scroll (05-16) | offen | nein | UAT 05 Test 2 (pass) lag vor der Änderung `d9f5008`; kein Retest. Im Code belegt: `EinnahmenPage.vue:454-455`, `:204` |
+| H3 Etikett–Wert-Abstand auf Produktseiten (05-16, G-05-4) | UAT 05 Test 4 (pass) | nein | Nutzer-Retest nach 05-16 am 2026-10-05; der Verifier prüfte nur die Deklaration (`ProduktPage.vue:245-248`) |
+| H4 Startseite bei 360 und 1280 px (05-08) | UAT 05 Test 1 (pass) | nein | Nur Teile automatisiert: `kacheln.spec.ts:465:5`, `kennzahlen.test.ts:116-134`; Tooltip bei Fokus und Navigation der Einstiege nicht |
+| H5 Einnahmen-Seite im Browser (05-09) | UAT 05 Test 2 (pass) | nein | Nur Teile automatisiert: Linienarten und Legende, Tabellenalternativen, Smoke |
+| H6 Ausgaben-Treemap und Zuschuss-Balken, Optik (05-10, 05-14) | UAT 05 Test 3 (pass) | nein | WR-03 seitdem im Code behoben, Optik danach nicht erneut gesehen |
+| H7 Produktseiten (05-11) | UAT 05 Test 4 (pass) | nein | Nur Teile automatisiert: kein Überlauf bei 360 px (`mobil.spec.ts:151:5`) |
+| H8 Geldfluss je Jahr (05-12) | UAT 05 Test 5 (pass) | nein | Nur Bilanz und Lesehilfe automatisiert; Überlappung der Beschriftungen nicht |
+| H9 Glossar, Sprungmarken, Tooltips (05-13, 05-15) | UAT 05 Test 6 (pass) | nein | Nur Daten und Verdrahtung automatisiert (`glossar.test.ts`, `quelltext.test.ts`) |
+| H10 Tastatur und Skip-Link (05-07) | UAT 05 Test 7 (pass) | nein | Menügruppe seitdem automatisiert (`interaktion.spec.ts:60:3` bis `:179:3`); für den Skip-Link kein Test |
+| H11 Fußzeile: Kontakt und PDF-Link (UI-03) | Code: `app/src/config.ts:13`, `:22-23`; automatisiert: `config.test.ts:52`, `e2e/smoke.spec.ts:152` | ja | Die Entscheidung ist durch echte Werte getroffen (1ab6b4b, b29be89); der Smoke-Test sperrt jede `.invalid`-Adresse |
+| B1 Live-Region-Ansage, Fragment-Fokus, Query-Wechsel | offen | nein | Titel und Fokus auf der h1 sind automatisiert belegt (`interaktion.spec.ts:278:5`, zehn Routen); der Rest ist ungetestet |
+| B2 Sankey-Klick und Hover | offen | nein | `zielCodeAusKlick` getestet, Canvas-Klick und Hover nicht; UAT 05 Test 5 nannte beides nicht |
+| B3 Drilldown und Umschalter im Zusammenspiel | offen | nein | Zustandslogik getestet, Zusammenspiel nicht; UAT 05 Test 3 und 4 nannten es nicht |
+| B4 Unter 700 px Balken statt Sankey | offen | nein | Drawer-Teil automatisiert (`interaktion.spec.ts:314:3` bis `:334:3`, `mobil.spec.ts:223:3` bis `:243:3`); die Umschaltung der Darstellung ungetestet |
+| B5 Landeposition des Glossar-Sprungs | UAT 05 Test 6 (pass) | nein | Gleicher Nutzer-Retest wie H1; Mechanismus im Code und per Unit-Test belegt |
+
+Offene Punkte, die den Status `human_needed` bestimmen: H2, B1, B2, B3, B4. Ein Nutzer, der sie im Browser bestätigt (oder ein neuer Playwright-Test, der sie belegt), setzt den Status auf `passed`; dann trägt der Bericht für jeden Punkt einen Beleg ungleich „offen“. Die Triage der offenen Punkte gehört in Plan 09-13.
 
 ## Gaps Summary
 
-Keine Gaps. Alle fünf ROADMAP-Erfolgskriterien und alle sechs Must-haves aus 05-16 sind am heutigen Code und an den heutigen Daten belegt; es gibt keine Regression gegenüber dem Bericht vom 2026-10-05.
+Keine Gaps. Das Phasenziel ist am heutigen Code und an den heutigen Daten erreicht: Beide Leitfragen haben eigene Seiten, jede Zahl läuft über `haushalt.json`, `texte.json` oder `produkte.json`, und Tests binden die Kernzahlen an die Sollwerte aus dem PDF (`kennzahlen.test.ts:116-134`, `geldfluss.test.ts:356-373`, `einnahmen.test.ts:404-428`). Gegenüber dem Bericht vom 2026-10-05 gibt es keine Regression; die dort geführten Warnungen WR-01 bis WR-07 und das Platzhalter-Item der Fußzeile sind im Code erledigt. Der Status ist `human_needed`, weil fünf Punkte ohne Beleg bleiben (H2, B1 bis B4): kein Test und keine Nutzerbestätigung deckt den Balkenklick-Scroll nach 05-16, die Live-Region-Ansage, den Sankey-Klick, das Drilldown-Zusammenspiel und die Umschaltung unter 700 px ab. Alle übrigen Human-Items sind mit UAT 05 (Stand 2026-10-05) oder mit Code und Tests belegt und als solche gekennzeichnet; nichts davon gilt als vom Verifier im Browser gesehen.
 
 ---
 
-_Verified: 2026-10-09T06:36:00Z (Re-Verifikation)_
+_Verified: 2026-10-09T06:41:00Z (Re-Verifikation)_
 _Verifier: Claude (gsd-verifier-Verfahren, ausgeführt in Plan 09-08)_
