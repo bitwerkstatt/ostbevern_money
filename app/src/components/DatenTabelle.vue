@@ -3,8 +3,8 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch, watc
 import { EURO_OPTIONEN, KEIN_WERT } from '@/charts/format'
 import QuelleKnopf from '@/components/QuelleKnopf.vue'
 import {
-  rahmenAttribute,
   sichtbareSpalten,
+  tabellenRahmen,
   type DatenSpalte,
   type DatenZeile,
 } from '@/components/datenTabelle'
@@ -82,7 +82,7 @@ const istLeer = computed(() => props.zeilen.length === 0)
 // Ein waagerecht scrollbarer Bereich muss per Tastatur erreichbar und benannt sein; eine
 // Tabelle, die in die Breite passt, braucht das nicht (kein überflüssiger Tabstopp, keine
 // Region ohne Not). Daher bekommt der Rahmen Fokus, Rolle und Namen nur gemeinsam und nur,
-// solange der Inhalt einer gerenderten Tabelle breiter ist als der Rahmen (`rahmenAttribute`).
+// solange der Inhalt einer gerenderten Tabelle breiter ist als der Rahmen (`tabellenRahmen`).
 // Der Name kommt genau einmal: per `aria-labelledby` aus der Caption der Tabelle (D-20), kein
 // `aria-label` daneben.
 const captionId = useId()
@@ -124,21 +124,29 @@ onBeforeUnmount(() => {
   beobachter?.disconnect()
 })
 
-// Nur eine gerenderte Tabelle trägt eine Caption, auf die der Rahmen verweisen kann. Ist die
-// Beschriftung leer, bliebe der Rahmen eine Region ohne Namen (A11Y-01): dann bekommt er keine
-// Rolle und keinen Tabstopp, und in der Entwicklung warnt `watchEffect` unten.
-const hatBeschriftung = computed(() => props.beschriftung.trim() !== '')
-const rahmenAttributeGebunden = computed(() =>
-  rahmenAttribute(
-    ueberlaeuft.value && !props.laedt && !istLeer.value && hatBeschriftung.value,
+// Nur eine gerenderte Tabelle trägt eine Caption, auf die der Rahmen verweisen kann. Der Rahmen
+// einer überlaufenden Tabelle bleibt aber immer per Tastatur erreichbar und benannt (WCAG 2.1.1,
+// 08/WR-02): Ist die Beschriftung leer, heißt die Caption „Tabelle“ (`tabellenRahmen`), statt dass
+// Rolle und Tabstopp entfallen. In der Entwicklung warnt `watchEffect` unten trotzdem, weil ein
+// leerer Name die Region nur als „Tabelle“ ansagen lässt.
+const rahmenLage = computed(() =>
+  tabellenRahmen(
+    {
+      ueberlaeuft: ueberlaeuft.value,
+      laedt: props.laedt ?? false,
+      leer: istLeer.value,
+      beschriftung: props.beschriftung,
+    },
     captionId,
   ),
 )
 
 if (import.meta.env.DEV) {
   watchEffect(() => {
-    if (!hatBeschriftung.value) {
-      console.warn('DatenTabelle: `beschriftung` ist leer, der scrollbare Rahmen bliebe unbenannt.')
+    if (props.beschriftung.trim() === '') {
+      console.warn(
+        'DatenTabelle: `beschriftung` ist leer, die Tabelle wird nur als „Tabelle“ angesagt.',
+      )
     }
   })
 }
@@ -159,7 +167,7 @@ function alsZahl(wert: string | number | null | undefined): number {
 </script>
 
 <template>
-  <div ref="rahmen" class="om-tabelle-rahmen" v-bind="rahmenAttributeGebunden">
+  <div ref="rahmen" class="om-tabelle-rahmen" v-bind="rahmenLage.attribute">
     <div v-if="laedt" class="om-tabelle-skeleton">
       <wa-skeleton effect="sheen"></wa-skeleton>
       <wa-skeleton effect="sheen"></wa-skeleton>
@@ -172,7 +180,7 @@ function alsZahl(wert: string | number | null | undefined): number {
     <table v-else class="om-tabelle">
       <caption :id="captionId" class="om-visually-hidden">
         {{
-          beschriftung
+          rahmenLage.name
         }}
       </caption>
       <thead>
