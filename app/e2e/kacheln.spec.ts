@@ -17,6 +17,9 @@ import { routen } from './routen'
 // - die Betragsgröße ist `--wa-font-size-l` bei jeder Breite (G-02),
 // - der Knopf zeigt „Quelle“, behält den zugänglichen Namen „Quelle anzeigen: …, PDF-Seite {n}“
 //   und ist mindestens 44 × 44 px groß (G-03),
+// - der Quelle-Knopf endet am unteren Inhaltsrand der Kachel (Quick-Aufgabe 261010-bvz),
+// - je Rasterreihe haben alle Kacheln dieselbe Höhe, und ihre Quelle-Knöpfe enden auf derselben
+//   Höhe (Quick-Aufgabe 261010-bvz),
 // - jede Kachel steht in einem Raster `.om-kachelraster` (G-04),
 // - das `li` um jede Kachel hat Außenabstand 0 (07-14, Einzug aus Web Awesome),
 // - je Route wird die Schrift der Beträge protokolliert und gegen die Kalibrierschrift geprüft
@@ -205,6 +208,15 @@ function messeKacheln(page: Page): Promise<KachelMessung> {
         (kachel) => sichtbar(kachel) && kachel.getBoundingClientRect().width > 0,
       )
 
+      // Reiheneinträge für den Gleichlauf je Rasterreihe (Quick-Aufgabe 261010-bvz).
+      const reiheneintraege: {
+        liste: Element | null
+        oben: number
+        hoehe: number
+        knopfUnten: number | null
+        name: string
+      }[] = []
+
       for (const kachel of kacheln) {
         const name =
           kachel.querySelector('.om-kennzahl__bezeichnung')?.textContent.trim() ?? '(ohne Name)'
@@ -212,7 +224,9 @@ function messeKacheln(page: Page): Promise<KachelMessung> {
         const stil = getComputedStyle(kachel)
         const innenLinks = rahmen.left + zahl(stil.borderLeftWidth) + zahl(stil.paddingLeft)
         const innenRechts = rahmen.right - zahl(stil.borderRightWidth) - zahl(stil.paddingRight)
+        const innenUnten = rahmen.bottom - zahl(stil.borderBottomWidth) - zahl(stil.paddingBottom)
         engsteInnenbreite = Math.min(engsteInnenbreite, innenRechts - innenLinks)
+        let knopfUnten: number | null = null
 
         // (a) gemeinsames Raster
         const raster = kachel.closest('.om-kachelraster')
@@ -296,6 +310,12 @@ function messeKacheln(page: Page): Promise<KachelMessung> {
               `„${name}“: Quelle-Knopf ${px(kasten.width)} × ${px(kasten.height)} px, unter ${String(mindest)} px`,
             )
           }
+          knopfUnten ??= kasten.bottom
+          if (Math.abs(kasten.bottom - innenUnten) > toleranz) {
+            befunde.push(
+              `„${name}“: Quelle-Knopf endet bei ${px(kasten.bottom)} px, Inhaltsbereich endet bei ${px(innenUnten)} px`,
+            )
+          }
           if (kasten.right > innenRechts + toleranz || kasten.left < innenLinks - toleranz) {
             befunde.push(
               `„${name}“: Quelle-Knopf liegt bei ${px(kasten.left)} bis ${px(kasten.right)} px, Inhaltsbereich ${px(innenLinks)} bis ${px(innenRechts)} px`,
@@ -332,6 +352,15 @@ function messeKacheln(page: Page): Promise<KachelMessung> {
             )
           }
         }
+
+        const eintragsListe = kachel.closest('li')
+        reiheneintraege.push({
+          liste: eintragsListe?.parentElement ?? null,
+          oben: eintragsListe?.getBoundingClientRect().top ?? rahmen.top,
+          hoehe: rahmen.height,
+          knopfUnten,
+          name,
+        })
 
         // (h) Kachel scrollt nicht
         if (kachel.scrollWidth > kachel.clientWidth) {
@@ -393,6 +422,46 @@ function messeKacheln(page: Page): Promise<KachelMessung> {
           }
         }
       }
+
+      // (j) Reihen im Gleichlauf: gleiche Kachelhöhe und gleiche Unterkante der Quelle-Knöpfe
+      const verteilt = new Set<number>()
+      reiheneintraege.forEach((erster, index) => {
+        if (verteilt.has(index)) {
+          return
+        }
+        const reihe = reiheneintraege.filter(
+          (eintrag, nummer) =>
+            !verteilt.has(nummer) &&
+            eintrag.liste === erster.liste &&
+            Math.abs(eintrag.oben - erster.oben) <= toleranz,
+        )
+        reiheneintraege.forEach((eintrag, nummer) => {
+          if (reihe.includes(eintrag)) {
+            verteilt.add(nummer)
+          }
+        })
+        if (reihe.length < 2) {
+          return
+        }
+        const namen = reihe.map((eintrag) => `„${eintrag.name}“`).join(', ')
+        const hoehen = reihe.map((eintrag) => eintrag.hoehe)
+        if (Math.max(...hoehen) - Math.min(...hoehen) > toleranz) {
+          befunde.push(
+            `Reihe bei ${px(erster.oben)} px: Kachelhöhen ${px(Math.min(...hoehen))} bis ${px(Math.max(...hoehen))} px (${namen})`,
+          )
+        }
+        const unterkanten = reihe
+          .map((eintrag) => eintrag.knopfUnten)
+          .filter((unten): unten is number => unten !== null)
+        if (
+          unterkanten.length >= 2 &&
+          Math.max(...unterkanten) - Math.min(...unterkanten) > toleranz
+        ) {
+          befunde.push(
+            `Reihe bei ${px(erster.oben)} px: Quelle-Knöpfe enden bei ${px(Math.min(...unterkanten))} bis ${px(Math.max(...unterkanten))} px (${namen})`,
+          )
+        }
+      })
 
       // Seite: kein waagerechtes Scrollen, die breitesten Verursacher nennen.
       const sichtbareBreite = document.documentElement.clientWidth
