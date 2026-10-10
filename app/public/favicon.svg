@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <!-- Haus (Gemeinde, Haus-halt) mit Euro-Zeichen (Geld) auf abgerundeter Kachel. Farben aus der
+       Web-Awesome-Palette yellow, auf der der Goldakzent beruht: Stufe 80 (Gold) und Stufe 20
+       (Dunkelbraun). Ein Favicon kann keine CSS-Variablen der Seite lesen, daher feste Werte.
+       Es wird nur dieses SVG ausgeliefert, kein ICO und kein PNG. -->
+  <rect width="16" height="16" rx="3" fill="#532600"/>
+  <path d="M8 1L15 7.5H13V15H3V7.5H1Z" fill="#fac22b"/>
+  <path d="M11.2 7.6A3.4 3.4 0 1 0 11.2 13.4" fill="none" stroke="#532600" stroke-width="1.6"/>
+  <path d="M4 9H9V10H4ZM4 11H9V12H4Z" fill="#532600"/>
+</svg>
