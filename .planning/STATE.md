@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 milestone: v1.0.1
 status: Awaiting next milestone
 stopped_at: Milestone v1.0.1 archived (override_closeout)
-last_updated: "2026-10-10T08:55:27.398Z"
-last_activity: 2026-10-09
+last_updated: "2026-10-10T17:47:23.766Z"
+last_activity: 2026-10-10
 last_activity_desc: Milestone v1.0.1 completed and archived
-state_head: a15f354a641a2f5d79a58a5d9c7c50ad2106299a
+state_head: 4f79141505289468e323b772f63781d2058bd0cc
 progress:
   total_phases: 2
   completed_phases: 9
@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-10-09)
 Phase: Milestone v1.0.1 complete
 Plan: —
 Status: Awaiting next milestone
-Last activity: 2026-10-10 - Completed quick task 261010-bvz: Quelle-Link in Kacheln einheitlich am unteren Rand ausrichten
+Last activity: 2026-10-10 - Completed quick task 261010-r8z: Favicon durch eigenes Haushalts-Motiv ersetzen (statt Vue-Logo)
 
 ## Performance Metrics
 
@@ -83,6 +83,7 @@ Aus v1.0 übernommen (offen):
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 261010-bvz | Quelle-Link in Kacheln einheitlich am unteren Rand ausrichten | 2026-10-10 | a15f354 | [261010-bvz-quelle-link-in-kacheln-einheitlich-am-un](./quick/261010-bvz-quelle-link-in-kacheln-einheitlich-am-un/) |
+| 261010-r8z | Favicon durch eigenes Haushalts-Motiv ersetzen (statt Vue-Logo) | 2026-10-10 | 4f79141 | [261010-r8z-favicon-durch-eigenes-haushalts-motiv-er](./quick/261010-r8z-favicon-durch-eigenes-haushalts-motiv-er/) |
 
 ## Deferred Items
 
