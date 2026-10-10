@@ -10,7 +10,7 @@ withDefaults(
     /** Zeile unter dem Wert: „{Wertart} {jahr} · PDF-Seite {n}“. */
     zeile: string
     berechnet?: boolean
-    /** Belegschlüssel (`lib/quelle.ts`); mit Beleg steht unter der Zeile der Knopf „Quelle“ (QuelleKnopf, Variante kachel). */
+    /** Belegschlüssel (`lib/quelle.ts`); mit Beleg steht der Knopf „Quelle“ (QuelleKnopf, Variante kachel) am unteren Rand der Kachel. */
     quelle?: string
     /** Herleitung eines berechneten Werts für die Quell-Seitenleiste (D-03). */
     herleitung?: string | null
@@ -76,7 +76,6 @@ withDefaults(
 }
 
 .om-kennzahl__zeile {
-  margin-top: auto;
   font-size: var(--wa-font-size-s);
   font-weight: var(--wa-font-weight-normal);
   line-height: 1.5;
@@ -85,7 +84,14 @@ withDefaults(
   overflow-wrap: break-word;
 }
 
+/*
+ * Die Quelle-Zeile steht am unteren Inhaltsrand der Kachel. Ein `margin-top: auto` an einem
+ * Absatz greift nicht, weil `.om-kennzahl p` (höhere Spezifität) den Außenabstand auf 0 setzt;
+ * deshalb ist der Wrapper (ein div) unten fixiert. `padding-top` hält den Mindestabstand zur Zeile.
+ */
 .om-kennzahl__quelle {
-  margin-top: var(--wa-space-xs);
+  display: flex;
+  margin-top: auto;
+  padding-top: var(--wa-space-xs);
 }
 </style>
